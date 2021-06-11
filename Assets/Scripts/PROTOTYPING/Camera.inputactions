@@ -1,0 +1,33 @@
+{
+    "name": "Camera",
+    "maps": [
+        {
+            "name": "OrbCam",
+            "id": "ee6dae52-781e-4ef3-8735-5b540b3e1683",
+            "actions": [
+                {
+                    "name": "CamContrl",
+                    "type": "PassThrough",
+                    "id": "289822e1-480a-4eca-acdf-de2e8deffc8e",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2c949f69-f0e0-40ae-afce-3f47a2fc330d",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CamContrl",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
