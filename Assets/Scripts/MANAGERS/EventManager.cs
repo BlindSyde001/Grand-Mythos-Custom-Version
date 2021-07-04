@@ -11,6 +11,8 @@ public class EventManager : MonoBehaviour
     internal GameManager GM;
     [SerializeField]
     internal GameState _GameState;
+    [SerializeField]
+    internal BattleState _BattleState;
 
     private void Awake()
     {
@@ -22,23 +24,22 @@ public class EventManager : MonoBehaviour
         switch (GS)
         {
             case GameState.TITLE:
+                _GameState = GameState.TITLE;
 
                 break;
             case GameState.OVERWORLD:
+                _GameState = GameState.OVERWORLD;
 
                 break;
             case GameState.BATTLE:
+                _GameState = GameState.BATTLE;
                 SceneManager.LoadScene("TEST - Battle");
                 break;
             case GameState.CUTSCENE:
+                _GameState = GameState.CUTSCENE;
 
                 break;
         }
         return GS;
-    }
-
-    public void Transition()
-    {
-
     }
 }

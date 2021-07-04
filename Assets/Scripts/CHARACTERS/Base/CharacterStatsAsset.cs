@@ -9,4 +9,5 @@ public class CharacterStatsAsset : ScriptableObject
     public int _Health;
     public int _Mana;
     public int _Attack;
+    public int _Defense;
 }

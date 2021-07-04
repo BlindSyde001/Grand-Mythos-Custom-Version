@@ -16,6 +16,11 @@ public class GameManager : MonoBehaviour
     #endregion
     #region BATTLE
     [SerializeField]
+    internal List<HeroExtension> _AllPartyMembers; // All in Party
+
+    [SerializeField]
+    internal List<HeroExtension> _PartyLineup;  // Who I've selected to be fighting
+    [SerializeField]
     internal List<EnemyExtension> _EnemyLineup;
     #endregion
 }

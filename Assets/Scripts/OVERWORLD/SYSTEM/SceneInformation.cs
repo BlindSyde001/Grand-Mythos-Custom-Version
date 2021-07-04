@@ -22,7 +22,7 @@ public class SceneInformation : MonoBehaviour
     {
         _PlayerCircuit = FindObjectOfType<OverworldPlayerCircuit>();
         _EnemyInformation = FindObjectOfType<EnemyInformation>();
-        _NextEncounter = Random.Range(0, 256);
+        _NextEncounter = Random.Range(6, 256);
     }
     private void FixedUpdate()
     {

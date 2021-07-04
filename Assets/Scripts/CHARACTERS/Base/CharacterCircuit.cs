@@ -4,45 +4,54 @@ using UnityEngine;
 
 public class CharacterCircuit : MonoBehaviour
 {
+    // VARIABLES
+    private EventManager EM;
+
     [SerializeField]
     internal CharacterStatsAsset _CSA;
-
-    #region STATS
-    internal int hp;
-    internal int attack;
-    #endregion
-
-    public float _ActionChargeAmount;
     [SerializeField]
-    internal float _ActionRecharge;
+    internal GameObject _CharacterModel;
 
+    public int _CurrentHP;
+    public int _MaxHP;
+    public int _MaxMP;
+    public int _Attack;
+    public int _Defense;
+
+    [SerializeField]
+    internal float _ActionRechargeSpeed;
+    public float _ActionChargeAmount;
+
+    // UPDATES
     private void Awake()
     {
-        if (hp != 0)
-            hp = _CSA._Health;
-        if (attack != 0)
-            attack = _CSA._Attack;
+        EM = FindObjectOfType<EventManager>();
+    }
+    private void Start()
+    {
+        AssignStats();
     }
     private void Update()
     {
-        _ActionChargeAmount += _ActionRecharge * Time.deltaTime;
+        if(EM._BattleState == BattleState.ACTIVE)
+        ActiveBattle();
+    }
+
+    // METHODS
+    private void AssignStats()
+    {
+        _MaxHP = _CSA._Health;
+        _MaxMP = _CSA._Mana;
+        _Attack = _CSA._Attack;
+        _Defense = _CSA._Defense;
+    }   // Assigns the character's stats from the Data Asset
+    private void ActiveBattle()
+    {
+        _ActionChargeAmount += _ActionRechargeSpeed * Time.deltaTime;
         _ActionChargeAmount = Mathf.Clamp(_ActionChargeAmount, 0, 100);
-        if(_ActionChargeAmount >= 100)
+        if (_ActionChargeAmount >= 100)
         {
-            Attack();
-            _ActionChargeAmount = 0;
+            print("ACTION READY");
         }
-    }
-    internal virtual void Attack()
-    {
-
-    }
-    internal virtual void Magic()
-    {
-
-    }
-    internal virtual void Item()
-    {
-
-    }
+    }  // Charges Action Bar when in combat, allowing action when it is full
 }

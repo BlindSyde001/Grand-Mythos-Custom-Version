@@ -271,8 +271,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _CSA: {fileID: 11400000, guid: ed4dcb7a1991c5748ab199e5c5f88d44, type: 2}
+  _CharacterModel: {fileID: 6683417299321850684, guid: 75ed46110bffecb489587c498d1aeeca, type: 3}
+  _CurrentHP: 0
+  _MaxHP: 0
+  _MaxMP: 0
+  _Attack: 0
+  _Defense: 0
+  _ActionRechargeSpeed: 5
   _ActionChargeAmount: 0
-  _ActionRecharge: 0
 --- !u!1 &231423471
 GameObject:
   m_ObjectHideFlags: 0
@@ -958,7 +964,6 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
-  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1031,21 +1036,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 10.905, y: 37.521, z: 0}
---- !u!114 &963194229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5fb4becc0d9cc44b6c7d87a67b2aab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _CSA: {fileID: 0}
-  _ActionChargeAmount: 0
-  _ActionRecharge: 0
 --- !u!1 &1038302009
 GameObject:
   m_ObjectHideFlags: 0
@@ -1287,6 +1277,10 @@ MonoBehaviour:
   EM: {fileID: 1382854779}
   _LastKnownPosition: {x: 0, y: 0, z: 0}
   _LastKnownRotation: {x: 0, y: 0, z: 0, w: 0}
+  _AllPartyMembers:
+  - {fileID: 1382854780}
+  _PartyLineup:
+  - {fileID: 1382854780}
   _EnemyLineup: []
 --- !u!114 &1382854779
 MonoBehaviour:
@@ -1302,6 +1296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GM: {fileID: 1382854778}
   _GameState: 1
+  _BattleState: 0
 --- !u!114 &1382854780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1315,8 +1310,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
+  _CharacterModel: {fileID: 6683417299321850684, guid: 75ed46110bffecb489587c498d1aeeca, type: 3}
+  _CurrentHP: 10
+  _MaxHP: 0
+  _MaxMP: 0
+  _Attack: 0
+  _Defense: 0
+  _ActionRechargeSpeed: 5
   _ActionChargeAmount: 0
-  _ActionRecharge: 0
 --- !u!1 &1412646909
 GameObject:
   m_ObjectHideFlags: 0
@@ -1636,7 +1637,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _NextEncounter: 0
   encounterRate: 5
-  TEST: 0
+  TEST: 1
 --- !u!4 &1962206005
 Transform:
   m_ObjectHideFlags: 0
