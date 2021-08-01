@@ -272,13 +272,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _CSA: {fileID: 11400000, guid: ed4dcb7a1991c5748ab199e5c5f88d44, type: 2}
   _CharacterModel: {fileID: 6683417299321850684, guid: 75ed46110bffecb489587c498d1aeeca, type: 3}
-  _CurrentHP: 0
+  _Level: 0
+  _Experience: 0
+  _CurrentHP: 150
+  _CurrentMP: 15
   _MaxHP: 0
   _MaxMP: 0
   _Attack: 0
+  _MagAttack: 0
   _Defense: 0
-  _ActionRechargeSpeed: 5
+  _MagDefense: 0
+  _ActionRechargeSpeed: 20
   _ActionChargeAmount: 0
+  _AvailableActions:
+  - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
 --- !u!1 &231423471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1030,7 +1037,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.0899761, y: 0.32015887, z: -0.030561265, w: 0.9425861}
-  m_LocalPosition: {x: -17.61, y: 6.99, z: -7.41}
+  m_LocalPosition: {x: -16.53, y: 7.54, z: -11.85}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1241,6 +1248,7 @@ GameObject:
   - component: {fileID: 1382854779}
   - component: {fileID: 1382854778}
   - component: {fileID: 1382854780}
+  - component: {fileID: 1382854781}
   m_Layer: 0
   m_Name: TRANSFER DATA
   m_TagString: Untagged
@@ -1296,7 +1304,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GM: {fileID: 1382854778}
   _GameState: 1
-  _BattleState: 0
 --- !u!114 &1382854780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1310,14 +1317,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
-  _CharacterModel: {fileID: 6683417299321850684, guid: 75ed46110bffecb489587c498d1aeeca, type: 3}
-  _CurrentHP: 10
+  _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
+  _Level: 0
+  _Experience: 0
+  _CurrentHP: 1000
+  _CurrentMP: 100
   _MaxHP: 0
   _MaxMP: 0
   _Attack: 0
+  _MagAttack: 0
   _Defense: 0
-  _ActionRechargeSpeed: 5
+  _MagDefense: 0
+  _ActionRechargeSpeed: 20
   _ActionChargeAmount: 0
+  _AvailableActions:
+  - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+  - {fileID: 11400000, guid: 3dfc7614cff8ec945910a39562371202, type: 2}
+  - {fileID: 11400000, guid: 47223203b46173546a02708669aad6dd, type: 2}
+--- !u!114 &1382854781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1382854776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355bb38e0df31c740b142dc22624f14c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _AttachedHero: {fileID: 1382854780}
+  _GambitList:
+  - {fileID: 11400000, guid: b62a84c43a8220f42910e009de41be27, type: 2}
 --- !u!1 &1412646909
 GameObject:
   m_ObjectHideFlags: 0

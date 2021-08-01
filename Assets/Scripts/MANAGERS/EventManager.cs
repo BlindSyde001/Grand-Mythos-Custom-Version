@@ -11,8 +11,6 @@ public class EventManager : MonoBehaviour
     internal GameManager GM;
     [SerializeField]
     internal GameState _GameState;
-    [SerializeField]
-    internal BattleState _BattleState;
 
     private void Awake()
     {
@@ -37,7 +35,6 @@ public class EventManager : MonoBehaviour
                 break;
             case GameState.CUTSCENE:
                 _GameState = GameState.CUTSCENE;
-
                 break;
         }
         return GS;

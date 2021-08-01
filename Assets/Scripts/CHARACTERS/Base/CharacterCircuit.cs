@@ -1,57 +1,77 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
-public class CharacterCircuit : MonoBehaviour
+public abstract class CharacterCircuit : MonoBehaviour
 {
     // VARIABLES
-    private EventManager EM;
+    #region CHARACTER TEMPLATE VARIABLES
+    [SerializeField]
+    protected internal CharacterStatsAsset _CSA;
 
     [SerializeField]
-    internal CharacterStatsAsset _CSA;
-    [SerializeField]
+    [PreviewField(100)]
+    [HideLabel]
     internal GameObject _CharacterModel;
 
+    [SerializeField]
+    protected private int _Level;
+    public int _Experience;
+
     public int _CurrentHP;
-    public int _MaxHP;
-    public int _MaxMP;
-    public int _Attack;
-    public int _Defense;
+    public int _CurrentMP;
 
     [SerializeField]
-    internal float _ActionRechargeSpeed;
+    protected private int _MaxHP;
+    public int MaxHP { get => _MaxHP; }
+
+    [SerializeField]
+    protected private int _MaxMP;
+    public int MaxMP { get => _MaxMP; }
+
+    [SerializeField]
+    protected private int _Attack;
+    public int Attack { get => _Attack;  }
+    [SerializeField]
+    protected private int _MagAttack;
+    public int MagAttack { get => _MagAttack; }
+    [SerializeField]
+    protected private int _Defense;
+    public int Defense { get => _Defense; }
+    [SerializeField]
+    protected private int _MagDefense;
+    public int MagDefense { get => _MagDefense; }
+
+    public float _ActionRechargeSpeed = 20;
     public float _ActionChargeAmount;
+
+    public List<Action> _AvailableActions;
+    #endregion
 
     // UPDATES
     private void Awake()
     {
-        EM = FindObjectOfType<EventManager>();
-    }
-    private void Start()
-    {
         AssignStats();
-    }
-    private void Update()
-    {
-        if(EM._BattleState == BattleState.ACTIVE)
-        ActiveBattle();
     }
 
     // METHODS
-    private void AssignStats()
-    {
-        _MaxHP = _CSA._Health;
-        _MaxMP = _CSA._Mana;
-        _Attack = _CSA._Attack;
-        _Defense = _CSA._Defense;
-    }   // Assigns the character's stats from the Data Asset
-    private void ActiveBattle()
+    public void ActiveStateBehaviour()
     {
         _ActionChargeAmount += _ActionRechargeSpeed * Time.deltaTime;
         _ActionChargeAmount = Mathf.Clamp(_ActionChargeAmount, 0, 100);
-        if (_ActionChargeAmount >= 100)
-        {
-            print("ACTION READY");
-        }
     }  // Charges Action Bar when in combat, allowing action when it is full
+    public void AssignStats()
+    {
+        _Level = _CSA._BaseLevel;
+        _MaxHP = _CSA._BaseHP * _Level;
+        _MaxMP = _CSA._BaseMP * _Level;
+        _Attack = _CSA._BaseAttack * _Level;
+        _MagAttack = _CSA._BaseMagAttack * _Level;
+        _Defense = _CSA._BaseDefense * _Level;
+        _MagDefense = _CSA._BaseMagDefense * _Level;
+
+        _CurrentHP = _MaxHP;
+        _CurrentMP = _MaxMP;
+    }
 }
