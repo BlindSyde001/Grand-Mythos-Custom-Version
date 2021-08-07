@@ -9,16 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 961f15c51fad5234abd1ff05325b6aff, type: 3}
-  m_Name: Officer
+  m_Script: {fileID: 11500000, guid: 26d01b0e253a0a34c9494ae6cdcbc658, type: 3}
+  m_Name: Summoner Gambit 7
   m_EditorClassIdentifier: 
-  _CharacterType: 0
-  _Name: Officer
-  _BaseLevel: 5
-  _BaseHP: 200
-  _BaseMP: 20
-  _BaseAttack: 10
-  _BaseMagAttack: 10
-  _BaseDefense: 10
-  _BaseMagDefense: 10
-  _BaseRechargeAmount: 20
+  isTurnedOn: 0
+  _Hero: {fileID: 0}
+  _Target: {fileID: 0}
+  _Action: {fileID: 0}
+  _Condition: {fileID: 0}
+  ConditionIsMet: 0

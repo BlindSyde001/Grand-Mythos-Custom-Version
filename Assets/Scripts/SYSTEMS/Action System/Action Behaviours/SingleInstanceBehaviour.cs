@@ -8,11 +8,8 @@ public class SingleInstanceBehaviour : ActionBehaviour
 {
     [TextArea]
     public string description = "Activates a Single Instance of either Damage or Healing.";
-    public override void PerformAction(CharacterCircuit caster, Action action, CharacterCircuit target)
+    protected override void PerformAction(CharacterCircuit caster, Action action, CharacterCircuit target)
     {
-        // Define the Parameters
-        // Pull Data from the Caster
-        // Compute Stats from Caster and Target with correct Behaviour Equation
         int amount;
         bool isCrit;
         if (Random.Range(1, 101) > action.critChance)
@@ -33,11 +30,16 @@ public class SingleInstanceBehaviour : ActionBehaviour
                                 (isCrit ? 2.5f : 1)
                                 / (action.isMagical ? target.MagDefense : target.Defense));
                 target._CurrentHP -= amount;
+                target.DieCheck();
                 Debug.Log(target + " has taken " + amount + " damage from " + caster);
                 Debug.Log(target._CurrentHP + "/" + target.MaxHP);
                 break;
 
             case (ActionEffect.HEAL):
+                amount = (int)((action.isMagical ? caster.MagAttack : 1) * (isCrit ? 2.5f : 1));
+                target._CurrentHP += amount;
+                Debug.Log(target + " has restored " + amount + " health from " + caster);
+                Debug.Log(target._CurrentHP + "/" + target.MaxHP);
                 break;
 
             case (ActionEffect.OTHER):

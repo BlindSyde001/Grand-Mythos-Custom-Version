@@ -5,9 +5,8 @@ using Sirenix.OdinInspector;
 
 public class BattleStateMachine : MonoBehaviour
 {
-    // VARIABLES
     private GameManager GM;
-
+    // VARIABLES
     public List<Transform> _HeroSpawns;    // Where do they initially spawn?
     public List<Transform> _EnemySpawns;
 
@@ -17,8 +16,8 @@ public class BattleStateMachine : MonoBehaviour
     public List<HeroExtension> _HeroesActive; // Who are currently in battle and can take actions
     public List<EnemyExtension> _EnemiesActive;
 
-    private List<HeroExtension> _HeroesDowned; // Who are currently in battle but are K.O'd
-    private List<EnemyExtension> _EnemiesDowned;
+    public List<HeroExtension> _HeroesDowned; // Who are currently in battle but are K.O'd
+    public List<EnemyExtension> _EnemiesDowned;
 
     public BattleState _BattleState;
 
@@ -41,7 +40,8 @@ public class BattleStateMachine : MonoBehaviour
     }
     private void Update()
     {
-        switch(_BattleState)
+        EndBattleCondition();
+        switch (_BattleState)
         {
             case BattleState.ACTIVE:
                 BattleActiveState();
@@ -51,6 +51,8 @@ public class BattleStateMachine : MonoBehaviour
                 break;
         }
     }
+
+
     // METHODS
     #region START OF BATTLE
     private void SpawnCharacterModels() // Spawn models into game, add heroes into active or downed list for battle.
@@ -62,41 +64,28 @@ public class BattleStateMachine : MonoBehaviour
     {
         for (int i = 0; i < GM._PartyLineup.Count; i++)
         {
-            GameObject instantiatedHero = Instantiate((GM._PartyLineup[i]._CharacterModel) as GameObject,
+            GameObject instantiatedHero = Instantiate(GM._PartyLineup[i]._CharacterModel,
                 _HeroSpawns[i].position,
                 _HeroSpawns[i].rotation);
             _HeroModels.Add(instantiatedHero);
 
-            if (GM._PartyLineup[i]._CurrentHP > 0)
-            {
-                _HeroesActive.Add(GM._PartyLineup[i]);
-            }
-            else if (GM._PartyLineup[i]._CurrentHP <= 0)
-            {
-                _HeroesDowned.Add(GM._PartyLineup[i]);
-            }
+            _HeroesActive.Add(GM._PartyLineup[i]);
         }
     }
     private void AddEnemyIntoBattle()
     {
         for (int i = 0; i < GM._EnemyLineup.Count; i++)
         {
-            GameObject instantiatedEnemy = Instantiate((GM._EnemyLineup[i]._CharacterModel) as GameObject,
+            GameObject instantiatedEnemy = Instantiate(GM._EnemyLineup[i]._CharacterModel as GameObject,
                 _EnemySpawns[i].position,
                 _EnemySpawns[i].rotation);
             _EnemyModels.Add(instantiatedEnemy);
 
-            if (GM._EnemyLineup[i]._CurrentHP > 0)
-            {
-                _EnemiesActive.Add(GM._EnemyLineup[i]);
-            }
-            else if (GM._EnemyLineup[i]._CurrentHP == 0)
-            {
-                _EnemiesDowned.Add(GM._EnemyLineup[i]);
-            }
+            _EnemiesActive.Add(GM._EnemyLineup[i]);
         }
     }
     #endregion
+    #region CHANGE IN BATTLE STATE
     private void BattleActiveState()
     {
         foreach(CharacterCircuit cc in _HeroesActive)
@@ -115,4 +104,39 @@ public class BattleStateMachine : MonoBehaviour
         _BattleState = BattleState.ACTIVE;
         print("END INTERMISSION " +"("+ x +") seconds");
     }
+    #endregion
+    #region CHECK STATE OF BATTLERS
+    // DEATH CHECK. Called when a char is hit
+    public void CheckCharIsDead(HeroExtension hero)
+    {
+        _HeroesActive.Remove(hero);
+        _HeroesDowned.Add(hero);
+        Debug.Log(hero.charName + " has fallen!");
+        Debug.Log(_HeroesActive + "Remaining");
+    }
+    public void CheckCharIsDead(EnemyExtension enemy)
+    {
+        _EnemiesActive.Remove(enemy);
+        _EnemiesDowned.Add(enemy);
+        Debug.Log(enemy.charName + " has fallen!");
+    }
+    #endregion
+    #region END OF GAME
+    private IEnumerator EndOfBattleTransition()
+    {
+        // Victory poses, exp gaining, items, transition back to overworld
+        yield return null;
+    }
+    private void EndBattleCondition()
+    {
+        if (_HeroesActive.Count == 0 && _HeroesDowned.Count > 0)
+        {
+            return;
+        }
+        else if (_EnemiesActive.Count == 0 && _EnemiesDowned.Count > 0)
+        {
+            return;
+        }
+    }
+    #endregion
 }

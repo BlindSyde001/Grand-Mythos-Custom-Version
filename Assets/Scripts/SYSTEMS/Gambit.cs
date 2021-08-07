@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
+[CreateAssetMenu]
+[InlineEditor]
 public class Gambit : ScriptableObject
 {
+    public bool isTurnedOn;                   // Is this Gambit activated?
+
     public HeroExtension _Hero;               // Who is performing Action
     public CharacterCircuit _Target;          // Who is target of Action
 

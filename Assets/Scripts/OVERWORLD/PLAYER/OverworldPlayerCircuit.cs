@@ -11,30 +11,35 @@ public class OverworldPlayerCircuit : MonoBehaviour
     internal OverworldPlayerMoveNode _MoveNode;
     [SerializeField]
     internal OverworldPlayerCollisionNode _CollisionNode;
-    [SerializeField]
-    internal EventManager EM;
 
     [Space(20)]
     [SerializeField]
     internal GameState _GameState;
 
+    private EventManager EM;
     private Rigidbody rb;
     internal CharacterController cc;
+    [SerializeField]
     internal Transform referenceDirection;
 
     internal bool isMoving;
-
-    // UPDATES
     private void Awake()
     {
         EM = FindObjectOfType<EventManager>();
-        _GameState = EM._GameState;
-        switch(_GameState)
+    }
+    // UPDATES
+    private void Start()
+    {
+        switch(EM._GameState)
         {
             case (GameState.OVERWORLD):
+                _GameState = GameState.OVERWORLD;
                 rb = GetComponentInChildren<Rigidbody>();
                 cc = GetComponentInChildren<CharacterController>();
                 referenceDirection = GameObject.Find("Reference Direction").transform;
+                break;
+            case (GameState.CUTSCENE):
+                _GameState = GameState.CUTSCENE;
                 break;
         }
     }

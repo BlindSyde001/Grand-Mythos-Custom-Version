@@ -4,5 +4,16 @@ using UnityEngine;
 
 public abstract class HeroExtension : CharacterCircuit
 {
-    //public Gambit[] _Gambits =new Gambit[8];
+    [SerializeField]
+    private HeroGambitController myGambitController;
+
+    public override void DieCheck()
+    {
+        if(_CurrentHP <= 0)
+        {
+            _CurrentHP = 0;
+            _ActionChargeAmount = 0;
+            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
+        }
+    }
 }

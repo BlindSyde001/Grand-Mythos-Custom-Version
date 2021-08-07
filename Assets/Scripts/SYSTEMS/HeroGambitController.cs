@@ -1,33 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class HeroGambitController : MonoBehaviour
+using Sirenix.OdinInspector;
+[CreateAssetMenu(menuName = "HGC")]
+[InlineEditor]
+public class HeroGambitController : ScriptableObject
 {
     public HeroExtension _AttachedHero;
     public List<Gambit> _GambitList;
 
-    public void SetGambitAction()
+    internal void SetGambitAction()
     {
+        // Checks: TURNED ON => CONDITION MET => FULL ACTION BAR
         if(_GambitList != null)
         for (int i = 0; i < _GambitList.Count; i++) // Go Down Gambit list
         {
-            _GambitList[i].CallCheck();
-            if (_GambitList[i].ConditionIsMet)      // If Condition is met, Perform Action
-            {
-                if (_AttachedHero._ActionChargeAmount == 100)
+                if (_GambitList[i].isTurnedOn)
                 {
-                    PerformGambitAction(_GambitList[i]);
+                    _GambitList[i].CallCheck();
+                    if (_GambitList[i].ConditionIsMet)      // If Condition is met, Perform Action
+                    {
+                        if (_AttachedHero._ActionChargeAmount == 100)
+                        {
+                            PerformGambitAction(_GambitList[i]);
+                            _AttachedHero.ConsumeActionCharge();
+                        }
+                        break;
+                    }
                 }
-                break;
-            }
         }
     }
-    private void PerformGambitAction(Gambit _GambitToPerform)
+    internal void PerformGambitAction(Gambit _GambitToPerform)
     {
         foreach (ActionBehaviour aBehaviour in _GambitToPerform._Action._Behaviours)
         {
-            aBehaviour.PerformAction(_GambitToPerform._Hero,
+            aBehaviour.PreActionTargetting(_GambitToPerform._Hero,
                                      _GambitToPerform._Action,
                                      _GambitToPerform._Target);
         }

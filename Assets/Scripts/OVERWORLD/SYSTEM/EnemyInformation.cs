@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EnemyInformation : MonoBehaviour
 {
-    private EventManager _EventManager;
-    private GameManager _GameManager;
+    private GameManager GM;
+    private EventManager EM;
 
     // Enemies spawned in order
     [SerializeField]
@@ -28,8 +28,8 @@ public class EnemyInformation : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
-        _EventManager = FindObjectOfType<EventManager>();
-        _GameManager = FindObjectOfType<GameManager>();
+        GM = FindObjectOfType<GameManager>();
+        EM = FindObjectOfType<EventManager>();
     }
 
     // Determine which enemies to spawn
@@ -40,37 +40,42 @@ public class EnemyInformation : MonoBehaviour
         {
             if (chance <= SpawnTable[i])
             {
-                EnemyFormation(i);
+                AssignEnemyFormation(i);
+                StartBattle();
                 return;
             }
             else
                 chance = chance - SpawnTable[i];
         }
     }
-    private void EnemyFormation(int enemyChance)
+
+    private void AssignEnemyFormation(int enemyChance)
     {
         switch (enemyChance)
         {
             case 0:
-                _GameManager._EnemyLineup.AddRange(_Formation1);
+                GM._EnemyLineup.AddRange(_Formation1);
                 break;
 
             case 1:
-                _GameManager._EnemyLineup.AddRange(_Formation2);
+                GM._EnemyLineup.AddRange(_Formation2);
                 break;
 
             case 2:
-                _GameManager._EnemyLineup.AddRange(_Formation3);
+                GM._EnemyLineup.AddRange(_Formation3);
                 break;
 
             case 3:
-                _GameManager._EnemyLineup.AddRange(_Formation4);
+                GM._EnemyLineup.AddRange(_Formation4);
                 break;
 
             case 4:
-                _GameManager._EnemyLineup.AddRange(_Formation5);
+                GM._EnemyLineup.AddRange(_Formation5);
                 break;
         }
-        _EventManager.ChangeInGameState(GameState.BATTLE);
+    }
+    private void StartBattle()
+    {
+        EM.ChangeInGameState(GameState.BATTLE);
     }
 }

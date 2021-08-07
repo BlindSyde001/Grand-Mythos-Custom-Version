@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 
 public class GameManager : MonoBehaviour
 {
-    // VARIABLES
     [SerializeField]
     internal EventManager EM;
 
@@ -18,7 +17,6 @@ public class GameManager : MonoBehaviour
     #region BATTLE
     [SerializeField]
     internal List<HeroExtension> _AllPartyMembers; // All in Party
-
     [SerializeField]
     internal List<HeroExtension> _PartyLineup;  // Who I've selected to be fighting
     [SerializeField]

@@ -270,9 +270,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cd1da63d2d50c046a496d0a37f1f431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CSA: {fileID: 11400000, guid: ed4dcb7a1991c5748ab199e5c5f88d44, type: 2}
+  _CSA: {fileID: 11400000, guid: d5249857a74b2cd48a4cc4b42685d6d4, type: 2}
+  characterType: 0
+  charName: 
   _CharacterModel: {fileID: 6683417299321850684, guid: 75ed46110bffecb489587c498d1aeeca, type: 3}
-  _Level: 0
+  _Level: 1
   _Experience: 0
   _CurrentHP: 150
   _CurrentMP: 15
@@ -286,6 +288,7 @@ MonoBehaviour:
   _ActionChargeAmount: 0
   _AvailableActions:
   - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+  experiencePool: 0
 --- !u!1 &231423471
 GameObject:
   m_ObjectHideFlags: 0
@@ -771,8 +774,8 @@ MonoBehaviour:
   _InputNode: {fileID: 890185798}
   _MoveNode: {fileID: 890185797}
   _CollisionNode: {fileID: 890185796}
-  EM: {fileID: 0}
-  _GameState: 0
+  _GameState: 1
+  referenceDirection: {fileID: 0}
 --- !u!114 &890185796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1279,17 +1282,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1382854776}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9c33206682c27c4ba112d06b83401e6, type: 3}
+  m_Script: {fileID: 11500000, guid: bb4b7faa30177664db76fa2a83c275f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EM: {fileID: 1382854779}
-  _LastKnownPosition: {x: 0, y: 0, z: 0}
-  _LastKnownRotation: {x: 0, y: 0, z: 0, w: 0}
-  _AllPartyMembers:
-  - {fileID: 1382854780}
-  _PartyLineup:
-  - {fileID: 1382854780}
-  _EnemyLineup: []
+  GM: {fileID: 1382854779}
+  _GameState: 1
 --- !u!114 &1382854779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1299,11 +1296,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1382854776}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb4b7faa30177664db76fa2a83c275f7, type: 3}
+  m_Script: {fileID: 11500000, guid: e9c33206682c27c4ba112d06b83401e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GM: {fileID: 1382854778}
-  _GameState: 1
+  EM: {fileID: 1382854778}
+  _LastKnownPosition: {x: 0, y: 0, z: 0}
+  _LastKnownRotation: {x: 0, y: 0, z: 0, w: 0}
+  _AllPartyMembers:
+  - {fileID: 1382854780}
+  - {fileID: 1382854781}
+  _PartyLineup:
+  - {fileID: 1382854780}
+  - {fileID: 1382854781}
+  _EnemyLineup: []
 --- !u!114 &1382854780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1317,11 +1322,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
+  characterType: 0
+  charName: Officer
   _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
-  _Level: 0
+  _Level: 1
   _Experience: 0
-  _CurrentHP: 1000
-  _CurrentMP: 100
+  _CurrentHP: 0
+  _CurrentMP: 0
   _MaxHP: 0
   _MaxMP: 0
   _Attack: 0
@@ -1334,6 +1341,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
   - {fileID: 11400000, guid: 3dfc7614cff8ec945910a39562371202, type: 2}
   - {fileID: 11400000, guid: 47223203b46173546a02708669aad6dd, type: 2}
+  myGambitController: {fileID: 11400000, guid: 5adca43a73fd55345abe01bb9d1ba388, type: 2}
 --- !u!114 &1382854781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1343,12 +1351,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 1382854776}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 355bb38e0df31c740b142dc22624f14c, type: 3}
+  m_Script: {fileID: 11500000, guid: 36ab1aa072df2404297cfce417ebd859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _AttachedHero: {fileID: 1382854780}
-  _GambitList:
-  - {fileID: 11400000, guid: b62a84c43a8220f42910e009de41be27, type: 2}
+  _CSA: {fileID: 11400000, guid: d5b57b749a688d94bbc29e8ab87c5314, type: 2}
+  characterType: 0
+  charName: Summoner
+  _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
+  _Level: 1
+  _Experience: 0
+  _CurrentHP: 0
+  _CurrentMP: 0
+  _MaxHP: 0
+  _MaxMP: 0
+  _Attack: 0
+  _MagAttack: 0
+  _Defense: 0
+  _MagDefense: 0
+  _ActionRechargeSpeed: 0
+  _ActionChargeAmount: 0
+  _AvailableActions:
+  - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+  myGambitController: {fileID: 11400000, guid: 9320d056d8f584a41b0c077b3a3c4444, type: 2}
 --- !u!1 &1412646909
 GameObject:
   m_ObjectHideFlags: 0
