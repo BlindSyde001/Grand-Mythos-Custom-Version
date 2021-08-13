@@ -1239,6 +1239,68 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1065612427}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1366557711
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1366557712}
+  - component: {fileID: 1366557713}
+  m_Layer: 0
+  m_Name: Summoner data
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1366557712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366557711}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1382854777}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1366557713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366557711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36ab1aa072df2404297cfce417ebd859, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CSA: {fileID: 11400000, guid: d5b57b749a688d94bbc29e8ab87c5314, type: 2}
+  characterType: 0
+  charName: Summoner
+  _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
+  _Level: 1
+  _Experience: 0
+  _CurrentHP: 0
+  _CurrentMP: 0
+  _MaxHP: 0
+  _MaxMP: 0
+  _Attack: 0
+  _MagAttack: 0
+  _Defense: 0
+  _MagDefense: 0
+  _ActionRechargeSpeed: 0
+  _ActionChargeAmount: 0
+  _AvailableActions:
+  - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+  myGambitController: {fileID: 11400000, guid: 9320d056d8f584a41b0c077b3a3c4444, type: 2}
 --- !u!1 &1382854776
 GameObject:
   m_ObjectHideFlags: 0
@@ -1250,8 +1312,6 @@ GameObject:
   - component: {fileID: 1382854777}
   - component: {fileID: 1382854779}
   - component: {fileID: 1382854778}
-  - component: {fileID: 1382854780}
-  - component: {fileID: 1382854781}
   m_Layer: 0
   m_Name: TRANSFER DATA
   m_TagString: Untagged
@@ -1269,7 +1329,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1547469611}
+  - {fileID: 1366557712}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1303,76 +1365,12 @@ MonoBehaviour:
   _LastKnownPosition: {x: 0, y: 0, z: 0}
   _LastKnownRotation: {x: 0, y: 0, z: 0, w: 0}
   _AllPartyMembers:
-  - {fileID: 1382854780}
-  - {fileID: 1382854781}
+  - {fileID: 1547469612}
+  - {fileID: 1366557713}
   _PartyLineup:
-  - {fileID: 1382854780}
-  - {fileID: 1382854781}
+  - {fileID: 1547469612}
+  - {fileID: 1366557713}
   _EnemyLineup: []
---- !u!114 &1382854780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1382854776}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0023f58a3811ddc47abfd8d0de6b1686, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
-  characterType: 0
-  charName: Officer
-  _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
-  _Level: 1
-  _Experience: 0
-  _CurrentHP: 0
-  _CurrentMP: 0
-  _MaxHP: 0
-  _MaxMP: 0
-  _Attack: 0
-  _MagAttack: 0
-  _Defense: 0
-  _MagDefense: 0
-  _ActionRechargeSpeed: 20
-  _ActionChargeAmount: 0
-  _AvailableActions:
-  - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
-  - {fileID: 11400000, guid: 3dfc7614cff8ec945910a39562371202, type: 2}
-  - {fileID: 11400000, guid: 47223203b46173546a02708669aad6dd, type: 2}
-  myGambitController: {fileID: 11400000, guid: 5adca43a73fd55345abe01bb9d1ba388, type: 2}
---- !u!114 &1382854781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1382854776}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36ab1aa072df2404297cfce417ebd859, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _CSA: {fileID: 11400000, guid: d5b57b749a688d94bbc29e8ab87c5314, type: 2}
-  characterType: 0
-  charName: Summoner
-  _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
-  _Level: 1
-  _Experience: 0
-  _CurrentHP: 0
-  _CurrentMP: 0
-  _MaxHP: 0
-  _MaxMP: 0
-  _Attack: 0
-  _MagAttack: 0
-  _Defense: 0
-  _MagDefense: 0
-  _ActionRechargeSpeed: 0
-  _ActionChargeAmount: 0
-  _AvailableActions:
-  - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
-  myGambitController: {fileID: 11400000, guid: 9320d056d8f584a41b0c077b3a3c4444, type: 2}
 --- !u!1 &1412646909
 GameObject:
   m_ObjectHideFlags: 0
@@ -1565,6 +1563,70 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1460450945}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1547469610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1547469611}
+  - component: {fileID: 1547469612}
+  m_Layer: 0
+  m_Name: Officer Data
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1547469611
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1547469610}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1382854777}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1547469612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1547469610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0023f58a3811ddc47abfd8d0de6b1686, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
+  characterType: 0
+  charName: Officer
+  _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
+  _Level: 1
+  _Experience: 0
+  _CurrentHP: 0
+  _CurrentMP: 0
+  _MaxHP: 0
+  _MaxMP: 0
+  _Attack: 0
+  _MagAttack: 0
+  _Defense: 0
+  _MagDefense: 0
+  _ActionRechargeSpeed: 20
+  _ActionChargeAmount: 0
+  _AvailableActions:
+  - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+  - {fileID: 11400000, guid: 3dfc7614cff8ec945910a39562371202, type: 2}
+  - {fileID: 11400000, guid: 47223203b46173546a02708669aad6dd, type: 2}
+  myGambitController: {fileID: 11400000, guid: 5adca43a73fd55345abe01bb9d1ba388, type: 2}
 --- !u!1 &1764437392
 GameObject:
   m_ObjectHideFlags: 0

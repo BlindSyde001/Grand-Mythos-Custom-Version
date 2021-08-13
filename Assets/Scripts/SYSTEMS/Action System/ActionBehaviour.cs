@@ -10,34 +10,32 @@ public class ActionBehaviour : ScriptableObject
         // Pull Data from the Caster
         // Compute Stats from Caster and Target with correct Behaviour Equation
         if (action._ActionTargetType == ActionTargetType.MULTI)
-        {
-            BattleStateMachine a = FindObjectOfType<BattleStateMachine>();
-
-            if (a._HeroesActive.Contains((HeroExtension)target))
+        {   // FIND WHERE THE GUY IS IN WHAT LIST => THEN DO IT TO EM ALL
+            if (BattleStateMachine._HeroesActive.Contains((HeroExtension)target))
             {
-                foreach (HeroExtension x in a._HeroesActive)
+                foreach (HeroExtension x in BattleStateMachine._HeroesActive)
                 {
                     PerformAction(caster, action, target);
                 }
             }
-            else if (a._HeroesDowned.Contains((HeroExtension)target))
+            else if (BattleStateMachine._HeroesDowned.Contains((HeroExtension)target))
             {
-                foreach (HeroExtension x in a._HeroesDowned)
+                foreach (HeroExtension x in BattleStateMachine._HeroesDowned)
                 {
                     PerformAction(caster, action, target);
                 }
 
             }
-            else if (a._EnemiesActive.Contains((EnemyExtension)target))
+            else if (BattleStateMachine._EnemiesActive.Contains((EnemyExtension)target))
             {
-                foreach (EnemyExtension x in a._EnemiesActive)
+                foreach (EnemyExtension x in BattleStateMachine._EnemiesActive)
                 {
                     PerformAction(caster, action, target);
                 }
             }
-            else if (a._EnemiesDowned.Contains((EnemyExtension)target))
+            else if (BattleStateMachine._EnemiesDowned.Contains((EnemyExtension)target))
             {
-                foreach (EnemyExtension x in a._EnemiesDowned)
+                foreach (EnemyExtension x in BattleStateMachine._EnemiesDowned)
                 {
                     PerformAction(caster, action, target);
                 }

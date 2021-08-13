@@ -10,45 +10,44 @@ public class BattleStateMachine : MonoBehaviour
     public List<Transform> _HeroSpawns;    // Where do they initially spawn?
     public List<Transform> _EnemySpawns;
 
-    private List<GameObject> _HeroModels;  // The character models in scene
-    private List<GameObject> _EnemyModels;
+    private static List<GameObject> _HeroModels = new List<GameObject>();  // The character models in scene
+    private static List<GameObject> _EnemyModels = new List<GameObject>();
 
-    public List<HeroExtension> _HeroesActive; // Who are currently in battle and can take actions
-    public List<EnemyExtension> _EnemiesActive;
+    public static List<HeroExtension> _HeroesActive = new List<HeroExtension>(); // Who are currently in battle and can take actions
+    public static List<EnemyExtension> _EnemiesActive = new List<EnemyExtension>();
 
-    public List<HeroExtension> _HeroesDowned; // Who are currently in battle but are K.O'd
-    public List<EnemyExtension> _EnemiesDowned;
+    public static List<HeroExtension> _HeroesDowned = new List<HeroExtension>(); // Who are currently in battle but are K.O'd
+    public static List<EnemyExtension> _EnemiesDowned = new List<EnemyExtension>();
 
     public BattleState _BattleState;
+    private bool _EndBattleLock;
 
     // UPDATES
     private void Awake()
     {
         GM = FindObjectOfType<GameManager>();
-
-        _HeroModels = new List<GameObject>();
-        _EnemyModels = new List<GameObject>();
-        _HeroesActive = new List<HeroExtension>();
-        _EnemiesActive = new List<EnemyExtension>();
-        _HeroesDowned = new List<HeroExtension>();
-        _EnemiesDowned = new List<EnemyExtension>();
     }
     private void Start()
     {
+        _EndBattleLock = false;
         StartCoroutine(BattleIntermission(5));
         SpawnCharacterModels();
     }
     private void Update()
     {
-        EndBattleCondition();
-        switch (_BattleState)
+        if(!_EndBattleLock)
         {
-            case BattleState.ACTIVE:
-                BattleActiveState();
-                break;
+            switch (_BattleState)
+            {
+                case BattleState.ACTIVE:
+                    EndBattleCondition();
+                    BattleActiveState();
+                    break;
 
-            case BattleState.WAIT:
-                break;
+                case BattleState.WAIT:
+                    EndBattleCondition();
+                    break;
+            }
         }
     }
 
@@ -67,6 +66,7 @@ public class BattleStateMachine : MonoBehaviour
             GameObject instantiatedHero = Instantiate(GM._PartyLineup[i]._CharacterModel,
                 _HeroSpawns[i].position,
                 _HeroSpawns[i].rotation);
+            instantiatedHero.name = GM._PartyLineup[i].charName +" Model";
             _HeroModels.Add(instantiatedHero);
 
             _HeroesActive.Add(GM._PartyLineup[i]);
@@ -80,6 +80,7 @@ public class BattleStateMachine : MonoBehaviour
                 _EnemySpawns[i].position,
                 _EnemySpawns[i].rotation);
             _EnemyModels.Add(instantiatedEnemy);
+            instantiatedEnemy.name = GM._EnemyLineup[i].charName + " Model " + i;
 
             _EnemiesActive.Add(GM._EnemyLineup[i]);
         }
@@ -100,6 +101,7 @@ public class BattleStateMachine : MonoBehaviour
     private IEnumerator BattleIntermission(float x)
     {
         print("START INTERMISSION");
+        _BattleState = BattleState.WAIT;
         yield return new WaitForSeconds(x);
         _BattleState = BattleState.ACTIVE;
         print("END INTERMISSION " +"("+ x +") seconds");
@@ -118,6 +120,8 @@ public class BattleStateMachine : MonoBehaviour
     {
         _EnemiesActive.Remove(enemy);
         _EnemiesDowned.Add(enemy);
+        Debug.Log(_EnemiesActive.Count);
+        Debug.Log(_EnemiesDowned.Count);
         Debug.Log(enemy.charName + " has fallen!");
     }
     #endregion
@@ -125,17 +129,22 @@ public class BattleStateMachine : MonoBehaviour
     private IEnumerator EndOfBattleTransition()
     {
         // Victory poses, exp gaining, items, transition back to overworld
+        _EndBattleLock = true;
         yield return null;
     }
     private void EndBattleCondition()
     {
         if (_HeroesActive.Count == 0 && _HeroesDowned.Count > 0)
         {
-            return;
+            _BattleState = BattleState.WAIT;
+            StartCoroutine(EndOfBattleTransition());
+            Debug.Log("BATTLE IS OVER!");
         }
         else if (_EnemiesActive.Count == 0 && _EnemiesDowned.Count > 0)
         {
-            return;
+            _BattleState = BattleState.WAIT;
+            StartCoroutine(EndOfBattleTransition());
+            Debug.Log("BATTLE IS OVER!");
         }
     }
     #endregion

@@ -17,6 +17,10 @@ public class Gambit : ScriptableObject
 
     public bool ConditionIsMet;               // Is condition met?
 
+    public CharacterType RetrieveTargetType()
+    {
+        return _Condition.targetType;
+    }
     public void CallCheck()
     {
        ConditionIsMet = _Condition.ConditionCheck(_Target);

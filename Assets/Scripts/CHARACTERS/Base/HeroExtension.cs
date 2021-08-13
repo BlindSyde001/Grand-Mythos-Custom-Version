@@ -7,6 +7,16 @@ public abstract class HeroExtension : CharacterCircuit
     [SerializeField]
     private HeroGambitController myGambitController;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        myGambitController._AttachedHero = this;
+    }
+    public override void ActiveStateBehaviour()
+    {
+        base.ActiveStateBehaviour();
+        myGambitController.SetGambitAction();
+    }
     public override void DieCheck()
     {
         if(_CurrentHP <= 0)

@@ -84,7 +84,7 @@ public abstract class CharacterCircuit : MonoBehaviour
     #endregion
 
     // UPDATES
-    private void Awake()
+    protected virtual void Awake()
     {
         AssignStats();
     }
@@ -94,13 +94,14 @@ public abstract class CharacterCircuit : MonoBehaviour
     {
         _ActionChargeAmount = 0;
     }
-    public void ActiveStateBehaviour()
+    public virtual void ActiveStateBehaviour()
     {
         _ActionChargeAmount += _ActionRechargeSpeed * Time.deltaTime;
         _ActionChargeAmount = Mathf.Clamp(_ActionChargeAmount, 0, 100);
     }  // Charges Action Bar when in combat, allowing action when it is full
     public void AssignStats()
     {
+        Debug.Log(this.name+" Activated");
         _Level = _CSA._BaseLevel;
         charName = _CSA._Name;
         characterType = _CSA._CharacterType;

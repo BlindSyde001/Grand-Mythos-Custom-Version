@@ -27,11 +27,10 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 //phys / mag stat > variation > ~pierce ? ~ > crit ? / tgt phys / mag defense
                 amount = (int)((action.isMagical ? caster.MagAttack : caster.Attack) *
                                 (Random.Range(action.powerModifier, action.powerModifier2)) *
-                                (isCrit ? 2.5f : 1)
-                                / (action.isMagical ? target.MagDefense : target.Defense));
+                                (isCrit ? 2.5f : 1));
                 target._CurrentHP -= amount;
                 target.DieCheck();
-                Debug.Log(target + " has taken " + amount + " damage from " + caster);
+                Debug.Log(target.charName + " has taken " + amount + " damage from " + caster.charName);
                 Debug.Log(target._CurrentHP + "/" + target.MaxHP);
                 break;
 

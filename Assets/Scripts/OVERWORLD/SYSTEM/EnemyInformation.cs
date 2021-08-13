@@ -16,8 +16,8 @@ public class EnemyInformation : MonoBehaviour
     internal List<EnemyExtension> _Formation3;
     [SerializeField]
     internal List<EnemyExtension> _Formation4;
-    [SerializeField]
-    internal List<EnemyExtension> _Formation5;
+    //[SerializeField]
+    //internal List<EnemyExtension> _Formation5;
 
     [Space (30)]
 
@@ -69,9 +69,9 @@ public class EnemyInformation : MonoBehaviour
                 GM._EnemyLineup.AddRange(_Formation4);
                 break;
 
-            case 4:
-                GM._EnemyLineup.AddRange(_Formation5);
-                break;
+            //case 4:
+            //    GM._EnemyLineup.AddRange(_Formation5);
+            //    break;
         }
     }
     private void StartBattle()
