@@ -7,6 +7,7 @@ public class EnemyInformation : MonoBehaviour
     private GameManager GM;
     private EventManager EM;
 
+    // VARIABLES
     // Enemies spawned in order
     [SerializeField]
     internal List<EnemyExtension> _Formation1;
@@ -25,13 +26,13 @@ public class EnemyInformation : MonoBehaviour
     [SerializeField]
     internal float[] SpawnTable = new float[5];
 
+    // UPDATES
     private void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
         GM = FindObjectOfType<GameManager>();
         EM = FindObjectOfType<EventManager>();
     }
-
     // Determine which enemies to spawn
     internal void DetermineEnemyFormation()
     {
@@ -48,7 +49,6 @@ public class EnemyInformation : MonoBehaviour
                 chance = chance - SpawnTable[i];
         }
     }
-
     private void AssignEnemyFormation(int enemyChance)
     {
         switch (enemyChance)
@@ -68,14 +68,10 @@ public class EnemyInformation : MonoBehaviour
             case 3:
                 GM._EnemyLineup.AddRange(_Formation4);
                 break;
-
-            //case 4:
-            //    GM._EnemyLineup.AddRange(_Formation5);
-            //    break;
         }
     }
     private void StartBattle()
     {
-        EM.ChangeInGameState(GameState.BATTLE);
+        EM.ChangeFunction(GameState.BATTLE);
     }
 }

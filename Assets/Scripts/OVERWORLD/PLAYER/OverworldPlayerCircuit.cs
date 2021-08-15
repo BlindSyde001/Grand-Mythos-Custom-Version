@@ -16,6 +16,7 @@ public class OverworldPlayerCircuit : MonoBehaviour
     [SerializeField]
     internal GameState _GameState;
 
+    private GameManager GM;
     private EventManager EM;
     private Rigidbody rb;
     internal CharacterController cc;
@@ -23,11 +24,12 @@ public class OverworldPlayerCircuit : MonoBehaviour
     internal Transform referenceDirection;
 
     internal bool isMoving;
+    // UPDATES
     private void Awake()
     {
+        GM = FindObjectOfType<GameManager>();
         EM = FindObjectOfType<EventManager>();
     }
-    // UPDATES
     private void Start()
     {
         switch(EM._GameState)
@@ -43,5 +45,21 @@ public class OverworldPlayerCircuit : MonoBehaviour
                 break;
         }
     }
-
+    private void OnEnable()
+    {
+        EventManager.ChangeToBattleState += SavePositionalData;
+    }
+    private void OnDisable()
+    {
+        EventManager.ChangeToBattleState -= SavePositionalData;
+    }
+    //METHODS
+    internal void SavePositionalData(GameState GS)
+    {
+        if (GS == GameState.BATTLE)
+        {
+            GM._LastKnownPosition = this.transform.position;
+            GM._LastKnownRotation = this.transform.rotation;
+        }
+    }
 }

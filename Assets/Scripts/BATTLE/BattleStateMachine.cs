@@ -51,7 +51,6 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
 
-
     // METHODS
     #region START OF BATTLE
     private void SpawnCharacterModels() // Spawn models into game, add heroes into active or downed list for battle.
@@ -126,26 +125,50 @@ public class BattleStateMachine : MonoBehaviour
     }
     #endregion
     #region END OF GAME
-    private IEnumerator EndOfBattleTransition()
-    {
-        // Victory poses, exp gaining, items, transition back to overworld
-        _EndBattleLock = true;
-        yield return null;
-    }
     private void EndBattleCondition()
     {
         if (_HeroesActive.Count == 0 && _HeroesDowned.Count > 0)
         {
             _BattleState = BattleState.WAIT;
-            StartCoroutine(EndOfBattleTransition());
-            Debug.Log("BATTLE IS OVER!");
+            StartCoroutine(VictoryTransition());
         }
         else if (_EnemiesActive.Count == 0 && _EnemiesDowned.Count > 0)
         {
             _BattleState = BattleState.WAIT;
-            StartCoroutine(EndOfBattleTransition());
-            Debug.Log("BATTLE IS OVER!");
+            StartCoroutine(DefeatTransition());
         }
+    }
+
+
+
+    private IEnumerator VictoryTransition()
+    {
+        // Victory poses, exp gaining, items, transition back to overworld
+        _EndBattleLock = true;
+        Debug.Log("VICTORY!!!");
+        yield return null;
+    }
+
+    private void DistributeTheExp()
+    {
+        int sharedExp = 0;
+        foreach(EnemyExtension enemy in _EnemiesDowned)
+        {
+            sharedExp += enemy.experiencePool;
+        }
+        foreach(HeroExtension hero in _HeroesActive)
+        {
+            hero._Experience += (int)(sharedExp / _HeroesActive.Count);
+        }
+    }
+
+
+    private IEnumerator DefeatTransition()
+    {
+        // Lost, Open up UI options to load saved game or return to title
+        _EndBattleLock = true;
+        Debug.Log("GAME OVER!!!");
+        yield return null;
     }
     #endregion
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Sirenix.OdinInspector;
 
 public class GameManager : MonoBehaviour
@@ -13,6 +14,8 @@ public class GameManager : MonoBehaviour
     internal Vector3 _LastKnownPosition;
     [SerializeField]
     internal Quaternion _LastKnownRotation;
+    [SerializeField]
+    internal string _LastKnownScene;
     #endregion
     #region BATTLE
     [SerializeField]
