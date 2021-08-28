@@ -17,8 +17,6 @@ public class EnemyInformation : MonoBehaviour
     internal List<EnemyExtension> _Formation3;
     [SerializeField]
     internal List<EnemyExtension> _Formation4;
-    //[SerializeField]
-    //internal List<EnemyExtension> _Formation5;
 
     [Space (30)]
 
@@ -26,10 +24,20 @@ public class EnemyInformation : MonoBehaviour
     [SerializeField]
     internal float[] SpawnTable = new float[5];
 
+    private static EnemyInformation _instance;
     // UPDATES
     private void Awake()
     {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else if (_instance != this)
+        {
+            Destroy(this.gameObject);
+        }
         DontDestroyOnLoad(this.gameObject);
+
         GM = FindObjectOfType<GameManager>();
         EM = FindObjectOfType<EventManager>();
     }

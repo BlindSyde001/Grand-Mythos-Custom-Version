@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 public class BattleStateMachine : MonoBehaviour
 {
     private GameManager GM;
+    private EventManager EM;
     // VARIABLES
     public List<Transform> _HeroSpawns;    // Where do they initially spawn?
     public List<Transform> _EnemySpawns;
@@ -26,12 +27,15 @@ public class BattleStateMachine : MonoBehaviour
     private void Awake()
     {
         GM = FindObjectOfType<GameManager>();
+        EM = FindObjectOfType<EventManager>();
     }
     private void Start()
     {
         _EndBattleLock = false;
         StartCoroutine(BattleIntermission(5));
         SpawnCharacterModels();
+        Debug.Log("Enemies active:"+_EnemiesActive.Count);
+        Debug.Log("Enemies Downed:" + _EnemiesDowned.Count);
     }
     private void Update()
     {
@@ -63,25 +67,34 @@ public class BattleStateMachine : MonoBehaviour
         for (int i = 0; i < GM._PartyLineup.Count; i++)
         {
             GameObject instantiatedHero = Instantiate(GM._PartyLineup[i]._CharacterModel,
-                _HeroSpawns[i].position,
-                _HeroSpawns[i].rotation);
+                                                        _HeroSpawns[i].position,
+                                                        _HeroSpawns[i].rotation,
+                                                        GameObject.Find("Hero Model Data").transform);
             instantiatedHero.name = GM._PartyLineup[i].charName +" Model";
             _HeroModels.Add(instantiatedHero);
 
             _HeroesActive.Add(GM._PartyLineup[i]);
+            GM._PartyLineup[i]._MyInstantiatedModel = instantiatedHero;
         }
     }
     private void AddEnemyIntoBattle()
     {
         for (int i = 0; i < GM._EnemyLineup.Count; i++)
         {
-            GameObject instantiatedEnemy = Instantiate(GM._EnemyLineup[i]._CharacterModel as GameObject,
-                _EnemySpawns[i].position,
-                _EnemySpawns[i].rotation);
-            _EnemyModels.Add(instantiatedEnemy);
-            instantiatedEnemy.name = GM._EnemyLineup[i].charName + " Model " + i;
+            // Instantiate enemy models
+            GameObject instantiatedEnemyModel = Instantiate(GM._EnemyLineup[i]._CharacterModel,
+                                                            _EnemySpawns[i].position,
+                                                            _EnemySpawns[i].rotation,
+                                                            GameObject.Find("Enemy Model Data").transform);
+            _EnemyModels.Add(instantiatedEnemyModel);
+            instantiatedEnemyModel.name = GM._EnemyLineup[i].charName + " Model " + i;
 
-            _EnemiesActive.Add(GM._EnemyLineup[i]);
+            // Instantiate a new version of enemy script
+            EnemyExtension instantiatedEnemyClass = Instantiate(GM._EnemyLineup[i], 
+                                                                GameObject.Find("Enemy Battle Data").transform);
+            instantiatedEnemyClass.name = GM._EnemyLineup[i].charName + " Data " + i;
+            _EnemiesActive.Add(instantiatedEnemyClass);
+            instantiatedEnemyClass._MyInstantiatedModel = instantiatedEnemyModel;
         }
     }
     #endregion
@@ -112,43 +125,43 @@ public class BattleStateMachine : MonoBehaviour
     {
         _HeroesActive.Remove(hero);
         _HeroesDowned.Add(hero);
+        hero._MyInstantiatedModel.SetActive(false);
         Debug.Log(hero.charName + " has fallen!");
-        Debug.Log(_HeroesActive + "Remaining");
+        Debug.Log(_HeroesActive + " Heroes remaining");
     }
     public void CheckCharIsDead(EnemyExtension enemy)
     {
         _EnemiesActive.Remove(enemy);
         _EnemiesDowned.Add(enemy);
-        Debug.Log(_EnemiesActive.Count);
-        Debug.Log(_EnemiesDowned.Count);
+        enemy._MyInstantiatedModel.SetActive(false);
         Debug.Log(enemy.charName + " has fallen!");
+        Debug.Log("Enemies still Active: " + _EnemiesActive.Count);
+        Debug.Log("Enemies K.O'd: " + _EnemiesDowned.Count);
     }
     #endregion
     #region END OF GAME
     private void EndBattleCondition()
     {
-        if (_HeroesActive.Count == 0 && _HeroesDowned.Count > 0)
+        if (_HeroesActive.Count > 0 && _EnemiesActive.Count <= 0)
         {
             _BattleState = BattleState.WAIT;
             StartCoroutine(VictoryTransition());
         }
-        else if (_EnemiesActive.Count == 0 && _EnemiesDowned.Count > 0)
+        else if (_EnemiesActive.Count > 0 && _HeroesActive.Count <= 0)
         {
             _BattleState = BattleState.WAIT;
             StartCoroutine(DefeatTransition());
         }
     }
-
-
-
     private IEnumerator VictoryTransition()
     {
         // Victory poses, exp gaining, items, transition back to overworld
         _EndBattleLock = true;
         Debug.Log("VICTORY!!!");
+        DistributeTheExp();
+        ReturnToOverworldPrep();
         yield return null;
     }
-
     private void DistributeTheExp()
     {
         int sharedExp = 0;
@@ -158,11 +171,28 @@ public class BattleStateMachine : MonoBehaviour
         }
         foreach(HeroExtension hero in _HeroesActive)
         {
-            hero._Experience += (int)(sharedExp / _HeroesActive.Count);
+            hero._TotalExperience += (int)(sharedExp / _HeroesActive.Count);
+            Debug.Log(hero.charName + " has gained " + (int)(sharedExp / _HeroesActive.Count) + " EXP!!!");
+            hero.LevelUpCheck();
         }
     }
+    private void ReturnToOverworldPrep()
+    {
+        // Clear Data
+        _HeroModels.Clear();
+        _HeroesActive.Clear();
+        _HeroesDowned.Clear();
 
+        _EnemyModels.Clear();
+        _EnemiesActive.Clear();
+        _EnemiesDowned.Clear();
 
+        GM._EnemyLineup.Clear();
+
+        Destroy(GameObject.Find("Enemy Data"));
+        // reload scene and create player moving character at coordinates
+        EM.ChangeFunction(GameState.OVERWORLD);
+    }
     private IEnumerator DefeatTransition()
     {
         // Lost, Open up UI options to load saved game or return to title

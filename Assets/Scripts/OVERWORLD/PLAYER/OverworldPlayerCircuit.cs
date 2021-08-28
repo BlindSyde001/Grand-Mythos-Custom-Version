@@ -29,6 +29,14 @@ public class OverworldPlayerCircuit : MonoBehaviour
     {
         GM = FindObjectOfType<GameManager>();
         EM = FindObjectOfType<EventManager>();
+
+        rb = GetComponent<Rigidbody>();
+        cc = GetComponent<CharacterController>();
+        _InputNode = GetComponent<OverworldPlayerInputNode>();
+        _MoveNode = GetComponent<OverworldPlayerMoveNode>();
+        _CollisionNode = GetComponent<OverworldPlayerCollisionNode>();
+
+        referenceDirection = GameObject.Find("Reference Direction").transform;
     }
     private void Start()
     {
@@ -36,9 +44,6 @@ public class OverworldPlayerCircuit : MonoBehaviour
         {
             case (GameState.OVERWORLD):
                 _GameState = GameState.OVERWORLD;
-                rb = GetComponentInChildren<Rigidbody>();
-                cc = GetComponentInChildren<CharacterController>();
-                referenceDirection = GameObject.Find("Reference Direction").transform;
                 break;
             case (GameState.CUTSCENE):
                 _GameState = GameState.CUTSCENE;

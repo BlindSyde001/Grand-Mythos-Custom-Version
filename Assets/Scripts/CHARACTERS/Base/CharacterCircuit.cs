@@ -8,37 +8,41 @@ public abstract class CharacterCircuit : MonoBehaviour
     // VARIABLES
     #region CHARACTER TEMPLATE VARIABLES
     [SerializeField]
-    protected internal CharacterStatsAsset _CSA;
+    [PropertyOrder(0)]
+    internal CharacterStatsAsset _CSA;
     [SerializeField]
+    [PropertyOrder(0)]
     internal CharacterType characterType;
 
+    [PropertyOrder(0)]
     public string charName;
 
     [SerializeField]
     [PreviewField(100)]
+    [PropertyOrder(0)]
     [HideLabel]
     internal GameObject _CharacterModel;
 
-    [SerializeField]
-    [PropertyRange(1, 100)]
-    protected private int _Level;
-    public int _Experience;
+    internal GameObject _MyInstantiatedModel;
 
     [TitleGroup("CHARACTER ATTRIBUTES")]
     [HorizontalGroup("CHARACTER ATTRIBUTES/Split")]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
     [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/CURRENT")]
+    [PropertyOrder(1)]
     [GUIColor(0f, 1f, 0.3f)]
     public int _CurrentHP;
 
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
     [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/CURRENT")]
+    [PropertyOrder(1)]
     [GUIColor(0f, 0.8f, 1f)]
     public int _CurrentMP;
 
     [SerializeField]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
     [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/MAXIMUM")]
+    [PropertyOrder(1)]
     [GUIColor(0f, 1f, 0.3f)]
     protected private int _MaxHP;
     public int MaxHP { get => _MaxHP; }
@@ -46,6 +50,7 @@ public abstract class CharacterCircuit : MonoBehaviour
     [SerializeField]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
     [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/MAXIMUM")]
+    [PropertyOrder(1)]
     [GUIColor(0f, 0.8f, 1f)]
     protected private int _MaxMP;
     public int MaxMP { get => _MaxMP; }
@@ -53,33 +58,85 @@ public abstract class CharacterCircuit : MonoBehaviour
     [SerializeField]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
     [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/OFFENSIVE")]
+    [PropertyOrder(1)]
     [GUIColor(1f, 0.2f, 0f)]
     protected private int _Attack;
     public int Attack { get => _Attack;  }
     [SerializeField]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
     [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/OFFENSIVE")]
+    [PropertyOrder(1)]
     [GUIColor(1f, 0.2f, 0f)]
     protected private int _MagAttack;
     public int MagAttack { get => _MagAttack; }
     [SerializeField]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
     [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/DEFENSIVE")]
+    [PropertyOrder(1)]
     [GUIColor(1f, 1f, 0f)]
     protected private int _Defense;
     public int Defense { get => _Defense; }
     [SerializeField]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
     [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/DEFENSIVE")]
+    [PropertyOrder(1)]
     [GUIColor(1f, 1f, 0f)]
     protected private int _MagDefense;
     public int MagDefense { get => _MagDefense; }
 
+    [BoxGroup("ELEMENTAL ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.1f)]
+    public int _AffinityFIRE;
+
+    [BoxGroup("ELEMENTAL ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.1f)]
+    public int _AffinityICE;
+
+    [BoxGroup("ELEMENTAL ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.1f)]
+    public int _AffinityLIGHTNING;
+
+    [BoxGroup("ELEMENTAL ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.1f)]
+    public int _AffinityWATER;
+
+    [BoxGroup("STATUS ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.2f)]
+    public int _ResistBLIND;
+
+    [BoxGroup("STATUS ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.2f)]
+    public int _ResistSILENCE;
+
+    [BoxGroup("STATUS ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.2f)]
+    public int _ResistFUROR;
+
+    [BoxGroup("STATUS ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.2f)]
+    public int _ResistPHYSICAL;
+
+    [BoxGroup("STATUS ATTRIBUTES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.2f)]
+    public int _ResistMAGICAL;
+
+    [PropertyOrder(4)]
     public float _ActionRechargeSpeed;
     [PropertyRange(0, 100)]
+    [PropertyOrder(4)]
     public float _ActionChargeAmount;
 
     [SerializeField]
+    [PropertyOrder(5)]
     private protected List<Action> _AvailableActions;
     #endregion
 
@@ -99,22 +156,9 @@ public abstract class CharacterCircuit : MonoBehaviour
         _ActionChargeAmount += _ActionRechargeSpeed * Time.deltaTime;
         _ActionChargeAmount = Mathf.Clamp(_ActionChargeAmount, 0, 100);
     }  // Charges Action Bar when in combat, allowing action when it is full
-    public void AssignStats()
+    public virtual void AssignStats()
     {
-        Debug.Log(this.name+" Activated");
-        _Level = _CSA._BaseLevel;
-        charName = _CSA._Name;
-        characterType = _CSA._CharacterType;
-        _MaxHP = _CSA._BaseHP * _Level;
-        _MaxMP = _CSA._BaseMP * _Level;
-        _Attack = _CSA._BaseAttack * _Level;
-        _MagAttack = _CSA._BaseMagAttack * _Level;
-        _Defense = _CSA._BaseDefense * _Level;
-        _MagDefense = _CSA._BaseMagDefense * _Level;
 
-        _ActionRechargeSpeed = 20;
-        _CurrentHP = _MaxHP;
-        _CurrentMP = _MaxMP;
     }
     public virtual void DieCheck()
     {

@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SceneInformation : MonoBehaviour
 {
     // VARIABLES
+    [SerializeField]
+    internal GameObject _Player;
     private OverworldPlayerCircuit _PlayerCircuit;
     private EnemyInformation _EnemyInformation;
 
     [SerializeField]
-    internal int _NextEncounter;                    // Number to 
+    internal int _NextEncounter;
     [SerializeField]
     internal int encounterRate = 5;
 
@@ -20,10 +23,29 @@ public class SceneInformation : MonoBehaviour
     // UPDATES
     private void Start()
     {
+        CreateMovablePlayer();
         _PlayerCircuit = FindObjectOfType<OverworldPlayerCircuit>();
         _EnemyInformation = FindObjectOfType<EnemyInformation>();
         _NextEncounter = Random.Range(6, 256);
     }
+
+    private void CreateMovablePlayer()
+    {
+        GameManager x = FindObjectOfType<GameManager>();
+        if(x._LastKnownScene == SceneManager.GetActiveScene().name)
+        {
+            Instantiate<GameObject>(_Player, 
+                                    x._LastKnownPosition, 
+                                    x._LastKnownRotation);
+        }
+        else
+        {
+            Instantiate<GameObject>(_Player, 
+                                    new Vector3(0, 1, 0), 
+                                    new Quaternion(0, 0, 0, 0));
+        }
+    }
+
     private void FixedUpdate()
     {
         // Enounter rate, where t represents steps

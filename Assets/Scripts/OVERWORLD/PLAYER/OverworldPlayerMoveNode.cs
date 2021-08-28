@@ -45,8 +45,8 @@ public class OverworldPlayerMoveNode : MonoBehaviour
                     rotate();
                 }
                 else
-                { 
-                    refQuat = _PlayerCircuit.referenceDirection.rotation; 
+                {
+                    refQuat = _PlayerCircuit.referenceDirection.rotation;
                 }
                 Move();
                 break;

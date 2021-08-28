@@ -12,7 +12,7 @@ public class CharacterStatsAsset : ScriptableObject
     [BoxGroup("Basic Info")]
     public string _Name;
     [BoxGroup("Basic Info")]
-    public int _BaseLevel;
+    public int _BaseExperience;
     [Space(20)]
 
     [VerticalGroup("Stats")]

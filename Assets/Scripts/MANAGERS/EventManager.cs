@@ -12,22 +12,40 @@ public class EventManager : MonoBehaviour
     internal GameManager GM;
     [SerializeField]
     internal GameState _GameState;
+
     public delegate void ChangeInGameState(GameState GS);
     public static event ChangeInGameState ChangeToBattleState;
-    
+    public static event ChangeInGameState ChangeToOverworldState;
+    public static event ChangeInGameState ChangeToTitleState;
+    public static event ChangeInGameState ChangeToCutsceneState;
+
+    public delegate void DataManipulation();
+    public static event DataManipulation SaveTheGame;
+    public static event DataManipulation LoadTheGame;
+
+    private static EventManager _instance;
     // UPDATES
     private void Awake()
     {
+        if(_instance == null)
+        {
+            _instance = this;
+        }
+        else if(_instance != this)
+        {
+            Destroy(this.gameObject);
+        }
         DontDestroyOnLoad(this.gameObject);
-
     }
     private void OnEnable()
     {
         ChangeToBattleState += BattleLoad;
+        ChangeToOverworldState += OverworldLoad;
     }
     private void OnDisable()
     {
         ChangeToBattleState -= BattleLoad;
+        ChangeToOverworldState -= OverworldLoad;
     }
 
     // METHODS
@@ -42,7 +60,7 @@ public class EventManager : MonoBehaviour
 
             case GameState.OVERWORLD:
                 GS = GameState.OVERWORLD;
-
+                ChangeToOverworldState(GS);
                 break;
 
             case GameState.BATTLE:
@@ -55,6 +73,10 @@ public class EventManager : MonoBehaviour
 
                 break;
         }
+    }
+    private void OverworldLoad(GameState GS)
+    {
+        SceneManager.LoadScene(GM._LastKnownScene);
     }
     private void BattleLoad(GameState GS)
     {
