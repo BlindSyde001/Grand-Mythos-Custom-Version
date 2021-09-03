@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 [InlineEditor]
 public class HeroGambitController : ScriptableObject
 {
+    public Action nextAction;
     public List<Gambit> _GambitList;
 
     internal void SetGambitAction(HeroExtension insertHero)
@@ -21,9 +22,11 @@ public class HeroGambitController : ScriptableObject
                 {
                     PerformGambitAction(_GambitList[i]); // Do all the behaviours on the action
                     insertHero.ConsumeActionCharge(); // ATB = 0;
+                        nextAction = null;
                 }
                 else if(_GambitList[i].ConditionIsMet)
                 {
+                        nextAction = _GambitList[i]._Action;
                     break;
                 }
             }

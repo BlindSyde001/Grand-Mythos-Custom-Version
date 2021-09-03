@@ -157,7 +157,7 @@ public abstract class HeroExtension : CharacterCircuit
         if (_TotalExperience >= _ExperienceThreshold)
         {
             _Level++;
-            // Debug.Log("Level Up! From " + (_Level-1) + " to " + _Level);
+            Debug.Log("Level Up! From " + (_Level-1) + " to " + _Level);
             LevelUpCheck();
         }
         AssignStats();

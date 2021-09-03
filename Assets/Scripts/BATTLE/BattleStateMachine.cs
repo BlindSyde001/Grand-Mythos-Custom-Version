@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 
 public class BattleStateMachine : MonoBehaviour
 {
+    private BattleUIController BU;
     private GameManager GM;
     private EventManager EM;
     // VARIABLES
@@ -26,6 +27,7 @@ public class BattleStateMachine : MonoBehaviour
     // UPDATES
     private void Awake()
     {
+        BU = FindObjectOfType<BattleUIController>();
         GM = FindObjectOfType<GameManager>();
         EM = FindObjectOfType<EventManager>();
     }
@@ -34,8 +36,6 @@ public class BattleStateMachine : MonoBehaviour
         _EndBattleLock = false;
         StartCoroutine(BattleIntermission(5));
         SpawnCharacterModels();
-        Debug.Log("Enemies active:"+_EnemiesActive.Count);
-        Debug.Log("Enemies Downed:" + _EnemiesDowned.Count);
     }
     private void Update()
     {
@@ -75,6 +75,7 @@ public class BattleStateMachine : MonoBehaviour
 
             _HeroesActive.Add(GM._PartyLineup[i]);
             GM._PartyLineup[i]._MyInstantiatedModel = instantiatedHero;
+            BU.CreateHeroUI(GM._PartyLineup[i]);
         }
     }
     private void AddEnemyIntoBattle()
@@ -135,8 +136,8 @@ public class BattleStateMachine : MonoBehaviour
         _EnemiesDowned.Add(enemy);
         enemy._MyInstantiatedModel.SetActive(false);
         Debug.Log(enemy.charName + " has fallen!");
-        Debug.Log("Enemies still Active: " + _EnemiesActive.Count);
-        Debug.Log("Enemies K.O'd: " + _EnemiesDowned.Count);
+        //Debug.Log("Enemies still Active: " + _EnemiesActive.Count);
+        //Debug.Log("Enemies K.O'd: " + _EnemiesDowned.Count);
     }
     #endregion
     #region END OF GAME
