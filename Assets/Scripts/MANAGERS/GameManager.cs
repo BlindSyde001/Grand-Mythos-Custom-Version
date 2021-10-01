@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
     #region OVERWORLD DATA
     [BoxGroup("SCENE DATA")]
     [SerializeField]
+    internal int _DoorwayIndex;
+    [BoxGroup("SCENE DATA")]
+    [SerializeField]
     internal string _LastKnownScene;
     [BoxGroup("SCENE DATA")]
     [SerializeField]

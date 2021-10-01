@@ -9,7 +9,6 @@ public class TitleScreenIO : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }   
-
     public void LoadGame(string fileName)
     {
         var SD = SaveManager.LoadFromFile(fileName);
@@ -31,6 +30,7 @@ public class TitleScreenIO : MonoBehaviour
             ExtractAccessoryData(SD, GM, i);
         }
     }
+
     private static void ExtractWeaponData(SaveData SD, GameManager GM, int i)
     {
         if (SD.heroSaveData[i].weaponSave != null)

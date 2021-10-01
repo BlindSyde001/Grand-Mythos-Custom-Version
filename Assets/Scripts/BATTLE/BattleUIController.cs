@@ -27,9 +27,9 @@ public class BattleUIController : MonoBehaviour
     {
         for (int i = 0; i < characterData.Count; i++)
         {
-            if (characterData[i].myGambitController.nextAction != null)
+            if (characterData[i].myTacticController.nextAction != null)
             {
-                heroUIData[i].nextAction.text = characterData[i].myGambitController.nextAction._Name;
+                heroUIData[i].nextAction.text = characterData[i].myTacticController.nextAction._Name;
             }
             else
             {

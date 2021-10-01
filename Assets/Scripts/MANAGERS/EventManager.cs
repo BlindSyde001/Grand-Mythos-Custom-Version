@@ -19,6 +19,9 @@ public class EventManager : MonoBehaviour
     public static event ChangeInGameState ChangeToTitleState;
     public static event ChangeInGameState ChangeToCutsceneState;
 
+    public delegate void ChangeZone();
+    public static event ChangeZone OnZoneChanged;
+
     public delegate void DataManipulation();
     public static event DataManipulation SaveTheGame;
     public static event DataManipulation LoadTheGame;
@@ -41,11 +44,15 @@ public class EventManager : MonoBehaviour
     {
         ChangeToBattleState += BattleLoad;
         ChangeToOverworldState += OverworldLoad;
+        ChangeToTitleState += TitleLoad;
+        ChangeToCutsceneState += CutsceneLoad;
     }
     private void OnDisable()
     {
         ChangeToBattleState -= BattleLoad;
         ChangeToOverworldState -= OverworldLoad;
+        ChangeToTitleState -= TitleLoad;
+        ChangeToCutsceneState -= CutsceneLoad;
     }
 
     // METHODS
@@ -55,7 +62,7 @@ public class EventManager : MonoBehaviour
         {
             case GameState.TITLE:
                 GS = GameState.TITLE;
-
+                ChangeToTitleState(GS);
                 break;
 
             case GameState.OVERWORLD:
@@ -70,10 +77,11 @@ public class EventManager : MonoBehaviour
 
             case GameState.CUTSCENE:
                 GS = GameState.CUTSCENE;
-
+                ChangeToCutsceneState(GS);
                 break;
         }
     }
+
     private void OverworldLoad(GameState GS)
     {
         SceneManager.LoadScene(GM._LastKnownScene);
@@ -82,5 +90,13 @@ public class EventManager : MonoBehaviour
     {
         GM._LastKnownScene = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene("TEST - Battle");
+    }
+    private void TitleLoad(GameState GS)
+    {
+        SceneManager.LoadScene("TEST - Title");
+    }
+    private void CutsceneLoad(GameState GS)
+    {
+
     }
 }

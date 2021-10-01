@@ -1,0 +1,119 @@
+{
+    "name": "Input Master",
+    "maps": [
+        {
+            "name": "Title Screen",
+            "id": "ee977955-a790-402a-9c64-e8137e7556ad",
+            "actions": [
+                {
+                    "name": "Navigation",
+                    "type": "Button",
+                    "id": "8f3b0519-0bbd-48b0-97ca-5748a971cf1e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6ef6bd98-446d-43a9-8b6e-53a8d094977d",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Navigation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Start Menu",
+            "id": "451701df-8d67-4bde-9a4d-9ff4ad181216",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "5df695d9-3dd5-4878-8d1b-ca5d5e4bae20",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2c4d9c6a-7e5b-441f-af15-9129132b3e6a",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Exploration",
+            "id": "911c29f1-e666-44e2-a228-204bb3df1bec",
+            "actions": [
+                {
+                    "name": "Movement",
+                    "type": "Button",
+                    "id": "f5348760-93f2-484e-a8c5-9a67cbdb7c00",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": []
+        },
+        {
+            "name": "Battle",
+            "id": "6db3b1eb-fc2b-45fb-9520-98a7b7bd840f",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "d86ada44-77c8-4269-b8fe-6ba617d18935",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "01b089f8-71ab-4e12-9f1c-6e919e5880c4",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Keyboard and Mouse",
+            "bindingGroup": "Keyboard and Mouse",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}

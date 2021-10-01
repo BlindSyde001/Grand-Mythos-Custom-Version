@@ -97,7 +97,7 @@ public abstract class HeroExtension : CharacterCircuit
     private protected List<Action> _AllUsableActions;
     [SerializeField]
     [PropertyOrder(6)]
-    internal protected HeroGambitController myGambitController;
+    internal protected HeroTacticController myTacticController;
 
     // UPDATES
     protected override void Awake()
@@ -150,7 +150,7 @@ public abstract class HeroExtension : CharacterCircuit
     public override void ActiveStateBehaviour()
     {
         base.ActiveStateBehaviour();
-        myGambitController.SetGambitAction(this);
+        myTacticController.SetTacticAction(this);
     }
     public void LevelUpCheck()
     {

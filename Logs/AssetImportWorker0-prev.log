@@ -15,11 +15,11 @@ C:/Users/samue/OneDrive/Documents/GitHub/Grand-Mythos
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-63189
-Successfully changed project path to: C:/Users/Steven Kranjac/Desktop/GitHub/Grand-Mythos
-C:/Users/Steven Kranjac/Desktop/GitHub/Grand-Mythos
+63355
+Successfully changed project path to: C:/Users/samue/OneDrive/Documents/GitHub/Grand-Mythos
+C:/Users/samue/OneDrive/Documents/GitHub/Grand-Mythos
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 55.81 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 51.70 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2021.1.11f1 (4d8c25f7477e)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/Resources/UnitySubsystems
@@ -30,96 +30,94 @@ Direct3D:
     Renderer: NVIDIA GeForce GTX 1070 Ti (ID=0x1b82)
     Vendor:   NVIDIA
     VRAM:     8079 MB
-    Driver:   30.0.14.7196
+    Driver:   30.0.14.7212
 Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56680
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56296
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.004241 seconds.
+Registered in 0.002775 seconds.
 Native extension for WindowsStandalone target not found
-Native extension for WebGL target not found
-Refreshing native plugins compatible for Editor in 47.53 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 43.89 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.595 seconds
+- Completed reload, in  3.201 seconds
 Domain Reload Profiling:
-	ReloadAssembly (1595ms)
-		BeginReloadAssembly (79ms)
+	ReloadAssembly (3201ms)
+		BeginReloadAssembly (66ms)
 			ExecutionOrderSort (0ms)
 			DisableScriptedObjects (0ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
 			CreateAndSetChildDomain (1ms)
-		EndReloadAssembly (501ms)
-			LoadAssemblies (76ms)
+		EndReloadAssembly (475ms)
+			LoadAssemblies (62ms)
 			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (202ms)
+			SetupTypeCache (187ms)
 			ReleaseScriptCaches (0ms)
-			RebuildScriptCaches (35ms)
-			SetupLoadedEditorAssemblies (207ms)
+			RebuildScriptCaches (32ms)
+			SetupLoadedEditorAssemblies (202ms)
 				LogAssemblyErrors (0ms)
-				InitializePlatformSupportModulesInManaged (8ms)
+				InitializePlatformSupportModulesInManaged (7ms)
 				SetLoadedEditorAssemblies (0ms)
-				RefreshPlugins (48ms)
-				BeforeProcessingInitializeOnLoad (1ms)
-				ProcessInitializeOnLoadAttributes (115ms)
-				ProcessInitializeOnLoadMethodAttributes (33ms)
+				RefreshPlugins (44ms)
+				BeforeProcessingInitializeOnLoad (2ms)
+				ProcessInitializeOnLoadAttributes (113ms)
+				ProcessInitializeOnLoadMethodAttributes (36ms)
 				AfterProcessingInitializeOnLoad (0ms)
 				EditorAssembliesLoaded (0ms)
 			ExecutionOrderSort2 (0ms)
 			AwakeInstancesAfterBackupRestoration (0ms)
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 0.023625 seconds.
+Registered in 0.020481 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Native extension for WebGL target not found
-Refreshing native plugins compatible for Editor in 52.71 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 43.19 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in  2.808 seconds
+- Completed reload, in  1.867 seconds
 Domain Reload Profiling:
-	ReloadAssembly (2809ms)
-		BeginReloadAssembly (180ms)
+	ReloadAssembly (1868ms)
+		BeginReloadAssembly (169ms)
 			ExecutionOrderSort (0ms)
-			DisableScriptedObjects (7ms)
+			DisableScriptedObjects (6ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
-			CreateAndSetChildDomain (25ms)
-		EndReloadAssembly (2557ms)
-			LoadAssemblies (124ms)
+			CreateAndSetChildDomain (21ms)
+		EndReloadAssembly (1621ms)
+			LoadAssemblies (110ms)
 			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (391ms)
-			ReleaseScriptCaches (0ms)
-			RebuildScriptCaches (66ms)
-			SetupLoadedEditorAssemblies (1852ms)
+			SetupTypeCache (370ms)
+			ReleaseScriptCaches (1ms)
+			RebuildScriptCaches (58ms)
+			SetupLoadedEditorAssemblies (966ms)
 				LogAssemblyErrors (0ms)
-				InitializePlatformSupportModulesInManaged (7ms)
+				InitializePlatformSupportModulesInManaged (4ms)
 				SetLoadedEditorAssemblies (0ms)
-				RefreshPlugins (53ms)
-				BeforeProcessingInitializeOnLoad (96ms)
-				ProcessInitializeOnLoadAttributes (1660ms)
-				ProcessInitializeOnLoadMethodAttributes (27ms)
-				AfterProcessingInitializeOnLoad (9ms)
+				RefreshPlugins (43ms)
+				BeforeProcessingInitializeOnLoad (63ms)
+				ProcessInitializeOnLoadAttributes (824ms)
+				ProcessInitializeOnLoadMethodAttributes (22ms)
+				AfterProcessingInitializeOnLoad (10ms)
 				EditorAssembliesLoaded (0ms)
 			ExecutionOrderSort2 (0ms)
-			AwakeInstancesAfterBackupRestoration (10ms)
+			AwakeInstancesAfterBackupRestoration (8ms)
 Platform modules already initialized, skipping
 ========================================================================
 Worker process is ready to serve import requests
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.11 seconds
-Refreshing native plugins compatible for Editor in 0.52 ms, found 2 plugins.
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.05 seconds
+Refreshing native plugins compatible for Editor in 0.49 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 1985 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 1987 Unused Serialized files (Serialized files now loaded: 0)
 System memory in use before: 89.0 MB.
 System memory in use after: 89.1 MB.
 
-Unloading 31 unused Assets to reduce memory usage. Loaded Objects now: 2481.
-Total: 30.358200 ms (FindLiveObjects: 0.157800 ms CreateObjectMapping: 0.079700 ms MarkObjects: 29.541500 ms  DeleteObjects: 0.577300 ms)
+Unloading 31 unused Assets to reduce memory usage. Loaded Objects now: 2484.
+Total: 26.964900 ms (FindLiveObjects: 0.203200 ms CreateObjectMapping: 0.061900 ms MarkObjects: 26.602500 ms  DeleteObjects: 0.095400 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
@@ -133,31 +131,7 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Import Request.
-  path: Assets/Scenes/Greybox Levels
-  artifactKey: Guid(c770b5f4b756bc442851af0a8961328b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scenes/Greybox Levels using Guid(c770b5f4b756bc442851af0a8961328b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e32d543def7e380c8478aca0c2b7191a') in 0.030605 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.000229 seconds.
-  path: Assets/Scenes/Greybox Levels/Greybox_LazerRoom1.unity
-  artifactKey: Guid(306f4f592332e61458feb50cc6459bcc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scenes/Greybox Levels/Greybox_LazerRoom1.unity using Guid(306f4f592332e61458feb50cc6459bcc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e1ff70dc723dd9a87d47c7c6ec3417d1') in 0.045304 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.000214 seconds.
-  path: Assets/Scenes/Greybox Levels/Greybox_LoadingDock.unity
-  artifactKey: Guid(7f6ed01b6fbf524408e0e9b6e53db743) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scenes/Greybox Levels/Greybox_LoadingDock.unity using Guid(7f6ed01b6fbf524408e0e9b6e53db743) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c45b7149d14bb100781c147a2860cfa1') in 0.032028 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 14795.091006 seconds.
-  path: Assets/Scenes/Greybox Levels/Storage_Room1.unity
-  artifactKey: Guid(046113ccac7cb3b4b81896b84c0f9276) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scenes/Greybox Levels/Storage_Room1.unity using Guid(046113ccac7cb3b4b81896b84c0f9276) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '732ff6e92ccc5aa6371acfda7961b4a7') in 0.049287 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 3.359686 seconds.
-  path: Assets/Scenes/Greybox Levels/Storage_Room2.unity
-  artifactKey: Guid(c88503d5ddb476c4a831f3a7a544c087) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scenes/Greybox Levels/Storage_Room2.unity using Guid(c88503d5ddb476c4a831f3a7a544c087) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '72a0ec56f7ebc5f9555ce906c7960f9a') in 0.034297 seconds 
+  path: Assets/Scripts/GAMBITS/Action System
+  artifactKey: Guid(553edd22a7de69746b435ff4f15d86b9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/GAMBITS/Action System using Guid(553edd22a7de69746b435ff4f15d86b9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ad734ae594ac8e4b933c1e3727ada316') in 0.011877 seconds 
 AssetImportWorkerClient::OnTransportError - code=2 error=End of file
