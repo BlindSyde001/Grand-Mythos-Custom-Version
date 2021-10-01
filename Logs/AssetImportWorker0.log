@@ -15,11 +15,11 @@ C:/Users/samue/OneDrive/Documents/GitHub/Grand-Mythos
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-62873
-Successfully changed project path to: C:/Users/samue/OneDrive/Documents/GitHub/Grand-Mythos
-C:/Users/samue/OneDrive/Documents/GitHub/Grand-Mythos
+64711
+Successfully changed project path to: C:/Users/Steven Kranjac/Desktop/GitHub/Grand-Mythos
+C:/Users/Steven Kranjac/Desktop/GitHub/Grand-Mythos
 Using Asset Import Pipeline V2.
-Refreshing native plugins compatible for Editor in 50.39 ms, found 2 plugins.
+Refreshing native plugins compatible for Editor in 50.71 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2021.1.11f1 (4d8c25f7477e)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/Resources/UnitySubsystems
@@ -35,89 +35,91 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56160
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56648
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2021.1.11f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.002940 seconds.
+Registered in 0.002723 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 44.51 ms, found 2 plugins.
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 43.88 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.552 seconds
+- Completed reload, in  1.503 seconds
 Domain Reload Profiling:
-	ReloadAssembly (1553ms)
-		BeginReloadAssembly (67ms)
+	ReloadAssembly (1504ms)
+		BeginReloadAssembly (65ms)
 			ExecutionOrderSort (0ms)
 			DisableScriptedObjects (0ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
 			CreateAndSetChildDomain (1ms)
-		EndReloadAssembly (491ms)
-			LoadAssemblies (64ms)
+		EndReloadAssembly (488ms)
+			LoadAssemblies (63ms)
 			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (194ms)
+			SetupTypeCache (203ms)
 			ReleaseScriptCaches (0ms)
-			RebuildScriptCaches (34ms)
-			SetupLoadedEditorAssemblies (206ms)
+			RebuildScriptCaches (35ms)
+			SetupLoadedEditorAssemblies (198ms)
 				LogAssemblyErrors (0ms)
-				InitializePlatformSupportModulesInManaged (7ms)
+				InitializePlatformSupportModulesInManaged (9ms)
 				SetLoadedEditorAssemblies (0ms)
-				RefreshPlugins (45ms)
-				BeforeProcessingInitializeOnLoad (2ms)
-				ProcessInitializeOnLoadAttributes (116ms)
-				ProcessInitializeOnLoadMethodAttributes (36ms)
+				RefreshPlugins (44ms)
+				BeforeProcessingInitializeOnLoad (1ms)
+				ProcessInitializeOnLoadAttributes (110ms)
+				ProcessInitializeOnLoadMethodAttributes (34ms)
 				AfterProcessingInitializeOnLoad (0ms)
 				EditorAssembliesLoaded (0ms)
 			ExecutionOrderSort2 (0ms)
 			AwakeInstancesAfterBackupRestoration (0ms)
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 0.015151 seconds.
+Registered in 0.011313 seconds.
 Begin MonoManager ReloadAssembly
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 44.44 ms, found 2 plugins.
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 45.32 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in  1.952 seconds
+- Completed reload, in  1.986 seconds
 Domain Reload Profiling:
-	ReloadAssembly (1952ms)
-		BeginReloadAssembly (172ms)
+	ReloadAssembly (1987ms)
+		BeginReloadAssembly (176ms)
 			ExecutionOrderSort (0ms)
-			DisableScriptedObjects (6ms)
+			DisableScriptedObjects (7ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
 			CreateAndSetChildDomain (22ms)
-		EndReloadAssembly (1701ms)
-			LoadAssemblies (109ms)
+		EndReloadAssembly (1735ms)
+			LoadAssemblies (123ms)
 			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (390ms)
-			ReleaseScriptCaches (1ms)
-			RebuildScriptCaches (62ms)
-			SetupLoadedEditorAssemblies (1020ms)
+			SetupTypeCache (385ms)
+			ReleaseScriptCaches (0ms)
+			RebuildScriptCaches (60ms)
+			SetupLoadedEditorAssemblies (1061ms)
 				LogAssemblyErrors (0ms)
-				InitializePlatformSupportModulesInManaged (5ms)
+				InitializePlatformSupportModulesInManaged (7ms)
 				SetLoadedEditorAssemblies (0ms)
 				RefreshPlugins (45ms)
-				BeforeProcessingInitializeOnLoad (65ms)
-				ProcessInitializeOnLoadAttributes (873ms)
-				ProcessInitializeOnLoadMethodAttributes (22ms)
-				AfterProcessingInitializeOnLoad (10ms)
+				BeforeProcessingInitializeOnLoad (66ms)
+				ProcessInitializeOnLoadAttributes (915ms)
+				ProcessInitializeOnLoadMethodAttributes (19ms)
+				AfterProcessingInitializeOnLoad (9ms)
 				EditorAssembliesLoaded (0ms)
 			ExecutionOrderSort2 (0ms)
-			AwakeInstancesAfterBackupRestoration (8ms)
+			AwakeInstancesAfterBackupRestoration (7ms)
 Platform modules already initialized, skipping
 ========================================================================
 Worker process is ready to serve import requests
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.07 seconds
-Refreshing native plugins compatible for Editor in 0.49 ms, found 2 plugins.
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.05 seconds
+Refreshing native plugins compatible for Editor in 0.43 ms, found 2 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
-Unloading 1987 Unused Serialized files (Serialized files now loaded: 0)
-System memory in use before: 89.0 MB.
-System memory in use after: 89.1 MB.
+Unloading 1985 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 88.9 MB.
+System memory in use after: 89.0 MB.
 
-Unloading 31 unused Assets to reduce memory usage. Loaded Objects now: 2484.
-Total: 28.030600 ms (FindLiveObjects: 0.194900 ms CreateObjectMapping: 0.051600 ms MarkObjects: 27.683600 ms  DeleteObjects: 0.098600 ms)
+Unloading 31 unused Assets to reduce memory usage. Loaded Objects now: 2481.
+Total: 24.434800 ms (FindLiveObjects: 0.179900 ms CreateObjectMapping: 0.089600 ms MarkObjects: 23.839200 ms  DeleteObjects: 0.324900 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
@@ -131,9 +133,9 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Import Request.
-  path: Assets/Scripts/GAMBITS/Tactic.cs
-  artifactKey: Guid(26d01b0e253a0a34c9494ae6cdcbc658) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/GAMBITS/Tactic.cs using Guid(26d01b0e253a0a34c9494ae6cdcbc658) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '962eb5ae935cf70165328a10d951924d') in 0.028204 seconds 
+  path: Assets/Plugins
+  artifactKey: Guid(c232b7f6d96c4784e94e647549b40562) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Plugins using Guid(c232b7f6d96c4784e94e647549b40562) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'acfa7a9e452e44b0c3322a94f66aa6a7') in 0.029184 seconds 
 ========================================================================
 Received Prepare
 Registering precompiled user dll's ...
@@ -248,302 +250,14 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Import Request.
-  Time since last request: 264.775251 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Attributes.asset
-  artifactKey: Guid(dd69228387ec27a43b9d8bcd30dbda95) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Attributes.asset using Guid(dd69228387ec27a43b9d8bcd30dbda95) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '04cabb97a8458b247ebe25c9e0a017c4') in 0.026644 seconds 
+  Time since last request: 1.315267 seconds.
+  path: Assets/Resources
+  artifactKey: Guid(1791117d65c462641aea11cc0fcdb7c1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources using Guid(1791117d65c462641aea11cc0fcdb7c1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e70f415062f21e95ea63df9e1a16ca41') in 0.029314 seconds 
 ========================================================================
 Received Import Request.
-  Time since last request: 25.091018 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 1.asset
-  artifactKey: Guid(d5ac7e8cfaf43c246817410c8e75a541) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 1.asset using Guid(d5ac7e8cfaf43c246817410c8e75a541) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f81fb9a40e3fac3f99c095569811fe4b') in 0.013621 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 1.009763 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 8.asset
-  artifactKey: Guid(616dd6aa341d08347a1497456467b44d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 8.asset using Guid(616dd6aa341d08347a1497456467b44d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b8293772c04d42e4680840728307e348') in 0.010489 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.760468 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 2.asset
-  artifactKey: Guid(75581596ff33ff9449d160e604a3a003) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 2.asset using Guid(75581596ff33ff9449d160e604a3a003) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2040aa1e4430c4c730ce86388a682ee5') in 0.009893 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.962427 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 2.asset
-  artifactKey: Guid(75581596ff33ff9449d160e604a3a003) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 2.asset using Guid(75581596ff33ff9449d160e604a3a003) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4704d1fc9345c629224a95866be89d57') in 0.010795 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.977537 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 3.asset
-  artifactKey: Guid(4facbfd2cf352b246a90da6cc888a3e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 3.asset using Guid(4facbfd2cf352b246a90da6cc888a3e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5da8ffdf075489933d951e5491737173') in 0.008942 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 6.973291 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 3.asset
-  artifactKey: Guid(4facbfd2cf352b246a90da6cc888a3e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 3.asset using Guid(4facbfd2cf352b246a90da6cc888a3e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '23b974c38e99aba961b07a09c18cf1ec') in 0.008723 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.806102 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 4.asset
-  artifactKey: Guid(ae14c5f056e0a2447bfd75f22b802d69) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 4.asset using Guid(ae14c5f056e0a2447bfd75f22b802d69) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6080a277f03c1961199eb869b5f74e2f') in 0.008731 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 5.405434 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 4.asset
-  artifactKey: Guid(ae14c5f056e0a2447bfd75f22b802d69) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 4.asset using Guid(ae14c5f056e0a2447bfd75f22b802d69) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e1454d2f5bc756aed10922dc64084792') in 0.009043 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 1.071793 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 5.asset
-  artifactKey: Guid(104c3b995c36e7847bbb8b5e2d5ab41f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 5.asset using Guid(104c3b995c36e7847bbb8b5e2d5ab41f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ec08bb6cdc8ff54bca22419067d21c68') in 0.008097 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 7.121270 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 5.asset
-  artifactKey: Guid(104c3b995c36e7847bbb8b5e2d5ab41f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 5.asset using Guid(104c3b995c36e7847bbb8b5e2d5ab41f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '58b51bdb946b91c7cc3e514c5571e756') in 0.008811 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.813499 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 6.asset
-  artifactKey: Guid(54c221fc1a3e27c41aae0df1903fd51d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 6.asset using Guid(54c221fc1a3e27c41aae0df1903fd51d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2ac51828433300256779271c629ad97a') in 0.008533 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.950762 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 6.asset
-  artifactKey: Guid(54c221fc1a3e27c41aae0df1903fd51d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 6.asset using Guid(54c221fc1a3e27c41aae0df1903fd51d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '243634d294efb7fc3c9235e8774a9a73') in 0.008910 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.949281 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 7.asset
-  artifactKey: Guid(5519abb7ec1d8e7438490333c2febe21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Gambit 7.asset using Guid(5519abb7ec1d8e7438490333c2febe21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5c71a6ed1d0bc6279ddebb125caa9fcb') in 0.008560 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.499597 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 7.asset
-  artifactKey: Guid(5519abb7ec1d8e7438490333c2febe21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 7.asset using Guid(5519abb7ec1d8e7438490333c2febe21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5d3195eac5afbeece1ef310d0063f99e') in 0.008359 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.737307 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 8.asset
-  artifactKey: Guid(616dd6aa341d08347a1497456467b44d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Detective/Detective Tactic 8.asset using Guid(616dd6aa341d08347a1497456467b44d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '45d75f45953c5a34e5ad04e15831ce21') in 0.009082 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.780031 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 1.asset
-  artifactKey: Guid(b0bb12630a5a1644981f94b268e2fc5e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 1.asset using Guid(b0bb12630a5a1644981f94b268e2fc5e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fd9041d4f01947303d4802bf48ca02bc') in 0.010333 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 11.847201 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 1.asset
-  artifactKey: Guid(b0bb12630a5a1644981f94b268e2fc5e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 1.asset using Guid(b0bb12630a5a1644981f94b268e2fc5e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e319a3ec56cd0899f06d9301a06c9255') in 0.009400 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.637391 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 2.asset
-  artifactKey: Guid(d5096907d139d6e46aa6347ae23e2608) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 2.asset using Guid(d5096907d139d6e46aa6347ae23e2608) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '57033f786948d156331eb7c1935bda9e') in 0.008683 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.270403 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 2.asset
-  artifactKey: Guid(d5096907d139d6e46aa6347ae23e2608) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 2.asset using Guid(d5096907d139d6e46aa6347ae23e2608) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7a072030464c59124234be32ee012d44') in 0.009260 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.041157 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 4.asset
-  artifactKey: Guid(b7efc9907cb44de43a7f69688f2c880f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 4.asset using Guid(b7efc9907cb44de43a7f69688f2c880f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b4c9ea30be00aa5d0c0c6f760d2917e7') in 0.008552 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.985075 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 3.asset
-  artifactKey: Guid(62f5024dab8e0ff46bd401abf6277237) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 3.asset using Guid(62f5024dab8e0ff46bd401abf6277237) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2068a14ee98ef71c8156e4f6c2b8c77a') in 0.008636 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.784819 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 3.asset
-  artifactKey: Guid(62f5024dab8e0ff46bd401abf6277237) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 3.asset using Guid(62f5024dab8e0ff46bd401abf6277237) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c645fd1613e9fc9f97e36376792eb5f8') in 0.010069 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.035925 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 5.asset
-  artifactKey: Guid(5212eccbf51043b4f839a920f55e2bef) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 5.asset using Guid(5212eccbf51043b4f839a920f55e2bef) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '35047a4c11ee41a9b2b905454a91a35c') in 0.008394 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 10.331036 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 4.asset
-  artifactKey: Guid(b7efc9907cb44de43a7f69688f2c880f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 4.asset using Guid(b7efc9907cb44de43a7f69688f2c880f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4fc377c630fd1a78d0480f334e327fc1') in 0.008292 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.009815 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 6.asset
-  artifactKey: Guid(a43d2b63a95b5374ea5b3ab5df02f006) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 6.asset using Guid(a43d2b63a95b5374ea5b3ab5df02f006) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b009b72fbf7dce24a020c692e6478a2d') in 0.008549 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.163056 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 5.asset
-  artifactKey: Guid(5212eccbf51043b4f839a920f55e2bef) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 5.asset using Guid(5212eccbf51043b4f839a920f55e2bef) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0fb082a0cb47821508d073049f811f6b') in 0.008832 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.037907 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 7.asset
-  artifactKey: Guid(409af0dc44cfb834f835be1e55563c85) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 7.asset using Guid(409af0dc44cfb834f835be1e55563c85) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9b8add83331b43a665b7ebcc375d140a') in 0.008567 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 7.473099 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 7.asset
-  artifactKey: Guid(409af0dc44cfb834f835be1e55563c85) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 7.asset using Guid(409af0dc44cfb834f835be1e55563c85) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a5b2a34dec5f2c2d12f13606ce91ed93') in 0.008255 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.329474 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 6.asset
-  artifactKey: Guid(a43d2b63a95b5374ea5b3ab5df02f006) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 6.asset using Guid(a43d2b63a95b5374ea5b3ab5df02f006) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'daca0705115db05e0ad105112264f7c5') in 0.008886 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.595276 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 8.asset
-  artifactKey: Guid(073b39123811bff459cf048b575514f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Gambit 8.asset using Guid(073b39123811bff459cf048b575514f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c29c3c1cb1655b014330cc345ec868bd') in 0.008667 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 5.679326 seconds.
-  path: Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 8.asset
-  artifactKey: Guid(073b39123811bff459cf048b575514f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Hero Data/Officer/Officer Tactic 8.asset using Guid(073b39123811bff459cf048b575514f5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b6d942602f719bbf8ddf866d7387dfeb') in 0.008958 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.705856 seconds.
-  path: Assets/Resources/Character Data/Miscellaneous/Overworld Data.asset
-  artifactKey: Guid(fd675190452d6ae42b0160a57e38b368) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Resources/Character Data/Miscellaneous/Overworld Data.asset using Guid(fd675190452d6ae42b0160a57e38b368) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ea85a09384d1136eff412842f32b9c2d') in 0.008668 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 7.703020 seconds.
-  path: Assets/Scripts/TACTICS/HeroTacticController.cs
-  artifactKey: Guid(355bb38e0df31c740b142dc22624f14c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/TACTICS/HeroTacticController.cs using Guid(355bb38e0df31c740b142dc22624f14c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f33b4e194fd0a80a6d90e3b16222285f') in 0.007699 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 1.305586 seconds.
-  path: Assets/Scripts/TACTICS/Condition System/Condition Types
-  artifactKey: Guid(6299a6ca598cc2e4ebd1736a14a60eb6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/TACTICS/Condition System/Condition Types using Guid(6299a6ca598cc2e4ebd1736a14a60eb6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3e1d81ca3ff3be40765a03c1d604485b') in 0.008053 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.431098 seconds.
-  path: Assets/Scripts/TACTICS/Condition System/Condition.cs
-  artifactKey: Guid(94d3e5ce4023c504e8f79b5f2dee9d2a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/TACTICS/Condition System/Condition.cs using Guid(94d3e5ce4023c504e8f79b5f2dee9d2a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0725f60f6355c3579468010ef23b9955') in 0.007940 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 4.882711 seconds.
-  path: Assets/Scripts/TACTICS/Action System/Action.cs
-  artifactKey: Guid(d8bcf0d7fa918c948a1b694bbcdef29a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/TACTICS/Action System/Action.cs using Guid(d8bcf0d7fa918c948a1b694bbcdef29a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '971a7bcb64ff3cc6f7dd53176beab9dc') in 0.009482 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.522771 seconds.
-  path: Assets/Scripts/TACTICS/Action System/ActionBehaviour.cs
-  artifactKey: Guid(e575425b4cd9e2d4cb5d88423867603d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/TACTICS/Action System/ActionBehaviour.cs using Guid(e575425b4cd9e2d4cb5d88423867603d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '02d8ae0b95acd867f09184b9a8c4b083') in 0.009328 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 5.701962 seconds.
-  path: Assets/Scripts/TACTICS/Action System/Action Behaviours
-  artifactKey: Guid(8ad7005322c84194ea823e39601bfc20) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/TACTICS/Action System/Action Behaviours using Guid(8ad7005322c84194ea823e39601bfc20) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f278857d84269b37820724d9034fded6') in 0.008729 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 1.680842 seconds.
-  path: Assets/Scripts/TACTICS/Action System/Action Behaviours/BuffBehaviour.cs
-  artifactKey: Guid(769235ec7c4924940b18f064c954a891) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/TACTICS/Action System/Action Behaviours/BuffBehaviour.cs using Guid(769235ec7c4924940b18f064c954a891) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3b9d950fb667f4663f6cad236bba0e90') in 0.008172 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.301291 seconds.
-  path: Assets/Scripts/TACTICS/Action System/Action Behaviours/DebuffBehaviour.cs
-  artifactKey: Guid(6cea2cd0007372945a6acf3621929ea1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/TACTICS/Action System/Action Behaviours/DebuffBehaviour.cs using Guid(6cea2cd0007372945a6acf3621929ea1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4b6bf6d4f55b06f08e3eb4c86aa7a2ef') in 0.008069 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 5.166892 seconds.
-  path: Assets/Scripts/BATTLE/BattleUIController.cs
-  artifactKey: Guid(a93b7328b20ab264aa01e2a4c8f1ffda) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/BATTLE/BattleUIController.cs using Guid(a93b7328b20ab264aa01e2a4c8f1ffda) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e99b5bf5c0843de0d586dcd718780437') in 0.007369 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 3.743172 seconds.
-  path: Assets/Scripts/INVENTORY/Basic Types
-  artifactKey: Guid(24515aafcfc911448bf83cf8f28d09e4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/INVENTORY/Basic Types using Guid(24515aafcfc911448bf83cf8f28d09e4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a8cdfc6defbccbdec5ed79a723fc769f') in 0.008647 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.308242 seconds.
-  path: Assets/Scripts/INVENTORY/Equipment Types
-  artifactKey: Guid(e916988707d7d584f8862d9f4df6ab51) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/INVENTORY/Equipment Types using Guid(e916988707d7d584f8862d9f4df6ab51) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3b70c14a38f33bb0c7992bf0444ec64c') in 0.007972 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.820524 seconds.
-  path: Assets/Scripts/INVENTORY/BaseItem.cs
-  artifactKey: Guid(cdefc934147ae9a4aa9ccdbd6615079e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/INVENTORY/BaseItem.cs using Guid(cdefc934147ae9a4aa9ccdbd6615079e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4a249413390d4a845db1a808d329dff6') in 0.007962 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.492256 seconds.
-  path: Assets/Scripts/INVENTORY/Inventory.cs
-  artifactKey: Guid(0416f68bd9a19294d99e0ab5e6dc8708) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/INVENTORY/Inventory.cs using Guid(0416f68bd9a19294d99e0ab5e6dc8708) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ed81aa5a85c0d4c2ae1868555ec4eeea') in 0.007767 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 3698.123290 seconds.
-  path: Assets/Scripts/INVENTORY/Equipment Types/Accessory/Accessory.cs
-  artifactKey: Guid(26d3b14de99e1b44384ce59c47a1be8f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/INVENTORY/Equipment Types/Accessory/Accessory.cs using Guid(26d3b14de99e1b44384ce59c47a1be8f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6ea9ff1dd857586153f5901d6ac6a09e') in 0.011379 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 5.124315 seconds.
-  path: Assets/Scripts/INVENTORY/Basic Types/Consumable.cs
-  artifactKey: Guid(a7afe243da054e946be5ebdee7e8105b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/INVENTORY/Basic Types/Consumable.cs using Guid(a7afe243da054e946be5ebdee7e8105b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'efb9a5ca49bd7a391e18d6a6aa8daacf') in 0.008140 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 0.647458 seconds.
-  path: Assets/Scripts/INVENTORY/Basic Types/Equipment.cs
-  artifactKey: Guid(f7cb7a2b3e5b7d942b068b65125ffe2a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/INVENTORY/Basic Types/Equipment.cs using Guid(f7cb7a2b3e5b7d942b068b65125ffe2a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '08a49da7181918afad02e1864997ac22') in 0.008496 seconds 
-========================================================================
-Received Import Request.
-  Time since last request: 548.188281 seconds.
-  path: Assets/Scripts/INVENTORY/Basic Types/Key.cs
-  artifactKey: Guid(2ef074132fafc984daa8e12f840ab1a3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/Scripts/INVENTORY/Basic Types/Key.cs using Guid(2ef074132fafc984daa8e12f840ab1a3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a7f86484e220f4c86dcfb62042869fb3') in 0.008999 seconds 
+  Time since last request: 0.378010 seconds.
+  path: Assets/Prefabs
+  artifactKey: Guid(8d5eded6f5ba8044aa824d9f6aa02939) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Prefabs using Guid(8d5eded6f5ba8044aa824d9f6aa02939) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'dec29e75d0ed85952e593913117070ac') in 0.027596 seconds 
 AssetImportWorkerClient::OnTransportError - code=2 error=End of file
