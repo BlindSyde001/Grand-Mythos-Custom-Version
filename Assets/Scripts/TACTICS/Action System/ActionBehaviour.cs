@@ -13,31 +13,33 @@ public class ActionBehaviour : ScriptableObject
         {   // FIND WHERE THE GUY IS IN WHAT LIST => THEN DO IT TO EM ALL
             if (BattleStateMachine._HeroesActive.Contains((HeroExtension)target))
             {
-                foreach (HeroExtension x in BattleStateMachine._HeroesActive)
+                for (int i = BattleStateMachine._HeroesActive.Count - 1; i >= 0; i--)
                 {
-                    PerformAction(caster, action, target);
+                    PerformAction(caster, action, BattleStateMachine._HeroesActive[i]);
                 }
             }
+
             else if (BattleStateMachine._HeroesDowned.Contains((HeroExtension)target))
             {
-                foreach (HeroExtension x in BattleStateMachine._HeroesDowned)
+                for (int i = BattleStateMachine._HeroesDowned.Count - 1; i >= 0; i--)
                 {
-                    PerformAction(caster, action, target);
+                    PerformAction(caster, action, BattleStateMachine._HeroesDowned[i]);
                 }
-
             }
+
             else if (BattleStateMachine._EnemiesActive.Contains((EnemyExtension)target))
             {
-                foreach (EnemyExtension x in BattleStateMachine._EnemiesActive)
+                for (int i = BattleStateMachine._EnemiesActive.Count - 1; i >= 0; i--)
                 {
-                    PerformAction(caster, action, target);
+                    PerformAction(caster, action, BattleStateMachine._EnemiesActive[i]);
                 }
             }
+
             else if (BattleStateMachine._EnemiesDowned.Contains((EnemyExtension)target))
             {
-                foreach (EnemyExtension x in BattleStateMachine._EnemiesDowned)
+                for (int i = BattleStateMachine._EnemiesDowned.Count - 1; i >= 0; i--)
                 {
-                    PerformAction(caster, action, target);
+                    PerformAction(caster, action, BattleStateMachine._EnemiesDowned[i]);
                 }
             }
         }

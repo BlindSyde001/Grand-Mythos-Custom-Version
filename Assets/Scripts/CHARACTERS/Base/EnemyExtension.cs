@@ -7,6 +7,14 @@ public abstract class EnemyExtension : CharacterCircuit
     [SerializeField]
     internal int experiencePool; // How much EXP the enemy Gives
 
+    protected internal void PerformEnemyAction(Action action, CharacterCircuit target)
+    {
+        foreach (ActionBehaviour aBehaviour in action._Behaviours)
+        {
+            aBehaviour.PreActionTargetting(this, action, target);
+        }
+        ConsumeActionCharge();
+    }
     public override void AssignStats()
     {
         Debug.Log(this.name + " Activated");

@@ -114,6 +114,8 @@ public abstract class HeroExtension : CharacterCircuit
 
         _TotalExperience = _CSA._BaseExperience;
         LevelUpCheck();
+
+        myTacticController.myHero = this;
     }
     protected void EquipStats()
     {
@@ -150,14 +152,13 @@ public abstract class HeroExtension : CharacterCircuit
     public override void ActiveStateBehaviour()
     {
         base.ActiveStateBehaviour();
-        myTacticController.SetTacticAction(this);
+        myTacticController.SetNextAction();
     }
     public void LevelUpCheck()
     {
         if (_TotalExperience >= _ExperienceThreshold)
         {
             _Level++;
-            Debug.Log("Level Up! From " + (_Level-1) + " to " + _Level);
             LevelUpCheck();
         }
         AssignStats();

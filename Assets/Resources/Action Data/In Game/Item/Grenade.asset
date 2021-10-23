@@ -18,11 +18,12 @@ MonoBehaviour:
   _ActionElement: 4
   isMagical: 0
   _Name: Grenade
+  _ActionID: 0
   _Description: Deals small amount of Damage to all enemies.
   _Cost: 0
   critChance: 0
-  powerModifier: 200
-  powerModifier2: 0
+  powerModifier: 1
+  powerModifier2: 1.5
   timingModifier: 0
   _Behaviours:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 4aecc845ec4044f429c8a64889b953f0, type: 2}

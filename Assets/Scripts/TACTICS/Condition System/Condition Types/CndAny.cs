@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Blank condition")]
-public class CndAnyEnemy : Condition
+public class CndAny : Condition
 {
     public override bool ConditionCheck(CharacterCircuit target)
     {

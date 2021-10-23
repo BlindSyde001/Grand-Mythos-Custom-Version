@@ -8,6 +8,7 @@ public class BattleStateMachine : MonoBehaviour
     private BattleUIController BU;
     private GameManager GM;
     private EventManager EM;
+
     // VARIABLES
     public List<Transform> _HeroSpawns;    // Where do they initially spawn?
     public List<Transform> _EnemySpawns;
@@ -24,6 +25,7 @@ public class BattleStateMachine : MonoBehaviour
     public BattleState _BattleState;
     private bool _EndBattleLock;
 
+    public List<HeroExtension> testlist;
     // UPDATES
     private void Awake()
     {
@@ -36,6 +38,11 @@ public class BattleStateMachine : MonoBehaviour
         _EndBattleLock = false;
         StartCoroutine(BattleIntermission(5));
         SpawnCharacterModels();
+
+        foreach(HeroExtension a in _HeroesActive)
+        {
+            testlist.Add(a);
+        }
     }
     private void Update()
     {
@@ -96,6 +103,9 @@ public class BattleStateMachine : MonoBehaviour
             instantiatedEnemyClass.name = GM._EnemyLineup[i].charName + " Data " + i;
             _EnemiesActive.Add(instantiatedEnemyClass);
             instantiatedEnemyClass._MyInstantiatedModel = instantiatedEnemyModel;
+
+            // Instantiate the UI Data of the Enemy Above the Enemy Model
+            BU.CreateEnemyUI(instantiatedEnemyClass, instantiatedEnemyModel.transform);
         }
     }
     #endregion
@@ -128,7 +138,7 @@ public class BattleStateMachine : MonoBehaviour
         _HeroesDowned.Add(hero);
         hero._MyInstantiatedModel.SetActive(false);
         Debug.Log(hero.charName + " has fallen!");
-        Debug.Log(_HeroesActive + " Heroes remaining");
+        Debug.Log(_HeroesActive.Count + " Heroes remaining");
     }
     public void CheckCharIsDead(EnemyExtension enemy)
     {
@@ -136,8 +146,6 @@ public class BattleStateMachine : MonoBehaviour
         _EnemiesDowned.Add(enemy);
         enemy._MyInstantiatedModel.SetActive(false);
         Debug.Log(enemy.charName + " has fallen!");
-        //Debug.Log("Enemies still Active: " + _EnemiesActive.Count);
-        //Debug.Log("Enemies K.O'd: " + _EnemiesDowned.Count);
     }
     #endregion
     #region END OF GAME
@@ -154,6 +162,7 @@ public class BattleStateMachine : MonoBehaviour
             StartCoroutine(DefeatTransition());
         }
     }
+
     private IEnumerator VictoryTransition()
     {
         // Victory poses, exp gaining, items, transition back to overworld
@@ -172,9 +181,9 @@ public class BattleStateMachine : MonoBehaviour
         }
         foreach(HeroExtension hero in _HeroesActive)
         {
-            hero._TotalExperience += (int)(sharedExp / _HeroesActive.Count);
-            Debug.Log(hero.charName + " has gained " + (int)(sharedExp / _HeroesActive.Count) + " EXP!!!");
-            hero.LevelUpCheck();
+            hero._TotalExperience += sharedExp / _HeroesActive.Count;
+            Debug.Log(hero.charName + " has gained " + sharedExp / _HeroesActive.Count + " EXP!!!");
+            hero.LevelUpCheck(); 
         }
     }
     private void ReturnToOverworldPrep()
@@ -194,6 +203,7 @@ public class BattleStateMachine : MonoBehaviour
         // reload scene and create player moving character at coordinates
         EM.ChangeFunction(GameState.OVERWORLD);
     }
+
     private IEnumerator DefeatTransition()
     {
         // Lost, Open up UI options to load saved game or return to title

@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class ES_Terrorist : EnemyExtension
 {
-    // Alternates between attacking and using Grenade. Has an emergency potion when below 50%HP
+    // Alternates between attacking and using Grenade. Has an emergency potion when below 50% HP
+
+    // VARIABLES
     int potionCount = 1;
-    private void Update()
+
+    // METHODS
+
+    public override void ActiveStateBehaviour()
     {
+        base.ActiveStateBehaviour();
         if(_ActionChargeAmount == 100)
         {
             if(_CurrentHP <= MaxHP/2 && potionCount > 0)
@@ -27,22 +33,24 @@ public class ES_Terrorist : EnemyExtension
                     Grenade();
                 }
             }
-        }    
-    }
+        }   
 
-    // Basic Attack
+    }
     private void BasicAttack()
     {
-        //_AvailableActions[0];
+        Debug.Log(this.name + " Has Attacked!");
+        int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
+        PerformEnemyAction(_AvailableActions[0], BattleStateMachine._HeroesActive[x]);
     }
-    // Potion
     private void Potion()
     {
-        // _AvailableActions[1];
+        Debug.Log(this.name + " Has used a Potion");
+        PerformEnemyAction(_AvailableActions[1], this);
     }
-    // Grenade
     private void Grenade()
     {
-        // AvailableActions[2];
+        Debug.Log(this.name + " Has used a Grenade!");
+        int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
+        PerformEnemyAction(_AvailableActions[2], BattleStateMachine._HeroesActive[x]);
     }
 }

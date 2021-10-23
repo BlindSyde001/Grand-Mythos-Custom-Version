@@ -4620,6 +4620,8 @@ MonoBehaviour:
   _ActionChargeAmount: 0
   _AvailableActions:
   - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+  - {fileID: 11400000, guid: ef652e3742e3b13458b241a678fbbe26, type: 2}
+  - {fileID: 11400000, guid: d1eaac4ae24fecc4c991895c4875b8db, type: 2}
   experiencePool: 250
 --- !u!1 &663768170
 GameObject:
@@ -14096,8 +14098,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _Player: {fileID: 4688717694253108979, guid: 40c95930b55b4d3449031d8c2b93cacc, type: 3}
   _NextEncounter: 0
-  DoorwayIndex: 
-  Doorways: {fileID: 0}
+  DoorwayPoints: []
 --- !u!4 &1962206005
 Transform:
   m_ObjectHideFlags: 0

@@ -4,11 +4,11 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 
 [InlineEditor]
-public class Tactic : ScriptableObject
+public class Tactic : MonoBehaviour
 {
     public bool isTurnedOn;                   // Is this Gambit activated?
 
-    public HeroExtension _Hero;               // Who is performing Action
+    public CharacterCircuit _Performer;               // Who is performing Action
     public CharacterCircuit _Target;          // Who is target of Action
 
     public Action _Action;                    // What is to be done
