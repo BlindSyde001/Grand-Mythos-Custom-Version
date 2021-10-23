@@ -25,7 +25,6 @@ public class BattleStateMachine : MonoBehaviour
     public BattleState _BattleState;
     private bool _EndBattleLock;
 
-    public List<HeroExtension> testlist;
     // UPDATES
     private void Awake()
     {
@@ -38,11 +37,6 @@ public class BattleStateMachine : MonoBehaviour
         _EndBattleLock = false;
         StartCoroutine(BattleIntermission(5));
         SpawnCharacterModels();
-
-        foreach(HeroExtension a in _HeroesActive)
-        {
-            testlist.Add(a);
-        }
     }
     private void Update()
     {
@@ -169,7 +163,6 @@ public class BattleStateMachine : MonoBehaviour
         _EndBattleLock = true;
         Debug.Log("VICTORY!!!");
         DistributeTheExp();
-        ReturnToOverworldPrep();
         yield return null;
     }
     private void DistributeTheExp()
@@ -183,8 +176,9 @@ public class BattleStateMachine : MonoBehaviour
         {
             hero._TotalExperience += sharedExp / _HeroesActive.Count;
             Debug.Log(hero.charName + " has gained " + sharedExp / _HeroesActive.Count + " EXP!!!");
-            hero.LevelUpCheck(); 
+            hero.LevelUpCheck();
         }
+        ReturnToOverworldPrep();
     }
     private void ReturnToOverworldPrep()
     {
@@ -200,6 +194,7 @@ public class BattleStateMachine : MonoBehaviour
         GM._EnemyLineup.Clear();
 
         Destroy(GameObject.Find("Enemy Data"));
+
         // reload scene and create player moving character at coordinates
         EM.ChangeFunction(GameState.OVERWORLD);
     }

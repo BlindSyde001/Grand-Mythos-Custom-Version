@@ -6,6 +6,7 @@ using TMPro;
 
 public class BattleUIController : MonoBehaviour
 {
+    // VARIABLES
     private BattleStateMachine BSM;
     public Transform heroContainer;
 
@@ -18,9 +19,14 @@ public class BattleUIController : MonoBehaviour
     public List<EnemyExtension> enemyData;
     public List<EnemyPrefabData> enemyUIData = new List<EnemyPrefabData>();
 
+    // UPDATES
     private void Awake()
     {
         BSM = FindObjectOfType<BattleStateMachine>();
+    }
+    private void Start()
+    {
+        StartUIData();
     }
 
     private void Update()
@@ -33,6 +39,20 @@ public class BattleUIController : MonoBehaviour
         }
     }
 
+    // METHODS
+    private void StartUIData()
+    {
+        for (int i = 0; i < heroData.Count; i++)
+        {
+            heroUIData[i].atbBar.value = heroData[i]._ActionChargeAmount;
+
+            heroUIData[i].health.text = heroData[i]._CurrentHP.ToString() + "/" +
+                                        heroData[i].MaxHP.ToString() + " HP";
+
+            heroUIData[i].mana.text = heroData[i]._CurrentMP.ToString() + "/" +
+                                      heroData[i].MaxMP.ToString() + " HP";
+        }
+    }
     private void SetUIData()
     {
         for (int i = 0; i < heroData.Count; i++)

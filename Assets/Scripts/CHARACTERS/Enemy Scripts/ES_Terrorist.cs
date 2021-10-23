@@ -38,9 +38,12 @@ public class ES_Terrorist : EnemyExtension
     }
     private void BasicAttack()
     {
-        Debug.Log(this.name + " Has Attacked!");
-        int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-        PerformEnemyAction(_AvailableActions[0], BattleStateMachine._HeroesActive[x]);
+        if(CheckForHeroTarget())
+         {
+            Debug.Log(this.name + " Has Attacked!");
+            int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
+            PerformEnemyAction(_AvailableActions[0], BattleStateMachine._HeroesActive[x]);
+        }
     }
     private void Potion()
     {
@@ -49,8 +52,11 @@ public class ES_Terrorist : EnemyExtension
     }
     private void Grenade()
     {
-        Debug.Log(this.name + " Has used a Grenade!");
-        int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-        PerformEnemyAction(_AvailableActions[2], BattleStateMachine._HeroesActive[x]);
+        if(CheckForHeroTarget())
+        {
+            Debug.Log(this.name + " Has used a Grenade!");
+            int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
+            PerformEnemyAction(_AvailableActions[2], BattleStateMachine._HeroesActive[x]);
+        }
     }
 }

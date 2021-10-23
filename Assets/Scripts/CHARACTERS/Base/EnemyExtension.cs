@@ -7,6 +7,17 @@ public abstract class EnemyExtension : CharacterCircuit
     [SerializeField]
     internal int experiencePool; // How much EXP the enemy Gives
 
+    private protected bool CheckForHeroTarget()
+    {
+        if (BattleStateMachine._HeroesActive.Count > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     protected internal void PerformEnemyAction(Action action, CharacterCircuit target)
     {
         foreach (ActionBehaviour aBehaviour in action._Behaviours)
