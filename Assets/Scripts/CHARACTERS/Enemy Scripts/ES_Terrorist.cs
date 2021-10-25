@@ -42,13 +42,13 @@ public class ES_Terrorist : EnemyExtension
          {
             Debug.Log(this.name + " Has Attacked!");
             int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-            PerformEnemyAction(_AvailableActions[0], BattleStateMachine._HeroesActive[x]);
+            PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]);
         }
     }
     private void Potion()
     {
         Debug.Log(this.name + " Has used a Potion");
-        PerformEnemyAction(_AvailableActions[1], this);
+        PerformEnemyAction(_AvailableActions[0], this);
     }
     private void Grenade()
     {
@@ -56,7 +56,7 @@ public class ES_Terrorist : EnemyExtension
         {
             Debug.Log(this.name + " Has used a Grenade!");
             int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-            PerformEnemyAction(_AvailableActions[2], BattleStateMachine._HeroesActive[x]);
+            PerformEnemyAction(_AvailableActions[1], BattleStateMachine._HeroesActive[x]);
         }
     }
 }

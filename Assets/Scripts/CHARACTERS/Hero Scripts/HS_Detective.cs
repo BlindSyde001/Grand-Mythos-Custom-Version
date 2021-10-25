@@ -9,7 +9,6 @@ public class HS_Detective : HeroExtension
     {
         base.Awake();
         AssignStats();
-        Debug.Log(this.name + " Activated");
     }
     public override void AssignStats()
     {

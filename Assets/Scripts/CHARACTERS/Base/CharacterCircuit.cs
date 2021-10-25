@@ -137,6 +137,9 @@ public abstract class CharacterCircuit : MonoBehaviour
 
     [SerializeField]
     [PropertyOrder(5)]
+    protected internal Action _BasicAttack;
+    [SerializeField]
+    [PropertyOrder(5)]
     protected internal List<Action> _AvailableActions;
     #endregion
 

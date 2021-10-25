@@ -12,7 +12,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
     {
         int amount;
         bool isCrit;
-        if (Random.Range(1, 101) > action.critChance)
+        if (Random.Range(1, 101) <= action.critChance)
         {
             isCrit = true;
         }

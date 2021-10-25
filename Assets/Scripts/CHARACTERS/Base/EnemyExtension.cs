@@ -28,7 +28,6 @@ public abstract class EnemyExtension : CharacterCircuit
     }
     public override void AssignStats()
     {
-        Debug.Log(this.name + " Activated");
         charName = _CSA._Name;
         characterType = _CSA._CharacterType;
         _MaxHP = _CSA._BaseHP;
