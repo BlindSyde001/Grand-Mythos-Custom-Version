@@ -28,13 +28,14 @@ public class EnemyInformation : MonoBehaviour
     // UPDATES
     private void Awake()
     {
-        if (_instance == null)
+        if(_instance == null)
         {
             _instance = this;
         }
-        else if (_instance != this)
+        else if(_instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(_instance.gameObject);
+            _instance = this;
         }
         DontDestroyOnLoad(this.gameObject);
 

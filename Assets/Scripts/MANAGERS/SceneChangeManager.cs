@@ -6,15 +6,11 @@ using UnityEngine.SceneManagement;
 public class SceneChangeManager : MonoBehaviour
 {
     // VARIABLES
-    public int DoorwayIndex;
-    public string SceneToLoad;
-
-    // UPDATES
+    public string PreviousScene;
 
     // METHODS
-    public void LoadNewZone(string newScene, int index)
+    public void LoadNewZone(string NewScene)
     {
-        SceneManager.LoadScene(SceneToLoad);
+        SceneManager.LoadScene(NewScene);
     }
-
 }

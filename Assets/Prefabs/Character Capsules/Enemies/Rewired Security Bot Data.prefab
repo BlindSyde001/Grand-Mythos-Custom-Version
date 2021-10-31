@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4298728654131661724
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4298728654131661727}
+  - component: {fileID: 4298728654131661726}
+  m_Layer: 0
+  m_Name: Rewired Security Bot Data
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4298728654131661727
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4298728654131661724}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.861643, y: 1.2894821, z: 4.906369}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4298728654131661726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4298728654131661724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4b155f904a3fd349b09ffedc5805a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CSA: {fileID: 11400000, guid: 6be5c1e4894b40a40b8ea7fa913207bd, type: 2}
+  characterType: 0
+  charName: 
+  _CharacterModel: {fileID: 6683417299321850684, guid: 75ed46110bffecb489587c498d1aeeca, type: 3}
+  _CurrentHP: 0
+  _CurrentMP: 0
+  _MaxHP: 0
+  _MaxMP: 0
+  _Attack: 0
+  _MagAttack: 0
+  _Defense: 0
+  _MagDefense: 0
+  _AffinityFIRE: 0
+  _AffinityICE: 0
+  _AffinityLIGHTNING: 0
+  _AffinityWATER: 0
+  _ResistBLIND: 0
+  _ResistSILENCE: 0
+  _ResistFUROR: 0
+  _ResistPHYSICAL: 0
+  _ResistMAGICAL: 0
+  _ActionRechargeSpeed: 0
+  _ActionChargeAmount: 0
+  _BasicAttack: {fileID: 0}
+  _AvailableActions: []
+  experiencePool: 300

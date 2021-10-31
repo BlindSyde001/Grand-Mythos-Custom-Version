@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ES_Terrorist : EnemyExtension
+public class ES_Terrorist_Gunner : EnemyExtension
 {
     // Alternates between attacking and using Grenade. Has an emergency potion when below 50% HP
 
