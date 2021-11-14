@@ -5,7 +5,6 @@ using UnityEngine;
 public class EnemyInformation : MonoBehaviour
 {
     private GameManager GM;
-    private EventManager EM;
 
     // VARIABLES
     // Enemies spawned in order
@@ -24,7 +23,7 @@ public class EnemyInformation : MonoBehaviour
     [SerializeField]
     internal float[] SpawnTable = new float[5];
 
-    private static EnemyInformation _instance;
+    public static EnemyInformation _instance;
     // UPDATES
     private void Awake()
     {
@@ -40,7 +39,6 @@ public class EnemyInformation : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         GM = FindObjectOfType<GameManager>();
-        EM = FindObjectOfType<EventManager>();
     }
     // Determine which enemies to spawn
     internal void DetermineEnemyFormation()
@@ -81,6 +79,6 @@ public class EnemyInformation : MonoBehaviour
     }
     private void StartBattle()
     {
-        EM.ChangeFunction(GameState.BATTLE);
+        EventManager._instance.ChangeFunction(GameState.BATTLE);
     }
 }

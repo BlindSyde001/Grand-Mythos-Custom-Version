@@ -38,6 +38,7 @@ public class SaveData
 public class SerializableHero
 {
     public int totalExperienceSave;
+    public Sprite sprite;
 
     public int weaponIDSave;
     public int armourIDSave;

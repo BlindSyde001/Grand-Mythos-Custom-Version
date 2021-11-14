@@ -6,6 +6,20 @@ using Sirenix.OdinInspector;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager _instance;
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else if (_instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     #region OVERWORLD DATA
     [BoxGroup("SCENE DATA")]
     [SerializeField]

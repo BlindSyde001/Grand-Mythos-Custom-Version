@@ -1552,14 +1552,13 @@ MonoBehaviour:
   - {fileID: 1987832160}
   - {fileID: 1673259597}
   _Formation3:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1987832160}
+  - {fileID: 1987832160}
+  - {fileID: 1987832160}
+  - {fileID: 1673259597}
   _Formation4:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1987832160}
+  - {fileID: 1987832160}
   SpawnTable:
   - 0
   - 30
@@ -8705,7 +8704,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1258138276}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -8772,7 +8771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a75bd4d415d4bc448c26e0c8ffd3fca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SceneToLoad: 
+  SceneToLoad: TEST - OverWorld
 --- !u!1001 &1280642830
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13864,6 +13863,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Player: {fileID: 4688717694253108979, guid: 40c95930b55b4d3449031d8c2b93cacc, type: 3}
+  _EnemyInformation: {fileID: 0}
   _NextEncounter: 0
   DoorwayPoints: []
 --- !u!4 &1962206005

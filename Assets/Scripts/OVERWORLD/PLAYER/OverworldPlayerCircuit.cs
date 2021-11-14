@@ -16,8 +16,6 @@ public class OverworldPlayerCircuit : MonoBehaviour
     [SerializeField]
     internal GameState _GameState;
 
-    private GameManager GM;
-    private EventManager EM;
     private Rigidbody rb;
     internal CharacterController cc;
     [SerializeField]
@@ -27,9 +25,6 @@ public class OverworldPlayerCircuit : MonoBehaviour
     // UPDATES
     private void Awake()
     {
-        GM = FindObjectOfType<GameManager>();
-        EM = FindObjectOfType<EventManager>();
-
         rb = GetComponent<Rigidbody>();
         cc = GetComponent<CharacterController>();
         _InputNode = GetComponent<OverworldPlayerInputNode>();
@@ -40,7 +35,7 @@ public class OverworldPlayerCircuit : MonoBehaviour
     }
     private void Start()
     {
-        switch(EM._GameState)
+        switch(EventManager._instance._GameState)
         {
             case (GameState.OVERWORLD):
                 _GameState = GameState.OVERWORLD;
@@ -63,8 +58,8 @@ public class OverworldPlayerCircuit : MonoBehaviour
     {
         if (GS == GameState.BATTLE)
         {
-            GM._LastKnownPosition = this.transform.position;
-            GM._LastKnownRotation = this.transform.rotation;
+            GameManager._instance._LastKnownPosition = this.transform.position;
+            GameManager._instance._LastKnownRotation = this.transform.rotation;
         }
     }
 }

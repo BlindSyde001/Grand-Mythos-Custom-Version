@@ -9,8 +9,6 @@ public class EventManager : MonoBehaviour
 {
     // VARIABLES
     [SerializeField]
-    internal GameManager GM;
-    [SerializeField]
     internal GameState _GameState;
 
     public delegate void ChangeInGameState(GameState GS);
@@ -26,7 +24,7 @@ public class EventManager : MonoBehaviour
     public static event DataManipulation SaveTheGame;
     public static event DataManipulation LoadTheGame;
 
-    private static EventManager _instance;
+    public static EventManager _instance;
     // UPDATES
     private void Awake()
     {
@@ -84,11 +82,11 @@ public class EventManager : MonoBehaviour
 
     private void OverworldLoad(GameState GS)
     {
-        SceneManager.LoadScene(GM._LastKnownScene);
+        SceneManager.LoadScene(GameManager._instance._LastKnownScene);
     }
     private void BattleLoad(GameState GS)
     {
-        GM._LastKnownScene = SceneManager.GetActiveScene().name;
+        GameManager._instance._LastKnownScene = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene("TEST - Battle");
     }
     private void TitleLoad(GameState GS)

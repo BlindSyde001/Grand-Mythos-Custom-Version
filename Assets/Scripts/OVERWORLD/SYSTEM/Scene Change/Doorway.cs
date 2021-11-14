@@ -13,8 +13,8 @@ public class Doorway : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
-            FindObjectOfType<SceneChangeManager>().PreviousScene = SceneManager.GetActiveScene().name;
-            FindObjectOfType<SceneChangeManager>().LoadNewZone(SceneToLoad);
+            SceneChangeManager._instance.PreviousScene = SceneManager.GetActiveScene().name;
+            SceneChangeManager._instance.LoadNewZone(SceneToLoad);
         }
     }
 }

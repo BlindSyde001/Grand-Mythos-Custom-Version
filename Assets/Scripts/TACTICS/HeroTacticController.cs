@@ -7,7 +7,6 @@ using Sirenix.OdinInspector;
 public class HeroTacticController : MonoBehaviour
 {
     // VARIABLES
-    private GameManager GM;
 
     protected internal HeroExtension myHero;
     public List<Tactic> _TacticsList;
@@ -20,9 +19,10 @@ public class HeroTacticController : MonoBehaviour
     // METHODS
     internal void SetNextAction()
     {
-        if (!ActionIsInputted)
+        if (!ActionIsInputted) // AI Behaviours
         {
             if (_TacticsList != null) // Checks: TURNED ON => CONDITION MET => FULL ACTION BAR
+            {
                 for (int i = 0; i < _TacticsList.Count; i++) // Go Down Gambit list
                 {
                     _TacticsList[i]._Performer = myHero;
@@ -44,9 +44,18 @@ public class HeroTacticController : MonoBehaviour
                         }
                     }
                 }
-        } else if(ActionIsInputted)
+            }
+        } 
+        else if(ActionIsInputted) // Manual Command
         {
-
+            if(myHero._ActionChargeAmount == 100)
+            { 
+                PerformManualAction();
+                myHero.ConsumeActionCharge();
+                ChosenAction = null;
+                ChosenTarget = null;
+                ActionIsInputted = false;
+            }
         }
     }
     private void TryTacticTargets(int i)
@@ -93,5 +102,14 @@ public class HeroTacticController : MonoBehaviour
                                            _TacticToPerform._Target);
         }
         _TacticToPerform._Target = null;
+    }
+    internal void PerformManualAction()
+    {
+        foreach(ActionBehaviour abehaviour in ChosenAction._Behaviours)
+        {
+            abehaviour.PreActionTargetting(myHero,
+                                           ChosenAction,
+                                           ChosenTarget);
+        }
     }
 }

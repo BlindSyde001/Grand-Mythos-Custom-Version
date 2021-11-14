@@ -9,7 +9,6 @@ public class SceneInformation : MonoBehaviour
     [SerializeField]
     internal GameObject _Player;
     private OverworldPlayerCircuit _PlayerCircuit;
-    private EnemyInformation _EnemyInformation;
 
     [SerializeField]
     internal int _NextEncounter;
@@ -25,7 +24,6 @@ public class SceneInformation : MonoBehaviour
     {
         CreateMovablePlayer();
         _PlayerCircuit = FindObjectOfType<OverworldPlayerCircuit>();
-        _EnemyInformation = FindObjectOfType<EnemyInformation>();
         _NextEncounter = Random.Range(6, 256);
     }
     private void FixedUpdate()
@@ -71,6 +69,6 @@ public class SceneInformation : MonoBehaviour
     private void EnemiesEncountered()
     {
         // Start a battle with enemies
-        _EnemyInformation.DetermineEnemyFormation();
+        EnemyInformation._instance.DetermineEnemyFormation();
     }
 }

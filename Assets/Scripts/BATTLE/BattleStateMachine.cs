@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 using Sirenix.OdinInspector;
 
 public class BattleStateMachine : MonoBehaviour
 {
     private BattleUIController BU;
-    private GameManager GM;
-    private EventManager EM;
 
     // VARIABLES
     public List<Transform> _HeroSpawns;    // Where do they initially spawn?
@@ -25,12 +24,13 @@ public class BattleStateMachine : MonoBehaviour
     public BattleState _BattleState;
     private bool _EndBattleLock;
 
+    private CinemachineFreeLook rotateCam;
+
     // UPDATES
     private void Awake()
     {
         BU = FindObjectOfType<BattleUIController>();
-        GM = FindObjectOfType<GameManager>();
-        EM = FindObjectOfType<EventManager>();
+        rotateCam = FindObjectOfType<CinemachineFreeLook>();
     }
     private void Start()
     {
@@ -47,10 +47,12 @@ public class BattleStateMachine : MonoBehaviour
                 case BattleState.ACTIVE:
                     EndBattleCondition();
                     BattleActiveState();
+                    rotateCam.GetComponent<CinemachineFreeLook>().enabled = true;
                     break;
 
                 case BattleState.WAIT:
                     EndBattleCondition();
+                    rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
                     break;
             }
         }
@@ -65,36 +67,36 @@ public class BattleStateMachine : MonoBehaviour
     }
     private void AddHeroIntoBattle()
     {
-        for (int i = 0; i < GM._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager._instance._PartyLineup.Count; i++)
         {
-            GameObject instantiatedHero = Instantiate(GM._PartyLineup[i]._CharacterModel,
+            GameObject instantiatedHero = Instantiate(GameManager._instance._PartyLineup[i]._CharacterModel,
                                                         _HeroSpawns[i].position,
                                                         _HeroSpawns[i].rotation,
                                                         GameObject.Find("Hero Model Data").transform);
-            instantiatedHero.name = GM._PartyLineup[i].charName +" Model";
+            instantiatedHero.name = GameManager._instance._PartyLineup[i].charName +" Model";
             _HeroModels.Add(instantiatedHero);
 
-            _HeroesActive.Add(GM._PartyLineup[i]);
-            GM._PartyLineup[i]._MyInstantiatedModel = instantiatedHero;
-            BU.CreateHeroUI(GM._PartyLineup[i]);
+            _HeroesActive.Add(GameManager._instance._PartyLineup[i]);
+            GameManager._instance._PartyLineup[i]._MyInstantiatedModel = instantiatedHero;
+            BU.CreateHeroUI(GameManager._instance._PartyLineup[i]);
         }
     }
     private void AddEnemyIntoBattle()
     {
-        for (int i = 0; i < GM._EnemyLineup.Count; i++)
+        for (int i = 0; i < GameManager._instance._EnemyLineup.Count; i++)
         {
             // Instantiate enemy models
-            GameObject instantiatedEnemyModel = Instantiate(GM._EnemyLineup[i]._CharacterModel,
+            GameObject instantiatedEnemyModel = Instantiate(GameManager._instance._EnemyLineup[i]._CharacterModel,
                                                             _EnemySpawns[i].position,
                                                             _EnemySpawns[i].rotation,
                                                             GameObject.Find("Enemy Model Data").transform);
             _EnemyModels.Add(instantiatedEnemyModel);
-            instantiatedEnemyModel.name = GM._EnemyLineup[i].charName + " Model " + i;
+            instantiatedEnemyModel.name = GameManager._instance._EnemyLineup[i].charName + " Model " + i;
 
             // Instantiate a new version of enemy script
-            EnemyExtension instantiatedEnemyClass = Instantiate(GM._EnemyLineup[i], 
+            EnemyExtension instantiatedEnemyClass = Instantiate(GameManager._instance._EnemyLineup[i], 
                                                                 GameObject.Find("Enemy Battle Data").transform);
-            instantiatedEnemyClass.name = GM._EnemyLineup[i].charName + " Data " + i;
+            instantiatedEnemyClass.name = GameManager._instance._EnemyLineup[i].charName + " Data " + i;
             _EnemiesActive.Add(instantiatedEnemyClass);
             instantiatedEnemyClass._MyInstantiatedModel = instantiatedEnemyModel;
 
@@ -191,12 +193,12 @@ public class BattleStateMachine : MonoBehaviour
         _EnemiesActive.Clear();
         _EnemiesDowned.Clear();
 
-        GM._EnemyLineup.Clear();
+        GameManager._instance._EnemyLineup.Clear();
 
         Destroy(GameObject.Find("Enemy Data"));
 
         // reload scene and create player moving character at coordinates
-        EM.ChangeFunction(GameState.OVERWORLD);
+        EventManager._instance.ChangeFunction(GameState.OVERWORLD);
     }
 
     private IEnumerator DefeatTransition()

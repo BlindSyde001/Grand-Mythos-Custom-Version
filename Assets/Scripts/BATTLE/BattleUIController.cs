@@ -19,6 +19,8 @@ public class BattleUIController : MonoBehaviour
     public List<EnemyExtension> enemyData;
     public List<EnemyPrefabData> enemyUIData = new List<EnemyPrefabData>();
 
+    public HeroExtension CurrentHero; // This is who is being referenced in the Command Panel
+
     // UPDATES
     private void Awake()
     {
@@ -27,6 +29,7 @@ public class BattleUIController : MonoBehaviour
     private void Start()
     {
         StartUIData();
+        CurrentHero = heroData[0];
     }
 
     private void Update()

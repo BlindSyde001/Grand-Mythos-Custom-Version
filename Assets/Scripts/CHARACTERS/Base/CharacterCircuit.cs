@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Sirenix.OdinInspector;
 
 public abstract class CharacterCircuit : MonoBehaviour
@@ -16,6 +17,12 @@ public abstract class CharacterCircuit : MonoBehaviour
 
     [PropertyOrder(0)]
     public string charName;
+
+    [SerializeField]
+    [PreviewField(100)]
+    [PropertyOrder(0)]
+    [HideLabel]
+    internal Sprite charPortrait;
 
     [SerializeField]
     [PreviewField(100)]
