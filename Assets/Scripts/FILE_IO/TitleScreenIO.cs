@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class TitleScreenIO : MonoBehaviour
 {
@@ -14,16 +15,13 @@ public class TitleScreenIO : MonoBehaviour
     {
         SceneManager.LoadScene(2);
     }   
-    public void LoadGame(string fileName)
+    public void LoadGame(int FileNumber)
     {
-        var SD = SaveManager.LoadFromFile(fileName);
+        var SD = SaveManager.LoadFromFile(FileNumber);
 
-        GameManager._instance._LastKnownScene = SD.scene;
+        GameManager._instance._LastKnownScene = SD.savedScene;
         GameManager._instance._LastKnownPosition = SD.overworldPos;
         GameManager._instance._LastKnownRotation = SD.overworldRot;
-
-        GameManager._instance._AllPartyMembers = SD.allPartyMembersSave;
-        GameManager._instance._PartyLineup = SD.partyLineupSave;
 
         for (int i = 0; i < GameManager._instance._AllPartyMembers.Count; i++)
         {
@@ -32,36 +30,50 @@ public class TitleScreenIO : MonoBehaviour
             SaveManager.ExtractArmourData(SD, i);
             SaveManager.ExtractAccessoryData(SD, i);
         }
-    }
 
+        GameManager._instance._PartyLineup.Clear();
+        for (int i = 0; i < SD.lineupSave.Count; i++)
+        {
+            GameManager._instance._PartyLineup.Add(GameManager._instance._AllPartyMembers[SD.lineupSave[i]]);
+        }
+    }
 
     public void OpenLoadFiles()
     {
-        foreach(GameObject button in SavedFiles)
-        {
-            button.SetActive(false);
-        }
-
+        // read the data on files
         string[] readFiles =  GetFileNames(Application.persistentDataPath + "/Save Files", "*.json");
-        foreach(string a in readFiles)
+        foreach(string name in readFiles)
         {
-            Debug.Log(a);
+            Debug.Log(name);
         }
-
+        // Interpret the Data on the read files
         for (int i = 0; i < readFiles.Length; i++)
         {
-            var SD = SaveManager.LoadFromFile(readFiles[i]);
+            // Open data packet from files
+            SaveData SD = SaveManager.LoadFromFile(i);
+            Debug.Log(SD);
 
-            SavedFiles[i].SetActive(true);
-
-            for (int j = 0; j < SD.partyLineupSave.Count; j++)
+            // Set the Lineup of heroes
+            if (SD != null)
             {
-                SavedFiles[i].transform.Find("Party List").GetChild(j).GetComponent<Image>().sprite =
-                    SD.partyLineupSave[j].charPortrait;
+                List<HeroExtension> tempHero = new List<HeroExtension>();
+                for (int j = 0; j < SD.lineupSave.Count; j++)
+                {
+                    tempHero.Add(GameManager._instance._AllPartyMembers[SD.lineupSave[j]]);
+                }
+
+                // foreach party member, display their icon in order
+                for (int k = 0; k < SD.lineupSave.Count; k++)
+                {
+                    SavedFiles[i].transform.Find("Party List").GetChild(k).GetComponent<Image>().sprite =
+                        tempHero[k].charPortrait;
+                }
             }
+            // Display name of the file
+            SavedFiles[i].transform.Find("File Name").GetComponent<TextMeshProUGUI>().text =
+                readFiles[i];
         }
     }
-
     private string[] GetFileNames(string path, string filter)
     {
         string[] files = Directory.GetFiles(path, filter);

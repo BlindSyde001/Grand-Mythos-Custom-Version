@@ -19,34 +19,27 @@ public class SaveData
         }
     }
 
-    // Current Scene
-    public string scene;
-    // Overworld Position
+    public string savedScene;
     public Vector3 overworldPos;
-    // Overworld Rotation
     public Quaternion overworldRot;
 
-    public List<HeroExtension> allPartyMembersSave;
-    public List<HeroExtension> partyLineupSave;
-
+    public List<int> lineupSave = new List<int>();
     public List<SerializableHero> heroSaveData = new List<SerializableHero>();
-    // Available items in Inventory => List<scriptableobject>
-    // Inventory Orgaisation order => List<scriptableobject>
 }
 
 [System.Serializable]
 public class SerializableHero
 {
     public int totalExperienceSave;
-    public Sprite sprite;
+    public string sprite;
 
     public int weaponIDSave;
     public int armourIDSave;
     public int accessoryOneIDSave;
     public int accessoryTwoIDSave;
 
-    public Weapon weaponSave;
-    public Armour armourSave;
-    public Accessory accessoryOneSave;
-    public Accessory accessoryTwoSave;
+    public string weaponSave;
+    public string armourSave;
+    public bool accessoryOneSave;
+    public bool accessoryTwoSave;
 }

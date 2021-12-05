@@ -7,23 +7,21 @@ using UnityEngine;
 
 public static class SaveManager
 {
-    public static void SaveToFile(SaveData saveData, string newFileName)
+    public static void SaveToFile(SaveData saveData, int FileNumber)
     {
-        if(!Directory.Exists(Application.persistentDataPath + "/Save Files")) // Creates the Folder for Save files if there isn't one already
-        {
-            Directory.CreateDirectory(Application.persistentDataPath + "/Save Files");
-        }
+        Debug.Log(FileNumber + "FN");
+        CreateNewDictionary();
 
         string json = JsonUtility.ToJson(saveData);
-        File.WriteAllText(Application.persistentDataPath + "/Save Files/" + newFileName + ".json", json);
+        File.WriteAllText(Application.persistentDataPath + "/Save Files/" + "SaveFile" + FileNumber + ".json", json);
     }
-    public static SaveData LoadFromFile(string fileName)
+    public static SaveData LoadFromFile(int FileNumber)
     {
         string json = "";
         SaveData loadData = new SaveData();
         try
         {
-            json = File.ReadAllText(Application.persistentDataPath + "/Save Files/" + fileName);
+            json = File.ReadAllText(Application.persistentDataPath + "/Save Files/" + "SaveFile" + FileNumber + ".json");
             loadData = JsonUtility.FromJson<SaveData>(json);
         }
         catch
@@ -33,15 +31,27 @@ public static class SaveManager
         return loadData;
     }
 
-
-
+    private static void CreateNewDictionary()
+    {
+        if (!Directory.Exists(Application.persistentDataPath + "/Save Files")) // Creates the Folder for Save files if there isn't one already
+        {
+            Directory.CreateDirectory(Application.persistentDataPath + "/Save Files");
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            if (!Directory.Exists(Application.persistentDataPath + "/Save Files/" + "SaveFile" + i + ".json"))
+            {
+                File.Create(Application.persistentDataPath + "/Save Files/" + "SaveFile" + i + ".json");
+            }
+        }
+    }
     internal static void ExtractWeaponData(SaveData SD, int i)
     {
         if (SD.heroSaveData[i].weaponSave != null)
         {
-            switch (SD.heroSaveData[i].weaponSave.weaponType)
+            switch (SD.heroSaveData[i].weaponSave)
             {
-                case Weapon.WeaponType.Gun:
+                case "Gun":
                     try
                     {
                         GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._GunsDatabase.Find(x => x._ItemID == SD.heroSaveData[i].weaponIDSave);
@@ -51,7 +61,7 @@ public static class SaveManager
                         Debug.LogError("Cannot find Gun in the Database!");
                     }
                     break;
-                case Weapon.WeaponType.Warhammer:
+                case "Warhammer":
                     try
                     {
                         GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._WarhammersDatabase.Find(x => x._ItemID == SD.heroSaveData[i].weaponIDSave);
@@ -61,7 +71,7 @@ public static class SaveManager
                         Debug.LogError("Cannot find Warhammer in the Database!");
                     }
                     break;
-                case Weapon.WeaponType.PowerGlove:
+                case "PowerGlove":
                     try
                     {
                         GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._PowerGlovesDatabase.Find(x => x._ItemID == SD.heroSaveData[i].weaponIDSave);
@@ -71,7 +81,7 @@ public static class SaveManager
                         Debug.LogError("Cannot find Power Glove in the Database!");
                     }
                     break;
-                case Weapon.WeaponType.Grimoire:
+                case "Grimoire":
                     try
                     {
                         GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._GrimoiresDatabase.Find(x => x._ItemID == SD.heroSaveData[i].weaponIDSave);
@@ -92,9 +102,9 @@ public static class SaveManager
     {
         if (SD.heroSaveData[i].armourSave != null)
         {
-            switch (SD.heroSaveData[i].armourSave.armourType)
+            switch (SD.heroSaveData[i].armourSave)
             {
-                case Armour.ArmourType.Leather:
+                case "Leather":
                     try
                     {
                         GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._LeatherDatabase.Find(x => x._ItemID == SD.heroSaveData[i].armourIDSave);
@@ -104,7 +114,7 @@ public static class SaveManager
                         Debug.LogError("Cannot find Leather in the Database!");
                     }
                     break;
-                case Armour.ArmourType.Mail:
+                case "Mail":
                     try
                     {
                         GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._MailDatabase.Find(x => x._ItemID == SD.heroSaveData[i].armourIDSave);
@@ -114,7 +124,7 @@ public static class SaveManager
                         Debug.LogError("Cannot find Mail in the Database!");
                     }
                     break;
-                case Armour.ArmourType.Chasis:
+                case "Chasis":
                     try
                     {
                         GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._ChasisDatabase.Find(x => x._ItemID == SD.heroSaveData[i].armourIDSave);
@@ -124,7 +134,7 @@ public static class SaveManager
                         Debug.LogError("Cannot find Chasis in the Database!");
                     }
                     break;
-                case Armour.ArmourType.Robes:
+                case "Robes":
                     try
                     {
                         GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._RobesDatabase.Find(x => x._ItemID == SD.heroSaveData[i].armourIDSave);
@@ -143,7 +153,7 @@ public static class SaveManager
     }
     internal static void ExtractAccessoryData(SaveData SD, int i)
     {
-        if (SD.heroSaveData[i].accessoryOneSave != null)
+        if (SD.heroSaveData[i].accessoryOneSave)
         {
             try
             {
@@ -154,7 +164,7 @@ public static class SaveManager
                 Debug.LogError("Cannot find Accessory for Acc1 in the Database!");
             }
         }
-        if (SD.heroSaveData[i].accessoryTwoSave != null)
+        if (SD.heroSaveData[i].accessoryTwoSave)
         {
             try
             {
