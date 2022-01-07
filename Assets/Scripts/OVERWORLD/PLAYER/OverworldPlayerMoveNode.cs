@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class OverworldPlayerMoveNode : MonoBehaviour
 {
@@ -23,15 +24,15 @@ public class OverworldPlayerMoveNode : MonoBehaviour
     // UPDATES
     private void FixedUpdate()
     {
-        switch(_PlayerCircuit._GameState)
+        switch(EventManager._instance._GameState)
         {
-            case (GameState.OVERWORLD):
+            case GameState.OVERWORLD:
 
                 // Move When Pressing button down
-                if (_PlayerCircuit._InputNode.isHoriPressed || _PlayerCircuit._InputNode.isVertPressed)
+                if (_PlayerCircuit.isMoving)
                 {
-                    input.x = Input.GetAxisRaw("Horizontal");
-                    input.z = Input.GetAxisRaw("Vertical");
+                    input.x = _PlayerCircuit.inputMovement.x;
+                    input.z = _PlayerCircuit.inputMovement.y;
                 } // Stop moving
                 else
                 {

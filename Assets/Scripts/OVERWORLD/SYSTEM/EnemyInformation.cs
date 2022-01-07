@@ -79,6 +79,6 @@ public class EnemyInformation : MonoBehaviour
     }
     private void StartBattle()
     {
-        EventManager._instance.ChangeFunction(GameState.BATTLE);
+        EventManager._instance.SwitchNewScene(1);
     }
 }

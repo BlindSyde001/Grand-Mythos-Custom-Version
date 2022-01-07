@@ -36,7 +36,7 @@ public class BattleUIController : MonoBehaviour
     {
         switch (BSM._BattleState)
         {
-            case BattleState.ACTIVE:
+            case CombatState.ACTIVE:
                 SetUIData();
                 break;
         }
@@ -75,7 +75,7 @@ public class BattleUIController : MonoBehaviour
                                         heroData[i].MaxHP.ToString() + " HP";
 
             heroUIData[i].mana.text = heroData[i]._CurrentMP.ToString() + "/" +
-                                      heroData[i].MaxMP.ToString() + " HP";
+                                      heroData[i].MaxMP.ToString() + " MP";
         }
         for (int i = 0; i < enemyData.Count; i++)
         {

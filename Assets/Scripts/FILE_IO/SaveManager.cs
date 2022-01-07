@@ -9,8 +9,7 @@ public static class SaveManager
 {
     public static void SaveToFile(SaveData saveData, int FileNumber)
     {
-        Debug.Log(FileNumber + "FN");
-        CreateNewDictionary();
+        Directory.CreateDirectory(Application.persistentDataPath + "/Save Files");
 
         string json = JsonUtility.ToJson(saveData);
         File.WriteAllText(Application.persistentDataPath + "/Save Files/" + "SaveFile" + FileNumber + ".json", json);
@@ -31,21 +30,7 @@ public static class SaveManager
         return loadData;
     }
 
-    private static void CreateNewDictionary()
-    {
-        if (!Directory.Exists(Application.persistentDataPath + "/Save Files")) // Creates the Folder for Save files if there isn't one already
-        {
-            Directory.CreateDirectory(Application.persistentDataPath + "/Save Files");
-        }
-        for (int i = 0; i < 3; i++)
-        {
-            if (!Directory.Exists(Application.persistentDataPath + "/Save Files/" + "SaveFile" + i + ".json"))
-            {
-                File.Create(Application.persistentDataPath + "/Save Files/" + "SaveFile" + i + ".json");
-            }
-        }
-    }
-    internal static void ExtractWeaponData(SaveData SD, int i)
+    public static void ExtractWeaponData(SaveData SD, int i)
     {
         if (SD.heroSaveData[i].weaponSave != null)
         {

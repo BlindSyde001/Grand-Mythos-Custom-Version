@@ -5,7 +5,6 @@ using UnityEngine;
 public class ES_Rewired_Security_Bot : EnemyExtension
 {
     // VARIABLES
-    int potionCount = 1;
 
     // METHODS
 

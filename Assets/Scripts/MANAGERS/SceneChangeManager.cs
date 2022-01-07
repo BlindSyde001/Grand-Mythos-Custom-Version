@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 public class SceneChangeManager : MonoBehaviour
 {
     // VARIABLES
-    public string PreviousScene;
     public static SceneChangeManager _instance;
+    public int DoorwayToSpawn;
 
     // UPDATES
     private void Awake()

@@ -21,7 +21,7 @@ public class BattleStateMachine : MonoBehaviour
     public static List<HeroExtension> _HeroesDowned = new List<HeroExtension>(); // Who are currently in battle but are K.O'd
     public static List<EnemyExtension> _EnemiesDowned = new List<EnemyExtension>();
 
-    public BattleState _BattleState;
+    public CombatState _BattleState;
     private bool _EndBattleLock;
 
     private CinemachineFreeLook rotateCam;
@@ -44,13 +44,13 @@ public class BattleStateMachine : MonoBehaviour
         {
             switch (_BattleState)
             {
-                case BattleState.ACTIVE:
+                case CombatState.ACTIVE:
                     EndBattleCondition();
                     BattleActiveState();
                     rotateCam.GetComponent<CinemachineFreeLook>().enabled = true;
                     break;
 
-                case BattleState.WAIT:
+                case CombatState.WAIT:
                     EndBattleCondition();
                     rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
                     break;
@@ -120,9 +120,9 @@ public class BattleStateMachine : MonoBehaviour
     private IEnumerator BattleIntermission(float x)
     {
         print("START INTERMISSION");
-        _BattleState = BattleState.WAIT;
+        _BattleState = CombatState.WAIT;
         yield return new WaitForSeconds(x);
-        _BattleState = BattleState.ACTIVE;
+        _BattleState = CombatState.ACTIVE;
         print("END INTERMISSION " +"("+ x +") seconds");
     }
     #endregion
@@ -149,12 +149,12 @@ public class BattleStateMachine : MonoBehaviour
     {
         if (_HeroesActive.Count > 0 && _EnemiesActive.Count <= 0)
         {
-            _BattleState = BattleState.WAIT;
+            _BattleState = CombatState.WAIT;
             StartCoroutine(VictoryTransition());
         }
         else if (_EnemiesActive.Count > 0 && _HeroesActive.Count <= 0)
         {
-            _BattleState = BattleState.WAIT;
+            _BattleState = CombatState.WAIT;
             StartCoroutine(DefeatTransition());
         }
     }
@@ -198,7 +198,7 @@ public class BattleStateMachine : MonoBehaviour
         Destroy(GameObject.Find("Enemy Data"));
 
         // reload scene and create player moving character at coordinates
-        EventManager._instance.ChangeFunction(GameState.OVERWORLD);
+        EventManager._instance.SwitchNewScene(2);
     }
 
     private IEnumerator DefeatTransition()

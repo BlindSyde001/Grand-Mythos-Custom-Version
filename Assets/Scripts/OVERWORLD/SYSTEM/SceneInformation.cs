@@ -17,12 +17,12 @@ public class SceneInformation : MonoBehaviour
     private float t;
     private bool lockout;
 
-    public List<Transform> DoorwayPoints;
+    public List<Transform> DoorwayPoints; // The different locations player can spawn b/c of a doorway
 
     // UPDATES
     private void Start()
     {
-        CreateMovablePlayer();
+        CreateMovablePlayer(SceneChangeManager._instance.DoorwayToSpawn);
         _PlayerCircuit = FindObjectOfType<OverworldPlayerCircuit>();
         _NextEncounter = Random.Range(6, 256);
     }
@@ -50,20 +50,20 @@ public class SceneInformation : MonoBehaviour
     }
 
     // METHODS
-    private void CreateMovablePlayer()
+    private void CreateMovablePlayer(int DoorwayToSpawn)
     {
-        GameManager x = FindObjectOfType<GameManager>();
-        if(x._LastKnownScene == SceneManager.GetActiveScene().name)
+        // If I move back to the same Scene, reload me at last position, otherwise, spawn me in a designated spot
+        if(GameManager._instance._LastKnownScene == SceneManager.GetActiveScene().name)
         {
-            Instantiate<GameObject>(_Player, 
-                                    x._LastKnownPosition, 
-                                    x._LastKnownRotation);
+            Instantiate(_Player,
+                        GameManager._instance._LastKnownPosition,
+                        GameManager._instance._LastKnownRotation);
         }
         else
         {
-            Instantiate<GameObject>(_Player, 
-                                    new Vector3(0, 1, 0), 
-                                    new Quaternion(0, 0, 0, 0));
+            Instantiate(_Player, 
+                        DoorwayPoints[DoorwayToSpawn].position, 
+                        DoorwayPoints[DoorwayToSpawn].rotation);
         }
     }
     private void EnemiesEncountered()

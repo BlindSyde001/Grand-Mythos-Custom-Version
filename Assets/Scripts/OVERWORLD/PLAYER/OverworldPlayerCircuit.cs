@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class OverworldPlayerCircuit : MonoBehaviour
 {
@@ -12,54 +13,44 @@ public class OverworldPlayerCircuit : MonoBehaviour
     [SerializeField]
     internal OverworldPlayerCollisionNode _CollisionNode;
 
-    [Space(20)]
-    [SerializeField]
-    internal GameState _GameState;
-
     private Rigidbody rb;
     internal CharacterController cc;
     [SerializeField]
     internal Transform referenceDirection;
 
     internal bool isMoving;
+    internal Vector2 inputMovement;
+
     // UPDATES
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        cc = GetComponent<CharacterController>();
+        _CollisionNode = GetComponent<OverworldPlayerCollisionNode>();
         _InputNode = GetComponent<OverworldPlayerInputNode>();
         _MoveNode = GetComponent<OverworldPlayerMoveNode>();
-        _CollisionNode = GetComponent<OverworldPlayerCollisionNode>();
+
+        rb = GetComponent<Rigidbody>();
+        cc = GetComponent<CharacterController>();
 
         referenceDirection = GameObject.Find("Reference Direction").transform;
     }
-    private void Start()
-    {
-        switch(EventManager._instance._GameState)
-        {
-            case (GameState.OVERWORLD):
-                _GameState = GameState.OVERWORLD;
-                break;
-            case (GameState.CUTSCENE):
-                _GameState = GameState.CUTSCENE;
-                break;
-        }
-    }
+
     private void OnEnable()
     {
-        EventManager.ChangeToBattleState += SavePositionalData;
+        EventManager.LoadingBattle += SavePositionalData;
     }
     private void OnDisable()
     {
-        EventManager.ChangeToBattleState -= SavePositionalData;
+        EventManager.LoadingBattle -= SavePositionalData;
     }
+
     //METHODS
-    internal void SavePositionalData(GameState GS)
+    internal void SavePositionalData()
     {
-        if (GS == GameState.BATTLE)
-        {
-            GameManager._instance._LastKnownPosition = this.transform.position;
-            GameManager._instance._LastKnownRotation = this.transform.rotation;
-        }
+        GameManager._instance._LastKnownPosition = this.transform.position;
+        GameManager._instance._LastKnownRotation = this.transform.rotation;
+    }
+    internal void InteractionCheck()
+    {
+
     }
 }

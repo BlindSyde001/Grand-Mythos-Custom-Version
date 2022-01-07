@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class OverworldPlayerInputNode : MonoBehaviour
 {
@@ -8,28 +9,19 @@ public class OverworldPlayerInputNode : MonoBehaviour
     [SerializeField]
     private OverworldPlayerCircuit _PlayerCircuit;
 
-    internal bool isHoriPressed;
-    internal bool isVertPressed;
-
     // UPDATES
     private void Update()
     {
-        switch(_PlayerCircuit._GameState)
+        switch(EventManager._instance._GameState)
         {
-            case (GameState.OVERWORLD):
+            case GameState.OVERWORLD:
 
-                if (Input.GetButton("Horizontal"))
-                    isHoriPressed = true;
-                else
-                    isHoriPressed = false;
-
-                if (Input.GetButton("Vertical"))
-                    isVertPressed = true;
-                else
-                    isVertPressed = false;
-
-                if (isHoriPressed || isVertPressed)
+                if (InputManager._instance.playerInput.actions.FindAction("Move").IsPressed())
+                {
                     _PlayerCircuit.isMoving = true;
+                    _PlayerCircuit.inputMovement = InputManager._instance.playerInput.actions.FindAction("Move").ReadValue<Vector2>();
+                }
+
                 else
                     _PlayerCircuit.isMoving = false;
                 break;
