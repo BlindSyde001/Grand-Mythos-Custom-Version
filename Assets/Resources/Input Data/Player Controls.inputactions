@@ -178,7 +178,16 @@
                     "id": "b8522af9-72c9-4bea-8add-ccec21a6d4dc",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CloseCurrentMenuCategory",
+                    "type": "Button",
+                    "id": "402fb325-9e75-49d2-ac96-cfcbdb832d75",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
                     "initialStateCheck": false
                 }
             ],
@@ -191,6 +200,17 @@
                     "processors": "",
                     "groups": "PC Controls",
                     "action": "CloseMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b7161edc-68e1-46bf-b810-fb8de460f20e",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC Controls",
+                    "action": "CloseCurrentMenuCategory",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -214,10 +234,10 @@
                 {
                     "name": "",
                     "id": "3ae4ee05-bc17-44f2-9101-5fab1f3edc6b",
-                    "path": "",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "PC Controls",
                     "action": "New action",
                     "isComposite": false,
                     "isPartOfComposite": false

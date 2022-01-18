@@ -2,10 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Sirenix.OdinInspector;
 
 public class SceneInformation : MonoBehaviour
 {
     // VARIABLES
+
+    [BoxGroup("Names")]
+    public string areaName;
+    [BoxGroup("Names")]
+    public string zoneName;
+
     [SerializeField]
     internal GameObject _Player;
     private OverworldPlayerCircuit _PlayerCircuit;

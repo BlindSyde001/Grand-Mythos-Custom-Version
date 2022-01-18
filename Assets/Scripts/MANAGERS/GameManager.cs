@@ -43,6 +43,9 @@ public class GameManager : MonoBehaviour
     internal List<HeroExtension> _PartyLineup;  // Who I've selected to be fighting
     [BoxGroup("PARTY DATA")]
     [SerializeField]
+    internal List<HeroExtension> _ReservesLineup;  // Who I have available in the Party
+
+    [SerializeField]
     internal List<EnemyExtension> _EnemyLineup;
     #endregion
     #region DATABASE LIBRARY

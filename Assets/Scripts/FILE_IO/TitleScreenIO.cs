@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
@@ -11,7 +11,7 @@ public class TitleScreenIO : MonoBehaviour
     // VARIABLES
     public string NewGameScene;
     public GameObject LoadList;
-    public List<GameObject> SavedFiles;
+    public List<SaveFileButton> SavedFiles;
 
     // METHODS
     public void OpenLoadFiles()
@@ -35,13 +35,11 @@ public class TitleScreenIO : MonoBehaviour
                 // foreach party member, display their icon in order
                 for (int k = 0; k < SD.lineupSave.Count; k++)
                 {
-                    SavedFiles[i].transform.Find("Party List").GetChild(k).GetComponent<Image>().sprite =
-                        tempHero[k].charPortrait;
+                    SavedFiles[i].characterPortraits[k].sprite = tempHero[k].charPortrait;
                 }
             }
             // Display name of the file
-            SavedFiles[i].transform.Find("File Name").GetComponent<TextMeshProUGUI>().text =
-                readFiles[i];
+            SavedFiles[i].fileName.text = "Saved Game " + i;
         }
     }
     private string[] GetFileNames(string path, string filter)
@@ -70,6 +68,7 @@ public class TitleScreenIO : MonoBehaviour
         for (int i = 0; i < GameManager._instance._AllPartyMembers.Count; i++)
         {
             GameManager._instance._AllPartyMembers[i]._TotalExperience = SD.heroSaveData[i].totalExperienceSave;
+            GameManager._instance._AllPartyMembers[i].LevelUpCheck();
             SaveManager.ExtractWeaponData(SD, i);
             SaveManager.ExtractArmourData(SD, i);
             SaveManager.ExtractAccessoryData(SD, i);

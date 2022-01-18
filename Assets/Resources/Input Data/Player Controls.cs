@@ -200,7 +200,16 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""id"": ""b8522af9-72c9-4bea-8add-ccec21a6d4dc"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CloseCurrentMenuCategory"",
+                    ""type"": ""Button"",
+                    ""id"": ""402fb325-9e75-49d2-ac96-cfcbdb832d75"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
                     ""initialStateCheck"": false
                 }
             ],
@@ -213,6 +222,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""PC Controls"",
                     ""action"": ""CloseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b7161edc-68e1-46bf-b810-fb8de460f20e"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC Controls"",
+                    ""action"": ""CloseCurrentMenuCategory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -236,10 +256,10 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""3ae4ee05-bc17-44f2-9101-5fab1f3edc6b"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""PC Controls"",
                     ""action"": ""New action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -330,6 +350,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         // Menu Map
         m_MenuMap = asset.FindActionMap("Menu Map", throwIfNotFound: true);
         m_MenuMap_CloseMenu = m_MenuMap.FindAction("CloseMenu", throwIfNotFound: true);
+        m_MenuMap_CloseCurrentMenuCategory = m_MenuMap.FindAction("CloseCurrentMenuCategory", throwIfNotFound: true);
         // Title Map
         m_TitleMap = asset.FindActionMap("Title Map", throwIfNotFound: true);
         m_TitleMap_Newaction = m_TitleMap.FindAction("New action", throwIfNotFound: true);
@@ -448,11 +469,13 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_MenuMap;
     private IMenuMapActions m_MenuMapActionsCallbackInterface;
     private readonly InputAction m_MenuMap_CloseMenu;
+    private readonly InputAction m_MenuMap_CloseCurrentMenuCategory;
     public struct MenuMapActions
     {
         private @PlayerControls m_Wrapper;
         public MenuMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @CloseMenu => m_Wrapper.m_MenuMap_CloseMenu;
+        public InputAction @CloseCurrentMenuCategory => m_Wrapper.m_MenuMap_CloseCurrentMenuCategory;
         public InputActionMap Get() { return m_Wrapper.m_MenuMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -465,6 +488,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @CloseMenu.started -= m_Wrapper.m_MenuMapActionsCallbackInterface.OnCloseMenu;
                 @CloseMenu.performed -= m_Wrapper.m_MenuMapActionsCallbackInterface.OnCloseMenu;
                 @CloseMenu.canceled -= m_Wrapper.m_MenuMapActionsCallbackInterface.OnCloseMenu;
+                @CloseCurrentMenuCategory.started -= m_Wrapper.m_MenuMapActionsCallbackInterface.OnCloseCurrentMenuCategory;
+                @CloseCurrentMenuCategory.performed -= m_Wrapper.m_MenuMapActionsCallbackInterface.OnCloseCurrentMenuCategory;
+                @CloseCurrentMenuCategory.canceled -= m_Wrapper.m_MenuMapActionsCallbackInterface.OnCloseCurrentMenuCategory;
             }
             m_Wrapper.m_MenuMapActionsCallbackInterface = instance;
             if (instance != null)
@@ -472,6 +498,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @CloseMenu.started += instance.OnCloseMenu;
                 @CloseMenu.performed += instance.OnCloseMenu;
                 @CloseMenu.canceled += instance.OnCloseMenu;
+                @CloseCurrentMenuCategory.started += instance.OnCloseCurrentMenuCategory;
+                @CloseCurrentMenuCategory.performed += instance.OnCloseCurrentMenuCategory;
+                @CloseCurrentMenuCategory.canceled += instance.OnCloseCurrentMenuCategory;
             }
         }
     }
@@ -593,6 +622,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     public interface IMenuMapActions
     {
         void OnCloseMenu(InputAction.CallbackContext context);
+        void OnCloseCurrentMenuCategory(InputAction.CallbackContext context);
     }
     public interface ITitleMapActions
     {

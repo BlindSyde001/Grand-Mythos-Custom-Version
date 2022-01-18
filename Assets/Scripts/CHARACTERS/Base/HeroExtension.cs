@@ -19,7 +19,7 @@ public abstract class HeroExtension : CharacterCircuit
     [BoxGroup("LEVEL ATTRIBUTES")]
     [PropertyOrder(2)]
     protected int _ExperienceToNextLevel;
-    protected int _ExperienceThreshold { get { return (int)(15 * Mathf.Pow(_Level, 2.3f) + (15 * _Level)); } }
+    internal int ExperienceThreshold { get { return (int)(15 * Mathf.Pow(_Level, 2.3f) + (15 * _Level)); } }
 
     private protected float _GrowthRateHyper = 0.5f;
     private protected float _GrowthRateStrong = 0.3f;
@@ -93,6 +93,12 @@ public abstract class HeroExtension : CharacterCircuit
     #endregion
 
     [SerializeField]
+    [PreviewField(100)]
+    [PropertyOrder(0)]
+    [HideLabel]
+    internal Sprite charBanner;
+
+    [SerializeField]
     [PropertyOrder(5)]
     private protected List<Action> _AllUsableActions;
     [SerializeField]
@@ -117,6 +123,19 @@ public abstract class HeroExtension : CharacterCircuit
 
         myTacticController.myHero = this;
     }
+    public void LevelUpCheck()
+    {
+        if (_TotalExperience >= ExperienceThreshold)
+        {
+            _Level++;
+            LevelUpCheck();
+        }
+        AssignStats();
+        _ExperienceToNextLevel = ExperienceThreshold - _TotalExperience;
+    }
+
+
+
     protected void EquipStats()
     {
         #region Reset Equip Stats
@@ -153,16 +172,6 @@ public abstract class HeroExtension : CharacterCircuit
     {
         base.ActiveStateBehaviour();
         myTacticController.SetNextAction();
-    }
-    public void LevelUpCheck()
-    {
-        if (_TotalExperience >= _ExperienceThreshold)
-        {
-            _Level++;
-            LevelUpCheck();
-        }
-        AssignStats();
-        _ExperienceToNextLevel = _ExperienceThreshold - _TotalExperience;
     }
     public override void DieCheck()
     {
