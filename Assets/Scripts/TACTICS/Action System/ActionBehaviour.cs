@@ -11,23 +11,26 @@ public class ActionBehaviour : ScriptableObject
         // Compute Stats from Caster and Target with correct Behaviour Equation
         if (action._ActionTargetType == ActionTargetType.MULTI)
         {   // FIND WHERE THE GUY IS IN WHAT LIST => THEN DO IT TO EM ALL
-            if (BattleStateMachine._HeroesActive.Contains((HeroExtension)target))
+            HeroExtension a = target as HeroExtension;
+            EnemyExtension b = target as EnemyExtension;
+
+            if (GameManager._instance._PartyMembersActive.Contains(a))
             {
-                for (int i = BattleStateMachine._HeroesActive.Count - 1; i >= 0; i--)
+                for (int i = GameManager._instance._PartyMembersActive.Count - 1; i >= 0; i--)
                 {
-                    PerformAction(caster, action, BattleStateMachine._HeroesActive[i]);
+                    PerformAction(caster, action, GameManager._instance._PartyMembersActive[i]);
                 }
             }
 
-            else if (BattleStateMachine._HeroesDowned.Contains((HeroExtension)target))
+            else if (GameManager._instance._PartyMembersDowned.Contains(a))
             {
-                for (int i = BattleStateMachine._HeroesDowned.Count - 1; i >= 0; i--)
+                for (int i = GameManager._instance._PartyMembersDowned.Count - 1; i >= 0; i--)
                 {
-                    PerformAction(caster, action, BattleStateMachine._HeroesDowned[i]);
+                    PerformAction(caster, action, GameManager._instance._PartyMembersDowned[i]);
                 }
             }
 
-            else if (BattleStateMachine._EnemiesActive.Contains((EnemyExtension)target))
+            else if (BattleStateMachine._EnemiesActive.Contains(b))
             {
                 for (int i = BattleStateMachine._EnemiesActive.Count - 1; i >= 0; i--)
                 {
@@ -35,7 +38,7 @@ public class ActionBehaviour : ScriptableObject
                 }
             }
 
-            else if (BattleStateMachine._EnemiesDowned.Contains((EnemyExtension)target))
+            else if (BattleStateMachine._EnemiesDowned.Contains(b))
             {
                 for (int i = BattleStateMachine._EnemiesDowned.Count - 1; i >= 0; i--)
                 {

@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class ES_Terrorist_Gunner : EnemyExtension
 {
-    // Alternates between attacking and using Grenade. Has an emergency potion when below 50% HP
+    // throws a Grenade for big Party-wide Damage. Has an emergency Potion when below 50% HP
 
     // VARIABLES
     int potionCount = 1;
+    int grenadeCount = 1;
 
     // METHODS
 
@@ -24,13 +25,14 @@ public class ES_Terrorist_Gunner : EnemyExtension
             else
             {
                int x = Random.Range(0, 2);
-                if(x == 0)
+                if(x == 0 && grenadeCount > 0)
                 {
-                    BasicAttack();
+                    grenadeCount--;
+                    Grenade();
                 }
                 else if(x == 1)
                 {
-                    Grenade();
+                    BasicAttack();
                 }
             }
         }   
@@ -40,23 +42,20 @@ public class ES_Terrorist_Gunner : EnemyExtension
     {
         if(CheckForHeroTarget())
          {
-            Debug.Log(this.name + " Has Attacked!");
-            int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-            PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]);
+            int x = Random.Range(0, GameManager._instance._PartyMembersActive.Count);
+            PerformEnemyAction(_BasicAttack, GameManager._instance._PartyMembersActive[x]);
         }
     }
     private void Potion()
     {
-        Debug.Log(this.name + " Has used a Potion");
         PerformEnemyAction(_AvailableActions[0], this);
     }
     private void Grenade()
     {
         if(CheckForHeroTarget())
         {
-            Debug.Log(this.name + " Has used a Grenade!");
-            int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-            PerformEnemyAction(_AvailableActions[1], BattleStateMachine._HeroesActive[x]);
+            int x = Random.Range(0, GameManager._instance._PartyMembersActive.Count);
+            PerformEnemyAction(_AvailableActions[1], GameManager._instance._PartyMembersActive[x]);
         }
     }
 }

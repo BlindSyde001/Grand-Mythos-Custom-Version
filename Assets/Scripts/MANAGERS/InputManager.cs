@@ -13,7 +13,7 @@ public class InputManager : MonoBehaviour
     internal MenuInputs menuInputs;
     #region Menu Items
     [SerializeField]
-    internal GameObject MenuGraphic;
+    internal GameObject MenuBackground;
     [SerializeField]
     internal List<GameObject> MenuItems;
     #endregion
@@ -41,14 +41,22 @@ public class InputManager : MonoBehaviour
     {
         if (context.performed)
         {
-            StartCoroutine(menuInputs.OpenFirstMenu());
+            if (!menuInputs.menuFlowIsRunning)
+            {
+                menuInputs.menuFlowIsRunning = true;
+                StartCoroutine(menuInputs.OpenFirstMenu());
+            }
         }
     }
     public void StartMenuClose(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            StartCoroutine(menuInputs.CloseAllMenus());
+            if (!menuInputs.menuFlowIsRunning)
+            {
+                menuInputs.menuFlowIsRunning = true;
+                StartCoroutine(menuInputs.CloseAllMenus());
+            }
         }
     }
     #endregion

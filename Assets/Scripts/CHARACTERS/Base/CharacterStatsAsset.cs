@@ -15,6 +15,10 @@ public class CharacterStatsAsset : ScriptableObject
     public int _BaseExperience;
     [Space(20)]
 
+
+    [VerticalGroup("Stats")]
+    [LabelWidth(100)]
+    public int startingLevel;
     [VerticalGroup("Stats")]
     [LabelWidth(100)]
     [GUIColor(0.5f, 1f, 0.5f)]
@@ -43,4 +47,7 @@ public class CharacterStatsAsset : ScriptableObject
     [LabelWidth(100)]
     [GUIColor(0.5f, 0.8f, 0.8f)]
     public int _BaseMagDefense;
+    [VerticalGroup("Stats")]
+    [LabelWidth(100)]
+    public int _BaseSpeed;
 }

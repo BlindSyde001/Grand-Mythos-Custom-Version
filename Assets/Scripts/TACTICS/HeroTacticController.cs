@@ -21,7 +21,7 @@ public class HeroTacticController : MonoBehaviour
     {
         if (!ActionIsInputted) // AI Behaviours
         {
-            if (_TacticsList != null) // Checks: TURNED ON => CONDITION MET => FULL ACTION BAR
+            if (_TacticsList != null) // Checks: TURNED ON => CONDITION MET => (ITEM) HAS ENOUGH IN INVENTORY => FULL ACTION BAR
             {
                 for (int i = 0; i < _TacticsList.Count; i++) // Go Down Gambit list
                 {
@@ -31,6 +31,7 @@ public class HeroTacticController : MonoBehaviour
                         TryTacticTargets(i); // Apply condition to targets down the list, until one/none is met
                         if (_TacticsList[i].ConditionIsMet && myHero._ActionChargeAmount == 100)
                         {
+                            Debug.Log(myHero + " has used " + _TacticsList[i]._Action._Name);
                             PerformTacticAction(_TacticsList[i]); // Do all the behaviours on the action
                             myHero.ConsumeActionCharge(); // ATB = 0;
                             ChosenAction = null;
@@ -70,9 +71,9 @@ public class HeroTacticController : MonoBehaviour
         switch (x)
         {
             case CharacterType.CHARACTER:
-                for(int j = 0; j < BattleStateMachine._HeroesActive.Count; j++)
+                for(int j = 0; j < GameManager._instance._PartyMembersActive.Count; j++)
                 {
-                    _TacticsList[i]._Target = BattleStateMachine._HeroesActive[j];
+                    _TacticsList[i]._Target = GameManager._instance._PartyMembersActive[j];
                     _TacticsList[i].CallCheck();
                     if (_TacticsList[i].ConditionIsMet)
                     {

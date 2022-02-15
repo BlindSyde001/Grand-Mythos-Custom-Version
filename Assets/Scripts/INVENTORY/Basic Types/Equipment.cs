@@ -5,9 +5,6 @@ using Sirenix.OdinInspector;
 
 public class Equipment : BaseItem
 {
-    [BoxGroup("BASIC DATA")]
-    [TextArea]
-    public string _Description;
     [BoxGroup("OFFENSE")]
     [SerializeField]
     internal int _EquipAttack;

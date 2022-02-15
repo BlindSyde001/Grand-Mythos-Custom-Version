@@ -90,6 +90,7 @@ MonoBehaviour:
   _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
   characterType: 0
   charName: 
+  charPortrait: {fileID: 21300000, guid: 8c4789b052a71724eae732d73e226d70, type: 3}
   _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
   _CurrentHP: 0
   _CurrentMP: 0
@@ -99,6 +100,7 @@ MonoBehaviour:
   _MagAttack: 0
   _Defense: 0
   _MagDefense: 0
+  _Speed: 0
   _AffinityFIRE: 0
   _AffinityICE: 0
   _AffinityLIGHTNING: 0
@@ -106,28 +108,39 @@ MonoBehaviour:
   _ResistBLIND: 0
   _ResistSILENCE: 0
   _ResistFUROR: 0
+  _ResistPARALYSIS: 0
   _ResistPHYSICAL: 0
   _ResistMAGICAL: 0
+  _IsBlinded: 0
+  _IsSilenced: 0
+  _IsFurored: 0
+  _IsParalysed: 0
+  _IsPhysDown: 0
+  _IsMagDown: 0
   _ActionRechargeSpeed: 0
   _ActionChargeAmount: 0
   _BasicAttack: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
-  _AvailableActions: []
+  _AvailableActions:
+  - {fileID: 11400000, guid: 053c51e6f2bdb0b448dc7244681873de, type: 2}
+  - {fileID: 11400000, guid: c3684dcaf6693f142ae4da282ede482d, type: 2}
   _Level: 1
   _TotalExperience: 0
   _ExperienceToNextLevel: 0
   _Weapon: {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
   _Armour: {fileID: 11400000, guid: 370d5bab6d025854ab86d6f8679d5c32, type: 2}
   _AccessoryOne: {fileID: 11400000, guid: 112d6aea410489a4896b0dc5d6b0ad3d, type: 2}
-  _AccessoryTwo: {fileID: 11400000, guid: de1c8f5a28252d2499e8d4ba617ab355, type: 2}
+  _AccessoryTwo: {fileID: 0}
   equipHP: 0
   equipMP: 0
   equipAttack: 0
   equipMagAttack: 0
   equipDefense: 0
   equipMagDefense: 0
+  equipSpeed: 0
+  charBanner: {fileID: 21300000, guid: e2368ee01c9e284449a43aa5be256c28, type: 3}
   _AllUsableActions:
-  - {fileID: 11400000, guid: 3dfc7614cff8ec945910a39562371202, type: 2}
-  - {fileID: 11400000, guid: 47223203b46173546a02708669aad6dd, type: 2}
+  - {fileID: 11400000, guid: 053c51e6f2bdb0b448dc7244681873de, type: 2}
+  - {fileID: 11400000, guid: c3684dcaf6693f142ae4da282ede482d, type: 2}
   myTacticController: {fileID: 5234438934277658767}
 --- !u!114 &5234438934277658767
 MonoBehaviour:

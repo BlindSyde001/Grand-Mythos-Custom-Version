@@ -49,6 +49,7 @@ MonoBehaviour:
   _CSA: {fileID: 11400000, guid: d5b57b749a688d94bbc29e8ab87c5314, type: 2}
   characterType: 0
   charName: 
+  charPortrait: {fileID: 21300000, guid: 1504392ba83117944800db42c21f3bd6, type: 3}
   _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
   _CurrentHP: 0
   _CurrentMP: 0
@@ -58,6 +59,7 @@ MonoBehaviour:
   _MagAttack: 0
   _Defense: 0
   _MagDefense: 0
+  _Speed: 0
   _AffinityFIRE: 0
   _AffinityICE: 0
   _AffinityLIGHTNING: 0
@@ -65,26 +67,39 @@ MonoBehaviour:
   _ResistBLIND: 0
   _ResistSILENCE: 0
   _ResistFUROR: 0
+  _ResistPARALYSIS: 0
   _ResistPHYSICAL: 0
   _ResistMAGICAL: 0
+  _IsBlinded: 0
+  _IsSilenced: 0
+  _IsFurored: 0
+  _IsParalysed: 0
+  _IsPhysDown: 0
+  _IsMagDown: 0
   _ActionRechargeSpeed: 0
   _ActionChargeAmount: 0
   _BasicAttack: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
-  _AvailableActions: []
+  _AvailableActions:
+  - {fileID: 11400000, guid: 053c51e6f2bdb0b448dc7244681873de, type: 2}
+  - {fileID: 11400000, guid: c3684dcaf6693f142ae4da282ede482d, type: 2}
   _Level: 1
   _TotalExperience: 0
   _ExperienceToNextLevel: 0
   _Weapon: {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
   _Armour: {fileID: 11400000, guid: 370d5bab6d025854ab86d6f8679d5c32, type: 2}
   _AccessoryOne: {fileID: 11400000, guid: 112d6aea410489a4896b0dc5d6b0ad3d, type: 2}
-  _AccessoryTwo: {fileID: 11400000, guid: de1c8f5a28252d2499e8d4ba617ab355, type: 2}
+  _AccessoryTwo: {fileID: 0}
   equipHP: 0
   equipMP: 0
   equipAttack: 0
   equipMagAttack: 0
   equipDefense: 0
   equipMagDefense: 0
-  _AllUsableActions: []
+  equipSpeed: 0
+  charBanner: {fileID: 21300000, guid: 5749c16871850b741b2df5d84042a0a5, type: 3}
+  _AllUsableActions:
+  - {fileID: 11400000, guid: 053c51e6f2bdb0b448dc7244681873de, type: 2}
+  - {fileID: 11400000, guid: c3684dcaf6693f142ae4da282ede482d, type: 2}
   myTacticController: {fileID: 9187409409059822418}
 --- !u!114 &9187409409059822418
 MonoBehaviour:
@@ -238,11 +253,11 @@ PrefabInstance:
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Action
       value: 
-      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+      objectReference: {fileID: 11400000, guid: 31a65cd091113b54a8f2e440dd0b4d02, type: 2}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Condition
       value: 
-      objectReference: {fileID: 11400000, guid: 4d7e2509ed4cf6a4f911d7db835cb454, type: 2}
+      objectReference: {fileID: 11400000, guid: c920cc82d06cee746bec1f0a6605b6b0, type: 2}
     - target: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -317,8 +332,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 9187409409519369570}
     m_Modifications:
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Action
+      value: 
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Condition
+      value: 
+      objectReference: {fileID: 11400000, guid: 4d7e2509ed4cf6a4f911d7db835cb454, type: 2}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: isTurnedOn
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: m_RootOrder

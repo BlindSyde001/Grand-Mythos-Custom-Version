@@ -10,6 +10,10 @@ public class EventManager : MonoBehaviour
     // VARIABLES
     public static EventManager _instance;
 
+    private InputManager inputManager;
+    private SceneChangeManager sceneChangeManager;
+    private GameManager gameManager;
+
     [SerializeField]
     internal GameState _GameState;
 
@@ -44,6 +48,10 @@ public class EventManager : MonoBehaviour
             Destroy(this.gameObject);
         }
         DontDestroyOnLoad(this.gameObject);
+
+        inputManager = InputManager._instance;
+        sceneChangeManager = SceneChangeManager._instance;
+        gameManager = GameManager._instance;
     }
     private void OnEnable()
     {
@@ -75,18 +83,20 @@ public class EventManager : MonoBehaviour
     // METHODS
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("GameState Changed");
         switch(scene.buildIndex)
         {
             case 0:
+                Debug.Log("To Title Scene");
                 SwitchGameState(GameState.TITLE);
                 break;
 
             case 1:
+                Debug.Log("To Battle Scene");
                 SwitchGameState(GameState.BATTLE);
                 break;
 
             case > 1:
+                Debug.Log("To Overworld Scene");
                 SwitchGameState(GameState.OVERWORLD);
                 break;
         }
@@ -117,12 +127,12 @@ public class EventManager : MonoBehaviour
     }
     private void LoadBattle()
     {
-        GameManager._instance._LastKnownScene = SceneManager.GetActiveScene().name;
+        gameManager._LastKnownScene = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(1);
     }
     private void LoadOverworld()
     {
-        SceneChangeManager._instance.LoadNewZone(GameManager._instance._LastKnownScene);
+        sceneChangeManager.LoadNewZone(GameManager._instance._LastKnownScene);
     }
     #endregion
     #region GAMESTATE CHANGING
@@ -160,27 +170,27 @@ public class EventManager : MonoBehaviour
     private void OverworldState(GameState GS)
     {
         _GameState = GameState.OVERWORLD;
-        InputManager._instance.playerInput.SwitchCurrentActionMap("Overworld Map");
+        inputManager.playerInput.SwitchCurrentActionMap("Overworld Map");
     }
     private void BattleState(GameState GS)
     {
         _GameState = GameState.BATTLE;
-        InputManager._instance.playerInput.SwitchCurrentActionMap("Battle Map");
+        inputManager.playerInput.SwitchCurrentActionMap("Battle Map");
     }
     private void TitleState(GameState GS)
     {
         _GameState = GameState.TITLE;
-        InputManager._instance.playerInput.SwitchCurrentActionMap("Title Map");
+        inputManager.playerInput.SwitchCurrentActionMap("Title Map");
     }
     private void CutsceneState(GameState GS)
     {
         _GameState = GameState.CUTSCENE;
-        InputManager._instance.playerInput.SwitchCurrentActionMap("Cutscene Map");
+        inputManager.playerInput.SwitchCurrentActionMap("Cutscene Map");
     }
     private void MenuState(GameState GS)
     {
         _GameState = GameState.MENU;
-        InputManager._instance.playerInput.SwitchCurrentActionMap("Menu Map");
+        inputManager.playerInput.SwitchCurrentActionMap("Menu Map");
     }
     #endregion
 }

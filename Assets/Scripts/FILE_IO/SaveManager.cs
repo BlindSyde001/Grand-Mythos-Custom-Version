@@ -17,7 +17,7 @@ public static class SaveManager
     public static SaveData LoadFromFile(int FileNumber)
     {
         string json = "";
-        SaveData loadData = new SaveData();
+        SaveData loadData = new();
         try
         {
             json = File.ReadAllText(Application.persistentDataPath + "/Save Files/" + "SaveFile" + FileNumber + ".json");
@@ -30,7 +30,7 @@ public static class SaveManager
         return loadData;
     }
 
-    public static void ExtractWeaponData(SaveData SD, int i)
+    internal static void LoadWeaponData(SaveData SD, int i)
     {
         if (SD.heroSaveData[i].weaponSave != null)
         {
@@ -83,7 +83,7 @@ public static class SaveManager
             Debug.LogError("There is no Weapon equipped! Character always must have a Weapon");
         }
     }
-    internal static void ExtractArmourData(SaveData SD, int i)
+    internal static void LoadArmourData(SaveData SD, int i)
     {
         if (SD.heroSaveData[i].armourSave != null)
         {
@@ -136,7 +136,7 @@ public static class SaveManager
             Debug.LogError("There is no Armour equipped! Character always must have a Weapon");
         }
     }
-    internal static void ExtractAccessoryData(SaveData SD, int i)
+    internal static void LoadAccessoryData(SaveData SD, int i)
     {
         if (SD.heroSaveData[i].accessoryOneSave)
         {

@@ -14,10 +14,10 @@ public class BattleUIController : MonoBehaviour
     public GameObject enemyUIPrefab;
 
     public List<HeroExtension> heroData;
-    public List<HeroPrefabData> heroUIData = new List<HeroPrefabData>();
+    public List<HeroPrefabUIData> heroUIData = new();
 
     public List<EnemyExtension> enemyData;
-    public List<EnemyPrefabData> enemyUIData = new List<EnemyPrefabData>();
+    public List<EnemyPrefabUIData> enemyUIData = new();
 
     public HeroExtension CurrentHero; // This is who is being referenced in the Command Panel
 
@@ -47,13 +47,17 @@ public class BattleUIController : MonoBehaviour
     {
         for (int i = 0; i < heroData.Count; i++)
         {
-            heroUIData[i].atbBar.value = heroData[i]._ActionChargeAmount;
+            heroUIData[i].atbBar.fillAmount = heroData[i]._ActionChargeAmount;
 
-            heroUIData[i].health.text = heroData[i]._CurrentHP.ToString() + "/" +
-                                        heroData[i].MaxHP.ToString() + " HP";
+            heroUIData[i].healthBar.fillAmount = (float)heroData[i]._CurrentHP / heroData[i].MaxHP;
 
-            heroUIData[i].mana.text = heroData[i]._CurrentMP.ToString() + "/" +
-                                      heroData[i].MaxMP.ToString() + " HP";
+            heroUIData[i].manaBar.fillAmount = (float)heroData[i]._CurrentMP / heroData[i].MaxMP;
+
+            heroUIData[i].health.text = heroData[i]._CurrentHP.ToString() + " / " +
+                                        heroData[i].MaxHP.ToString();
+
+            heroUIData[i].mana.text = heroData[i]._CurrentMP.ToString() + " / " +
+                                      heroData[i].MaxMP.ToString();
         }
     }
     private void SetUIData()
@@ -62,14 +66,18 @@ public class BattleUIController : MonoBehaviour
         {
             if (heroData[i].myTacticController.ChosenAction != null)
             {
-                heroUIData[i].nextAction.text = heroData[i].myTacticController.ChosenAction._Name + " > " +
-                                                heroData[i].myTacticController.ChosenTarget.charName;
+                heroUIData[i].action.text = heroData[i].myTacticController.ChosenAction._Name + " > " +
+                                            heroData[i].myTacticController.ChosenTarget.charName;
             }
             else
             {
-                heroUIData[i].nextAction.text = "";
+                heroUIData[i].action.text = "";
             }
-            heroUIData[i].atbBar.value = heroData[i]._ActionChargeAmount;
+            heroUIData[i].atbBar.fillAmount = heroData[i]._ActionChargeAmount / 100;
+
+            heroUIData[i].healthBar.fillAmount = (float)heroData[i]._CurrentHP / heroData[i].MaxHP;
+
+            heroUIData[i].manaBar.fillAmount = (float)heroData[i]._CurrentMP / heroData[i].MaxMP;
 
             heroUIData[i].health.text = heroData[i]._CurrentHP.ToString() + "/" +
                                         heroData[i].MaxHP.ToString() + " HP";
@@ -79,7 +87,7 @@ public class BattleUIController : MonoBehaviour
         }
         for (int i = 0; i < enemyData.Count; i++)
         {
-            enemyUIData[i].healthBar.value = enemyData[i]._CurrentHP;
+            enemyUIData[i].healthBar.fillAmount = (float)enemyData[i]._CurrentHP / enemyData[i].MaxHP;
             enemyUIData[i].health.text = enemyData[i]._CurrentHP.ToString();
         }
     }
@@ -89,14 +97,8 @@ public class BattleUIController : MonoBehaviour
 
         GameObject heroUI = Instantiate(heroUIPrefab, heroContainer);
         heroUI.name = hero.charName + " UI";
-
-        HeroPrefabData data = new HeroPrefabData();
-
-        data.nextAction = heroUI.transform.Find("Action Name").GetComponent<TextMeshProUGUI>();
-        data.atbBar = heroUI.transform.GetComponentInChildren<Slider>();
-        data.health = heroUI.transform.Find("HP").GetComponent<TextMeshProUGUI>();
-        data.mana = heroUI.transform.Find("MP").GetComponent<TextMeshProUGUI>();
-        heroUIData.Add(data);
+        heroUI.GetComponent<HeroPrefabUIData>().characterIcon.sprite = hero.charPortrait;
+        heroUIData.Add(heroUI.GetComponent<HeroPrefabUIData>());
     }
     public void CreateEnemyUI(EnemyExtension enemy, Transform enemyModel)
     {
@@ -108,31 +110,10 @@ public class BattleUIController : MonoBehaviour
                                          enemyModel.Find("Battle Display"));
         enemyUI.name = enemy.charName + " UI";
 
-        EnemyPrefabData data = new EnemyPrefabData();
-        data.enemyName = enemyUI.transform.Find("Enemy Name").GetComponent<TextMeshProUGUI>();
-        data.enemyName.text = enemy.name;
-
-        data.healthBar = enemyUI.transform.GetComponentInChildren<Slider>();
-        data.healthBar.maxValue = enemy.MaxHP;
-        data.health = enemyUI.transform.Find("HP").GetComponent<TextMeshProUGUI>();
+        EnemyPrefabUIData data = enemyUI.GetComponent<EnemyPrefabUIData>();
+        data.identity.text = enemy.name;
+        data.healthBar.fillAmount = enemy.MaxHP;
 
         enemyUIData.Add(data);
     }
-}
-
-[System.Serializable]
-public class HeroPrefabData
-{
-    public TextMeshProUGUI nextAction;
-    public Slider atbBar;
-    public TextMeshProUGUI health;
-    public TextMeshProUGUI mana;
-}
-
-[System.Serializable]
-public class EnemyPrefabData
-{
-    public TextMeshProUGUI enemyName;
-    public TextMeshProUGUI health;
-    public Slider healthBar;
 }

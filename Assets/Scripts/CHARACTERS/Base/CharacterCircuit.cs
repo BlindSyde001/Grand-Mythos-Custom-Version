@@ -90,51 +90,87 @@ public abstract class CharacterCircuit : MonoBehaviour
     [GUIColor(1f, 1f, 0f)]
     protected private int _MagDefense;
     public int MagDefense { get => _MagDefense; }
+    [SerializeField]
+    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
+    [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/DEFENSIVE")]
+    [PropertyOrder(1)]
+    [GUIColor(1f, 1f, 0f)]
+    protected private int _Speed;
+    public int Speed { get => _Speed; }
 
-    [BoxGroup("ELEMENTAL ATTRIBUTES")]
+    [BoxGroup("ELEMENTAL RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.1f)]
     public int _AffinityFIRE;
 
-    [BoxGroup("ELEMENTAL ATTRIBUTES")]
+    [BoxGroup("ELEMENTAL RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.1f)]
     public int _AffinityICE;
 
-    [BoxGroup("ELEMENTAL ATTRIBUTES")]
+    [BoxGroup("ELEMENTAL RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.1f)]
     public int _AffinityLIGHTNING;
 
-    [BoxGroup("ELEMENTAL ATTRIBUTES")]
+    [BoxGroup("ELEMENTAL RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.1f)]
     public int _AffinityWATER;
 
-    [BoxGroup("STATUS ATTRIBUTES")]
+    [BoxGroup("STATUS RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.2f)]
     public int _ResistBLIND;
 
-    [BoxGroup("STATUS ATTRIBUTES")]
+    [BoxGroup("STATUS RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.2f)]
     public int _ResistSILENCE;
 
-    [BoxGroup("STATUS ATTRIBUTES")]
+    [BoxGroup("STATUS RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.2f)]
     public int _ResistFUROR;
 
-    [BoxGroup("STATUS ATTRIBUTES")]
+    [BoxGroup("STATUS RESISTANCES")]
+    [PropertyRange(-100, 100)]
+    [PropertyOrder(1.2f)]
+    public int _ResistPARALYSIS;
+
+    [BoxGroup("STATUS RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.2f)]
     public int _ResistPHYSICAL;
 
-    [BoxGroup("STATUS ATTRIBUTES")]
+    [BoxGroup("STATUS RESISTANCES")]
     [PropertyRange(-100, 100)]
     [PropertyOrder(1.2f)]
     public int _ResistMAGICAL;
+
+    [BoxGroup("AFFLICTION STATUS")]
+    [PropertyOrder(1.3f)]
+    public bool _IsBlinded;
+
+    [BoxGroup("AFFLICTION STATUS")]
+    [PropertyOrder(1.3f)]
+    public bool _IsSilenced;
+
+    [BoxGroup("AFFLICTION STATUS")]
+    [PropertyOrder(1.3f)]
+    public bool _IsFurored;
+
+    [BoxGroup("AFFLICTION STATUS")]
+    [PropertyOrder(1.3f)]
+    public bool _IsParalysed;
+
+    [BoxGroup("AFFLICTION STATUS")]
+    [PropertyOrder(1.3f)]
+    public bool _IsPhysDown;
+
+    [BoxGroup("AFFLICTION STATUS")]
+    [PropertyOrder(1.3f)]
+    public bool _IsMagDown;
 
     [PropertyOrder(4)]
     public float _ActionRechargeSpeed;

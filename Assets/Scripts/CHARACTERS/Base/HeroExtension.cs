@@ -6,6 +6,15 @@ using Sirenix.OdinInspector;
 public abstract class HeroExtension : CharacterCircuit
 {
     // VARIABLES
+    #region BASE STATS
+    internal virtual int BaseHP { get => _CSA._BaseHP; }
+    internal virtual int BaseMP { get => _CSA._BaseMP; }
+    internal virtual int BaseAttack { get => _CSA._BaseAttack; }
+    internal virtual int BaseMagAttack { get => _CSA._BaseMagAttack; }
+    internal virtual int BaseDefense { get => _CSA._BaseDefense; }
+    internal virtual int BaseMagDefense { get => _CSA._BaseMagDefense; }
+    internal virtual int BaseSpeed { get => _CSA._BaseSpeed; }
+    #endregion
     #region LEVEL STATS
     [SerializeField]
     [PropertyRange(1, 100)]
@@ -90,6 +99,20 @@ public abstract class HeroExtension : CharacterCircuit
     [LabelWidth(120)]
     [PropertyOrder(3)]
     protected private int equipMagDefense;
+    [SerializeField]
+    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
+    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
+    [LabelWidth(120)]
+    [PropertyOrder(3)]
+    protected private int equipSpeed;
+
+    internal int EquipHP { get => equipHP; }
+    internal int EquipMP { get => equipMP; }
+    internal int EquipAttack { get => equipAttack; }
+    internal int EquipMagAttack { get => equipMagAttack; }
+    internal int EquipDefense { get => equipDefense; }
+    internal int EquipMagDefense { get => equipMagDefense; }
+    internal int EquipSpeed { get => equipSpeed; }
     #endregion
 
     [SerializeField]
@@ -100,7 +123,7 @@ public abstract class HeroExtension : CharacterCircuit
 
     [SerializeField]
     [PropertyOrder(5)]
-    private protected List<Action> _AllUsableActions;
+    internal protected List<Action> _AllUsableActions;
     [SerializeField]
     [PropertyOrder(6)]
     internal protected HeroTacticController myTacticController;
@@ -113,6 +136,12 @@ public abstract class HeroExtension : CharacterCircuit
     }
 
     // METHODS
+    public override void ActiveStateBehaviour()
+    {
+        base.ActiveStateBehaviour();
+        myTacticController.SetNextAction();
+    }
+
     protected void InitializeCharacter()
     {
         charName = _CSA._Name;
@@ -123,18 +152,28 @@ public abstract class HeroExtension : CharacterCircuit
 
         myTacticController.myHero = this;
     }
+    public void InitializeLevel()
+    {
+        _Level = _CSA.startingLevel;
+        if (_TotalExperience >= ExperienceThreshold)
+        {
+            _Level++;
+            LevelUpCheck();
+            AssignStats();
+        }
+        _ExperienceToNextLevel = ExperienceThreshold - _TotalExperience;
+    }
+
     public void LevelUpCheck()
     {
         if (_TotalExperience >= ExperienceThreshold)
         {
             _Level++;
             LevelUpCheck();
+            AssignStats();
         }
-        AssignStats();
         _ExperienceToNextLevel = ExperienceThreshold - _TotalExperience;
     }
-
-
 
     protected void EquipStats()
     {
@@ -167,11 +206,6 @@ public abstract class HeroExtension : CharacterCircuit
             equipHP += gear._EquipHP;
             equipMP += gear._EquipMP;
         }
-    }
-    public override void ActiveStateBehaviour()
-    {
-        base.ActiveStateBehaviour();
-        myTacticController.SetNextAction();
     }
     public override void DieCheck()
     {

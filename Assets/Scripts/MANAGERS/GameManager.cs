@@ -45,34 +45,56 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     internal List<HeroExtension> _ReservesLineup;  // Who I have available in the Party
 
+    [BoxGroup("BATTLE PARTY DATA")]
+    public List<HeroExtension> _PartyMembersActive;
+    [BoxGroup("BATTLE PARTY DATA")]
+    public List<HeroExtension> _PartyMembersDowned;
+
+
     [SerializeField]
     internal List<EnemyExtension> _EnemyLineup;
     #endregion
     #region DATABASE LIBRARY
     [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/WEAPONS")]
-    public List<Gun> _GunsDatabase;
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/WEAPONS")]
-    public List<Warhammer> _WarhammersDatabase;
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/WEAPONS")]
-    public List<PowerGlove> _PowerGlovesDatabase;
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/WEAPONS")]
-    public List<Grimoire> _GrimoiresDatabase;
+    [HorizontalGroup("LIBRARY COLLECTION/Split")]
+    [VerticalGroup("LIBRARY COLLECTION/Split/Left")]
+    [BoxGroup("LIBRARY COLLECTION/Split/Left/WEAPONS")]
+    public List<Weapon> _GunsDatabase;
 
     [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ARMOUR")]
+    [VerticalGroup("LIBRARY COLLECTION/Split/Left")]
+    [BoxGroup("LIBRARY COLLECTION/Split/Left/WEAPONS")]
+    public List<Weapon> _WarhammersDatabase;
+
+    [TitleGroup("LIBRARY COLLECTION")]
+    [VerticalGroup("LIBRARY COLLECTION/Split/Left")]
+    [BoxGroup("LIBRARY COLLECTION/Split/Left/WEAPONS")]
+    public List<Weapon> _PowerGlovesDatabase;
+
+    [TitleGroup("LIBRARY COLLECTION")]
+    [VerticalGroup("LIBRARY COLLECTION/Split/Left")]
+    [BoxGroup("LIBRARY COLLECTION/Split/Left/WEAPONS")]
+    public List<Weapon> _GrimoiresDatabase;
+
+    [TitleGroup("LIBRARY COLLECTION")]
+    [HorizontalGroup("LIBRARY COLLECTION/Split")]
+    [VerticalGroup("LIBRARY COLLECTION/Split/Right")]
+    [BoxGroup("LIBRARY COLLECTION/Split/Right/ARMOUR")]
     public List<Armour> _LeatherDatabase;
+
     [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ARMOUR")]
+    [VerticalGroup("LIBRARY COLLECTION/Split/Right")]
+    [BoxGroup("LIBRARY COLLECTION/Split/Right/ARMOUR")]
     public List<Armour> _MailDatabase;
+
     [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ARMOUR")]
+    [VerticalGroup("LIBRARY COLLECTION/Split/Right")]
+    [BoxGroup("LIBRARY COLLECTION/Split/Right/ARMOUR")]
     public List<Armour> _ChasisDatabase;
+
     [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ARMOUR")]
+    [VerticalGroup("LIBRARY COLLECTION/Split/Right")]
+    [BoxGroup("LIBRARY COLLECTION/Split/Right/ARMOUR")]
     public List<Armour> _RobesDatabase;
 
     [TitleGroup("LIBRARY COLLECTION")]
@@ -80,25 +102,27 @@ public class GameManager : MonoBehaviour
     public List<Accessory> _AccessoryDatabase;
 
     [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ABILITIES")]
-    public List<Action> _SkillsDatabase;
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ABILITIES")]
-    public List<Action> _MagicDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
     [BoxGroup("LIBRARY COLLECTION/ITEMS")]
     public List<Consumable> _ConsumablesDatabase;
 
     [TitleGroup("LIBRARY COLLECTION")]
     [BoxGroup("LIBRARY COLLECTION/ITEMS")]
-    public List<Key> _KeyItemsDatabase;
+    public List<KeyItem> _KeyItemsDatabase;
+
+    [TitleGroup("LIBRARY COLLECTION")]
+    [BoxGroup("LIBRARY COLLECTION/ITEMS")]
+    public List<Loot> _LootDatabase;
+
+    [TitleGroup("LIBRARY COLLECTION")]
+    [BoxGroup("LIBRARY COLLECTION/ACTIONS")]
+    public List<Action> _HeroSkillsDatabase;
+
+    [TitleGroup("LIBRARY COLLECTION")]
+    [BoxGroup("LIBRARY COLLECTION/ACTIONS")]
+    public List<Action> _ItemSkillsDatabase;
 
     [TitleGroup("LIBRARY COLLECTION")]
     [BoxGroup("LIBRARY COLLECTION/CONDITIONS")]
-    public List<Condition> _AllyConditionDatabase;
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/CONDITIONS")]
-    public List<Condition> _EnemyConditionDatabase;
+    public List<Condition> _ConditionsDatabase;
     #endregion
 }

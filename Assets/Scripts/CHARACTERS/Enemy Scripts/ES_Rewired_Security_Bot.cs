@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class ES_Rewired_Security_Bot : EnemyExtension
 {
+    // Smacks hard. Is weak to Lightning based attacks.
+
     // VARIABLES
 
     // METHODS
-
     public override void ActiveStateBehaviour()
     {
         base.ActiveStateBehaviour();
@@ -22,8 +23,8 @@ public class ES_Rewired_Security_Bot : EnemyExtension
         if (CheckForHeroTarget())
         {
             Debug.Log(this.name + " Has Attacked!");
-            int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-            PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]);
+            int x = Random.Range(0, GameManager._instance._PartyMembersActive.Count);
+            PerformEnemyAction(_BasicAttack, GameManager._instance._PartyMembersActive[x]);
         }
     }
 }

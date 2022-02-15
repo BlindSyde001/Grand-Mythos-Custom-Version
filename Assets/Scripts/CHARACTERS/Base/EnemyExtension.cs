@@ -6,10 +6,12 @@ public abstract class EnemyExtension : CharacterCircuit
 {
     [SerializeField]
     internal int experiencePool; // How much EXP the enemy Gives
+    [SerializeField]
+    internal int creditPool;     // How many Credits the enemy Gives
 
     private protected bool CheckForHeroTarget()
     {
-        if (BattleStateMachine._HeroesActive.Count > 0)
+        if (GameManager._instance._PartyMembersActive.Count > 0)
         {
             return true;
         }
@@ -37,7 +39,7 @@ public abstract class EnemyExtension : CharacterCircuit
         _Defense = _CSA._BaseDefense;
         _MagDefense = _CSA._BaseMagDefense;
 
-        _ActionRechargeSpeed = 20;
+        _ActionRechargeSpeed = _CSA._BaseSpeed;
         _CurrentHP = _MaxHP;
         _CurrentMP = _MaxMP;
     }

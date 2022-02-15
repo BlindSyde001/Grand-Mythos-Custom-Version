@@ -11,7 +11,7 @@ public class CndGroupSize : Condition
         switch(targetType)
         {
             case CharacterType.CHARACTER:
-                if (BattleStateMachine._HeroesActive.Count >= _GroupSizeThreshold)
+                if (GameManager._instance._PartyMembersActive.Count > _GroupSizeThreshold)
                 {
                     return true;
                 }
@@ -21,7 +21,7 @@ public class CndGroupSize : Condition
                 }
 
             case CharacterType.ENEMY:
-                if (BattleStateMachine._EnemiesActive.Count >= _GroupSizeThreshold)
+                if (GameManager._instance._PartyMembersActive.Count > _GroupSizeThreshold)
                 {
                     return true;
                 }

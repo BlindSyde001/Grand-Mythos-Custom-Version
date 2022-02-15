@@ -4,8 +4,8 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 
 public enum ActionTargetType { SINGLE, MULTI};
-public enum ActionType { ABILITY, SPELLS};
 public enum ActionEffect { DAMAGE, HEAL, OTHER};
+public enum ActionType { SKILL, ITEM};
 public enum ActionElement { FIRE, ICE, LIGHTNING, WATER, NONE}
 
 [CreateAssetMenu(fileName = "Blank Action", menuName = "Actions")]
@@ -21,6 +21,8 @@ public class Action : ScriptableObject
     public ActionElement _ActionElement;
     [BoxGroup("Properties")]
     public bool isMagical;
+    [BoxGroup("Properties")]
+    public bool isFlatAmount;
 
     [BoxGroup("Basic Info")]
     public string _Name;

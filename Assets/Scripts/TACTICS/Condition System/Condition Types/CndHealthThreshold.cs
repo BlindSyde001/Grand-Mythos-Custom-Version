@@ -4,25 +4,17 @@ using UnityEngine;
 
 public class CndHealthThreshold : Condition
 {
-    public int healthThreshold;
+    private double percentage;
+    public float healthThreshold;
     public bool _IsGreaterThan;
     public override bool ConditionCheck(CharacterCircuit target)
     {
-        if (_IsGreaterThan == true)
+        percentage = 1.0 * target._CurrentHP / target.MaxHP;
+        if (_IsGreaterThan ? percentage >= healthThreshold / 100 :
+                             percentage <= healthThreshold / 100)
         {
-            if (target._CurrentHP / target.MaxHP >= healthThreshold / 100)
-            {
-                return true;
-            }
-            else return false;
+            return true;
         }
-        else
-        {
-            if (target._CurrentHP / target.MaxHP <= healthThreshold / 100)
-            {
-                return true;
-            }
-            else return false;
-        }
+        else return false;
     }
 }

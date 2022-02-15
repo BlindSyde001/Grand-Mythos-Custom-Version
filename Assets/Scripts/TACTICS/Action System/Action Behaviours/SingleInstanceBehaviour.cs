@@ -25,19 +25,36 @@ public class SingleInstanceBehaviour : ActionBehaviour
         {
             case (ActionEffect.DAMAGE):
                 //phys / mag stat > variation > ~pierce ? ~ > crit ? / tgt phys / mag defense
-                amount = (int)((action.isMagical ? caster.MagAttack : caster.Attack) *
-                                Random.Range(action.powerModifier, action.powerModifier2) *
-                                (isCrit ? 2.5f : 1));
+                if (!action.isFlatAmount)
+                {
+                    amount = (int)((action.isMagical ? caster.MagAttack : caster.Attack) *
+                                    Random.Range(action.powerModifier, action.powerModifier2) *
+                                    (isCrit ? 2.5f : 1));
+                }
+                else
+                {
+                    amount = (int)action.powerModifier;
+                }
+
                 target._CurrentHP -= amount;
+                target._CurrentHP = Mathf.Clamp(target._CurrentHP, 0, target.MaxHP);
                 Debug.Log(target.charName + " has taken " + amount + " damage from " + caster.charName);
                 target.DieCheck();
                 break;
 
             case (ActionEffect.HEAL):
-                amount = (int)((action.isMagical ? caster.MagAttack : 1) *
-                                Random.Range(action.powerModifier, action.powerModifier2) *
-                                (isCrit ? 2.5f : 1));
+                if (!action.isFlatAmount)
+                {
+                    amount = (int)((action.isMagical ? caster.MagAttack : 1) *
+                                    Random.Range(action.powerModifier, action.powerModifier2) *
+                                    (isCrit ? 2.5f : 1));
+                }
+                else
+                {
+                    amount = (int)action.powerModifier;
+                }
                 target._CurrentHP += amount;
+                target._CurrentHP = Mathf.Clamp(target._CurrentHP, 0, target.MaxHP);
                 Debug.Log(target + " has restored " + amount + " health from " + caster);
                 break;
 
