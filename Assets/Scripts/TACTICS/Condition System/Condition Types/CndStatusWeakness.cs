@@ -14,7 +14,7 @@ public class CndStatusWeakness : Condition
 
     public bool isGreaterThan;
 
-    public override bool ConditionCheck(CharacterCircuit target)
+    public override bool ConditionCheck(CharacterTemplate target)
     {
         if (blindVuln)
         {

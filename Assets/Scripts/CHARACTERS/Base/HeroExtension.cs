@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public abstract class HeroExtension : CharacterCircuit
+public abstract class HeroExtension : CharacterTemplate
 {
     // VARIABLES
     #region BASE STATS
@@ -115,6 +115,11 @@ public abstract class HeroExtension : CharacterCircuit
     internal int EquipSpeed { get => equipSpeed; }
     #endregion
 
+
+    [SerializeField]
+    [PropertyOrder(0)]
+    internal BattleHeroController myBattleHeroController;
+
     [SerializeField]
     [PreviewField(100)]
     [PropertyOrder(0)]
@@ -136,12 +141,7 @@ public abstract class HeroExtension : CharacterCircuit
     }
 
     // METHODS
-    public override void ActiveStateBehaviour()
-    {
-        base.ActiveStateBehaviour();
-        myTacticController.SetNextAction();
-    }
-
+    #region Initialization
     protected void InitializeCharacter()
     {
         charName = _CSA._Name;
@@ -163,7 +163,8 @@ public abstract class HeroExtension : CharacterCircuit
         }
         _ExperienceToNextLevel = ExperienceThreshold - _TotalExperience;
     }
-
+    #endregion
+    #region Stats & Levelling Up
     public void LevelUpCheck()
     {
         if (_TotalExperience >= ExperienceThreshold)
@@ -174,7 +175,6 @@ public abstract class HeroExtension : CharacterCircuit
         }
         _ExperienceToNextLevel = ExperienceThreshold - _TotalExperience;
     }
-
     protected void EquipStats()
     {
         #region Reset Equip Stats
@@ -207,13 +207,5 @@ public abstract class HeroExtension : CharacterCircuit
             equipMP += gear._EquipMP;
         }
     }
-    public override void DieCheck()
-    {
-        if(_CurrentHP <= 0)
-        {
-            _CurrentHP = 0;
-            _ActionChargeAmount = 0;
-            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
-        }
-    }
+    #endregion
 }

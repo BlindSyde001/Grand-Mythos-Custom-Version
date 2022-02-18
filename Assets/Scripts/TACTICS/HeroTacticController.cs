@@ -14,51 +14,9 @@ public class HeroTacticController : MonoBehaviour
     [SerializeField]
     internal bool ActionIsInputted;     // To check if a player made an action, overwrite current Controller
     internal Action ChosenAction;
-    internal CharacterCircuit ChosenTarget;
+    internal CharacterTemplate ChosenTarget;
 
     // METHODS
-    internal void SetNextAction()
-    {
-        if (!ActionIsInputted) // AI Behaviours
-        {
-            if (_TacticsList != null) // Checks: TURNED ON => CONDITION MET => (ITEM) HAS ENOUGH IN INVENTORY => FULL ACTION BAR
-            {
-                for (int i = 0; i < _TacticsList.Count; i++) // Go Down Gambit list
-                {
-                    _TacticsList[i]._Performer = myHero;
-                    if (_TacticsList[i].isTurnedOn)
-                    {
-                        TryTacticTargets(i); // Apply condition to targets down the list, until one/none is met
-                        if (_TacticsList[i].ConditionIsMet && myHero._ActionChargeAmount == 100)
-                        {
-                            Debug.Log(myHero + " has used " + _TacticsList[i]._Action._Name);
-                            PerformTacticAction(_TacticsList[i]); // Do all the behaviours on the action
-                            myHero.ConsumeActionCharge(); // ATB = 0;
-                            ChosenAction = null;
-                            ChosenTarget = null;
-                        }
-                        else if (_TacticsList[i].ConditionIsMet)
-                        {
-                            ChosenAction = _TacticsList[i]._Action;
-                            ChosenTarget = _TacticsList[i]._Target;
-                            break;
-                        }
-                    }
-                }
-            }
-        } 
-        else if(ActionIsInputted) // Manual Command
-        {
-            if(myHero._ActionChargeAmount == 100)
-            { 
-                PerformManualAction();
-                myHero.ConsumeActionCharge();
-                ChosenAction = null;
-                ChosenTarget = null;
-                ActionIsInputted = false;
-            }
-        }
-    }
     private void TryTacticTargets(int i)
     {
         // FIND CHARACTER TO INPUT INTO CALLCHECK
@@ -94,23 +52,39 @@ public class HeroTacticController : MonoBehaviour
                 break;
         }
     }
-    internal void PerformTacticAction(Tactic _TacticToPerform)
+    internal void SetNextAction()
     {
-        foreach (ActionBehaviour aBehaviour in _TacticToPerform._Action._Behaviours)
+        if (!ActionIsInputted) // AI Behaviours
         {
-            aBehaviour.PreActionTargetting(_TacticToPerform._Performer,
-                                           _TacticToPerform._Action,
-                                           _TacticToPerform._Target);
-        }
-        _TacticToPerform._Target = null;
-    }
-    internal void PerformManualAction()
-    {
-        foreach(ActionBehaviour abehaviour in ChosenAction._Behaviours)
+            if (_TacticsList != null) // Checks: TURNED ON => CONDITION MET => (ITEM) HAS ENOUGH IN INVENTORY => FULL ACTION BAR
+            {
+                for (int i = 0; i < _TacticsList.Count; i++) // Go Down Gambit list
+                {
+                    _TacticsList[i]._Performer = myHero;
+                    if (_TacticsList[i].isTurnedOn)
+                    {
+                        TryTacticTargets(i); // Apply condition to targets down the list, until one/none is met
+                        if (_TacticsList[i].ConditionIsMet && myHero._ActionChargeAmount == 100)
+                        {
+                            Debug.Log(myHero + " has used " + _TacticsList[i]._Action._Name);
+                            myHero.myBattleHeroController.PerformTacticWithAnim(_TacticsList[i]); // Do all the behaviours on the action
+                        }
+                        else if (_TacticsList[i].ConditionIsMet)
+                        {
+                            ChosenAction = _TacticsList[i]._Action;
+                            ChosenTarget = _TacticsList[i]._Target;
+                            break;
+                        }
+                    }
+                }
+            }
+        } 
+        else if(ActionIsInputted) // Manual Command
         {
-            abehaviour.PreActionTargetting(myHero,
-                                           ChosenAction,
-                                           ChosenTarget);
+            if(myHero._ActionChargeAmount == 100)
+            {
+                myHero.myBattleHeroController.PerformManualActionWithAnim();
+            }
         }
     }
 }

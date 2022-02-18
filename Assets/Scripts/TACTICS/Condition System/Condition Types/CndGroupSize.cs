@@ -5,7 +5,7 @@ using UnityEngine;
 public class CndGroupSize : Condition
 {
     public int _GroupSizeThreshold;
-    public override bool ConditionCheck(CharacterCircuit target)
+    public override bool ConditionCheck(CharacterTemplate target)
     {
         // Check how many are in a group
         switch(targetType)

@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 using DG.Tweening;
 
 
@@ -17,6 +18,7 @@ public class SaveMenuActions : MonoBehaviour
 
     public GameObject LoadList;
     public List<SaveFileButton> SavedFiles;
+    public TextMeshProUGUI savedtext;
 
     // UPDATES
     private void Start()
@@ -28,7 +30,7 @@ public class SaveMenuActions : MonoBehaviour
     }
 
     // METHODS
-    public void OpenLoadFiles(int openType)
+    public void OpenLoadFiles()
     {
         string[] readFiles = GetFileNames(Application.persistentDataPath + "/Save Files", "*.json");
         // Interpret the Data on the read files
@@ -54,18 +56,22 @@ public class SaveMenuActions : MonoBehaviour
             }
             // Display name of the file
             SavedFiles[i].fileName.text = "Saved Game " + i;
+
+            int hr = SD.playTimeData / 3600 % 24;
+            int min = SD.playTimeData / 60 % 60;
+            int sec = SD.playTimeData % 60;
+            SavedFiles[i].timePlayed.text = ((hr < 10) ? ("0" + hr) : hr) + ":" +
+                                            ((min < 10) ? ("0" + min) : min) + ":" +
+                                            ((sec < 10) ? ("0" + sec) : sec);
+            SavedFiles[i].moneyAcquired.text = SD.inventorySaveData.CreditsAmountData.ToString() + " Credits";
         }
 
         for (int j = 0; j < SavedFiles.Count; j++)
         {
             SavedFiles[j].GetComponent<Button>().onClick.RemoveAllListeners();
+            
             int q = j;
-            switch (openType)
-            {
-                case 0:
-                    SavedFiles[j].GetComponent<Button>().onClick.AddListener(delegate { ClickSave(q); });
-                    break;
-            }
+            SavedFiles[j].GetComponent<Button>().onClick.AddListener(delegate { ClickSave(q); });
         }
     }
     private string[] GetFileNames(string path, string filter)
@@ -176,7 +182,13 @@ public class SaveMenuActions : MonoBehaviour
         SaveData.current.playTimeData = FindObjectOfType<InGameClock>().playTime;
         #endregion
         SaveManager.SaveToFile(SaveData.current, SaveFileNumber);
-        Debug.Log("Saved");
+        StartCoroutine(SavedGameGraphic());
+    }
+    private IEnumerator SavedGameGraphic()
+    {
+        savedtext.gameObject.SetActive(true);
+        yield return new WaitForSeconds(1.5f);
+        savedtext.gameObject.SetActive(false);
     }
 
     internal IEnumerator SaveMenuOpen()
@@ -187,7 +199,7 @@ public class SaveMenuActions : MonoBehaviour
             inputManager.MenuItems[7].SetActive(true);
             inputManager.MenuItems[7].transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
             inputManager.MenuItems[7].transform.GetChild(1).DOLocalMove(new Vector3(190, 0, 0), menuInputs.speed);
-            OpenLoadFiles(0);
+            OpenLoadFiles();
         }
     }
     internal IEnumerator SaveMenuClose(bool closeAllOverride)

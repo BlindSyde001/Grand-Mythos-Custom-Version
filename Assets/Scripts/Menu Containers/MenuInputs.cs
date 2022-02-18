@@ -1,9 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using TMPro;
 
 public class MenuInputs : MonoBehaviour
 {
@@ -188,12 +186,10 @@ public class MenuInputs : MonoBehaviour
         if(heroLineupChangeOne == 0)
         {
             heroLineupChangeOne = selectedToChange;
-            Debug.Log("Set 1!");
         }
         else if(heroLineupChangeTwo == 0)
         {
             heroLineupChangeTwo = selectedToChange;
-            Debug.Log("Set 2!");
             PerformSwap(heroLineupChangeOne, heroLineupChangeTwo);
         }
     }

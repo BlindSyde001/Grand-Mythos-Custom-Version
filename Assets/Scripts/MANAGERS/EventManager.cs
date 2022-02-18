@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,9 +8,10 @@ public class EventManager : MonoBehaviour
     // VARIABLES
     public static EventManager _instance;
 
+    private GameManager gameManager;
+    private AudioManager audioManager;
     private InputManager inputManager;
     private SceneChangeManager sceneChangeManager;
-    private GameManager gameManager;
 
     [SerializeField]
     internal GameState _GameState;
@@ -23,10 +22,7 @@ public class EventManager : MonoBehaviour
     public static event LoadNewScene LoadingTitle;
 
     public delegate void ChangeInGameState(GameState GS);
-    public static event ChangeInGameState ChangeToBattleState;
-    public static event ChangeInGameState ChangeToOverworldState;
-    public static event ChangeInGameState ChangeToTitleState;
-    public static event ChangeInGameState ChangeToCutsceneState;
+    public static event ChangeInGameState OnGameStateChange;
 
     public delegate void ChangeZone();
     public static event ChangeZone OnZoneChanged;
@@ -45,13 +41,14 @@ public class EventManager : MonoBehaviour
         }
         else if(_instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
-        DontDestroyOnLoad(this.gameObject);
+        DontDestroyOnLoad(gameObject);
 
         inputManager = InputManager._instance;
         sceneChangeManager = SceneChangeManager._instance;
         gameManager = GameManager._instance;
+        audioManager = AudioManager._instance;
     }
     private void OnEnable()
     {
@@ -61,10 +58,10 @@ public class EventManager : MonoBehaviour
         LoadingBattle += LoadBattle;
         LoadingTitle += LoadTitle;
 
-        ChangeToBattleState += BattleState;
-        ChangeToOverworldState += OverworldState;
-        ChangeToTitleState += TitleState;
-        ChangeToCutsceneState += CutsceneState;
+        OnGameStateChange += TitleState;
+        OnGameStateChange += OverworldState;
+        OnGameStateChange += BattleState;
+        OnGameStateChange += CutsceneState;
     }
     private void OnDisable()
     {
@@ -74,10 +71,10 @@ public class EventManager : MonoBehaviour
         LoadingBattle -= LoadBattle;
         LoadingTitle -= LoadTitle;
 
-        ChangeToBattleState -= BattleState;
-        ChangeToOverworldState -= OverworldState;
-        ChangeToTitleState -= TitleState;
-        ChangeToCutsceneState -= CutsceneState;
+        OnGameStateChange -= TitleState;
+        OnGameStateChange -= OverworldState;
+        OnGameStateChange -= BattleState;
+        OnGameStateChange -= CutsceneState;
     }
 
     // METHODS
@@ -102,6 +99,74 @@ public class EventManager : MonoBehaviour
         }
     }
 
+    #region GAMESTATE CHANGING
+    public void SwitchGameState(GameState GS)
+    {
+        switch (GS)
+        {
+            case GameState.TITLE:
+                OnGameStateChange(GameState.TITLE);
+                break;
+
+            case GameState.OVERWORLD:
+                OnGameStateChange(GameState.OVERWORLD);
+                break;
+
+            case GameState.BATTLE:
+                OnGameStateChange(GameState.BATTLE);
+                break;
+
+            case GameState.CUTSCENE:
+                OnGameStateChange(GameState.CUTSCENE);
+                break;
+
+            case GameState.MENU:
+                MenuState(GameState.MENU);
+                break;
+        }
+    }
+
+    private void TitleState(GameState GS)
+    {
+        if(GS == GameState.TITLE)
+        {
+            _GameState = GameState.TITLE;
+            inputManager.playerInput.SwitchCurrentActionMap("Title Map");
+        }
+    }
+    private void OverworldState(GameState GS)
+    {
+        if(GS == GameState.OVERWORLD)
+        {
+            _GameState = GameState.OVERWORLD;
+            inputManager.playerInput.SwitchCurrentActionMap("Overworld Map");
+        }
+    }
+    private void BattleState(GameState GS)
+    {
+        if(GS == GameState.BATTLE)
+        {
+            _GameState = GameState.BATTLE;
+            inputManager.playerInput.SwitchCurrentActionMap("Battle Map");
+        }
+    }
+    private void CutsceneState(GameState GS)
+    {
+        if(GS == GameState.CUTSCENE)
+        {
+            _GameState = GameState.CUTSCENE;
+            inputManager.playerInput.SwitchCurrentActionMap("Cutscene Map");
+        }
+    }
+    private void MenuState(GameState GS)
+    {
+        if(GS == GameState.MENU)
+        {
+            _GameState = GameState.MENU;
+            inputManager.playerInput.SwitchCurrentActionMap("Menu Map");
+        }
+    }
+    #endregion
     #region LOADING
     public void SwitchNewScene(int levelID)
     {
@@ -133,64 +198,6 @@ public class EventManager : MonoBehaviour
     private void LoadOverworld()
     {
         sceneChangeManager.LoadNewZone(GameManager._instance._LastKnownScene);
-    }
-    #endregion
-    #region GAMESTATE CHANGING
-    public void SwitchGameState(GameState GS)
-    {
-        switch (GS)
-        {
-            case GameState.TITLE:
-                GS = GameState.TITLE;
-                ChangeToTitleState(GS);
-                break;
-
-            case GameState.OVERWORLD:
-                GS = GameState.OVERWORLD;
-                ChangeToOverworldState(GS);
-                break;
-
-            case GameState.BATTLE:
-                GS = GameState.BATTLE;
-                ChangeToBattleState(GS);
-                break;
-
-            case GameState.CUTSCENE:
-                GS = GameState.CUTSCENE;
-                ChangeToCutsceneState(GS);
-                break;
-
-            case GameState.MENU:
-                GS = GameState.MENU;
-                MenuState(GS);
-                break;
-        }
-    }
-
-    private void OverworldState(GameState GS)
-    {
-        _GameState = GameState.OVERWORLD;
-        inputManager.playerInput.SwitchCurrentActionMap("Overworld Map");
-    }
-    private void BattleState(GameState GS)
-    {
-        _GameState = GameState.BATTLE;
-        inputManager.playerInput.SwitchCurrentActionMap("Battle Map");
-    }
-    private void TitleState(GameState GS)
-    {
-        _GameState = GameState.TITLE;
-        inputManager.playerInput.SwitchCurrentActionMap("Title Map");
-    }
-    private void CutsceneState(GameState GS)
-    {
-        _GameState = GameState.CUTSCENE;
-        inputManager.playerInput.SwitchCurrentActionMap("Cutscene Map");
-    }
-    private void MenuState(GameState GS)
-    {
-        _GameState = GameState.MENU;
-        inputManager.playerInput.SwitchCurrentActionMap("Menu Map");
     }
     #endregion
 }

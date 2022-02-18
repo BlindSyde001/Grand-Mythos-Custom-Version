@@ -10,7 +10,7 @@ public class CndStatusAfflicted : Condition
     public bool isParalysed;
     public bool isPhysDown;
     public bool isMagDown;
-    public override bool ConditionCheck(CharacterCircuit target)
+    public override bool ConditionCheck(CharacterTemplate target)
     {
         if(isBlinded)
         {

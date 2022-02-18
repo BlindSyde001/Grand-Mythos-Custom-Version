@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class cndIsDowned : Condition
 {
-    public override bool ConditionCheck(CharacterCircuit target)
+    public override bool ConditionCheck(CharacterTemplate target)
     {
         switch(targetType)
         {

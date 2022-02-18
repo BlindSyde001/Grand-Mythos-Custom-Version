@@ -6,7 +6,7 @@ public class Condition : ScriptableObject
 {
     public CharacterType targetType;
     public int cndID;
-    public virtual bool ConditionCheck(CharacterCircuit target)
+    public virtual bool ConditionCheck(CharacterTemplate target)
     {
         return true;
     }

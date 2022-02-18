@@ -7,6 +7,7 @@ public class CameraFollowArea : MonoBehaviour
     //VARIABLES
     private GameObject player;
     private Camera cam;
+    public GameObject focalPoint;
 
     public Vector3 offset;
     public Vector3 min;
@@ -14,6 +15,8 @@ public class CameraFollowArea : MonoBehaviour
 
     [SerializeField]
     private bool isFollowing;
+    [SerializeField]
+    private bool isFocusing;
 
     //UPDATES
     private void Start()
@@ -53,6 +56,10 @@ public class CameraFollowArea : MonoBehaviour
         {
             Vector3 pos = player.transform.position + offset;
             cam.transform.position = new Vector3(Mathf.Clamp(pos.x, min.x, max.x), Mathf.Clamp(pos.y, min.y, max.y), Mathf.Clamp(pos.z, min.z, max.z));
+            if(isFocusing)
+            {
+                cam.transform.LookAt(focalPoint.transform);
+            }
         }
     }
 

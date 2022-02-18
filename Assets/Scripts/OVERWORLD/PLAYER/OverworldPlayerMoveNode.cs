@@ -27,7 +27,6 @@ public class OverworldPlayerMoveNode : MonoBehaviour
         switch(EventManager._instance._GameState)
         {
             case GameState.OVERWORLD:
-
                 // Move When Pressing button down
                 if (_PlayerCircuit.isMoving)
                 {
@@ -39,7 +38,7 @@ public class OverworldPlayerMoveNode : MonoBehaviour
                     input.x = 0;
                     input.z = 0;
                 }
-
+                Debug.Log("My sqrMag is " + input.sqrMagnitude);
                 if (input.sqrMagnitude >= Mathf.Epsilon)
                 {
                     calculateDirection();

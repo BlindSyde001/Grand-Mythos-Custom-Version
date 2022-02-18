@@ -12,9 +12,8 @@ public class ES_Terrorist_Gunner : EnemyExtension
 
     // METHODS
 
-    public override void ActiveStateBehaviour()
+    public void ActiveStateBehaviour()
     {
-        base.ActiveStateBehaviour();
         if(_ActionChargeAmount == 100)
         {
             if(_CurrentHP <= MaxHP/2 && potionCount > 0)

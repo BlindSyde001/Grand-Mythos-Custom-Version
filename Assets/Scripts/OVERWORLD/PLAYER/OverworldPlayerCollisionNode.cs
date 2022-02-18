@@ -9,9 +9,7 @@ public class OverworldPlayerCollisionNode : MonoBehaviour
     [SerializeField]
     private OverworldPlayerCircuit _PlayerCircuit;
 
-
     // UPDATES
-
     private void OnTriggerEnter(Collider other)
     {
         

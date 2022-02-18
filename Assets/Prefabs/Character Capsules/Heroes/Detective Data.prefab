@@ -52,6 +52,7 @@ GameObject:
   - component: {fileID: 5234438934277658764}
   - component: {fileID: 5234438934277658765}
   - component: {fileID: 5234438934277658767}
+  - component: {fileID: 8430257081442506228}
   m_Layer: 0
   m_Name: Detective Data
   m_TagString: Untagged
@@ -91,7 +92,7 @@ MonoBehaviour:
   characterType: 0
   charName: 
   charPortrait: {fileID: 21300000, guid: 8c4789b052a71724eae732d73e226d70, type: 3}
-  _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
+  _CharacterModel: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
   _CurrentHP: 0
   _CurrentMP: 0
   _MaxHP: 0
@@ -137,6 +138,7 @@ MonoBehaviour:
   equipDefense: 0
   equipMagDefense: 0
   equipSpeed: 0
+  myBattleHeroController: {fileID: 8430257081442506228}
   charBanner: {fileID: 21300000, guid: e2368ee01c9e284449a43aa5be256c28, type: 3}
   _AllUsableActions:
   - {fileID: 11400000, guid: 053c51e6f2bdb0b448dc7244681873de, type: 2}
@@ -166,6 +168,20 @@ MonoBehaviour:
   - {fileID: 7761677193417200921}
   - {fileID: 7761677193617011592}
   ActionIsInputted: 0
+--- !u!114 &8430257081442506228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5234438934277658762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07d13343315557f429cf35d080b3c7d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 0}
+  myHero: {fileID: 5234438934277658765}
 --- !u!1001 &5234438933414526721
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -843,6 +859,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+--- !u!4 &7761677192562351171 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+  m_PrefabInstance: {fileID: 5234438935072165758}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7761677192562351170 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
@@ -854,11 +875,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26d01b0e253a0a34c9494ae6cdcbc658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &7761677192562351171 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
-  m_PrefabInstance: {fileID: 5234438935072165758}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7420505763907801429
 PrefabInstance:
   m_ObjectHideFlags: 0

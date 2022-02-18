@@ -8,7 +8,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
 {
     [TextArea]
     public string description = "Activates a Single Instance of either Damage or Healing.";
-    protected override void PerformAction(CharacterCircuit caster, Action action, CharacterCircuit target)
+    protected override void PerformAction(CharacterTemplate caster, Action action, CharacterTemplate target)
     {
         int amount;
         bool isCrit;
@@ -39,7 +39,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 target._CurrentHP -= amount;
                 target._CurrentHP = Mathf.Clamp(target._CurrentHP, 0, target.MaxHP);
                 Debug.Log(target.charName + " has taken " + amount + " damage from " + caster.charName);
-                target.DieCheck();
+                //target.DieCheck();
                 break;
 
             case (ActionEffect.HEAL):

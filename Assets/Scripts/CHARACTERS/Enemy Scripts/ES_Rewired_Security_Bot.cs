@@ -9,9 +9,8 @@ public class ES_Rewired_Security_Bot : EnemyExtension
     // VARIABLES
 
     // METHODS
-    public override void ActiveStateBehaviour()
+    public void ActiveStateBehaviour()
     {
-        base.ActiveStateBehaviour();
         if (_ActionChargeAmount == 100)
         {
             BasicAttack();

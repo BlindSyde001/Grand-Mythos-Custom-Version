@@ -7,7 +7,6 @@ public class CameraPanArea: MonoBehaviour
     //VARIABLES
     public GameObject player;
     private bool inZone;
-    Camera main;
     public GameObject camPos;
 
     //UPDATES
@@ -34,13 +33,6 @@ public class CameraPanArea: MonoBehaviour
             Camera.main.transform.position = camPos.transform.position;
         }
     }
-    //private void OnTriggerStay(Collider other)
-    //{
-    //    if(other.CompareTag("Player"))
-    //    {
-    //        inZone = true;
-    //    }
-    //}
     private void OnTriggerExit(Collider other)
     {
         inZone = false;

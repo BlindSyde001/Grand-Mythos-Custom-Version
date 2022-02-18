@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ActionBehaviour : ScriptableObject
 {
-    public void PreActionTargetting(CharacterCircuit caster, Action action, CharacterCircuit target)
+    public void PreActionTargetting(CharacterTemplate caster, Action action, CharacterTemplate target)
     {
         // Define the Parameters
         // Pull Data from the Caster
@@ -51,7 +51,7 @@ public class ActionBehaviour : ScriptableObject
             PerformAction(caster, action, target);
         }
     }
-    protected virtual void PerformAction(CharacterCircuit caster, Action action, CharacterCircuit target)
+    protected virtual void PerformAction(CharacterTemplate caster, Action action, CharacterTemplate target)
     {
 
     }

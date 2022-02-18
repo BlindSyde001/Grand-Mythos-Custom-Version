@@ -2,32 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EnemyExtension : CharacterCircuit
+public abstract class EnemyExtension : CharacterTemplate
 {
+
+    [SerializeField]
+    internal BattleEnemyController myBattleEnemyController;
+
     [SerializeField]
     internal int experiencePool; // How much EXP the enemy Gives
     [SerializeField]
     internal int creditPool;     // How many Credits the enemy Gives
 
-    private protected bool CheckForHeroTarget()
-    {
-        if (GameManager._instance._PartyMembersActive.Count > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    protected internal void PerformEnemyAction(Action action, CharacterCircuit target)
-    {
-        foreach (ActionBehaviour aBehaviour in action._Behaviours)
-        {
-            aBehaviour.PreActionTargetting(this, action, target);
-        }
-        ConsumeActionCharge();
-    }
     public override void AssignStats()
     {
         charName = _CSA._Name;
@@ -43,13 +28,24 @@ public abstract class EnemyExtension : CharacterCircuit
         _CurrentHP = _MaxHP;
         _CurrentMP = _MaxMP;
     }
-    public override void DieCheck()
+
+    private protected bool CheckForHeroTarget()
     {
-        if(_CurrentHP <= 0)
+        if (GameManager._instance._PartyMembersActive.Count > 0)
         {
-            _CurrentHP = 0;
-            _ActionChargeAmount = 0;
-            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
+            return true;
         }
+        else
+        {
+            return false;
+        }
+    }
+    protected internal void PerformEnemyAction(Action action, CharacterTemplate target)
+    {
+        foreach (ActionBehaviour aBehaviour in action._Behaviours)
+        {
+            aBehaviour.PreActionTargetting(this, action, target);
+        }
+        _ActionChargeAmount = 0;
     }
 }

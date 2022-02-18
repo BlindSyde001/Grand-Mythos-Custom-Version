@@ -17,7 +17,7 @@ public class OverworldPlayerCircuit : MonoBehaviour
     internal CharacterController cc;
     [SerializeField]
     internal Transform referenceDirection;
-
+    [SerializeField]
     internal bool isMoving;
     internal Vector2 inputMovement;
 
@@ -46,8 +46,8 @@ public class OverworldPlayerCircuit : MonoBehaviour
     //METHODS
     internal void SavePositionalData()
     {
-        GameManager._instance._LastKnownPosition = this.transform.position;
-        GameManager._instance._LastKnownRotation = this.transform.rotation;
+        GameManager._instance._LastKnownPosition = transform.position;
+        GameManager._instance._LastKnownRotation = transform.rotation;
     }
     internal void InteractionCheck()
     {

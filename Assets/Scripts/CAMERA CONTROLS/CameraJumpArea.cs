@@ -8,19 +8,6 @@ public class CameraJumpArea : MonoBehaviour
     public GameObject posChange;
     public Vector3 currentPos;
 
-    [Space]
-    public CameraFollowArea follow;
-
-    //UPDATES
-    //private void Start()
-    //{
-    //    // IF THIS IS THE FIRST CAMERA POSITION, MOVE CAM TO HERE
-    //    if(posChange.CompareTag("StartCamPos"))
-    //    {
-    //        CutToShot();
-    //    }
-    //}
-
     //METHODS
     private void OnTriggerEnter(Collider other)
     {

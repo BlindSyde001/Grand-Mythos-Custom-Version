@@ -6,7 +6,7 @@ public class CndManaThreshold : Condition
 {
     public int manaThreshold;
     public bool _IsGreaterThan;
-    public override bool ConditionCheck(CharacterCircuit target)
+    public override bool ConditionCheck(CharacterTemplate target)
     {
         if (_IsGreaterThan ?  target._CurrentMP / target.MaxMP >= manaThreshold / 100 :
                               target._CurrentMP / target.MaxMP <= manaThreshold / 100)

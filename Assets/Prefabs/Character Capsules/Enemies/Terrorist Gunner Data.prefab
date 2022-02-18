@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9115676008236007250}
   - component: {fileID: 9115676008236007249}
+  - component: {fileID: 659661335794905614}
   m_Layer: 0
   m_Name: Terrorist Gunner Data
   m_TagString: Untagged
@@ -48,7 +49,7 @@ MonoBehaviour:
   characterType: 0
   charName: 
   charPortrait: {fileID: 0}
-  _CharacterModel: {fileID: 6683417299321850684, guid: 75ed46110bffecb489587c498d1aeeca, type: 3}
+  _CharacterModel: {fileID: 5499571375476555240, guid: 1eb592d996651674d93b63d2df0729e2, type: 3}
   _CurrentHP: 0
   _CurrentMP: 0
   _MaxHP: 0
@@ -57,6 +58,7 @@ MonoBehaviour:
   _MagAttack: 0
   _Defense: 0
   _MagDefense: 0
+  _Speed: 0
   _AffinityFIRE: 0
   _AffinityICE: 0
   _AffinityLIGHTNING: 0
@@ -64,13 +66,35 @@ MonoBehaviour:
   _ResistBLIND: 0
   _ResistSILENCE: 0
   _ResistFUROR: 0
+  _ResistPARALYSIS: 0
   _ResistPHYSICAL: 0
   _ResistMAGICAL: 0
+  _IsBlinded: 0
+  _IsSilenced: 0
+  _IsFurored: 0
+  _IsParalysed: 0
+  _IsPhysDown: 0
+  _IsMagDown: 0
   _ActionRechargeSpeed: 0
   _ActionChargeAmount: 0
   _BasicAttack: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
   _AvailableActions:
   - {fileID: 11400000, guid: 31a65cd091113b54a8f2e440dd0b4d02, type: 2}
   - {fileID: 11400000, guid: 56b23aa04b633404ba4e4c704525d621, type: 2}
+  myBattleEnemyController: {fileID: 659661335794905614}
   experiencePool: 250
   creditPool: 150
+--- !u!114 &659661335794905614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9115676008236007251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae144f2cba8224b47bb7614f52ad5459, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 0}
+  myEnemy: {fileID: 9115676008236007249}
