@@ -9,7 +9,9 @@ public class InputManager : MonoBehaviour
 {
     // VARIABLES
     public static InputManager _instance;
+    [SerializeField]
     internal PlayerInput playerInput;
+    [SerializeField]
     internal MenuInputs menuInputs;
     #region Menu Items
     [SerializeField]
@@ -30,9 +32,6 @@ public class InputManager : MonoBehaviour
             Destroy(this.gameObject);
         }
         DontDestroyOnLoad(this.gameObject);
-
-        playerInput = GetComponent<PlayerInput>();
-        menuInputs = GetComponent<MenuInputs>();
     }
 
     // METHODS

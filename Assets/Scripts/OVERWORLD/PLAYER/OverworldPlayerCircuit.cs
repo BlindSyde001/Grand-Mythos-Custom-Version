@@ -12,8 +12,7 @@ public class OverworldPlayerCircuit : MonoBehaviour
     internal OverworldPlayerMoveNode _MoveNode;
     [SerializeField]
     internal OverworldPlayerCollisionNode _CollisionNode;
-
-    private Rigidbody rb;
+    [SerializeField]
     internal CharacterController cc;
     [SerializeField]
     internal Transform referenceDirection;
@@ -24,13 +23,6 @@ public class OverworldPlayerCircuit : MonoBehaviour
     // UPDATES
     private void Awake()
     {
-        _CollisionNode = GetComponent<OverworldPlayerCollisionNode>();
-        _InputNode = GetComponent<OverworldPlayerInputNode>();
-        _MoveNode = GetComponent<OverworldPlayerMoveNode>();
-
-        rb = GetComponent<Rigidbody>();
-        cc = GetComponent<CharacterController>();
-
         referenceDirection = GameObject.Find("Reference Direction").transform;
     }
 

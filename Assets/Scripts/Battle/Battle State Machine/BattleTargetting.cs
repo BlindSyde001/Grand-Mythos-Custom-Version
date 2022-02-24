@@ -12,8 +12,11 @@ public class BattleTargetting : MonoBehaviour
     // 4. Buttons, when pressed will affect the Hero UI such that it reads: ( [Action] > [Target] )
 
     // VARIABLES
+    [SerializeField]
+    private BattleUIController battlUIController;
 
-    public BattleUIController BUC;
+    public GameObject mainCommandsPanel;
+    public List<Button> mainCommands;
 
     public GameObject actionsPanel;
     public List<BattleActionsListContainer> actions;
@@ -25,43 +28,62 @@ public class BattleTargetting : MonoBehaviour
     private bool itemsOpen;
 
     private Action chosenAction;
-    private CharacterTemplate chosenTarget;
+    private BattleCharacterController chosenTarget;
 
     // METHODS
+
+    public void ResetCommands()
+    {
+        actionsPanel.SetActive(false);
+        targetPanel.SetActive(false);
+        skillsOpen = false;
+        itemsOpen = false;
+        mainCommands[0].Select();
+    }
+
     public void OpenSkillsList()
     {
+        // Panel toggling stuff
         if(actionsPanel.activeSelf == true && skillsOpen)
         {
             actionsPanel.SetActive(false);
             skillsOpen = false;
+            mainCommands[0].Select();
             return;
         }
         actionsPanel.SetActive(true);
+        targetPanel.SetActive(false);
         skillsOpen = true;
         itemsOpen = false;
 
-        for(int i = 0; i < BUC.CurrentHero._AvailableActions.Count; i++)
+        // Add the Data of the Hero's skills onto each button
+        for(int i = 0; i < battlUIController.CurrentHero._AvailableActions.Count; i++)
         {
             actions[i].myName.text = "";
             int j = i;
-            actions[i].myAction = BUC.CurrentHero._AvailableActions[i];
-            actions[i].myName.text = BUC.CurrentHero._AvailableActions[i]._Name;
+            actions[i].myAction = battlUIController.CurrentHero._AvailableActions[i];
+            actions[i].myName.text = battlUIController.CurrentHero._AvailableActions[i]._Name;
             actions[i].myButton.onClick.AddListener(delegate {SetAction(actions[j].myAction); });
         }
+        actions[0].GetComponent<Button>().Select();
     }
     public void OpenItemsList()
     {
+        // Panel toggling stuff
         if (actionsPanel.activeSelf == true && itemsOpen)
         {
             actionsPanel.SetActive(false);
             itemsOpen = false;
+            mainCommands[0].Select();
             return;
         }
         actionsPanel.SetActive(true);
+        targetPanel.SetActive(false);
         skillsOpen = false;
         itemsOpen = true;
 
-        foreach(BattleActionsListContainer a in actions)
+        // Reset Button, then add Usable Items data onto them
+        foreach (BattleActionsListContainer a in actions)
         {
             a.myName.text = "";
             a.myAction = null;
@@ -74,12 +96,14 @@ public class BattleTargetting : MonoBehaviour
             actions[i].myName.text = InventoryManager._instance.ConsumablesInBag[i]._ItemName;
             actions[i].myButton.onClick.AddListener(delegate { SetAction(actions[j].myAction); });
         }
+        actions[0].GetComponent<Button>().Select();
     }
     
     public void SetAction(Action action)
     {
         chosenAction = action;
         OpenTargetList(action._ActionEffect == ActionEffect.HEAL? 1 : 0);
+        Targets[0].GetComponent<Button>().Select();
     }
     public void OpenTargetList(int enemyOrHero)
     {
@@ -102,7 +126,7 @@ public class BattleTargetting : MonoBehaviour
                 {
                     int j = i;
                     Targets[i].myTarget = BattleStateMachine._EnemiesActive[i];
-                    Targets[i].myName.text = BattleStateMachine._EnemiesActive[i].charName;
+                    Targets[i].myName.text = BattleStateMachine._EnemiesActive[i].myEnemy.charName;
                     Targets[i].myButton.onClick.AddListener(delegate { ChooseTarget(Targets[j].myTarget); });
                 }
                 break;
@@ -110,20 +134,20 @@ public class BattleTargetting : MonoBehaviour
             case 1:
                 // hero list
                 List<HeroExtension> allHeroes = new();
-                foreach (HeroExtension a in GameManager._instance._PartyMembersActive)
+                foreach (BattleHeroController a in BattleStateMachine._HeroesActive)
                 {
-                    allHeroes.Add(a);
+                    allHeroes.Add(a.myHero);
                 }
-                foreach(HeroExtension a in GameManager._instance._PartyMembersDowned)
+                foreach(BattleHeroController a in BattleStateMachine._HeroesDowned)
                 {
-                    allHeroes.Add(a);
+                    allHeroes.Add(a.myHero);
                 }
 
                 for(int i = 0; i < allHeroes.Count ; i++)
                 {
                     Targets[i].myName.text = "";
                     int j = i;
-                    Targets[i].myTarget = allHeroes[i];
+                    Targets[i].myTarget = allHeroes[i].myBattleHeroController;
                     Targets[i].myName.text = allHeroes[i].charName;
                     Targets[i].myButton.onClick.AddListener(delegate {ChooseTarget(Targets[j].myTarget); });
                 }
@@ -131,16 +155,17 @@ public class BattleTargetting : MonoBehaviour
         }
     }
 
-    public void ChooseTarget(CharacterTemplate target)
+    public void ChooseTarget(BattleCharacterController target)
     {
         chosenTarget = target;
         targetPanel.SetActive(false);
         InputHeroCommand(chosenAction, chosenTarget);
+        mainCommands[0].Select();
     }
-    private void InputHeroCommand(Action action, CharacterTemplate target)
+    private void InputHeroCommand(Action action, BattleCharacterController target)
     {
-        BUC.CurrentHero.myTacticController.ActionIsInputted = true;
-        BUC.CurrentHero.myTacticController.ChosenAction = action;
-        BUC.CurrentHero.myTacticController.ChosenTarget = target;
+        battlUIController.CurrentHero.myTacticController.ActionIsInputted = true;
+        battlUIController.CurrentHero.myTacticController.ChosenAction = action;
+        battlUIController.CurrentHero.myTacticController.ChosenTarget = target;
     }
 }

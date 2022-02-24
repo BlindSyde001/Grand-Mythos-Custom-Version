@@ -10,31 +10,49 @@ public class CndStatusAfflicted : Condition
     public bool isParalysed;
     public bool isPhysDown;
     public bool isMagDown;
-    public override bool ConditionCheck(CharacterTemplate target)
+    public override bool ConditionCheck(BattleCharacterController target)
     {
-        if(isBlinded)
+        CharacterTemplate tempToUse;
+        switch (target.myType)
         {
-            return target._IsBlinded;
+            case BattleCharacterController.ControllerType.HERO:
+                {
+                    BattleHeroController a = target as BattleHeroController;
+                    tempToUse = a.myHero;
+                    break;
+                }
+
+            default:
+                {
+                    BattleEnemyController a = target as BattleEnemyController;
+                    tempToUse = a.myEnemy;
+                    break;
+                }
+        }
+
+        if (isBlinded)
+        {
+            return tempToUse._IsBlinded;
         }
         if (isSilenced)
         {
-            return target._IsSilenced;
+            return tempToUse._IsSilenced;
         }
         if (isFurored)
         {
-            return target._IsFurored;
+            return tempToUse._IsFurored;
         }
         if (isParalysed)
         {
-            return target._IsParalysed;
+            return tempToUse._IsParalysed;
         }
         if (isPhysDown)
         {
-            return target._IsPhysDown;
+            return tempToUse._IsPhysDown;
         }
         if (isMagDown)
         {
-            return target._IsMagDown;
+            return tempToUse._IsMagDown;
         }
         else return false;
     }

@@ -22,6 +22,7 @@ public class SceneChangeManager : MonoBehaviour
         }
         DontDestroyOnLoad(this.gameObject);
     }
+
     // METHODS
     public void LoadNewZone(string NewScene)
     {

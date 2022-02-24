@@ -44,12 +44,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     internal List<HeroExtension> _ReservesLineup;  // Who I have available in the Party
 
-    [BoxGroup("BATTLE PARTY DATA")]
-    public List<HeroExtension> _PartyMembersActive;
-    [BoxGroup("BATTLE PARTY DATA")]
-    public List<HeroExtension> _PartyMembersDowned;
-
-
     [SerializeField]
     internal List<EnemyExtension> _EnemyLineup;
     #endregion

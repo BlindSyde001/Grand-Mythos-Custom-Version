@@ -14,46 +14,64 @@ public class CndStatusWeakness : Condition
 
     public bool isGreaterThan;
 
-    public override bool ConditionCheck(CharacterTemplate target)
+    public override bool ConditionCheck(BattleCharacterController target)
     {
+        CharacterTemplate tempToUse;
+        switch (target.myType)
+        {
+            case BattleCharacterController.ControllerType.HERO:
+                {
+                    BattleHeroController a = target as BattleHeroController;
+                    tempToUse = a.myHero;
+                    break;
+                }
+
+            default:
+                {
+                    BattleEnemyController a = target as BattleEnemyController;
+                    tempToUse = a.myEnemy;
+                    break;
+                }
+        }
+
         if (blindVuln)
         {
-            if (isGreaterThan ? target._ResistBLIND > 0 : target._ResistBLIND < 0)
+            if (isGreaterThan ? tempToUse._ResistBLIND > 0 : tempToUse._ResistBLIND < 0)
             {
                 return true;
             }
         }
         if (silenceVuln)
         {
-            if (isGreaterThan ? target._ResistSILENCE > 0 : target._ResistSILENCE < 0)
+            if (isGreaterThan ? tempToUse._ResistSILENCE > 0 : tempToUse._ResistSILENCE < 0)
             {
                 return true;
             }
         }
         if (furorVuln)
         {
-            if (isGreaterThan ? target._ResistFUROR > 0 : target._ResistFUROR < 0)
+            if (isGreaterThan ? tempToUse._ResistFUROR > 0 : tempToUse._ResistFUROR < 0)
             {
                 return true;
             }
         }
         if (paralysisVuln)
         {
-            if (isGreaterThan ? target._ResistPARALYSIS > 0 : target._ResistPARALYSIS < 0)
+            if (isGreaterThan ? tempToUse._ResistPARALYSIS > 0 : tempToUse._ResistPARALYSIS < 0)
             {
                 return true;
             }
         }
         if (physVuln)
         {
-            if (isGreaterThan ? target._ResistPHYSICAL > 0 : target._ResistPHYSICAL < 0)
+            if (isGreaterThan ? tempToUse._ResistPHYSICAL > 0 : tempToUse._ResistPHYSICAL < 0)
             {
                 return true;
             }
         }
         if (magVuln)
         {
-            if (isGreaterThan ? target._ResistMAGICAL > 0 : target._ResistMAGICAL < 0)
+            if (isGreaterThan ? tempToUse._ResistMAGICAL > 0 : tempToUse._ResistMAGICAL < 0)
             {
                 return true;
             }

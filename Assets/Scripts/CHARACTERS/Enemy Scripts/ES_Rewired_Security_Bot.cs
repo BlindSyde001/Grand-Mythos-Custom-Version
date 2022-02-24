@@ -22,8 +22,8 @@ public class ES_Rewired_Security_Bot : EnemyExtension
         if (CheckForHeroTarget())
         {
             Debug.Log(this.name + " Has Attacked!");
-            int x = Random.Range(0, GameManager._instance._PartyMembersActive.Count);
-            PerformEnemyAction(_BasicAttack, GameManager._instance._PartyMembersActive[x]);
+            int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
+            PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]);
         }
     }
 }

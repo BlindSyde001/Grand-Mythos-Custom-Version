@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class cndIsDowned : Condition
 {
-    public override bool ConditionCheck(CharacterTemplate target)
+    public override bool ConditionCheck(BattleCharacterController target)
     {
         switch(targetType)
         {
             case CharacterType.CHARACTER:
-                if (GameManager._instance._PartyMembersDowned.Count > 0)
+                if (BattleStateMachine._HeroesDowned.Count > 0)
                 {
                     return true;
                 }

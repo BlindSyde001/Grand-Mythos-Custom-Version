@@ -8,8 +8,8 @@ public class Tactic : MonoBehaviour
 {
     public bool isTurnedOn;                   // Is this Gambit activated?
 
-    public CharacterTemplate _Performer;               // Who is performing Action
-    public CharacterTemplate _Target;          // Who is target of Action
+    public BattleCharacterController _Performer;       // Who is performing Action
+    public BattleCharacterController _Target;          // Who is target of Action
 
     public Action _Action;                    // What is to be done
     public Condition _Condition;              // What needs to be met to perform Action

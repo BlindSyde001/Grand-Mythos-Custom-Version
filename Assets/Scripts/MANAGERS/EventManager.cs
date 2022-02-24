@@ -2,15 +2,17 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public enum GameState {BATTLE, OVERWORLD, TITLE, CUTSCENE, MENU }
-public enum CombatState {WAIT, ACTIVE}
+public enum CombatState {START, ACTIVE, WAIT, END}
 public class EventManager : MonoBehaviour
 {
     // VARIABLES
     public static EventManager _instance;
 
+    [SerializeField]
     private GameManager gameManager;
-    private AudioManager audioManager;
+    [SerializeField]
     private InputManager inputManager;
+    [SerializeField]
     private SceneChangeManager sceneChangeManager;
 
     [SerializeField]
@@ -24,14 +26,6 @@ public class EventManager : MonoBehaviour
     public delegate void ChangeInGameState(GameState GS);
     public static event ChangeInGameState OnGameStateChange;
 
-    public delegate void ChangeZone();
-    public static event ChangeZone OnZoneChanged;
-
-    public delegate void DataManipulation();
-    public static event DataManipulation SaveTheGame;
-    public static event DataManipulation LoadTheGame;
-
-
     // UPDATES
     private void Awake()
     {
@@ -44,11 +38,6 @@ public class EventManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-
-        inputManager = InputManager._instance;
-        sceneChangeManager = SceneChangeManager._instance;
-        gameManager = GameManager._instance;
-        audioManager = AudioManager._instance;
     }
     private void OnEnable()
     {
@@ -83,17 +72,14 @@ public class EventManager : MonoBehaviour
         switch(scene.buildIndex)
         {
             case 0:
-                Debug.Log("To Title Scene");
                 SwitchGameState(GameState.TITLE);
                 break;
 
             case 1:
-                Debug.Log("To Battle Scene");
                 SwitchGameState(GameState.BATTLE);
                 break;
 
             case > 1:
-                Debug.Log("To Overworld Scene");
                 SwitchGameState(GameState.OVERWORLD);
                 break;
         }
@@ -102,6 +88,7 @@ public class EventManager : MonoBehaviour
     #region GAMESTATE CHANGING
     public void SwitchGameState(GameState GS)
     {
+        Debug.Log(GS);
         switch (GS)
         {
             case GameState.TITLE:

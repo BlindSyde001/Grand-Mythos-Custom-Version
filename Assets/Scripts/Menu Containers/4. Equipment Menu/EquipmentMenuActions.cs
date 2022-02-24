@@ -77,6 +77,7 @@ public class EquipmentMenuActions : MonoBehaviour
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
+            heroSelections[i].GetComponent<Image>().sprite = gameManager._PartyLineup[j].charPortrait;
             heroSelections[i].onClick.AddListener(delegate {SetStats(gameManager._PartyLineup[j]); });
             heroSelections[i].onClick.AddListener(delegate {SetLoadout(gameManager._PartyLineup[j]); });
         }

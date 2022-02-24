@@ -6,7 +6,6 @@ public class CameraJumpArea : MonoBehaviour
 {
     //VARIABLES
     public GameObject posChange;
-    public Vector3 currentPos;
 
     //METHODS
     private void OnTriggerEnter(Collider other)

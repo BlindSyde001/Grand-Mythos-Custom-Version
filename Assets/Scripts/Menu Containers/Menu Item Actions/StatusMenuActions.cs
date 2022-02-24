@@ -84,6 +84,7 @@ public class StatusMenuActions : MonoBehaviour
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
+            heroSelections[i].GetComponent<Image>().sprite = gameManager._PartyLineup[j].charPortrait;
             heroSelections[i].onClick.AddListener(delegate { SetExperience(gameManager._PartyLineup[j]); });
             heroSelections[i].onClick.AddListener(delegate { SetAttributes(gameManager._PartyLineup[j]); });
             heroSelections[i].onClick.AddListener(delegate { SetElemental(gameManager._PartyLineup[j]); });

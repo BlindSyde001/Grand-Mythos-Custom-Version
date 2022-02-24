@@ -82,8 +82,8 @@ public class TitleScreenIO : MonoBehaviour
         #endregion
         #region Lineup Data
         gameManager._PartyLineup.Clear();
-        gameManager._PartyMembersActive.Clear();
-        gameManager._PartyMembersDowned.Clear();
+        BattleStateMachine._HeroesActive.Clear();
+        BattleStateMachine._HeroesActive.Clear();
         for (int i = 0; i < SD.lineupSave.Count; i++)
         {
             gameManager._PartyLineup.Add(gameManager._AllPartyMembers[SD.lineupSave[i]]);
@@ -131,16 +131,6 @@ public class TitleScreenIO : MonoBehaviour
         {
             gameManager._PartyLineup[i]._CurrentHP = SD.heroSaveData[i].currentHPData;
             gameManager._PartyLineup[i]._CurrentMP = SD.heroSaveData[i].currentMPData;
-
-            // Alive or Dead list
-            if (gameManager._AllPartyMembers[SD.lineupSave[i]]._CurrentHP > 0)
-            {
-                gameManager._PartyMembersActive.Add(gameManager._AllPartyMembers[SD.lineupSave[i]]);
-            }
-            else
-            {
-                gameManager._PartyMembersDowned.Add(gameManager._AllPartyMembers[SD.lineupSave[i]]);
-            }
         }
         #endregion
         #region Inventory Data

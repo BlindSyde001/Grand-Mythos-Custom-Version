@@ -4,32 +4,34 @@ using UnityEngine;
 
 public class ActionBehaviour : ScriptableObject
 {
-    public void PreActionTargetting(CharacterTemplate caster, Action action, CharacterTemplate target)
+    public void PreActionTargetting(BattleCharacterController caster, Action action, BattleCharacterController target)
     {
         // Define the Parameters
         // Pull Data from the Caster
         // Compute Stats from Caster and Target with correct Behaviour Equation
         if (action._ActionTargetType == ActionTargetType.MULTI)
         {   // FIND WHERE THE GUY IS IN WHAT LIST => THEN DO IT TO EM ALL
-            HeroExtension a = target as HeroExtension;
-            EnemyExtension b = target as EnemyExtension;
 
-            if (GameManager._instance._PartyMembersActive.Contains(a))
+            BattleHeroController a = target as BattleHeroController;
+            BattleEnemyController b = target as BattleEnemyController;
+
+            // Check Hero Lists
+            if (BattleStateMachine._HeroesActive.Contains(a))
             {
-                for (int i = GameManager._instance._PartyMembersActive.Count - 1; i >= 0; i--)
+                for (int i = BattleStateMachine._HeroesActive.Count - 1; i >= 0; i--)
                 {
-                    PerformAction(caster, action, GameManager._instance._PartyMembersActive[i]);
+                    PerformAction(caster, action, BattleStateMachine._HeroesActive[i]);
+                }
+            }
+            else if (BattleStateMachine._HeroesDowned.Contains(a))
+            {
+                for (int i = BattleStateMachine._HeroesDowned.Count - 1; i >= 0; i--)
+                {
+                    PerformAction(caster, action, BattleStateMachine._HeroesDowned[i]);
                 }
             }
 
-            else if (GameManager._instance._PartyMembersDowned.Contains(a))
-            {
-                for (int i = GameManager._instance._PartyMembersDowned.Count - 1; i >= 0; i--)
-                {
-                    PerformAction(caster, action, GameManager._instance._PartyMembersDowned[i]);
-                }
-            }
-
+            // Check Enemy Lists
             else if (BattleStateMachine._EnemiesActive.Contains(b))
             {
                 for (int i = BattleStateMachine._EnemiesActive.Count - 1; i >= 0; i--)
@@ -37,7 +39,6 @@ public class ActionBehaviour : ScriptableObject
                     PerformAction(caster, action, BattleStateMachine._EnemiesActive[i]);
                 }
             }
-
             else if (BattleStateMachine._EnemiesDowned.Contains(b))
             {
                 for (int i = BattleStateMachine._EnemiesDowned.Count - 1; i >= 0; i--)
@@ -51,7 +52,7 @@ public class ActionBehaviour : ScriptableObject
             PerformAction(caster, action, target);
         }
     }
-    protected virtual void PerformAction(CharacterTemplate caster, Action action, CharacterTemplate target)
+    protected virtual void PerformAction(BattleCharacterController caster, Action action, BattleCharacterController target)
     {
 
     }

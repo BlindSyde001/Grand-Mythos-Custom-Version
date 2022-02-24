@@ -75,7 +75,7 @@ public class SceneInformation : MonoBehaviour
     }
     private void EnemiesEncountered()
     {
-        // Start a battle with enemies
-        EnemyInformation._instance.DetermineEnemyFormation();
+        // Prepare data for next battle
+        FindObjectOfType<EnemyInformation>().DetermineEnemyFormation();
     }
 }

@@ -11,32 +11,50 @@ public class CndElementalWeakness : Condition
 
     public bool isGreaterThan;
 
-    public override bool ConditionCheck(CharacterTemplate target)
+    public override bool ConditionCheck(BattleCharacterController target)
     {
-        if(fireVuln)
+        CharacterTemplate tempToUse;
+        switch (target.myType)
         {
-            if(isGreaterThan? target._AffinityFIRE > 0 : target._AffinityFIRE < 0)
+            case BattleCharacterController.ControllerType.HERO:
+                {
+                    BattleHeroController a = target as BattleHeroController;
+                    tempToUse = a.myHero;
+                    break;
+                }
+
+            default:
+                {
+                    BattleEnemyController a = target as BattleEnemyController;
+                    tempToUse = a.myEnemy;
+                    break;
+                }
+        }
+
+        if (fireVuln)
+        {
+            if(isGreaterThan? tempToUse._AffinityFIRE > 0 : tempToUse._AffinityFIRE < 0)
             {
                 return true;
             }
         }
         if(iceVuln)
         {
-            if(isGreaterThan ? target._AffinityICE > 0 : target._AffinityICE < 0)
+            if(isGreaterThan ? tempToUse._AffinityICE > 0 : tempToUse._AffinityICE < 0)
             {
                 return true;
             }
         }
         if(waterVuln)
         {
-            if(isGreaterThan ? target._AffinityWATER > 0 : target._AffinityWATER < 0)
+            if(isGreaterThan ? tempToUse._AffinityWATER > 0 : tempToUse._AffinityWATER < 0)
             {
                 return true;
             }
         }
         if(lightningVuln)
         {
-            if(isGreaterThan ? target._AffinityLIGHTNING> 0 : target._AffinityLIGHTNING < 0)
+            if(isGreaterThan ? tempToUse._AffinityLIGHTNING> 0 : tempToUse._AffinityLIGHTNING < 0)
             {
                 return true;
             }

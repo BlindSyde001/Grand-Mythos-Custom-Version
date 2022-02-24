@@ -41,20 +41,20 @@ public class ES_Terrorist_Gunner : EnemyExtension
     {
         if(CheckForHeroTarget())
          {
-            int x = Random.Range(0, GameManager._instance._PartyMembersActive.Count);
-            PerformEnemyAction(_BasicAttack, GameManager._instance._PartyMembersActive[x]);
+            int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
+            PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]);
         }
     }
     private void Potion()
     {
-        PerformEnemyAction(_AvailableActions[0], this);
+        PerformEnemyAction(_AvailableActions[0], myBattleEnemyController);
     }
     private void Grenade()
     {
         if(CheckForHeroTarget())
         {
-            int x = Random.Range(0, GameManager._instance._PartyMembersActive.Count);
-            PerformEnemyAction(_AvailableActions[1], GameManager._instance._PartyMembersActive[x]);
+            int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
+            PerformEnemyAction(_AvailableActions[1], BattleStateMachine._HeroesActive[x]);
         }
     }
 }

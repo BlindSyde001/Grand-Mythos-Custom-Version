@@ -8,10 +8,36 @@ public class SingleInstanceBehaviour : ActionBehaviour
 {
     [TextArea]
     public string description = "Activates a Single Instance of either Damage or Healing.";
-    protected override void PerformAction(CharacterTemplate caster, Action action, CharacterTemplate target)
+    protected override void PerformAction(BattleCharacterController caster, Action action, BattleCharacterController target)
     {
+        CharacterTemplate casterStats;
+        CharacterTemplate targetStats;
         int amount;
         bool isCrit;
+        #region Downscaling Controller types and Stats
+        if (caster.myType == BattleCharacterController.ControllerType.HERO)
+        {
+            BattleHeroController casterDownScale = caster as BattleHeroController;
+            casterStats = casterDownScale.myHero;
+        }
+        else
+        {
+            BattleEnemyController casterDownScale = caster as BattleEnemyController;
+            casterStats = casterDownScale.myEnemy;
+        }
+
+        if (target.myType == BattleCharacterController.ControllerType.HERO)
+        {
+            BattleHeroController targetDownScale = target as BattleHeroController;
+            targetStats = targetDownScale.myHero;
+        } 
+        else
+        {
+            BattleEnemyController targetDownScale = target as BattleEnemyController;
+            targetStats = targetDownScale.myEnemy;
+        }
+        #endregion
+        #region Crit roll
         if (Random.Range(1, 101) <= action.critChance)
         {
             isCrit = true;
@@ -20,14 +46,15 @@ public class SingleInstanceBehaviour : ActionBehaviour
         {
             isCrit = false;
         }
+        #endregion
 
         switch (action._ActionEffect)
         {
-            case (ActionEffect.DAMAGE):
+            case ActionEffect.DAMAGE:
                 //phys / mag stat > variation > ~pierce ? ~ > crit ? / tgt phys / mag defense
                 if (!action.isFlatAmount)
                 {
-                    amount = (int)((action.isMagical ? caster.MagAttack : caster.Attack) *
+                    amount = (int)((action.isMagical ? casterStats.MagAttack : casterStats.Attack) *
                                     Random.Range(action.powerModifier, action.powerModifier2) *
                                     (isCrit ? 2.5f : 1));
                 }
@@ -36,16 +63,16 @@ public class SingleInstanceBehaviour : ActionBehaviour
                     amount = (int)action.powerModifier;
                 }
 
-                target._CurrentHP -= amount;
-                target._CurrentHP = Mathf.Clamp(target._CurrentHP, 0, target.MaxHP);
-                Debug.Log(target.charName + " has taken " + amount + " damage from " + caster.charName);
-                //target.DieCheck();
+                targetStats._CurrentHP -= amount;
+                targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
+                Debug.Log(targetStats.name + " has taken " + amount + " damage from " + casterStats.charName);
+                target.DieCheck();
                 break;
 
             case (ActionEffect.HEAL):
                 if (!action.isFlatAmount)
                 {
-                    amount = (int)((action.isMagical ? caster.MagAttack : 1) *
+                    amount = (int)((action.isMagical ? casterStats.MagAttack : 1) *
                                     Random.Range(action.powerModifier, action.powerModifier2) *
                                     (isCrit ? 2.5f : 1));
                 }
@@ -53,8 +80,8 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 {
                     amount = (int)action.powerModifier;
                 }
-                target._CurrentHP += amount;
-                target._CurrentHP = Mathf.Clamp(target._CurrentHP, 0, target.MaxHP);
+                targetStats._CurrentHP += amount;
+                targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
                 Debug.Log(target + " has restored " + amount + " health from " + caster);
                 break;
 

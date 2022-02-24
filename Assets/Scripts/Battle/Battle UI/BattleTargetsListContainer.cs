@@ -6,7 +6,7 @@ using TMPro;
 
 public class BattleTargetsListContainer : MonoBehaviour
 {
-    public CharacterTemplate myTarget;
+    public BattleCharacterController myTarget;
     public Button myButton;
     public TextMeshProUGUI myName;
 }

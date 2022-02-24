@@ -4,9 +4,44 @@ using UnityEngine;
 
 public class BattleHeroController : BattleCharacterController
 {
+    // VARIABLES
     [SerializeField]
-    private HeroExtension myHero;
+    internal HeroExtension myHero;
 
+    // UPDATES
+    private void Update()
+    {
+        if (eventManager._GameState == GameState.BATTLE)
+        {
+            switch (BattleStateMachine._CombatState)
+            {
+                case CombatState.START:
+                    anim.Play("Enter Fight");
+                    break;
+
+                case CombatState.ACTIVE:
+                    break;
+
+                case CombatState.WAIT:
+                    anim.Play("Stance");
+                    break;
+
+                case CombatState.END:
+                    anim.Play("Jump");
+                    break;
+            }
+        }
+    }
+    private void OnEnable()
+    {
+        
+    }
+    private void OnDisable()
+    {
+        
+    }
+
+    // METHODS
     public override void ActiveStateBehaviour()
     {
         myHero._ActionChargeAmount += myHero._ActionRechargeSpeed * Time.deltaTime;
@@ -19,10 +54,9 @@ public class BattleHeroController : BattleCharacterController
         {
             myHero._CurrentHP = 0;
             myHero._ActionChargeAmount = 0;
-            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(myHero);
+            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
         }
     }
-
 
     internal void PerformManualActionWithAnim()
     {
@@ -30,9 +64,9 @@ public class BattleHeroController : BattleCharacterController
         //yield return new WaitForSeconds(0);
         foreach (ActionBehaviour abehaviour in myHero.myTacticController.ChosenAction._Behaviours)
         {
-            abehaviour.PreActionTargetting(myHero,
-                                          myHero.myTacticController.ChosenAction,
-                                          myHero.myTacticController.ChosenTarget);
+            abehaviour.PreActionTargetting(this,
+                                           myHero.myTacticController.ChosenAction,
+                                           myHero.myTacticController.ChosenTarget);
         }
         myHero._ActionChargeAmount = 0;
         myHero.myTacticController.ChosenAction = null;

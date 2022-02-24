@@ -38,7 +38,7 @@ public class OverworldPlayerMoveNode : MonoBehaviour
                     input.x = 0;
                     input.z = 0;
                 }
-                Debug.Log("My sqrMag is " + input.sqrMagnitude);
+
                 if (input.sqrMagnitude >= Mathf.Epsilon)
                 {
                     calculateDirection();

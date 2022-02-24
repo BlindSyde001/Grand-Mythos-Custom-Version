@@ -5,13 +5,13 @@ using UnityEngine;
 public class CndGroupSize : Condition
 {
     public int _GroupSizeThreshold;
-    public override bool ConditionCheck(CharacterTemplate target)
+    public override bool ConditionCheck(BattleCharacterController target)
     {
         // Check how many are in a group
         switch(targetType)
         {
             case CharacterType.CHARACTER:
-                if (GameManager._instance._PartyMembersActive.Count > _GroupSizeThreshold)
+                if (BattleStateMachine._HeroesActive.Count > _GroupSizeThreshold)
                 {
                     return true;
                 }
@@ -21,7 +21,7 @@ public class CndGroupSize : Condition
                 }
 
             case CharacterType.ENEMY:
-                if (GameManager._instance._PartyMembersActive.Count > _GroupSizeThreshold)
+                if (BattleStateMachine._HeroesActive.Count > _GroupSizeThreshold)
                 {
                     return true;
                 }

@@ -12,13 +12,23 @@ public class BattleStateMachine : MonoBehaviour
     public List<Transform> _HeroSpawns;    // Where do they initially spawn?
     public List<Transform> _EnemySpawns;
 
+    #region Controller Variables
+    public static List<BattleHeroController> _HeroControllers = new(); // Where all actions for Battle are
+    public static List<BattleEnemyController> _EnemyControllers = new();
+    #endregion
+    #region Model Variables
     private static List<GameObject> _HeroModels = new();  // The character models in scene
     private static List<GameObject> _EnemyModels = new();
+    #endregion
+    #region Character State Variables
+    public static List<BattleHeroController> _HeroesActive = new();
+    public static List<BattleHeroController> _HeroesDowned = new();
 
-    public static List<EnemyExtension> _EnemiesActive = new();
-    public static List<EnemyExtension> _EnemiesDowned = new();
+    public static List<BattleEnemyController> _EnemiesActive = new();
+    public static List<BattleEnemyController> _EnemiesDowned = new();
+    #endregion
 
-    public CombatState _BattleState;
+    public static CombatState _CombatState;
     public GameObject losePanel;
     private bool _EndBattleLock;
 
@@ -29,23 +39,25 @@ public class BattleStateMachine : MonoBehaviour
     {
         BU = FindObjectOfType<BattleUIController>();
         rotateCam = FindObjectOfType<CinemachineFreeLook>();
+        //Cursor.visible = false;
     }
     private void Start()
     {
         gameManager = GameManager._instance;
         _EndBattleLock = false;
         SpawnCharacterModels();
+        SwitchCombatState(CombatState.START);
         StartCoroutine(BattleIntermission(5));
     }
     private void Update()
     {
         if(!_EndBattleLock)
         {
-            switch (_BattleState)
+            switch (_CombatState)
             {
                 case CombatState.ACTIVE:
                     EndBattleCondition();
-                    BattleActiveState();
+                    BattleIsActive();
                     rotateCam.GetComponent<CinemachineFreeLook>().enabled = true;
                     break;
 
@@ -58,6 +70,28 @@ public class BattleStateMachine : MonoBehaviour
     }
 
     // METHODS
+    private void SwitchCombatState(CombatState newCombatState)
+    {
+        switch(newCombatState)
+        {
+            case CombatState.START:
+                _CombatState = CombatState.START;
+                break;
+
+            case CombatState.ACTIVE:
+                _CombatState = CombatState.ACTIVE;
+                break;
+
+            case CombatState.WAIT:
+                _CombatState = CombatState.WAIT;
+                break;
+
+            case CombatState.END:
+                _CombatState = CombatState.END;
+                break;
+        }
+    }
+
     #region START OF BATTLE
     private void SpawnCharacterModels() // Spawn models into game, add heroes into active or downed list for battle.
     {
@@ -68,112 +102,119 @@ public class BattleStateMachine : MonoBehaviour
     {
         for (int i = 0; i < gameManager._PartyLineup.Count; i++)
         {
-            #region Instantiate Hero Model
-            GameObject instantiatedHero = Instantiate(gameManager._PartyLineup[i]._CharacterModel,
-                                                        _HeroSpawns[i].position,
-                                                        _HeroSpawns[i].rotation,
-                                                        GameObject.Find("Hero Model Data").transform);
-            instantiatedHero.name = gameManager._PartyLineup[i].charName + " Model";
-            _HeroModels.Add(instantiatedHero);
-            #endregion
-            #region Add to Active/Downed List based on Health
-            switch (gameManager._PartyLineup[i]._CurrentHP)
+            // Add the Controller
+             _HeroControllers.Add(gameManager._PartyLineup[i].myBattleHeroController);
+
+            // Add Model into Battle
+            GameObject instantiatedHeroModel = Instantiate(_HeroControllers[i].myHero._CharacterModel, 
+                                                      _HeroSpawns[i].position, 
+                                                      _HeroSpawns[i].rotation, 
+                                                      GameObject.Find("Hero Model Data").transform);
+            instantiatedHeroModel.name = _HeroControllers[i].myHero.charName + " Model";
+            _HeroModels.Add(instantiatedHeroModel);
+
+            // Add to Active/Downed list Based on Health
+            switch (_HeroControllers[i].myHero._CurrentHP)
             {
                 case <= 0:
-                    gameManager._PartyMembersDowned.Add(gameManager._PartyLineup[i]);
+                    _HeroesDowned.Add(_HeroControllers[i]);
                     break;
 
                 case > 0:
-                    gameManager._PartyMembersActive.Add(gameManager._PartyLineup[i]);
+                    _HeroesActive.Add(_HeroControllers[i]);
                     break;
             }
-            gameManager._PartyLineup[i]._MyInstantiatedModel = instantiatedHero;
-            #endregion
-            gameManager._PartyLineup[i].myBattleHeroController.anim = instantiatedHero.GetComponent<Animator>();
-            BU.CreateHeroUI(gameManager._PartyLineup[i]);
+
+            // Attach Relevant References
+            _HeroControllers[i].myHero._MyInstantiatedModel = instantiatedHeroModel;        // The Battle Model Im using
+            _HeroControllers[i].anim = instantiatedHeroModel.GetComponent<Animator>();      // The Animator Component
+            BU.CreateHeroUI(_HeroControllers[i].myHero);                                    // Battle UI Component
         }
-        foreach (HeroExtension a in gameManager._PartyMembersActive)
+        foreach (BattleHeroController a in _HeroesActive)
         {
-            a._ActionChargeAmount = Random.Range(0, 50);
-        }
+            a.myHero._ActionChargeAmount = Random.Range(0, 50);
+        }                                // Set ATB Bar
     }
     private void AddEnemyIntoBattle()
     {
         for (int i = 0; i < gameManager._EnemyLineup.Count; i++)
         {
-            #region Instantiate Enemy Model
-            GameObject instantiatedEnemyModel = Instantiate(gameManager._EnemyLineup[i]._CharacterModel,
+            // Add Controller
+            _EnemyControllers.Add(gameManager._EnemyLineup[i].myBattleEnemyController);
+
+            // Add Model into Battle
+            GameObject instantiatedEnemyModel = Instantiate(_EnemyControllers[i].myEnemy._CharacterModel,
                                                             _EnemySpawns[i].position,
                                                             _EnemySpawns[i].rotation,
                                                             GameObject.Find("Enemy Model Data").transform);
-            _EnemyModels.Add(instantiatedEnemyModel);
-            instantiatedEnemyModel.name = gameManager._EnemyLineup[i].charName + " Model " + i;
-            #endregion
-            #region Create new Instance of the enemy Script Class
-            EnemyExtension instantiatedEnemyClass = Instantiate(gameManager._EnemyLineup[i], 
-                                                                GameObject.Find("Enemy Battle Data").transform);
-            instantiatedEnemyClass.name = gameManager._EnemyLineup[i].charName + " Data " + i;
-            instantiatedEnemyClass._MyInstantiatedModel = instantiatedEnemyModel;
-            _EnemiesActive.Add(instantiatedEnemyClass);
-            #endregion
-            gameManager._EnemyLineup[i].myBattleEnemyController.anim = instantiatedEnemyModel.GetComponent<Animator>();
-            BU.CreateEnemyUI(instantiatedEnemyClass, instantiatedEnemyModel.transform);
 
-            gameManager._EnemyLineup[i]._ActionChargeAmount = Random.Range(0, 50);
+            instantiatedEnemyModel.name = _EnemyControllers[i].myEnemy.charName + " Model " + i;
+            _EnemyModels.Add(instantiatedEnemyModel);
+
+            // Add to Active List
+            _EnemiesActive.Add(gameManager._EnemyLineup[i].myBattleEnemyController);
+
+            // Attach Relevant References
+            gameManager._EnemyLineup[i]._MyInstantiatedModel = instantiatedEnemyModel;               // the Model Im using in Battle
+            _EnemyControllers[i].anim = instantiatedEnemyModel.GetComponent<Animator>();             // The Animator Component
+            BU.CreateEnemyUI(gameManager._EnemyLineup[i], instantiatedEnemyModel.transform);         // the Battle UI  Component
+
+            _EnemyControllers[i].myEnemy._ActionChargeAmount = Random.Range(0, 50);                  // The ATB Bar
         }
     }
     #endregion
     #region CHANGE IN BATTLE STATE
-    private void BattleActiveState()
+    private void BattleIsActive()
     {
-        foreach(HeroExtension hero in gameManager._PartyMembersActive)
+        foreach(BattleHeroController hero in _HeroControllers)
         {
-            hero.myBattleHeroController.ActiveStateBehaviour();
+            hero.ActiveStateBehaviour();
         }
-        foreach(EnemyExtension enemy in _EnemiesActive)
+        foreach(BattleEnemyController enemy in _EnemyControllers)
         {
-            enemy.myBattleEnemyController.ActiveStateBehaviour();
+            enemy.ActiveStateBehaviour();
         }
     }
     private IEnumerator BattleIntermission(float x)
     {
-        _BattleState = CombatState.WAIT;
+        //_CombatState = CombatState.START;
+        SwitchCombatState(CombatState.WAIT);
         yield return new WaitForSeconds(x);
-        _BattleState = CombatState.ACTIVE;
+        SwitchCombatState(CombatState.ACTIVE);
     }
     #endregion
     #region CHECK STATE OF BATTLERS
     // DEATH CHECK. Called when a char is hit
-    public void CheckCharIsDead(HeroExtension hero)
+    public void CheckCharIsDead(BattleHeroController hero)
     {
-        gameManager._PartyMembersActive.Remove(hero);
-        gameManager._PartyMembersDowned.Add(hero);
-        hero._MyInstantiatedModel.SetActive(false);
-        Debug.Log(hero.charName + " has fallen!");
+        _HeroesActive.Remove(hero);
+        _HeroesDowned.Add(hero);
+        hero.myHero._MyInstantiatedModel.SetActive(false);
+        Debug.Log(hero.myHero.charName + " has fallen!");
     }
-    public void CheckCharIsDead(EnemyExtension enemy)
+    public void CheckCharIsDead(BattleEnemyController enemy)
     {
         _EnemiesActive.Remove(enemy);
         _EnemiesDowned.Add(enemy);
-        enemy._MyInstantiatedModel.SetActive(false);
-        Debug.Log(enemy.charName + " has fallen!");
+        enemy.myEnemy._MyInstantiatedModel.SetActive(false);
+        Debug.Log(enemy.myEnemy.charName + " has fallen!");
     }
     #endregion
-    #region END OF GAME
+    #region End of Battle
     private void EndBattleCondition()
     {
-        if (gameManager._PartyMembersActive.Count > 0 && _EnemiesActive.Count <= 0)
+        if (_HeroesActive.Count > 0 && _EnemiesActive.Count <= 0)
         {
-            _BattleState = CombatState.WAIT;
+            SwitchCombatState(CombatState.WAIT);
             StartCoroutine(VictoryTransition());
         }
-        else if (_EnemiesActive.Count > 0 && gameManager._PartyMembersActive.Count <= 0)
+        else if (_EnemiesActive.Count > 0 && _HeroesActive.Count <= 0)
         {
-            _BattleState = CombatState.WAIT;
+            SwitchCombatState(CombatState.WAIT);
             StartCoroutine(DefeatTransition());
         }
     }
-
+    #region Win Fight
     private IEnumerator VictoryTransition()
     {
         // Victory poses, exp gaining, items, transition back to overworld
@@ -186,28 +227,29 @@ public class BattleStateMachine : MonoBehaviour
     {
         int sharedExp = 0;
         int creditsEarned = 0;
-        foreach(EnemyExtension enemy in _EnemiesDowned)
+        foreach(BattleEnemyController enemy in _EnemiesDowned)
         {
-            sharedExp += enemy.experiencePool;
-            creditsEarned += enemy.creditPool;
+            sharedExp += enemy.myEnemy.experiencePool;
+            creditsEarned += enemy.myEnemy.creditPool;
         }
-        foreach(HeroExtension hero in gameManager._PartyMembersActive)
+        foreach(BattleHeroController hero in _HeroesActive)
         {
-            hero._TotalExperience += sharedExp / gameManager._PartyMembersActive.Count;
-            Debug.Log(hero.charName + " has gained " + sharedExp / gameManager._PartyMembersActive.Count + " EXP & " + creditsEarned + " Credits!!!" );
-            hero.LevelUpCheck();
+            hero.myHero._TotalExperience += sharedExp / _HeroesActive.Count;
+            hero.myHero.LevelUpCheck();
         }
         InventoryManager._instance.creditsInBag += creditsEarned;
-        ReturnToOverworldPrep();
+        StartCoroutine(ReturnToOverworldPrep());
     }
-    private void ReturnToOverworldPrep()
+    private IEnumerator ReturnToOverworldPrep()
     {
         ClearData();
-
+        yield return new WaitForSeconds(2);
+        Cursor.visible = true;
         // reload scene and create player moving character at coordinates
         EventManager._instance.SwitchNewScene(2);
     }
-
+    #endregion
+    #region Lost fight
     private IEnumerator DefeatTransition()
     {
         // Lost, Open up UI options to load saved game or return to title
@@ -221,19 +263,23 @@ public class BattleStateMachine : MonoBehaviour
         losePanel.SetActive(true);
     }
     #endregion
-
     public void ClearData()
     {
         _HeroModels.Clear();
-        gameManager._PartyMembersActive.Clear();
-        gameManager._PartyMembersDowned.Clear();
+        _HeroesActive.Clear();
+        _HeroesDowned.Clear();
+        _HeroControllers.Clear();
 
         _EnemyModels.Clear();
         _EnemiesActive.Clear();
         _EnemiesDowned.Clear();
+        _EnemyControllers.Clear();
 
+        foreach(EnemyExtension ext in gameManager._EnemyLineup)
+        {
+            Destroy(ext.gameObject);
+        }
         gameManager._EnemyLineup.Clear();
-
-        Destroy(GameObject.Find("Enemy Data"));
     }
+    #endregion
 }

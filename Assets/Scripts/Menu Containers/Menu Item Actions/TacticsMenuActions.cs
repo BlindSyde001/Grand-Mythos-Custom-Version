@@ -118,6 +118,7 @@ public class TacticsMenuActions : MonoBehaviour
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
+            heroSelections[i].GetComponent<Image>().sprite = gameManager._PartyLineup[j].charPortrait;
             heroSelections[i].onClick.AddListener(delegate { SetTacticsList(gameManager._PartyLineup[j]); });
         }
     }

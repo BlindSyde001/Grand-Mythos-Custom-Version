@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class EnemyInformation : MonoBehaviour
 {
-    private GameManager GM;
+    private GameManager gameManager;
 
     // VARIABLES
+    List<EnemyExtension> tempLineup = new();
     // Enemies spawned in order
     [SerializeField]
     internal List<EnemyExtension> _Formation1;
@@ -22,24 +23,14 @@ public class EnemyInformation : MonoBehaviour
     // Enemy Chance to Appear
     [SerializeField]
     internal float[] SpawnTable = new float[4];
-
     public static EnemyInformation _instance;
+
     // UPDATES
     private void Awake()
     {
-        if(_instance == null)
-        {
-            _instance = this;
-        }
-        else if(_instance != this)
-        {
-            Destroy(_instance.gameObject);
-            _instance = this;
-        }
-        DontDestroyOnLoad(this.gameObject);
-
-        GM = FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
     }
+
     // Determine which enemies to spawn
     internal void DetermineEnemyFormation()
     {
@@ -49,7 +40,6 @@ public class EnemyInformation : MonoBehaviour
             if (chance <= SpawnTable[i])
             {
                 AssignEnemyFormation(i);
-                StartBattle();
                 return;
             }
             else
@@ -61,24 +51,31 @@ public class EnemyInformation : MonoBehaviour
         switch (enemyChance)
         {
             case 0:
-                GM._EnemyLineup.AddRange(_Formation1);
+                tempLineup.AddRange(_Formation1);
                 break;
 
             case 1:
-                GM._EnemyLineup.AddRange(_Formation2);
+                tempLineup.AddRange(_Formation2);
                 break;
 
             case 2:
-                GM._EnemyLineup.AddRange(_Formation3);
+                tempLineup.AddRange(_Formation3);
                 break;
 
             case 3:
-                GM._EnemyLineup.AddRange(_Formation4);
+                tempLineup.AddRange(_Formation4);
                 break;
         }
+        CreateEnemyInstances();
     }
-    private void StartBattle()
+    private void CreateEnemyInstances()
     {
+        for( int i = 0; i < tempLineup.Count; i++)
+        {
+            EnemyExtension instantiatedEnemyClass = Instantiate(tempLineup[i], gameManager.transform.Find("Enemies"));
+            instantiatedEnemyClass.name = tempLineup[i].charName + "Data" + i;
+            gameManager._EnemyLineup.Add(instantiatedEnemyClass);
+        }
         EventManager._instance.SwitchNewScene(1);
     }
 }

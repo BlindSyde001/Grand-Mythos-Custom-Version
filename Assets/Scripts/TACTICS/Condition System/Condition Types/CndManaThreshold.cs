@@ -6,10 +6,27 @@ public class CndManaThreshold : Condition
 {
     public int manaThreshold;
     public bool _IsGreaterThan;
-    public override bool ConditionCheck(CharacterTemplate target)
+    public override bool ConditionCheck(BattleCharacterController target)
     {
-        if (_IsGreaterThan ?  target._CurrentMP / target.MaxMP >= manaThreshold / 100 :
-                              target._CurrentMP / target.MaxMP <= manaThreshold / 100)
+        CharacterTemplate tempToUse;
+        switch (target.myType)
+        {
+            case BattleCharacterController.ControllerType.HERO:
+                {
+                    BattleHeroController a = target as BattleHeroController;
+                    tempToUse = a.myHero;
+                    break;
+                }
+
+            default:
+                {
+                    BattleEnemyController a = target as BattleEnemyController;
+                    tempToUse = a.myEnemy;
+                    break;
+                }
+        }
+        if (_IsGreaterThan ? tempToUse._CurrentMP / tempToUse.MaxMP >= manaThreshold / 100 :
+                              tempToUse._CurrentMP / tempToUse.MaxMP <= manaThreshold / 100)
         {
             return true;
         }

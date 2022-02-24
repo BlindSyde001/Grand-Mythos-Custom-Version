@@ -7,14 +7,14 @@ using Sirenix.OdinInspector;
 public class HeroTacticController : MonoBehaviour
 {
     // VARIABLES
-
-    protected internal HeroExtension myHero;
+    [SerializeField]
+    internal BattleHeroController myHeroCtrlr;
     public List<Tactic> _TacticsList;
 
     [SerializeField]
     internal bool ActionIsInputted;     // To check if a player made an action, overwrite current Controller
     internal Action ChosenAction;
-    internal CharacterTemplate ChosenTarget;
+    internal BattleCharacterController ChosenTarget;
 
     // METHODS
     private void TryTacticTargets(int i)
@@ -29,9 +29,9 @@ public class HeroTacticController : MonoBehaviour
         switch (x)
         {
             case CharacterType.CHARACTER:
-                for(int j = 0; j < GameManager._instance._PartyMembersActive.Count; j++)
+                for(int j = 0; j < BattleStateMachine._HeroesActive.Count; j++)
                 {
-                    _TacticsList[i]._Target = GameManager._instance._PartyMembersActive[j];
+                    _TacticsList[i]._Target = BattleStateMachine._HeroesActive[j];
                     _TacticsList[i].CallCheck();
                     if (_TacticsList[i].ConditionIsMet)
                     {
@@ -39,6 +39,7 @@ public class HeroTacticController : MonoBehaviour
                     }
                 }
                 break;
+
             case CharacterType.ENEMY:
                 for(int j = 0; j < BattleStateMachine._EnemiesActive.Count; j++)
                 {
@@ -60,14 +61,14 @@ public class HeroTacticController : MonoBehaviour
             {
                 for (int i = 0; i < _TacticsList.Count; i++) // Go Down Gambit list
                 {
-                    _TacticsList[i]._Performer = myHero;
+                    _TacticsList[i]._Performer = myHeroCtrlr;
                     if (_TacticsList[i].isTurnedOn)
                     {
                         TryTacticTargets(i); // Apply condition to targets down the list, until one/none is met
-                        if (_TacticsList[i].ConditionIsMet && myHero._ActionChargeAmount == 100)
+                        if (_TacticsList[i].ConditionIsMet && myHeroCtrlr.myHero._ActionChargeAmount == 100)
                         {
-                            Debug.Log(myHero + " has used " + _TacticsList[i]._Action._Name);
-                            myHero.myBattleHeroController.PerformTacticWithAnim(_TacticsList[i]); // Do all the behaviours on the action
+                            Debug.Log(myHeroCtrlr + " has used " + _TacticsList[i]._Action._Name);
+                            myHeroCtrlr.myHero.myBattleHeroController.PerformTacticWithAnim(_TacticsList[i]); // Do all the behaviours on the action
                         }
                         else if (_TacticsList[i].ConditionIsMet)
                         {
@@ -81,9 +82,9 @@ public class HeroTacticController : MonoBehaviour
         } 
         else if(ActionIsInputted) // Manual Command
         {
-            if(myHero._ActionChargeAmount == 100)
+            if(myHeroCtrlr.myHero._ActionChargeAmount == 100)
             {
-                myHero.myBattleHeroController.PerformManualActionWithAnim();
+                myHeroCtrlr.myHero.myBattleHeroController.PerformManualActionWithAnim();
             }
         }
     }

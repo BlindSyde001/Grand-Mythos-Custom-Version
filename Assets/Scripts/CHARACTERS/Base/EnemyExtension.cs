@@ -31,7 +31,7 @@ public abstract class EnemyExtension : CharacterTemplate
 
     private protected bool CheckForHeroTarget()
     {
-        if (GameManager._instance._PartyMembersActive.Count > 0)
+        if (BattleStateMachine._HeroesActive.Count > 0)
         {
             return true;
         }
@@ -40,11 +40,11 @@ public abstract class EnemyExtension : CharacterTemplate
             return false;
         }
     }
-    protected internal void PerformEnemyAction(Action action, CharacterTemplate target)
+    protected internal void PerformEnemyAction(Action action, BattleCharacterController target)
     {
         foreach (ActionBehaviour aBehaviour in action._Behaviours)
         {
-            aBehaviour.PreActionTargetting(this, action, target);
+            aBehaviour.PreActionTargetting(myBattleEnemyController, action, target);
         }
         _ActionChargeAmount = 0;
     }

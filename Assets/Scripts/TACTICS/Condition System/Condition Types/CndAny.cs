@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CndAny : Condition
 {
-    public override bool ConditionCheck(CharacterTemplate target)
+    public override bool ConditionCheck(BattleCharacterController target)
     {
         return true;
     }
