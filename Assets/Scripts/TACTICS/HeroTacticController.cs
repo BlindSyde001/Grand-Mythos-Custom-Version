@@ -67,8 +67,8 @@ public class HeroTacticController : MonoBehaviour
                         TryTacticTargets(i); // Apply condition to targets down the list, until one/none is met
                         if (_TacticsList[i].ConditionIsMet && myHeroCtrlr.myHero._ActionChargeAmount == 100)
                         {
-                            Debug.Log(myHeroCtrlr + " has used " + _TacticsList[i]._Action._Name);
-                            myHeroCtrlr.myHero.myBattleHeroController.PerformTacticWithAnim(_TacticsList[i]); // Do all the behaviours on the action
+                            Debug.Log(myHeroCtrlr + " has used " + _TacticsList[i]._Action.Name);
+                            StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.PerformTacticWithAnim(_TacticsList[i])); // Do all the behaviours on the action
                         }
                         else if (_TacticsList[i].ConditionIsMet)
                         {
@@ -84,7 +84,7 @@ public class HeroTacticController : MonoBehaviour
         {
             if(myHeroCtrlr.myHero._ActionChargeAmount == 100)
             {
-                myHeroCtrlr.myHero.myBattleHeroController.PerformManualActionWithAnim();
+                StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.PerformManualActionWithAnim());
             }
         }
     }

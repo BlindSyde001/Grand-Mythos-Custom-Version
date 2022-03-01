@@ -175,7 +175,7 @@ public abstract class HeroExtension : CharacterTemplate
         }
         _ExperienceToNextLevel = ExperienceThreshold - _TotalExperience;
     }
-    protected void EquipStats()
+    internal void EquipStats()
     {
         #region Reset Equip Stats
         equipAttack = 0;

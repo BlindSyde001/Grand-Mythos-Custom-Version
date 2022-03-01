@@ -22,6 +22,7 @@ public class SaveData
     public string savedScene;
     public Vector3 overworldPos;
     public Quaternion overworldRot;
+    public int overworldRefDirection;
 
     public int playTimeData;
 

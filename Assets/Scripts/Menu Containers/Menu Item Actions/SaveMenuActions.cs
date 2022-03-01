@@ -87,13 +87,15 @@ public class SaveMenuActions : MonoBehaviour
     public void ClickSave(int SaveFileNumber)
     {
         #region Positional & Zone Data
-        gameManager._LastKnownScene = SceneManager.GetActiveScene().name;
-        gameManager._LastKnownPosition = FindObjectOfType<OverworldPlayerCircuit>().transform.position;
-        gameManager._LastKnownRotation = FindObjectOfType<OverworldPlayerCircuit>().transform.rotation;
+        gameManager.LastKnownScene = SceneManager.GetActiveScene().name;
+        gameManager.LastKnownPosition = FindObjectOfType<OverworldPlayerCircuit>().transform.position;
+        gameManager.LastKnownRotation = FindObjectOfType<OverworldPlayerCircuit>().transform.rotation;
+        gameManager.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(FindObjectOfType<OverworldPlayerCircuit>().referenceDirection);
 
-        SaveData.current.savedScene = gameManager._LastKnownScene;
-        SaveData.current.overworldPos = gameManager._LastKnownPosition;
-        SaveData.current.overworldRot = gameManager._LastKnownRotation;
+        SaveData.current.savedScene = gameManager.LastKnownScene;
+        SaveData.current.overworldPos = gameManager.LastKnownPosition;
+        SaveData.current.overworldRot = gameManager.LastKnownRotation;
+        SaveData.current.overworldRefDirection = gameManager.LastKnownReferenceDirection;
         #endregion
         #region Lineup Data
         // Set x as Index Number of Hero in AllList, so that you can pull that hero by Index when making the Lineup
@@ -140,8 +142,8 @@ public class SaveMenuActions : MonoBehaviour
                 }
                 if(hero.myTacticController._TacticsList[i]._Action != null)
                 {
-                    tacticSave.tacticActionTypeList[i] = hero.myTacticController._TacticsList[i]._Action._ActionType.ToString();
-                    tacticSave.tacticActionList[i] = hero.myTacticController._TacticsList[i]._Action._Name;
+                    tacticSave.tacticActionTypeList[i] = hero.myTacticController._TacticsList[i]._Action.ActionType.ToString();
+                    tacticSave.tacticActionList[i] = hero.myTacticController._TacticsList[i]._Action.Name;
                 }
             }
 

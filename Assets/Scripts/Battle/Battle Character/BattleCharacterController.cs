@@ -8,11 +8,13 @@ public abstract class BattleCharacterController : MonoBehaviour
     public enum ControllerType { HERO, ENEMY}
 
     // VARIABLES
+    protected EventManager eventManager;
     [SerializeField]
     internal ControllerType myType;
     [SerializeField]
-    internal Animator anim;
-    protected EventManager eventManager;
+    internal Animator animator;
+    [SerializeField]
+    private BattleArenaMovement myMovementController;
 
     // UPDATES
     private void Start()

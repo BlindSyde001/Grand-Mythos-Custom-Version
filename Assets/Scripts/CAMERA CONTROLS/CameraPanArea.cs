@@ -8,6 +8,7 @@ public class CameraPanArea: MonoBehaviour
     public GameObject player;
     private bool inZone;
     public GameObject camPos;
+    public Transform refDirection;
 
     //UPDATES
     private void Start()
@@ -27,6 +28,8 @@ public class CameraPanArea: MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            other.GetComponent<OverworldPlayerCircuit>().referenceDirection = refDirection;
+            GameManager._instance.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(refDirection);
             foreach (CameraFollowArea cf in FindObjectsOfType<CameraFollowArea>())
                 cf.StopFollow();
             inZone = true;

@@ -141,7 +141,7 @@ public class TacticsMenuActions : MonoBehaviour
             }
             if (hero.myTacticController._TacticsList[i]._Action != null)
             {
-                tacticsModules[i].action.text = hero.myTacticController._TacticsList[i]._Action._Name;
+                tacticsModules[i].action.text = hero.myTacticController._TacticsList[i]._Action.Name;
             }
             else
             {
@@ -210,7 +210,7 @@ public class TacticsMenuActions : MonoBehaviour
                     selectedHero._BasicAttack == ActionsList[(pageNo * 10) + i])
                 {
                     newComponentList[i].selectedAction = ActionsList[(pageNo * 10) + i];
-                    newComponentList[i].cmpName.text = newComponentList[i].selectedAction._Name;
+                    newComponentList[i].cmpName.text = newComponentList[i].selectedAction.Name;
 
                     int j = i;
                     newComponentList[i].cmpButton.onClick.RemoveAllListeners();
@@ -220,10 +220,10 @@ public class TacticsMenuActions : MonoBehaviour
                 {
                     for (int k = 0; k < inventoryManager.ConsumablesInBag.Count; k++)
                     {
-                        if(inventoryManager.ConsumablesInBag[k]._ItemName == ActionsList[(pageNo * 10) + i]._Name)
+                        if(inventoryManager.ConsumablesInBag[k]._ItemName == ActionsList[(pageNo * 10) + i].Name)
                         {
                             newComponentList[i].selectedAction = ActionsList[(pageNo * 10) + i];
-                            newComponentList[i].cmpName.text = newComponentList[i].selectedAction._Name;
+                            newComponentList[i].cmpName.text = newComponentList[i].selectedAction.Name;
 
                             int j = i;
                             newComponentList[i].cmpButton.onClick.RemoveAllListeners();
@@ -320,7 +320,7 @@ public class TacticsMenuActions : MonoBehaviour
     private void SwapActions()
     {
         tacticActionToChange._Action = actionToBecome;
-        currentContainer.action.text = tacticActionToChange._Action._Name;
+        currentContainer.action.text = tacticActionToChange._Action.Name;
     }
     #endregion
 }

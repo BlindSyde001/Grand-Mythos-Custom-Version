@@ -6,8 +6,7 @@ using TMPro;
 
 public class EquipLoadoutContainer : MonoBehaviour
 {
-    public TextMeshProUGUI WeaponName;
-    public TextMeshProUGUI ArmourName;
-    public TextMeshProUGUI AccessoryOneName;
-    public TextMeshProUGUI AccessoryTwoName;
+    public TextMeshProUGUI EquippedName;
+    public Equipment thisEquipment;
+    public Button ThisButton;
 }

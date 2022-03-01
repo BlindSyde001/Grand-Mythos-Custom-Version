@@ -48,41 +48,47 @@ public class SingleInstanceBehaviour : ActionBehaviour
         }
         #endregion
 
-        switch (action._ActionEffect)
+        switch (action.ActionEffect)
         {
             case ActionEffect.DAMAGE:
                 //phys / mag stat > variation > ~pierce ? ~ > crit ? / tgt phys / mag defense
                 if (!action.isFlatAmount)
                 {
                     amount = (int)((action.isMagical ? casterStats.MagAttack : casterStats.Attack) *
-                                    Random.Range(action.powerModifier, action.powerModifier2) *
+                                    Random.Range(action.PowerModifier, action.PowerModifier2) *
                                     (isCrit ? 2.5f : 1));
                 }
                 else
                 {
-                    amount = (int)action.powerModifier;
+                    amount = (int)action.PowerModifier;
                 }
 
-                targetStats._CurrentHP -= amount;
-                targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
-                Debug.Log(targetStats.name + " has taken " + amount + " damage from " + casterStats.charName);
-                target.DieCheck();
+                if (target != null)
+                {
+                    targetStats._CurrentHP -= amount;
+                    targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
+                    Debug.Log(targetStats.name + " has taken " + amount + " damage from " + casterStats.charName);
+                    target.DieCheck();
+                }
                 break;
 
             case (ActionEffect.HEAL):
                 if (!action.isFlatAmount)
                 {
                     amount = (int)((action.isMagical ? casterStats.MagAttack : 1) *
-                                    Random.Range(action.powerModifier, action.powerModifier2) *
+                                    Random.Range(action.PowerModifier, action.PowerModifier2) *
                                     (isCrit ? 2.5f : 1));
                 }
                 else
                 {
-                    amount = (int)action.powerModifier;
+                    amount = (int)action.PowerModifier;
                 }
-                targetStats._CurrentHP += amount;
-                targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
-                Debug.Log(target + " has restored " + amount + " health from " + caster);
+                if (target != null)
+                {
+                    targetStats._CurrentHP += amount;
+                    targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
+                    Debug.Log(target + " has restored " + amount + " health from " + caster);
+                }
                 break;
 
             case (ActionEffect.OTHER):

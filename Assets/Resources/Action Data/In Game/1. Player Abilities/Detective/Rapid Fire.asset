@@ -12,19 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8bcf0d7fa918c948a1b694bbcdef29a, type: 3}
   m_Name: Rapid Fire
   m_EditorClassIdentifier: 
-  _ActionTargetType: 1
-  _ActionType: 0
-  _ActionEffect: 0
-  _ActionElement: 4
+  ActionTargetType: 1
+  ActionType: 0
+  ActionEffect: 0
+  ActionElement: 4
   isMagical: 0
   isFlatAmount: 0
-  _Name: Rapid Fire
+  Name: Rapid Fire
   _ActionID: 0
-  _Description: Shoots in quick succession at all enemies.
+  AnimationName: Attack
+  AnimationTiming: 0.15
+  Description: 
   _Cost: 0
   critChance: 0
-  powerModifier: 0.8
-  powerModifier2: 1
-  timingModifier: 0
-  _Behaviours:
+  PowerModifier: 0.75
+  PowerModifier2: 1
+  TimingModifier: 0
+  Behaviours:
   - {fileID: 11400000, guid: 4aecc845ec4044f429c8a64889b953f0, type: 2}

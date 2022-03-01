@@ -45,7 +45,8 @@ public class AudioManager : MonoBehaviour
         switch(gs)
         {
             case GameState.OVERWORLD:
-                PlayMusicWithDelay(overworldTheme);
+                PlayMusicWithFade(overworldTheme);
+                //PlayMusicWithDelay(overworldTheme);
                 break;
 
             case GameState.BATTLE:

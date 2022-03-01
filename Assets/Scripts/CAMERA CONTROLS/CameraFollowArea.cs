@@ -7,8 +7,8 @@ public class CameraFollowArea : MonoBehaviour
     //VARIABLES
     private GameObject player;
     private Camera cam;
-    public GameObject posChange;
-    public GameObject focalPoint;
+    public GameObject camPos;
+    public Transform refDirection;
 
 
     public Vector3 offset;
@@ -56,7 +56,6 @@ public class CameraFollowArea : MonoBehaviour
         {
             Vector3 pos = player.transform.position + offset;
             cam.transform.position = new Vector3(Mathf.Clamp(pos.x, min.x, max.x), Mathf.Clamp(pos.y, min.y, max.y), Mathf.Clamp(pos.z, min.z, max.z));
-            //cam.transform.LookAt(focalPoint.transform);
         }
     }
 
@@ -65,6 +64,8 @@ public class CameraFollowArea : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
+            other.GetComponent<OverworldPlayerCircuit>().referenceDirection = refDirection;
+            GameManager._instance.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(refDirection);
             player = other.gameObject;
             CutToShot();
             StartFollow();
@@ -89,8 +90,8 @@ public class CameraFollowArea : MonoBehaviour
 
     public void CutToShot()
     {
-        cam.transform.localPosition = posChange.transform.position;
-        cam.transform.localRotation = posChange.transform.rotation;
+        cam.transform.localPosition = camPos.transform.position;
+        cam.transform.localRotation = camPos.transform.rotation;
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()

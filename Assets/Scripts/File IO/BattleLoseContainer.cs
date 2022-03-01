@@ -21,12 +21,10 @@ public class BattleLoseContainer : MonoBehaviour
     }
 
     // METHODS
-
     public void QuitGame()
     {
         Application.Quit();
     }
-
     public void OpenLoadFiles()
     {
         string[] readFiles = GetFileNames(Application.persistentDataPath + "/Save Files", "*.json");
@@ -72,19 +70,21 @@ public class BattleLoseContainer : MonoBehaviour
         }
         return files;
     }
+
     public void LoadGameData(int FileNumber)
     {
         var SD = SaveManager.LoadFromFile(FileNumber);
 
         #region Positional Data
-        gameManager._LastKnownScene = SD.savedScene;
-        gameManager._LastKnownPosition = SD.overworldPos;
-        gameManager._LastKnownRotation = SD.overworldRot;
+        gameManager.LastKnownScene = SD.savedScene;
+        gameManager.LastKnownPosition = SD.overworldPos;
+        gameManager.LastKnownRotation = SD.overworldRot;
+        gameManager.LastKnownReferenceDirection = SD.overworldRefDirection;
         #endregion
         #region Lineup Data
         gameManager._PartyLineup.Clear();
         BattleStateMachine._HeroesActive.Clear();
-        BattleStateMachine._HeroesDowned.Clear();
+        BattleStateMachine._HeroesActive.Clear();
         for (int i = 0; i < SD.lineupSave.Count; i++)
         {
             gameManager._PartyLineup.Add(gameManager._AllPartyMembers[SD.lineupSave[i]]);
@@ -117,12 +117,12 @@ public class BattleLoseContainer : MonoBehaviour
                         }
                         else
                         {
-                            gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Action = gameManager._HeroSkillsDatabase.Find(x => x._Name == SD.heroTacticData[i].tacticActionList[j]);
+                            gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Action = gameManager._HeroSkillsDatabase.Find(x => x.Name == SD.heroTacticData[i].tacticActionList[j]);
                         }
                     }
                     else if (SD.heroTacticData[i].tacticActionTypeList[j] == "ITEM")
                     {
-                        gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Action = gameManager._ItemSkillsDatabase.Find(x => x._Name == SD.heroTacticData[i].tacticActionList[j]);
+                        gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Action = gameManager._ItemSkillsDatabase.Find(x => x.Name == SD.heroTacticData[i].tacticActionList[j]);
                     }
                 }
             }
@@ -137,16 +137,21 @@ public class BattleLoseContainer : MonoBehaviour
         #region Inventory Data
         inventoryManager.ConsumablesInBag.Clear();
         inventoryManager.EquipmentInBag.Clear();
+        inventoryManager._WeaponsInBag.Clear();
+        inventoryManager._ArmourInBag.Clear();
+        inventoryManager._AccessoryInBag.Clear();
         inventoryManager.LootInBag.Clear();
         inventoryManager.KeyItemsInBag.Clear();
         inventoryManager.ConditionsAcquired.Clear();
 
+        // Add Consumables into Bag
         for (int i = 0; i < SD.inventorySaveData.ConsumablesIdData.Count; i++)
         {
             Consumable newCon = gameManager._ConsumablesDatabase.Find(x => x._ItemID == SD.inventorySaveData.ConsumablesIdData[i]);
             newCon._ItemAmount = SD.inventorySaveData.ConsumablesAmountData[i];
             inventoryManager.ConsumablesInBag.Add(newCon);
         }
+        // Add Equipment into Bag as well as Categorised into Weapons / Armour / Accessories
         for (int i = 0; i < SD.inventorySaveData.EquipmentNameData.Count; i++)
         {
             Equipment newEquip;
@@ -156,26 +161,36 @@ public class BattleLoseContainer : MonoBehaviour
                     newEquip = gameManager._GunsDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
                     newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
                     inventoryManager.EquipmentInBag.Add(newEquip);
+                    Weapon gun = newEquip as Weapon;
+                    inventoryManager._WeaponsInBag.Add(gun);
                     break;
                 case string a when a.Contains("Warhammer"):
                     newEquip = gameManager._WarhammersDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
                     newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
                     inventoryManager.EquipmentInBag.Add(newEquip);
+                    Weapon hmr = newEquip as Weapon;
+                    inventoryManager._WeaponsInBag.Add(hmr);
                     break;
                 case string a when a.Contains("Power Glove"):
                     newEquip = gameManager._PowerGlovesDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
                     newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
                     inventoryManager.EquipmentInBag.Add(newEquip);
+                    Weapon glv = newEquip as Weapon;
+                    inventoryManager._WeaponsInBag.Add(glv);
                     break;
                 case string a when a.Contains("Grimoire"):
                     newEquip = gameManager._GrimoiresDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
                     newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
                     inventoryManager.EquipmentInBag.Add(newEquip);
+                    Weapon grm = newEquip as Weapon;
+                    inventoryManager._WeaponsInBag.Add(grm);
                     break;
                 case string a when a.Contains("Leather"):
                     newEquip = gameManager._LeatherDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
                     newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
                     inventoryManager.EquipmentInBag.Add(newEquip);
+                    Armour arm = newEquip as Armour;
+                    inventoryManager._ArmourInBag.Add(arm);
                     break;
                 case string a when a.Contains("Mail"):
                     newEquip = gameManager._MailDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
@@ -186,41 +201,51 @@ public class BattleLoseContainer : MonoBehaviour
                     newEquip = gameManager._ChasisDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
                     newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
                     inventoryManager.EquipmentInBag.Add(newEquip);
+                    Armour chs = newEquip as Armour;
+                    inventoryManager._ArmourInBag.Add(chs);
                     break;
                 case string a when a.Contains("Robe"):
                     newEquip = gameManager._RobesDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
                     newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
                     inventoryManager.EquipmentInBag.Add(newEquip);
+                    Armour rb = newEquip as Armour;
+                    inventoryManager._ArmourInBag.Add(rb);
                     break;
                 case string a when a.Contains("Accessory"):
                     newEquip = gameManager._AccessoryDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
                     newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
                     inventoryManager.EquipmentInBag.Add(newEquip);
+                    Accessory acc = newEquip as Accessory;
+                    inventoryManager._AccessoryInBag.Add(acc);
                     break;
             }
         }
+        // Add Loot into Bag
         for (int i = 0; i < SD.inventorySaveData.LootIdData.Count; i++)
         {
             Loot newLoot = gameManager._LootDatabase.Find(x => x._ItemID == SD.inventorySaveData.KeyItemsIdData[i]);
             newLoot._ItemAmount = SD.inventorySaveData.LootAmountData[i];
             inventoryManager.LootInBag.Add(newLoot);
         }
+        // Add Key Items into Bag
         for (int i = 0; i < SD.inventorySaveData.KeyItemsIdData.Count; i++)
         {
             KeyItem newKey = gameManager._KeyItemsDatabase.Find(x => x._ItemID == SD.inventorySaveData.KeyItemsIdData[i]);
             inventoryManager.KeyItemsInBag.Add(newKey);
         }
+        // Add Conditions into Bag
         for (int i = 0; i < SD.inventorySaveData.ConditionsIdData.Count; i++)
         {
             Condition newCond = gameManager._ConditionsDatabase.Find(x => x.cndID == SD.inventorySaveData.ConditionsIdData[i]);
             inventoryManager.ConditionsAcquired.Add(newCond);
         }
+        // Add Money into Bag
         inventoryManager.creditsInBag = SD.inventorySaveData.CreditsAmountData;
         #endregion
         #region Time Data
         FindObjectOfType<InGameClock>().playTime = SD.playTimeData;
         #endregion
-        LoadGameScene(gameManager._LastKnownScene);
+        LoadGameScene(gameManager.LastKnownScene);
     }
     private void LoadGameScene(string SceneToLoad)
     {

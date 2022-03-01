@@ -60,11 +60,12 @@ public class SceneInformation : MonoBehaviour
     private void CreateMovablePlayer(int DoorwayToSpawn)
     {
         // If I move back to the same Scene, reload me at last position, otherwise, spawn me in a designated spot
-        if(GameManager._instance._LastKnownScene == SceneManager.GetActiveScene().name)
+        if(GameManager._instance.LastKnownScene == SceneManager.GetActiveScene().name)
         {
-            Instantiate(_Player,
-                        GameManager._instance._LastKnownPosition,
-                        GameManager._instance._LastKnownRotation);
+           GameObject a = Instantiate(_Player,
+                                      GameManager._instance.LastKnownPosition,
+                                      GameManager._instance.LastKnownRotation);
+            a.GetComponent<OverworldPlayerCircuit>().referenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections[GameManager._instance.LastKnownReferenceDirection];
         }
         else
         {

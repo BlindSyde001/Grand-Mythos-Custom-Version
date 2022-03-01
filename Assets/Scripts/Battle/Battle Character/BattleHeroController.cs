@@ -7,41 +7,73 @@ public class BattleHeroController : BattleCharacterController
     // VARIABLES
     [SerializeField]
     internal HeroExtension myHero;
+    private string currentAnimState;
+
+    const string Battle_EnterFight = "Enter Fight";
+    const string Battle_Stance = "Stance";
+    const string Battle_Die = "Die";
 
     // UPDATES
-    private void Update()
-    {
-        if (eventManager._GameState == GameState.BATTLE)
-        {
-            switch (BattleStateMachine._CombatState)
-            {
-                case CombatState.START:
-                    anim.Play("Enter Fight");
-                    break;
-
-                case CombatState.ACTIVE:
-                    break;
-
-                case CombatState.WAIT:
-                    anim.Play("Stance");
-                    break;
-
-                case CombatState.END:
-                    anim.Play("Jump");
-                    break;
-            }
-        }
-    }
     private void OnEnable()
     {
-        
+        BattleStateMachine.OnNewStateSwitched += NewCombatState;
     }
     private void OnDisable()
     {
-        
+        BattleStateMachine.OnNewStateSwitched -= NewCombatState;
     }
 
     // METHODS
+    #region Standard Action Methods
+    internal IEnumerator PerformManualActionWithAnim()
+    {
+        // Play Anim
+        if (myHero._CurrentHP > 0)
+        {
+            myHero._ActionChargeAmount = 0;
+            ChangeAnimationState(myHero.myTacticController.ChosenAction.AnimationName);
+            yield return new WaitForSeconds(myHero.myTacticController.ChosenAction.AnimationTiming);
+
+            foreach (ActionBehaviour abehaviour in myHero.myTacticController.ChosenAction.Behaviours)
+            {
+                abehaviour.PreActionTargetting(this,
+                                               myHero.myTacticController.ChosenAction,
+                                               myHero.myTacticController.ChosenTarget);
+            }
+        }
+        else
+        {
+            yield return null;
+        }
+        myHero.myTacticController.ChosenAction = null;
+        myHero.myTacticController.ChosenTarget = null;
+        myHero.myTacticController.ActionIsInputted = false;
+    }
+    internal IEnumerator PerformTacticWithAnim(Tactic _TacticToPerform)
+    {
+        // Play Anim Here
+        if (myHero._CurrentHP > 0)
+        {
+            myHero._ActionChargeAmount = 0;
+            ChangeAnimationState(myHero.myTacticController.ChosenAction.AnimationName);
+            yield return new WaitForSeconds(myHero.myTacticController.ChosenAction.AnimationTiming);
+
+            foreach (ActionBehaviour aBehaviour in _TacticToPerform._Action.Behaviours)
+            {
+                aBehaviour.PreActionTargetting(_TacticToPerform._Performer,
+                                               _TacticToPerform._Action,
+                                               _TacticToPerform._Target);
+            }
+        }
+        else
+        {
+            yield return null;
+        }
+        _TacticToPerform._Target = null;
+        myHero.myTacticController.ChosenAction = null;
+        myHero.myTacticController.ChosenTarget = null;
+    }
+
     public override void ActiveStateBehaviour()
     {
         myHero._ActionChargeAmount += myHero._ActionRechargeSpeed * Time.deltaTime;
@@ -55,38 +87,41 @@ public class BattleHeroController : BattleCharacterController
             myHero._CurrentHP = 0;
             myHero._ActionChargeAmount = 0;
             FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
+            ChangeAnimationState(Battle_Die);
         }
     }
+    #endregion
 
-    internal void PerformManualActionWithAnim()
+    private void NewCombatState(CombatState combatState)
     {
-        // Play Anim
-        //yield return new WaitForSeconds(0);
-        foreach (ActionBehaviour abehaviour in myHero.myTacticController.ChosenAction._Behaviours)
+        switch(combatState)
         {
-            abehaviour.PreActionTargetting(this,
-                                           myHero.myTacticController.ChosenAction,
-                                           myHero.myTacticController.ChosenTarget);
+            case CombatState.START:
+                if(myHero._CurrentHP > 0)
+                ChangeAnimationState(Battle_EnterFight);
+                else
+                {
+                    ChangeAnimationState(Battle_Die);
+                }
+                break;
+
+            case CombatState.ACTIVE:
+                if (myHero._CurrentHP > 0)
+                    ChangeAnimationState(Battle_Stance);
+                break;
+
+            case CombatState.WAIT:
+                if (myHero._CurrentHP > 0)
+                    ChangeAnimationState(Battle_Stance);
+                break;
+
+            case CombatState.END:
+                break;
         }
-        myHero._ActionChargeAmount = 0;
-        myHero.myTacticController.ChosenAction = null;
-        myHero.myTacticController.ChosenTarget = null;
-        myHero.myTacticController.ActionIsInputted = false;
     }
-    internal void PerformTacticWithAnim(Tactic _TacticToPerform)
+    private void ChangeAnimationState(string newAnimState)
     {
-        // Play Anim Here
-        //yield return new WaitForSeconds(0);
-        foreach (ActionBehaviour aBehaviour in _TacticToPerform._Action._Behaviours)
-        {
-            aBehaviour.PreActionTargetting(_TacticToPerform._Performer,
-                                           _TacticToPerform._Action,
-                                           _TacticToPerform._Target);
-        }
-        _TacticToPerform._Target = null;
-        myHero._ActionChargeAmount = 0;
-        myHero.myTacticController.ChosenAction = null;
-        myHero.myTacticController.ChosenTarget = null;
-
+        animator.Play(newAnimState);
+        currentAnimState = newAnimState;
     }
 }

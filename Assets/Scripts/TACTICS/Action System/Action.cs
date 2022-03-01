@@ -12,35 +12,39 @@ public enum ActionElement { FIRE, ICE, LIGHTNING, WATER, NONE}
 public class Action : ScriptableObject
 {
     [BoxGroup("Properties")]
-    public ActionTargetType _ActionTargetType;
+    public ActionTargetType ActionTargetType;
     [BoxGroup("Properties")]
-    public ActionType _ActionType;
+    public ActionType ActionType;
     [BoxGroup("Properties")]
-    public ActionEffect _ActionEffect;
+    public ActionEffect ActionEffect;
     [BoxGroup("Properties")]
-    public ActionElement _ActionElement;
+    public ActionElement ActionElement;
     [BoxGroup("Properties")]
     public bool isMagical;
     [BoxGroup("Properties")]
     public bool isFlatAmount;
 
     [BoxGroup("Basic Info")]
-    public string _Name;
+    public string Name;
     [BoxGroup("Basic Info")]
     public int _ActionID;
     [BoxGroup("Basic Info")]
-    [TextArea]
-    public string _Description;
+    public string AnimationName;
     [BoxGroup("Basic Info")]
-    public int _Cost;
+    public float AnimationTiming;
+    [BoxGroup("Basic Info")]
+    [TextArea]
+    public string Description;
 
+    [BoxGroup("Modifiers")]
+    public int _Cost;
     [BoxGroup("Modifiers")]
     public int critChance;
     [BoxGroup("Modifiers")]
-    public float powerModifier;  // First power modifier e.g initial spell power, attack damage modifier
+    public float PowerModifier;  // First power modifier e.g initial spell power, attack damage modifier
     [BoxGroup("Modifiers")]
-    public float powerModifier2; // Second power modifier e.g top end range for damage variation (attack damage is between 1 - 1.5)
+    public float PowerModifier2; // Second power modifier e.g top end range for damage variation (attack damage is between 1 - 1.5)
     [BoxGroup("Modifiers")]
-    public float timingModifier; // Use in countdowns, e.g Doom spell, Damage over time
-    public List<ActionBehaviour> _Behaviours;
+    public float TimingModifier; // Use in countdowns, e.g Doom spell, Damage over time
+    public List<ActionBehaviour> Behaviours;
 }

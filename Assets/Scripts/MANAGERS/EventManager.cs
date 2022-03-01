@@ -179,12 +179,12 @@ public class EventManager : MonoBehaviour
     }
     private void LoadBattle()
     {
-        gameManager._LastKnownScene = SceneManager.GetActiveScene().name;
+        gameManager.LastKnownScene = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(1);
     }
     private void LoadOverworld()
     {
-        sceneChangeManager.LoadNewZone(GameManager._instance._LastKnownScene);
+        sceneChangeManager.LoadNewZone(GameManager._instance.LastKnownScene);
     }
     #endregion
 }

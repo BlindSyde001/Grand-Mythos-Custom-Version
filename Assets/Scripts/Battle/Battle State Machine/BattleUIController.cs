@@ -36,7 +36,10 @@ public class BattleUIController : MonoBehaviour
     {
         switch (BattleStateMachine._CombatState)
         {
-            case CombatState.ACTIVE:
+            case CombatState.START:
+                break;
+
+            default:
                 SetUIData();
                 break;
         }
@@ -112,7 +115,7 @@ public class BattleUIController : MonoBehaviour
                             break;
                         }
                 }
-                heroUIData[i].action.text = heroData[i].myTacticController.ChosenAction._Name + " > " +
+                heroUIData[i].action.text = heroData[i].myTacticController.ChosenAction.Name + " > " +
                                             tempToUse.charName;
             }
             else

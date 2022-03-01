@@ -9,7 +9,7 @@ public class ActionBehaviour : ScriptableObject
         // Define the Parameters
         // Pull Data from the Caster
         // Compute Stats from Caster and Target with correct Behaviour Equation
-        if (action._ActionTargetType == ActionTargetType.MULTI)
+        if (action.ActionTargetType == ActionTargetType.MULTI)
         {   // FIND WHERE THE GUY IS IN WHAT LIST => THEN DO IT TO EM ALL
 
             BattleHeroController a = target as BattleHeroController;
@@ -47,7 +47,7 @@ public class ActionBehaviour : ScriptableObject
                 }
             }
         }
-        else if (action._ActionTargetType == ActionTargetType.SINGLE)
+        else if (action.ActionTargetType == ActionTargetType.SINGLE)
         {
             PerformAction(caster, action, target);
         }

@@ -27,6 +27,9 @@ public class BattleStateMachine : MonoBehaviour
     public static List<BattleEnemyController> _EnemiesActive = new();
     public static List<BattleEnemyController> _EnemiesDowned = new();
     #endregion
+    public delegate void SwitchToNewState(CombatState CS);
+    public static event SwitchToNewState OnNewStateSwitched;
+
 
     public static CombatState _CombatState;
     public GameObject losePanel;
@@ -76,18 +79,22 @@ public class BattleStateMachine : MonoBehaviour
         {
             case CombatState.START:
                 _CombatState = CombatState.START;
+                OnNewStateSwitched(newCombatState);
                 break;
 
             case CombatState.ACTIVE:
                 _CombatState = CombatState.ACTIVE;
+                OnNewStateSwitched(newCombatState);
                 break;
 
             case CombatState.WAIT:
                 _CombatState = CombatState.WAIT;
+                OnNewStateSwitched(newCombatState);
                 break;
 
             case CombatState.END:
                 _CombatState = CombatState.END;
+                OnNewStateSwitched(newCombatState);
                 break;
         }
     }
@@ -127,7 +134,7 @@ public class BattleStateMachine : MonoBehaviour
 
             // Attach Relevant References
             _HeroControllers[i].myHero._MyInstantiatedModel = instantiatedHeroModel;        // The Battle Model Im using
-            _HeroControllers[i].anim = instantiatedHeroModel.GetComponent<Animator>();      // The Animator Component
+            _HeroControllers[i].animator = instantiatedHeroModel.GetComponent<Animator>();      // The Animator Component
             BU.CreateHeroUI(_HeroControllers[i].myHero);                                    // Battle UI Component
         }
         foreach (BattleHeroController a in _HeroesActive)
@@ -156,7 +163,7 @@ public class BattleStateMachine : MonoBehaviour
 
             // Attach Relevant References
             gameManager._EnemyLineup[i]._MyInstantiatedModel = instantiatedEnemyModel;               // the Model Im using in Battle
-            _EnemyControllers[i].anim = instantiatedEnemyModel.GetComponent<Animator>();             // The Animator Component
+            _EnemyControllers[i].animator = instantiatedEnemyModel.GetComponent<Animator>();             // The Animator Component
             BU.CreateEnemyUI(gameManager._EnemyLineup[i], instantiatedEnemyModel.transform);         // the Battle UI  Component
 
             _EnemyControllers[i].myEnemy._ActionChargeAmount = Random.Range(0, 50);                  // The ATB Bar
@@ -189,14 +196,12 @@ public class BattleStateMachine : MonoBehaviour
     {
         _HeroesActive.Remove(hero);
         _HeroesDowned.Add(hero);
-        hero.myHero._MyInstantiatedModel.SetActive(false);
         Debug.Log(hero.myHero.charName + " has fallen!");
     }
     public void CheckCharIsDead(BattleEnemyController enemy)
     {
         _EnemiesActive.Remove(enemy);
         _EnemiesDowned.Add(enemy);
-        enemy.myEnemy._MyInstantiatedModel.SetActive(false);
         Debug.Log(enemy.myEnemy.charName + " has fallen!");
     }
     #endregion
@@ -214,7 +219,8 @@ public class BattleStateMachine : MonoBehaviour
             StartCoroutine(DefeatTransition());
         }
     }
-    #region Win Fight
+
+
     private IEnumerator VictoryTransition()
     {
         // Victory poses, exp gaining, items, transition back to overworld
@@ -248,8 +254,8 @@ public class BattleStateMachine : MonoBehaviour
         // reload scene and create player moving character at coordinates
         EventManager._instance.SwitchNewScene(2);
     }
-    #endregion
-    #region Lost fight
+
+
     private IEnumerator DefeatTransition()
     {
         // Lost, Open up UI options to load saved game or return to title
@@ -262,7 +268,6 @@ public class BattleStateMachine : MonoBehaviour
     {
         losePanel.SetActive(true);
     }
-    #endregion
     public void ClearData()
     {
         _HeroModels.Clear();

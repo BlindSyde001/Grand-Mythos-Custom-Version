@@ -12,19 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8bcf0d7fa918c948a1b694bbcdef29a, type: 3}
   m_Name: Grenade
   m_EditorClassIdentifier: 
-  _ActionTargetType: 1
-  _ActionType: 1
-  _ActionEffect: 0
-  _ActionElement: 4
+  ActionTargetType: 1
+  ActionType: 1
+  ActionEffect: 0
+  ActionElement: 0
   isMagical: 0
   isFlatAmount: 1
-  _Name: Grenade
+  Name: Grenade
   _ActionID: 0
-  _Description: 
+  AnimationName: Attack
+  AnimationTiming: 0
+  Description: 
   _Cost: 1
   critChance: 0
-  powerModifier: 75
-  powerModifier2: 0
-  timingModifier: 0
-  _Behaviours:
+  PowerModifier: 100
+  PowerModifier2: 0
+  TimingModifier: 0
+  Behaviours:
   - {fileID: 11400000, guid: 4aecc845ec4044f429c8a64889b953f0, type: 2}

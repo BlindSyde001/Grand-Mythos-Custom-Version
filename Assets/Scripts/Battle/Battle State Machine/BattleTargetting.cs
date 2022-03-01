@@ -62,7 +62,7 @@ public class BattleTargetting : MonoBehaviour
             actions[i].myName.text = "";
             int j = i;
             actions[i].myAction = battlUIController.CurrentHero._AvailableActions[i];
-            actions[i].myName.text = battlUIController.CurrentHero._AvailableActions[i]._Name;
+            actions[i].myName.text = battlUIController.CurrentHero._AvailableActions[i].Name;
             actions[i].myButton.onClick.AddListener(delegate {SetAction(actions[j].myAction); });
         }
         actions[0].GetComponent<Button>().Select();
@@ -102,7 +102,7 @@ public class BattleTargetting : MonoBehaviour
     public void SetAction(Action action)
     {
         chosenAction = action;
-        OpenTargetList(action._ActionEffect == ActionEffect.HEAL? 1 : 0);
+        OpenTargetList(action.ActionEffect == ActionEffect.HEAL? 1 : 0);
         Targets[0].GetComponent<Button>().Select();
     }
     public void OpenTargetList(int enemyOrHero)
@@ -167,5 +167,9 @@ public class BattleTargetting : MonoBehaviour
         battlUIController.CurrentHero.myTacticController.ActionIsInputted = true;
         battlUIController.CurrentHero.myTacticController.ChosenAction = action;
         battlUIController.CurrentHero.myTacticController.ChosenTarget = target;
+        if(action.ActionType == ActionType.ITEM)
+        {
+            InventoryManager._instance.RemoveFromInventory(InventoryManager._instance.ConsumablesInBag.Find(x => x.myAction == action));
+        }
     }
 }

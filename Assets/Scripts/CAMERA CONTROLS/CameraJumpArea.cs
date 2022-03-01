@@ -5,7 +5,8 @@ using UnityEngine;
 public class CameraJumpArea : MonoBehaviour
 {
     //VARIABLES
-    public GameObject posChange;
+    public GameObject camPos;
+    public Transform refDirection;
 
     //METHODS
     private void OnTriggerEnter(Collider other)
@@ -13,6 +14,8 @@ public class CameraJumpArea : MonoBehaviour
        if(other.CompareTag("Player"))
         {
             // MOVE CAMERA TO POSCHANGE POSITION
+            other.GetComponent<OverworldPlayerCircuit>().referenceDirection = refDirection;
+            GameManager._instance.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(refDirection);
             foreach (CameraFollowArea cf in FindObjectsOfType<CameraFollowArea>())
                 cf.StopFollow();
             CutToShot();
@@ -21,7 +24,7 @@ public class CameraJumpArea : MonoBehaviour
 
     public void CutToShot()
     {
-        Camera.main.transform.localPosition = posChange.transform.position;
-        Camera.main.transform.localRotation = posChange.transform.rotation;
+        Camera.main.transform.localPosition = camPos.transform.position;
+        Camera.main.transform.localRotation = camPos.transform.rotation;
     }
 }

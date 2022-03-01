@@ -23,9 +23,8 @@ public class OverworldPlayerCircuit : MonoBehaviour
     // UPDATES
     private void Awake()
     {
-        referenceDirection = GameObject.Find("Reference Direction").transform;
+        referenceDirection = FindObjectOfType<DirectionStorage>().ReferenceDirections[0];
     }
-
     private void OnEnable()
     {
         EventManager.LoadingBattle += SavePositionalData;
@@ -38,8 +37,9 @@ public class OverworldPlayerCircuit : MonoBehaviour
     //METHODS
     internal void SavePositionalData()
     {
-        GameManager._instance._LastKnownPosition = transform.position;
-        GameManager._instance._LastKnownRotation = transform.rotation;
+        GameManager._instance.LastKnownPosition = transform.position;
+        GameManager._instance.LastKnownRotation = transform.rotation;
+        GameManager._instance.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(referenceDirection);
     }
     internal void InteractionCheck()
     {

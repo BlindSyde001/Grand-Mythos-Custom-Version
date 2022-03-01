@@ -102,13 +102,13 @@ public class AbilitiesMenuActions : MonoBehaviour
         {
             int j = i;
             abilityButtons[i].gameObject.SetActive(true);
-            abilityButtons[i].buttonName.text = hero._AvailableActions[i]._Name;
+            abilityButtons[i].buttonName.text = hero._AvailableActions[i].Name;
             abilityButtons[i].thisButton.onClick.AddListener(delegate { SetDescription(hero._AvailableActions[j]); });
         }
     }
     public void SetDescription(Action action)
     {
-        abilityDescriptionContainer.abilityNameTitle.text = action._Name;
-        abilityDescriptionContainer.abilityDescription.text = action._Description;
+        abilityDescriptionContainer.abilityNameTitle.text = action.Name;
+        abilityDescriptionContainer.abilityDescription.text = action.Description;
     }
 }

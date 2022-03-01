@@ -28,7 +28,10 @@ public abstract class EnemyExtension : CharacterTemplate
         _CurrentHP = _MaxHP;
         _CurrentMP = _MaxMP;
     }
+    public virtual void EnemyAct()
+    {
 
+    }
     private protected bool CheckForHeroTarget()
     {
         if (BattleStateMachine._HeroesActive.Count > 0)
@@ -39,13 +42,5 @@ public abstract class EnemyExtension : CharacterTemplate
         {
             return false;
         }
-    }
-    protected internal void PerformEnemyAction(Action action, BattleCharacterController target)
-    {
-        foreach (ActionBehaviour aBehaviour in action._Behaviours)
-        {
-            aBehaviour.PreActionTargetting(myBattleEnemyController, action, target);
-        }
-        _ActionChargeAmount = 0;
     }
 }

@@ -12,7 +12,7 @@ public class ES_Terrorist_Gunner : EnemyExtension
 
     // METHODS
 
-    public void ActiveStateBehaviour()
+    public override void EnemyAct()
     {
         if(_ActionChargeAmount == 100)
         {
@@ -35,26 +35,27 @@ public class ES_Terrorist_Gunner : EnemyExtension
                 }
             }
         }   
-
     }
     private void BasicAttack()
     {
         if(CheckForHeroTarget())
-         {
+        {
+            Debug.Log(charName + " has Attacked!");
             int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-            PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]);
+            StartCoroutine(myBattleEnemyController.PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]));
         }
     }
     private void Potion()
     {
-        PerformEnemyAction(_AvailableActions[0], myBattleEnemyController);
+        StartCoroutine(myBattleEnemyController.PerformEnemyAction(_AvailableActions[0], myBattleEnemyController));
     }
     private void Grenade()
     {
         if(CheckForHeroTarget())
         {
+            Debug.Log(charName + " has Attacked!");
             int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
-            PerformEnemyAction(_AvailableActions[1], BattleStateMachine._HeroesActive[x]);
+            StartCoroutine(myBattleEnemyController.PerformEnemyAction(_AvailableActions[1], BattleStateMachine._HeroesActive[x]));
         }
     }
 }

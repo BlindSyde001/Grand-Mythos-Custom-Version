@@ -22,16 +22,19 @@ public class GameManager : MonoBehaviour
     #region OVERWORLD DATA
     [BoxGroup("SCENE DATA")]
     [SerializeField]
-    internal int _DoorwayIndex;
+    internal int DoorwayIndex;
     [BoxGroup("SCENE DATA")]
     [SerializeField]
-    internal string _LastKnownScene;
+    internal string LastKnownScene;
     [BoxGroup("SCENE DATA")]
     [SerializeField]
-    internal Vector3 _LastKnownPosition;
+    internal Vector3 LastKnownPosition;
     [BoxGroup("SCENE DATA")]
     [SerializeField]
-    internal Quaternion _LastKnownRotation;
+    internal Quaternion LastKnownRotation;
+    [BoxGroup("SCENE DATA")]
+    [SerializeField]
+    internal int LastKnownReferenceDirection;
     #endregion
     #region BATTLE DATA
     [BoxGroup("PARTY DATA")]
