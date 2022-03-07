@@ -1,28 +1,30 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using System;
 using System.Linq;
+using Sirenix.OdinInspector;
 
 public class InventoryManager : MonoBehaviour
 {
     // VARIABLES
     public static InventoryManager _instance;
+    #region Items In Bag
+    public List<ItemCapsule> ConsumablesInBag;
 
-    public List<Consumable> ConsumablesInBag;
-    public List<Equipment> EquipmentInBag;
-    #region Equipment Category Lists
+    [BoxGroup("Equipment")]
+    public List<ItemCapsule> EquipmentInBag;
+    [BoxGroup("Equipment")]
     [SerializeField]
-    internal List<Weapon> _WeaponsInBag;
+    internal List<ItemCapsule> _WeaponsInBag;
+    [BoxGroup("Equipment")]
     [SerializeField]
-    internal List<Armour> _ArmourInBag;
+    internal List<ItemCapsule> _ArmourInBag;
+    [BoxGroup("Equipment")]
     [SerializeField]
-    internal List<Accessory> _AccessoryInBag;
+    internal List<ItemCapsule> _AccessoryInBag;
+
+    public List<ItemCapsule> KeyItemsInBag;
+    public List<ItemCapsule> LootInBag;
     #endregion
-
-    public List<KeyItem> KeyItemsInBag;
-    public List<Loot> LootInBag;
 
     public List<Condition> ConditionsAcquired;
 
@@ -51,16 +53,16 @@ public class InventoryManager : MonoBehaviour
         switch(listToSort)
         {
             case 0:
-                ConsumablesInBag = ConsumablesInBag.OrderBy(i => i._ItemID).ToList();
+                ConsumablesInBag = ConsumablesInBag.OrderBy(i => i.ItemID).ToList();
                 break;
             case 1:
-                EquipmentInBag = EquipmentInBag.OrderBy(i => i._ItemType).ThenBy(i => i._ItemID).ToList();
+                EquipmentInBag = EquipmentInBag.OrderBy(i => i.thisItem._ItemType).ThenBy(i => i.ItemID).ToList();
                 break;
             case 2:
-                KeyItemsInBag = KeyItemsInBag.OrderBy(i => i._ItemID).ToList();
+                KeyItemsInBag = KeyItemsInBag.OrderBy(i => i.ItemID).ToList();
                 break;
             case 3:
-                LootInBag = LootInBag.OrderBy(i => i._ItemID).ToList();
+                LootInBag = LootInBag.OrderBy(i => i.ItemID).ToList();
                 break;
         }
     }
@@ -70,41 +72,35 @@ public class InventoryManager : MonoBehaviour
         return (ItemType)item1.CompareTo(item2);
     }
 
-    public void RemoveFromInventory(BaseItem item)
+    public void RemoveFromInventory(ItemCapsule item)
     {
-        item._ItemAmount--;
-        if(item._ItemAmount <= 0)
+        item.ItemAmount--;
+        if(item.ItemAmount <= 0)
         {
-            switch(item._ItemType)
+            switch (item.thisItem._ItemType)
             {
                 case ItemType.CONSUMABLE:
-                    Consumable itemC = item as Consumable;
-                    ConsumablesInBag.Remove(itemC);
+                    ConsumablesInBag.Remove(item);
                     break;
 
                 case ItemType.WEAPON:
-                    Weapon itemW = item as Weapon;
-                    _WeaponsInBag.Remove(itemW);
+                    _WeaponsInBag.Remove(item);
                     break;
 
                 case ItemType.ARMOUR:
-                    Armour itemA = item as Armour;
-                    _ArmourInBag.Remove(itemA);
+                    _ArmourInBag.Remove(item);
                     break;
 
                 case ItemType.ACCESSORY:
-                    Accessory itemAC = item as Accessory;
-                    _AccessoryInBag.Remove(itemAC);
+                    _AccessoryInBag.Remove(item);
                     break;
 
                 case ItemType.KEYITEM:
-                    KeyItem itemK = item as KeyItem;
-                    KeyItemsInBag.Remove(itemK);
+                    KeyItemsInBag.Remove(item);
                     break;
 
                 case ItemType.LOOT:
-                    Loot itemL = item as Loot;
-                    LootInBag.Remove(itemL);
+                    LootInBag.Remove(item);
                     break;
             }
         }

@@ -154,25 +154,25 @@ public class SaveMenuActions : MonoBehaviour
         #region Inventory Data
         SaveData.current.inventorySaveData = new();
 
-        foreach (Consumable a in inventoryManager.ConsumablesInBag)
+        foreach (ItemCapsule a in inventoryManager.ConsumablesInBag)
         {
-            SaveData.current.inventorySaveData.ConsumablesIdData.Add(a._ItemID);
-            SaveData.current.inventorySaveData.ConsumablesAmountData.Add(a._ItemAmount);
+            SaveData.current.inventorySaveData.ConsumablesIdData.Add(a.thisItem._ItemID);
+            SaveData.current.inventorySaveData.ConsumablesAmountData.Add(a.ItemAmount);
         }
-        foreach (Equipment a in inventoryManager.EquipmentInBag)
+        foreach (ItemCapsule a in inventoryManager.EquipmentInBag)
         {
-            SaveData.current.inventorySaveData.EquipmentNameData.Add(a.name);
-            SaveData.current.inventorySaveData.EquipmentIdData.Add(a._ItemID);
-            SaveData.current.inventorySaveData.EquipmentAmountData.Add(a._ItemAmount);
+            SaveData.current.inventorySaveData.EquipmentNameData.Add(a.thisItem.name);
+            SaveData.current.inventorySaveData.EquipmentIdData.Add(a.ItemID);
+            SaveData.current.inventorySaveData.EquipmentAmountData.Add(a.ItemAmount);
         }
-        foreach (KeyItem a in inventoryManager.KeyItemsInBag)
+        foreach (ItemCapsule a in inventoryManager.KeyItemsInBag)
         {
-            SaveData.current.inventorySaveData.KeyItemsIdData.Add(a._ItemID);
+            SaveData.current.inventorySaveData.KeyItemsIdData.Add(a.ItemID);
         }
-        foreach (Loot a in inventoryManager.LootInBag)
+        foreach (ItemCapsule a in inventoryManager.LootInBag)
         {
-            SaveData.current.inventorySaveData.LootIdData.Add(a._ItemID);
-            SaveData.current.inventorySaveData.LootAmountData.Add(a._ItemAmount);
+            SaveData.current.inventorySaveData.LootIdData.Add(a.ItemID);
+            SaveData.current.inventorySaveData.LootAmountData.Add(a.ItemAmount);
         }
         foreach (Condition a in inventoryManager.ConditionsAcquired)
         {

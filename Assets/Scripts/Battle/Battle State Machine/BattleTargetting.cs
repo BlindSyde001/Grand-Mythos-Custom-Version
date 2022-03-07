@@ -14,6 +14,7 @@ public class BattleTargetting : MonoBehaviour
     // VARIABLES
     [SerializeField]
     private BattleUIController battlUIController;
+    private InventoryManager inventoryManager;
 
     public GameObject mainCommandsPanel;
     public List<Button> mainCommands;
@@ -30,8 +31,13 @@ public class BattleTargetting : MonoBehaviour
     private Action chosenAction;
     private BattleCharacterController chosenTarget;
 
-    // METHODS
+    // UPDATES
+    private void Awake()
+    {
+        inventoryManager = InventoryManager._instance;
+    }
 
+    // METHODS
     public void ResetCommands()
     {
         actionsPanel.SetActive(false);
@@ -89,11 +95,12 @@ public class BattleTargetting : MonoBehaviour
             a.myAction = null;
             a.myButton.onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < InventoryManager._instance.ConsumablesInBag.Count; i++)
+        for (int i = 0; i < inventoryManager.ConsumablesInBag.Count; i++)
         {
+            Consumable consumable = (Consumable)inventoryManager.ConsumablesInBag[i].thisItem;
             int j = i;
-            actions[i].myAction = InventoryManager._instance.ConsumablesInBag[i].myAction;
-            actions[i].myName.text = InventoryManager._instance.ConsumablesInBag[i]._ItemName;
+            actions[i].myAction = consumable.myAction;
+            actions[i].myName.text = consumable._ItemName;
             actions[i].myButton.onClick.AddListener(delegate { SetAction(actions[j].myAction); });
         }
         actions[0].GetComponent<Button>().Select();
@@ -169,7 +176,10 @@ public class BattleTargetting : MonoBehaviour
         battlUIController.CurrentHero.myTacticController.ChosenTarget = target;
         if(action.ActionType == ActionType.ITEM)
         {
-            InventoryManager._instance.RemoveFromInventory(InventoryManager._instance.ConsumablesInBag.Find(x => x.myAction == action));
+            Consumable consumable = GameManager._instance._ConsumablesDatabase.Find(x => x.myAction == action);
+            ItemCapsule itemCapsule = inventoryManager.ConsumablesInBag.Find(x => x.thisItem == consumable);
+
+            inventoryManager.RemoveFromInventory(itemCapsule);
         }
     }
 }

@@ -220,7 +220,7 @@ public class TacticsMenuActions : MonoBehaviour
                 {
                     for (int k = 0; k < inventoryManager.ConsumablesInBag.Count; k++)
                     {
-                        if(inventoryManager.ConsumablesInBag[k]._ItemName == ActionsList[(pageNo * 10) + i].Name)
+                        if(inventoryManager.ConsumablesInBag[k].thisItem._ItemName == ActionsList[(pageNo * 10) + i].Name)
                         {
                             newComponentList[i].selectedAction = ActionsList[(pageNo * 10) + i];
                             newComponentList[i].cmpName.text = newComponentList[i].selectedAction.Name;

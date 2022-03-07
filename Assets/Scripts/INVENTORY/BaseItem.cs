@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-    public enum ItemType { CONSUMABLE, WEAPON, ARMOUR, ACCESSORY, KEYITEM, LOOT};
+public enum ItemType { CONSUMABLE, WEAPON, ARMOUR, ACCESSORY, KEYITEM, LOOT};
 public class BaseItem : ScriptableObject
 {
     [BoxGroup("BASIC DATA")]
@@ -17,9 +15,14 @@ public class BaseItem : ScriptableObject
     internal string _ItemName;
     [BoxGroup("BASIC DATA")]
     [SerializeField]
-    internal int _ItemAmount;
-    [BoxGroup("BASIC DATA")]
-    [SerializeField]
     [TextArea]
     internal string _ItemDescription;
+}
+
+[System.Serializable]
+public class ItemCapsule
+{
+    public BaseItem thisItem;
+    public int ItemID { get { return thisItem._ItemID; } }
+    public int ItemAmount;
 }

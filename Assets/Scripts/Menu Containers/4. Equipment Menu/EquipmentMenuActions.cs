@@ -188,13 +188,15 @@ public class EquipmentMenuActions : MonoBehaviour
             case 0:
                 switch(selectedHero._Weapon.name)
                 {
+                    #region Guns
                     case string a when a.Contains("Gun"):
                         List<Weapon> guns = new();
-                        foreach(Weapon weapon in inventoryManager._WeaponsInBag)
+                        foreach(ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
-                            if(weapon.name.Contains("Gun"))
+                            if(weapon.thisItem.name.Contains("Gun"))
                             {
-                                guns.Add(weapon);
+                                Weapon wpToAdd = (Weapon)weapon.thisItem;
+                                guns.Add(wpToAdd);
                             }
                         }
                         for(int i = 0; i < guns.Count; i++)
@@ -205,14 +207,16 @@ public class EquipmentMenuActions : MonoBehaviour
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(guns[j], 0); });
                         }
                         break;
-
+                    #endregion
+                    #region Warhammer
                     case string a when a.Contains("Warhammer"):
                         List<Weapon> warhammers = new();
-                        foreach (Weapon weapon in inventoryManager._WeaponsInBag)
+                        foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
-                            if (weapon.name.Contains("Warhammer"))
+                            if (weapon.thisItem.name.Contains("Warhammer"))
                             {
-                                warhammers.Add(weapon);
+                                Weapon wpToAdd = (Weapon)weapon.thisItem;
+                                warhammers.Add(wpToAdd);
                             }
                         }
                         for (int i = 0; i < warhammers.Count; i++)
@@ -223,14 +227,16 @@ public class EquipmentMenuActions : MonoBehaviour
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(warhammers[j], 0); });
                         }
                         break;
-
+                    #endregion
+                    #region Power Glove
                     case string a when a.Contains("Power Glove"):
                         List<Weapon> powergloves = new();
-                        foreach (Weapon weapon in inventoryManager._WeaponsInBag)
+                        foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
-                            if (weapon.name.Contains("Power Glove"))
+                            if (weapon.thisItem.name.Contains("Power Glove"))
                             {
-                                powergloves.Add(weapon);
+                                Weapon wpToAdd = (Weapon)weapon.thisItem;
+                                powergloves.Add(wpToAdd);
                             }
                         }
                         for (int i = 0; i < powergloves.Count; i++)
@@ -241,14 +247,16 @@ public class EquipmentMenuActions : MonoBehaviour
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(powergloves[j], 0); });
                         }
                         break;
-
+                    #endregion
+                    #region Grimoire
                     case string a when a.Contains("Grimoire"):
                         List<Weapon> grimoire = new();
-                        foreach (Weapon weapon in inventoryManager._WeaponsInBag)
+                        foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
-                            if (weapon.name.Contains("Grimoire"))
+                            if (weapon.thisItem.name.Contains("Grimoire"))
                             {
-                                grimoire.Add(weapon);
+                                Weapon wpToAdd = (Weapon)weapon.thisItem;
+                                grimoire.Add(wpToAdd);
                             }
                         }
                         for (int i = 0; i < grimoire.Count; i++)
@@ -259,19 +267,22 @@ public class EquipmentMenuActions : MonoBehaviour
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(grimoire[j], 0); });
                         }
                         break;
+                        #endregion
                 }
                 break;
 
             case 1:
                 switch(selectedHero._Armour.name)
                 {
+                    #region Leather
                     case string a when a.Contains("Leather"):
                         List<Armour> leather = new();
-                        foreach (Armour armour in inventoryManager._ArmourInBag)
+                        foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
-                            if (armour.name.Contains("Leather"))
+                            if (armour.thisItem.name.Contains("Leather"))
                             {
-                                leather.Add(armour);
+                                Armour armToAdd = (Armour)armour.thisItem;
+                                leather.Add(armToAdd);
                             }
                         }
                         for (int i = 0; i < leather.Count; i++)
@@ -282,14 +293,16 @@ public class EquipmentMenuActions : MonoBehaviour
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(leather[j], 1); });
                         }
                         break;
-
+                    #endregion
+                    #region Mail
                     case string a when a.Contains("Mail"):
                         List<Armour> mail = new();
-                        foreach (Armour armour in inventoryManager._ArmourInBag)
+                        foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
-                            if (armour.name.Contains("Mail"))
+                            if (armour.thisItem.name.Contains("Mail"))
                             {
-                                mail.Add(armour);
+                                Armour armToAdd = (Armour)armour.thisItem;
+                                mail.Add(armToAdd);
                             }
                         }
                         for (int i = 0; i < mail.Count; i++)
@@ -300,14 +313,16 @@ public class EquipmentMenuActions : MonoBehaviour
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(mail[j], 1); });
                         }
                         break;
-
+                    #endregion
+                    #region Chasis
                     case string a when a.Contains("Chasis"):
                         List<Armour> chasis = new();
-                        foreach (Armour armour in inventoryManager._ArmourInBag)
+                        foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
-                            if (armour.name.Contains("Chasis"))
+                            if (armour.thisItem.name.Contains("Chasis"))
                             {
-                                chasis.Add(armour);
+                                Armour armToAdd = (Armour)armour.thisItem;
+                                chasis.Add(armToAdd);
                             }
                         }
                         for (int i = 0; i < chasis.Count; i++)
@@ -318,14 +333,16 @@ public class EquipmentMenuActions : MonoBehaviour
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(chasis[j], 1); });
                         }
                         break;
-
+                    #endregion
+                    #region Robe
                     case string a when a.Contains("Robe"):
                         List<Armour> robe = new();
-                        foreach (Armour armour in inventoryManager._ArmourInBag)
+                        foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
-                            if (armour.name.Contains("Robe"))
+                            if (armour.thisItem.name.Contains("Robe"))
                             {
-                                robe.Add(armour);
+                                Armour armToAdd = (Armour)armour.thisItem;
+                                robe.Add(armToAdd);
                             }
                         }
                         for (int i = 0; i < robe.Count; i++)
@@ -336,17 +353,21 @@ public class EquipmentMenuActions : MonoBehaviour
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(robe[j], 1); });
                         }
                         break;
+                    #endregion
                 }
                 break;
 
             case > 1:
+                #region Accessory
                 for (int i = 0; i < inventoryManager._AccessoryInBag.Count; i++)
                 {
                     int j = i;
-                    equipNewItemContainers[i].EquipName.text = inventoryManager._AccessoryInBag[i]._ItemName;
-                    equipNewItemContainers[i].ThisEquipment = inventoryManager._AccessoryInBag[i];
-                    equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(inventoryManager._AccessoryInBag[j], equipSlot); });
+                    Accessory accessory = (Accessory)inventoryManager._AccessoryInBag[i].thisItem;
+                    equipNewItemContainers[i].EquipName.text = accessory._ItemName;
+                    equipNewItemContainers[i].ThisEquipment = accessory;
+                    equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(accessory, equipSlot); });
                 }
+                #endregion
                 break;
         }
         listToggle = buttonPressed;

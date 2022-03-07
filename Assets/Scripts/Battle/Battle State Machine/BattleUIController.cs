@@ -46,13 +46,19 @@ public class BattleUIController : MonoBehaviour
     }
     private void OnEnable()
     {
-        playerControls.Enable();
-        playerControls.BattleMap.HeroSwitch.performed += SwitchToNextHero;
+        if (BattleStateMachine._CombatState == CombatState.ACTIVE)
+        {
+            playerControls.Enable();
+            playerControls.BattleMap.HeroSwitch.performed += SwitchToNextHero;
+        }
     }
     private void OnDisable()
     {
-        playerControls.Disable();
-        playerControls.BattleMap.HeroSwitch.performed -= SwitchToNextHero;
+        if (BattleStateMachine._CombatState == CombatState.ACTIVE)
+        {
+            playerControls.Disable();
+            playerControls.BattleMap.HeroSwitch.performed -= SwitchToNextHero;
+        }
     }
 
     // METHODS
@@ -71,7 +77,6 @@ public class BattleUIController : MonoBehaviour
         }
         CurrentHero = BattleStateMachine._HeroesActive[j].myHero;
         battleTargetting.ResetCommands();
-        //Debug.Log("'New hero selected is: " + BattleStateMachine._HeroesActive[j].myHero.charName);
     }
 
 

@@ -145,96 +145,164 @@ public class TitleScreenIO : MonoBehaviour
         inventoryManager.ConditionsAcquired.Clear();
 
         // Add Consumables into Bag
-        for(int i = 0; i < SD.inventorySaveData.ConsumablesIdData.Count; i++)
+        for (int i = 0; i < SD.inventorySaveData.ConsumablesIdData.Count; i++)
         {
             Consumable newCon = gameManager._ConsumablesDatabase.Find(x => x._ItemID == SD.inventorySaveData.ConsumablesIdData[i]);
-            newCon._ItemAmount = SD.inventorySaveData.ConsumablesAmountData[i];
-            inventoryManager.ConsumablesInBag.Add(newCon);
+            ItemCapsule itemCapsule = new();
+            itemCapsule.thisItem = newCon;
+            itemCapsule.ItemAmount = SD.inventorySaveData.ConsumablesAmountData[i];
+            inventoryManager.ConsumablesInBag.Add(itemCapsule);
         }
         // Add Equipment into Bag as well as Categorised into Weapons / Armour / Accessories
-        for(int i = 0; i < SD.inventorySaveData.EquipmentNameData.Count; i++)
+        for (int i = 0; i < SD.inventorySaveData.EquipmentNameData.Count; i++)
         {
             Equipment newEquip;
-            switch(SD.inventorySaveData.EquipmentNameData[i])
+            ItemCapsule itemCapsule = new();
+            switch (SD.inventorySaveData.EquipmentNameData[i])
             {
+                #region WEAPONS DATA
+                #region Gun
                 case string a when a.Contains("Gun"):
                     newEquip = gameManager._GunsDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
                     Weapon gun = newEquip as Weapon;
-                    inventoryManager._WeaponsInBag.Add(gun);
+                    itemCapsule.thisItem = gun;
+                    inventoryManager._WeaponsInBag.Add(itemCapsule);
                     break;
+                #endregion
+                #region Warhammer
                 case string a when a.Contains("Warhammer"):
                     newEquip = gameManager._WarhammersDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
-                    Weapon hmr = newEquip as Weapon;
-                    inventoryManager._WeaponsInBag.Add(hmr);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
+                    Weapon warHammer = newEquip as Weapon;
+                    itemCapsule.thisItem = warHammer;
+                    inventoryManager._WeaponsInBag.Add(itemCapsule);
                     break;
+                #endregion
+                #region Power Glove
                 case string a when a.Contains("Power Glove"):
                     newEquip = gameManager._PowerGlovesDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
-                    Weapon glv = newEquip as Weapon;
-                    inventoryManager._WeaponsInBag.Add(glv);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
+                    Weapon glove = newEquip as Weapon;
+                    itemCapsule.thisItem = glove;
+                    inventoryManager._WeaponsInBag.Add(itemCapsule);
                     break;
+                #endregion
+                #region Grimoire
                 case string a when a.Contains("Grimoire"):
                     newEquip = gameManager._GrimoiresDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
-                    Weapon grm = newEquip as Weapon;
-                    inventoryManager._WeaponsInBag.Add(grm);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
+                    Weapon grimoire = newEquip as Weapon;
+                    itemCapsule.thisItem = grimoire;
+                    inventoryManager._WeaponsInBag.Add(itemCapsule);
                     break;
+                #endregion
+                #endregion
+                #region ARMOUR DATA
+                #region Leather
                 case string a when a.Contains("Leather"):
                     newEquip = gameManager._LeatherDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
                     Armour arm = newEquip as Armour;
-                    inventoryManager._ArmourInBag.Add(arm);
+                    itemCapsule.thisItem = arm;
+                    inventoryManager._ArmourInBag.Add(itemCapsule);
                     break;
+                #endregion
+                #region Mail
                 case string a when a.Contains("Mail"):
                     newEquip = gameManager._MailDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
+                    Armour mail = newEquip as Armour;
+                    itemCapsule.thisItem = mail;
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
                     break;
+                #endregion
+                #region Chasis
                 case string a when a.Contains("Chasis"):
                     newEquip = gameManager._ChasisDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
-                    Armour chs = newEquip as Armour;
-                    inventoryManager._ArmourInBag.Add(chs);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
+                    Armour chasis = newEquip as Armour;
+                    itemCapsule.thisItem = chasis;
+                    inventoryManager._ArmourInBag.Add(itemCapsule);
                     break;
+                #endregion
+                #region Robe
                 case string a when a.Contains("Robe"):
                     newEquip = gameManager._RobesDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
-                    Armour rb = newEquip as Armour;
-                    inventoryManager._ArmourInBag.Add(rb);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
+                    Armour robe = newEquip as Armour;
+                    itemCapsule.thisItem = robe;
+                    inventoryManager._ArmourInBag.Add(itemCapsule);
                     break;
+                #endregion
+                #endregion
+                #region ACCESSORY DATA
                 case string a when a.Contains("Accessory"):
                     newEquip = gameManager._AccessoryDatabase.Find(x => x._ItemID == SD.inventorySaveData.EquipmentIdData[i]);
-                    newEquip._ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
-                    inventoryManager.EquipmentInBag.Add(newEquip);
-                    Accessory acc = newEquip as Accessory;
-                    inventoryManager._AccessoryInBag.Add(acc);
+
+                    itemCapsule.thisItem = newEquip;
+                    itemCapsule.ItemAmount = SD.inventorySaveData.EquipmentAmountData[i];
+                    inventoryManager.EquipmentInBag.Add(itemCapsule);
+
+                    Accessory accessory = newEquip as Accessory;
+                    itemCapsule.thisItem = accessory;
+                    inventoryManager._AccessoryInBag.Add(itemCapsule);
                     break;
+                    #endregion
             }
         }
         // Add Loot into Bag
-        for(int i = 0; i < SD.inventorySaveData.LootIdData.Count; i++)
+        for (int i = 0; i < SD.inventorySaveData.LootIdData.Count; i++)
         {
             Loot newLoot = gameManager._LootDatabase.Find(x => x._ItemID == SD.inventorySaveData.KeyItemsIdData[i]);
-            newLoot._ItemAmount = SD.inventorySaveData.LootAmountData[i];
-            inventoryManager.LootInBag.Add(newLoot);
+            ItemCapsule itemCapsule = new();
+            itemCapsule.thisItem = newLoot;
+            itemCapsule.ItemAmount = SD.inventorySaveData.LootAmountData[i];
+            inventoryManager.LootInBag.Add(itemCapsule);
         }
         // Add Key Items into Bag
-        for(int i = 0; i < SD.inventorySaveData.KeyItemsIdData.Count; i++)
+        for (int i = 0; i < SD.inventorySaveData.KeyItemsIdData.Count; i++)
         {
             KeyItem newKey = gameManager._KeyItemsDatabase.Find(x => x._ItemID == SD.inventorySaveData.KeyItemsIdData[i]);
-            inventoryManager.KeyItemsInBag.Add(newKey);
+            ItemCapsule itemCapsule = new();
+            itemCapsule.thisItem = newKey;
+            itemCapsule.ItemAmount = 1;
+            inventoryManager.KeyItemsInBag.Add(itemCapsule);
         }
         // Add Conditions into Bag
-        for(int i = 0; i < SD.inventorySaveData.ConditionsIdData.Count; i++)
+        for (int i = 0; i < SD.inventorySaveData.ConditionsIdData.Count; i++)
         {
             Condition newCond = gameManager._ConditionsDatabase.Find(x => x.cndID == SD.inventorySaveData.ConditionsIdData[i]);
             inventoryManager.ConditionsAcquired.Add(newCond);

@@ -87,9 +87,9 @@ public class ItemMenuActions : MonoBehaviour
             ItemButtons[i].SetActive(true);
             ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
             
-            btn.itemName.text = inventoryManager.ConsumablesInBag[i]._ItemName;
-            btn.itemAmount.text = inventoryManager.ConsumablesInBag[i]._ItemAmount.ToString();
-            btn.itemDescription = inventoryManager.ConsumablesInBag[i]._ItemDescription;
+            btn.itemName.text = inventoryManager.ConsumablesInBag[i].thisItem._ItemName;
+            btn.itemAmount.text = inventoryManager.ConsumablesInBag[i].ItemAmount.ToString();
+            btn.itemDescription = inventoryManager.ConsumablesInBag[i].thisItem._ItemDescription;
 
             btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
         }
@@ -114,9 +114,9 @@ public class ItemMenuActions : MonoBehaviour
             ItemButtons[i].SetActive(true);
             ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
 
-            btn.itemName.text = inventoryManager.EquipmentInBag[i]._ItemName;
-            btn.itemAmount.text = inventoryManager.EquipmentInBag[i]._ItemAmount.ToString();
-            btn.itemDescription = inventoryManager.EquipmentInBag[i]._ItemDescription;
+            btn.itemName.text = inventoryManager.EquipmentInBag[i].thisItem._ItemName;
+            btn.itemAmount.text = inventoryManager.EquipmentInBag[i].ItemAmount.ToString();
+            btn.itemDescription = inventoryManager.EquipmentInBag[i].thisItem._ItemDescription;
 
             btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
         }
@@ -142,9 +142,9 @@ public class ItemMenuActions : MonoBehaviour
             ItemButtons[i].SetActive(true);
             ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
 
-            btn.itemName.text = inventoryManager.KeyItemsInBag[i]._ItemName;
-            btn.itemAmount.text = inventoryManager.KeyItemsInBag[i]._ItemAmount.ToString();
-            btn.itemDescription = inventoryManager.KeyItemsInBag[i]._ItemDescription;
+            btn.itemName.text = inventoryManager.KeyItemsInBag[i].thisItem._ItemName;
+            btn.itemAmount.text = inventoryManager.KeyItemsInBag[i].ItemAmount.ToString();
+            btn.itemDescription = inventoryManager.KeyItemsInBag[i].thisItem._ItemDescription;
 
             btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
         }
@@ -170,9 +170,9 @@ public class ItemMenuActions : MonoBehaviour
             ItemButtons[i].SetActive(true);
             ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
 
-            btn.itemName.text = inventoryManager.LootInBag[i]._ItemName;
-            btn.itemAmount.text = inventoryManager.LootInBag[i]._ItemAmount.ToString();
-            btn.itemDescription = inventoryManager.LootInBag[i]._ItemDescription;
+            btn.itemName.text = inventoryManager.LootInBag[i].thisItem._ItemName;
+            btn.itemAmount.text = inventoryManager.LootInBag[i].ItemAmount.ToString();
+            btn.itemDescription = inventoryManager.LootInBag[i].thisItem._ItemDescription;
 
             btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
         }
