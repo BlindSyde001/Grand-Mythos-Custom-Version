@@ -90,7 +90,7 @@ public class SaveMenuActions : MonoBehaviour
         gameManager.LastKnownScene = SceneManager.GetActiveScene().name;
         gameManager.LastKnownPosition = FindObjectOfType<OverworldPlayerCircuit>().transform.position;
         gameManager.LastKnownRotation = FindObjectOfType<OverworldPlayerCircuit>().transform.rotation;
-        gameManager.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(FindObjectOfType<OverworldPlayerCircuit>().referenceDirection);
+        gameManager.LastKnownReferenceDirection = Camera.main.GetComponent<CameraManager>().ReferenceDirections.IndexOf(FindObjectOfType<OverworldPlayerCircuit>().referenceDirection);
 
         SaveData.current.savedScene = gameManager.LastKnownScene;
         SaveData.current.overworldPos = gameManager.LastKnownPosition;

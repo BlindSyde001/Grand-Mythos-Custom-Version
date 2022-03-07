@@ -134,8 +134,9 @@ public class BattleStateMachine : MonoBehaviour
 
             // Attach Relevant References
             _HeroControllers[i].myHero._MyInstantiatedModel = instantiatedHeroModel;        // The Battle Model Im using
-            _HeroControllers[i].animator = instantiatedHeroModel.GetComponent<Animator>();      // The Animator Component
-            BU.CreateHeroUI(_HeroControllers[i].myHero);                                    // Battle UI Component
+            _HeroControllers[i].animator = instantiatedHeroModel.GetComponent<Animator>();  // The Animator Component
+            BU.AttachHeroUIData(_HeroControllers[i].myHero, i);                                    // Battle UI Component
+            _HeroControllers[i].myMovementController = instantiatedHeroModel.GetComponent<BattleArenaMovement>();
         }
         foreach (BattleHeroController a in _HeroesActive)
         {
@@ -196,13 +197,11 @@ public class BattleStateMachine : MonoBehaviour
     {
         _HeroesActive.Remove(hero);
         _HeroesDowned.Add(hero);
-        Debug.Log(hero.myHero.charName + " has fallen!");
     }
     public void CheckCharIsDead(BattleEnemyController enemy)
     {
         _EnemiesActive.Remove(enemy);
         _EnemiesDowned.Add(enemy);
-        Debug.Log(enemy.myEnemy.charName + " has fallen!");
     }
     #endregion
     #region End of Battle

@@ -67,13 +67,13 @@ public class HeroTacticController : MonoBehaviour
                         TryTacticTargets(i); // Apply condition to targets down the list, until one/none is met
                         if (_TacticsList[i].ConditionIsMet && myHeroCtrlr.myHero._ActionChargeAmount == 100)
                         {
-                            Debug.Log(myHeroCtrlr + " has used " + _TacticsList[i]._Action.Name);
                             StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.PerformTacticWithAnim(_TacticsList[i])); // Do all the behaviours on the action
                         }
                         else if (_TacticsList[i].ConditionIsMet)
                         {
                             ChosenAction = _TacticsList[i]._Action;
                             ChosenTarget = _TacticsList[i]._Target;
+                            myHeroCtrlr.myMovementController.myTarget = ChosenTarget.animator.GetComponent<Transform>();
                             break;
                         }
                     }
@@ -82,9 +82,21 @@ public class HeroTacticController : MonoBehaviour
         } 
         else if(ActionIsInputted) // Manual Command
         {
-            if(myHeroCtrlr.myHero._ActionChargeAmount == 100)
+            if(ChosenTarget != null || ChosenTarget)
             {
-                StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.PerformManualActionWithAnim());
+                if (myHeroCtrlr.myHero._ActionChargeAmount == 100)
+                {
+                    StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.PerformManualActionWithAnim());
+                }
+                else
+                {
+                    myHeroCtrlr.myMovementController.myTarget = ChosenTarget.animator.GetComponent<Transform>();
+                }
+            }
+            else
+            {
+                ActionIsInputted = false;
+                return;
             }
         }
     }

@@ -97,8 +97,10 @@ public class BattleHeroController : BattleCharacterController
         switch(combatState)
         {
             case CombatState.START:
-                if(myHero._CurrentHP > 0)
-                ChangeAnimationState(Battle_EnterFight);
+                if (myHero._CurrentHP > 0)
+                {
+                    ChangeAnimationState(Battle_EnterFight);
+                }
                 else
                 {
                     ChangeAnimationState(Battle_Die);
@@ -107,15 +109,22 @@ public class BattleHeroController : BattleCharacterController
 
             case CombatState.ACTIVE:
                 if (myHero._CurrentHP > 0)
+                {
                     ChangeAnimationState(Battle_Stance);
+                    myMovementController.isRoaming = true;
+                }
                 break;
 
             case CombatState.WAIT:
                 if (myHero._CurrentHP > 0)
+                {
                     ChangeAnimationState(Battle_Stance);
+                    myMovementController.isRoaming = false;
+                }
                 break;
 
             case CombatState.END:
+                myMovementController.isRoaming = false;
                 break;
         }
     }

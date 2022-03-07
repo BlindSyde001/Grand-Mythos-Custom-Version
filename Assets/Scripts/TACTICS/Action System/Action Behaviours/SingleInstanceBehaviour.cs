@@ -67,7 +67,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 {
                     targetStats._CurrentHP -= amount;
                     targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
-                    Debug.Log(targetStats.name + " has taken " + amount + " damage from " + casterStats.charName);
+                    //Debug.Log(targetStats.name + " has taken " + amount + " damage from " + casterStats.charName);
                     target.DieCheck();
                 }
                 break;
@@ -87,7 +87,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 {
                     targetStats._CurrentHP += amount;
                     targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
-                    Debug.Log(target + " has restored " + amount + " health from " + caster);
+                    //Debug.Log(target + " has restored " + amount + " health from " + caster);
                 }
                 break;
 

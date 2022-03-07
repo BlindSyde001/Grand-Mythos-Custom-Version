@@ -2,42 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraPanArea: MonoBehaviour
-{
-    //VARIABLES
-    public GameObject player;
-    private bool inZone;
-    public GameObject camPos;
-    public Transform refDirection;
-
-    //UPDATES
-    private void Start()
+public class CameraPanArea: CameraBase
+{ 
+    // UPDATES
+    private void Awake()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        cameraManager = FindObjectOfType<CameraManager>();
     }
-
     private void LateUpdate()
     {
-        if (inZone)
+        if (AmActiveCam)
         {
-            Camera.main.transform.LookAt(player.transform);
+            cameraManager._Camera.transform.LookAt(cameraManager.player.transform);
         }
     }
-    //METHODS
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<OverworldPlayerCircuit>().referenceDirection = refDirection;
-            GameManager._instance.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(refDirection);
-            foreach (CameraFollowArea cf in FindObjectsOfType<CameraFollowArea>())
-                cf.StopFollow();
-            inZone = true;
-            Camera.main.transform.position = camPos.transform.position;
+            SetAsActiveCam(this);
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        inZone = false;
+        if (other.CompareTag("Player"))
+        {
+            ExitCamZone();
+        }
     }
 }

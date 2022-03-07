@@ -2,29 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraJumpArea : MonoBehaviour
+public class CameraJumpArea : CameraBase
 {
-    //VARIABLES
-    public GameObject camPos;
-    public Transform refDirection;
+    // VARIABLES
 
-    //METHODS
+    // UPDATES
+    private void Awake()
+    {
+        cameraManager = FindObjectOfType<CameraManager>();
+    }
     private void OnTriggerEnter(Collider other)
     {
-       if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            // MOVE CAMERA TO POSCHANGE POSITION
-            other.GetComponent<OverworldPlayerCircuit>().referenceDirection = refDirection;
-            GameManager._instance.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(refDirection);
-            foreach (CameraFollowArea cf in FindObjectsOfType<CameraFollowArea>())
-                cf.StopFollow();
-            CutToShot();
+            SetAsActiveCam(this);
         }
     }
-
-    public void CutToShot()
+    private void OnTriggerExit(Collider other)
     {
-        Camera.main.transform.localPosition = camPos.transform.position;
-        Camera.main.transform.localRotation = camPos.transform.rotation;
+        if(other.CompareTag("Player"))
+        {
+            ExitCamZone();
+        }
     }
 }

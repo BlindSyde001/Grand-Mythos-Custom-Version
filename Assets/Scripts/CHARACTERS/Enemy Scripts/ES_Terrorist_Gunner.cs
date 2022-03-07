@@ -40,7 +40,7 @@ public class ES_Terrorist_Gunner : EnemyExtension
     {
         if(CheckForHeroTarget())
         {
-            Debug.Log(charName + " has Attacked!");
+            //Debug.Log(charName + " has Attacked!");
             int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
             StartCoroutine(myBattleEnemyController.PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]));
         }
@@ -53,7 +53,6 @@ public class ES_Terrorist_Gunner : EnemyExtension
     {
         if(CheckForHeroTarget())
         {
-            Debug.Log(charName + " has Attacked!");
             int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
             StartCoroutine(myBattleEnemyController.PerformEnemyAction(_AvailableActions[1], BattleStateMachine._HeroesActive[x]));
         }

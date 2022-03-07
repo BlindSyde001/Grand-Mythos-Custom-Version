@@ -46,9 +46,12 @@ public class BattleEnemyController : BattleCharacterController
 
     public override void ActiveStateBehaviour()
     {
-        myEnemy._ActionChargeAmount += myEnemy._ActionRechargeSpeed * Time.deltaTime;
-        myEnemy._ActionChargeAmount = Mathf.Clamp(myEnemy._ActionChargeAmount, 0, 100);
-        myEnemy.EnemyAct();
+        if (myEnemy._CurrentHP > 0)
+        {
+            myEnemy._ActionChargeAmount += myEnemy._ActionRechargeSpeed * Time.deltaTime;
+            myEnemy._ActionChargeAmount = Mathf.Clamp(myEnemy._ActionChargeAmount, 0, 100);
+            myEnemy.EnemyAct();
+        }
     }
     public override void DieCheck()
     {

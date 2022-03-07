@@ -30,7 +30,7 @@ public class BattleUIController : MonoBehaviour
     private void Start()
     {
         StartUIData();
-        CurrentHero = heroData[0];
+        CurrentHero = BattleStateMachine._HeroesActive[0].myHero;
     }
     private void Update()
     {
@@ -59,19 +59,19 @@ public class BattleUIController : MonoBehaviour
     private void SwitchToNextHero(InputAction.CallbackContext context)
     {
         int i = (int)context.ReadValue<float>();
-        int j = heroData.IndexOf(CurrentHero) + i;
+        int j = BattleStateMachine._HeroesActive.IndexOf(CurrentHero.myBattleHeroController) + i;
 
         if(j < 0)
         {
-            j = heroData.Count - 1;
+            j = BattleStateMachine._HeroesActive.Count - 1;
         }
-        else if(j >= heroData.Count)
+        else if(j >= BattleStateMachine._HeroesActive.Count)
         {
             j = 0;
         }
-        CurrentHero = heroData[j];
+        CurrentHero = BattleStateMachine._HeroesActive[j].myHero;
         battleTargetting.ResetCommands();
-        Debug.Log("'New hero selected is: " + heroData[j].charName);
+        //Debug.Log("'New hero selected is: " + BattleStateMachine._HeroesActive[j].myHero.charName);
     }
 
 
@@ -140,14 +140,12 @@ public class BattleUIController : MonoBehaviour
             enemyUIData[i].health.text = enemyData[i]._CurrentHP.ToString();
         }
     }                     // Updating Hero Info in Battle
-    public void CreateHeroUI(HeroExtension hero)
+    public void AttachHeroUIData(HeroExtension hero, int i)
     {
         heroData.Add(hero);
-
-        GameObject heroUI = Instantiate(heroUIPrefab, heroContainer);
-        heroUI.name = hero.charName + " UI";
-        heroUI.GetComponent<HeroPrefabUIData>().characterIcon.sprite = hero.charPortrait;
-        heroUIData.Add(heroUI.GetComponent<HeroPrefabUIData>());
+        heroUIData[i].gameObject.SetActive(true);
+        heroUIData[i].name = hero.charName + "UI";
+        heroUIData[i].characterIcon.sprite = hero.charPortrait;
     }
     public void CreateEnemyUI(EnemyExtension enemy, Transform enemyModel)
     {

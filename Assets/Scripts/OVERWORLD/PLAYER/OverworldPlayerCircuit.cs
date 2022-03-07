@@ -7,23 +7,21 @@ public class OverworldPlayerCircuit : MonoBehaviour
 {
     // VARIABLES
     [SerializeField]
-    internal OverworldPlayerInputNode _InputNode;
-    [SerializeField]
-    internal OverworldPlayerMoveNode _MoveNode;
+    internal OverworldPlayerControlsNode _MoveNode;
     [SerializeField]
     internal OverworldPlayerCollisionNode _CollisionNode;
     [SerializeField]
     internal CharacterController cc;
     [SerializeField]
-    internal Transform referenceDirection;
-    [SerializeField]
     internal bool isMoving;
     internal Vector2 inputMovement;
+    [SerializeField]
+    internal Transform referenceDirection;
 
     // UPDATES
     private void Awake()
     {
-        referenceDirection = FindObjectOfType<DirectionStorage>().ReferenceDirections[0];
+        referenceDirection = FindObjectOfType<CameraManager>().ReferenceDirections[0];
     }
     private void OnEnable()
     {
@@ -39,7 +37,6 @@ public class OverworldPlayerCircuit : MonoBehaviour
     {
         GameManager._instance.LastKnownPosition = transform.position;
         GameManager._instance.LastKnownRotation = transform.rotation;
-        GameManager._instance.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(referenceDirection);
     }
     internal void InteractionCheck()
     {

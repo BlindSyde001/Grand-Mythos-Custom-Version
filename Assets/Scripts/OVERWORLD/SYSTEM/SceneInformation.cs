@@ -30,7 +30,6 @@ public class SceneInformation : MonoBehaviour
     private void Start()
     {
         CreateMovablePlayer(SceneChangeManager._instance.DoorwayToSpawn);
-        _PlayerCircuit = FindObjectOfType<OverworldPlayerCircuit>();
         _NextEncounter = Random.Range(6, 256);
     }
     private void FixedUpdate()
@@ -62,17 +61,17 @@ public class SceneInformation : MonoBehaviour
         // If I move back to the same Scene, reload me at last position, otherwise, spawn me in a designated spot
         if(GameManager._instance.LastKnownScene == SceneManager.GetActiveScene().name)
         {
-           GameObject a = Instantiate(_Player,
-                                      GameManager._instance.LastKnownPosition,
-                                      GameManager._instance.LastKnownRotation);
-            a.GetComponent<OverworldPlayerCircuit>().referenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections[GameManager._instance.LastKnownReferenceDirection];
+            FindObjectOfType<CameraManager>().player = Instantiate(_Player,
+                                                        GameManager._instance.LastKnownPosition,
+                                                        GameManager._instance.LastKnownRotation);
         }
         else
         {
-            Instantiate(_Player, 
-                        DoorwayPoints[DoorwayToSpawn].position, 
-                        DoorwayPoints[DoorwayToSpawn].rotation);
+            FindObjectOfType<CameraManager>().player = Instantiate(_Player, 
+                                                       DoorwayPoints[DoorwayToSpawn].position, 
+                                                       DoorwayPoints[DoorwayToSpawn].rotation);
         }
+        _PlayerCircuit = FindObjectOfType<OverworldPlayerCircuit>();
     }
     private void EnemiesEncountered()
     {

@@ -88,7 +88,7 @@ public class EventManager : MonoBehaviour
     #region GAMESTATE CHANGING
     public void SwitchGameState(GameState GS)
     {
-        Debug.Log(GS);
+        //Debug.Log(GS);
         switch (GS)
         {
             case GameState.TITLE:

@@ -2,28 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraFollowArea : MonoBehaviour
+public class CameraFollowArea : CameraBase
 {
     //VARIABLES
-    private GameObject player;
-    private Camera cam;
-    public GameObject camPos;
-    public Transform refDirection;
-
-
     public Vector3 offset;
     public Vector3 min;
     public Vector3 max;
 
-
     [SerializeField]
-    private bool isFollowing;
+    private bool lookAtPlayer;
 
     //UPDATES
+    private void Awake()
+    {
+        cameraManager = FindObjectOfType<CameraManager>();
+    }
     private void Start()
     {
-        cam = Camera.main;
-
         min += transform.position;
         max += transform.position;
 
@@ -48,51 +43,38 @@ public class CameraFollowArea : MonoBehaviour
             max.z = val;
         }
     }
-
     private void LateUpdate()
     {
         // Move around the defined space
-        if (isFollowing)
+        if (AmActiveCam)
         {
-            Vector3 pos = player.transform.position + offset;
-            cam.transform.position = new Vector3(Mathf.Clamp(pos.x, min.x, max.x), Mathf.Clamp(pos.y, min.y, max.y), Mathf.Clamp(pos.z, min.z, max.z));
+            if (cameraManager.player != null)
+            {
+                Vector3 pos = cameraManager.player.transform.position + offset;
+                cameraManager._Camera.transform.position = new Vector3(Mathf.Clamp(pos.x, min.x, max.x), Mathf.Clamp(pos.y, min.y, max.y), Mathf.Clamp(pos.z, min.z, max.z));
+                if (lookAtPlayer)
+                {
+                    cameraManager._Camera.transform.LookAt(cameraManager.player.transform);
+                }
+            }
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            SetAsActiveCam(this);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            ExitCamZone();
         }
     }
 
     //METHODS
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.CompareTag("Player"))
-        {
-            other.GetComponent<OverworldPlayerCircuit>().referenceDirection = refDirection;
-            GameManager._instance.LastKnownReferenceDirection = Camera.main.GetComponent<DirectionStorage>().ReferenceDirections.IndexOf(refDirection);
-            player = other.gameObject;
-            CutToShot();
-            StartFollow();
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if(other.CompareTag("Player"))
-        {
-            StopFollow();
-        }
-    }
-    public void StartFollow()
-    {
-        isFollowing = true;
-    }
-    public void StopFollow()
-    {
-        isFollowing = false;
-    }
-
-    public void CutToShot()
-    {
-        cam.transform.localPosition = camPos.transform.position;
-        cam.transform.localRotation = camPos.transform.rotation;
-    }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -101,7 +83,8 @@ public class CameraFollowArea : MonoBehaviour
         Vector3 min = transform.position + this.min;
         Vector3 max = transform.position + this.max;
 
-        if (UnityEditor.EditorApplication.isPlaying) {
+        if (UnityEditor.EditorApplication.isPlaying)
+        {
             min = this.min;
             max = this.max;
         }
