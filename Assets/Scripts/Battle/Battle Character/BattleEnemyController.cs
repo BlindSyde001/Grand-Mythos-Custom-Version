@@ -57,9 +57,9 @@ public class BattleEnemyController : BattleCharacterController
     {
         if (myEnemy._CurrentHP <= 0)
         {
+            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
             myEnemy._CurrentHP = 0;
             myEnemy._ActionChargeAmount = 0;
-            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
             ChangeAnimationState(Battle_Die);
         }
     }

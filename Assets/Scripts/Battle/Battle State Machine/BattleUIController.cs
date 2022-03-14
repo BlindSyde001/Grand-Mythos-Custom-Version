@@ -34,49 +34,38 @@ public class BattleUIController : MonoBehaviour
     }
     private void Update()
     {
-        switch (BattleStateMachine._CombatState)
-        {
-            case CombatState.START:
-                break;
-
-            default:
-                SetUIData();
-                break;
-        }
+        SetUIData();
     }
     private void OnEnable()
     {
-        if (BattleStateMachine._CombatState == CombatState.ACTIVE)
-        {
-            playerControls.Enable();
-            playerControls.BattleMap.HeroSwitch.performed += SwitchToNextHero;
-        }
+        playerControls.Enable();
+        playerControls.BattleMap.HeroSwitch.performed += SwitchToNextHero;
     }
     private void OnDisable()
     {
-        if (BattleStateMachine._CombatState == CombatState.ACTIVE)
-        {
-            playerControls.Disable();
-            playerControls.BattleMap.HeroSwitch.performed -= SwitchToNextHero;
-        }
+        playerControls.Disable();
+        playerControls.BattleMap.HeroSwitch.performed -= SwitchToNextHero;
     }
 
     // METHODS
     private void SwitchToNextHero(InputAction.CallbackContext context)
     {
-        int i = (int)context.ReadValue<float>();
-        int j = BattleStateMachine._HeroesActive.IndexOf(CurrentHero.myBattleHeroController) + i;
+        if (BattleStateMachine._CombatState == CombatState.ACTIVE)
+        {
+            int i = (int)context.ReadValue<float>();
+            int j = BattleStateMachine._HeroesActive.IndexOf(CurrentHero.myBattleHeroController) + i;
 
-        if(j < 0)
-        {
-            j = BattleStateMachine._HeroesActive.Count - 1;
+            if (j < 0)
+            {
+                j = BattleStateMachine._HeroesActive.Count - 1;
+            }
+            else if (j >= BattleStateMachine._HeroesActive.Count)
+            {
+                j = 0;
+            }
+            CurrentHero = BattleStateMachine._HeroesActive[j].myHero;
+            battleTargetting.ResetCommands();
         }
-        else if(j >= BattleStateMachine._HeroesActive.Count)
-        {
-            j = 0;
-        }
-        CurrentHero = BattleStateMachine._HeroesActive[j].myHero;
-        battleTargetting.ResetCommands();
     }
 
 
@@ -101,27 +90,30 @@ public class BattleUIController : MonoBehaviour
     {
         for (int i = 0; i < heroData.Count; i++)
         {
-            if (heroData[i].myTacticController.ChosenAction != null)
+            if (heroData[i].myTacticController.ChosenAction != null && BattleStateMachine.CheckStateOfPlay())
             {
-                CharacterTemplate tempToUse;
-                switch (heroData[i].myTacticController.ChosenTarget.myType)
-                {
-                    case BattleCharacterController.ControllerType.HERO:
-                        {
-                            BattleHeroController a = heroData[i].myTacticController.ChosenTarget as BattleHeroController;
-                            tempToUse = a.myHero;
-                            break;
-                        }
+                //if (heroData[i].myTacticController.ChosenTarget != null)
+                //{
+                    CharacterTemplate tempToUse;
+                    switch (heroData[i].myTacticController.ChosenTarget.myType)
+                    {
+                        case BattleCharacterController.ControllerType.HERO:
+                            {
+                                BattleHeroController a = heroData[i].myTacticController.ChosenTarget as BattleHeroController;
+                                tempToUse = a.myHero;
+                                break;
+                            }
 
-                    default:
-                        {
-                            BattleEnemyController a = heroData[i].myTacticController.ChosenTarget as BattleEnemyController;
-                            tempToUse = a.myEnemy;
-                            break;
-                        }
-                }
-                heroUIData[i].action.text = heroData[i].myTacticController.ChosenAction.Name + " > " +
-                                            tempToUse.charName;
+                        default:
+                            {
+                                BattleEnemyController a = heroData[i].myTacticController.ChosenTarget as BattleEnemyController;
+                                tempToUse = a.myEnemy;
+                                break;
+                            }
+                    }
+                    heroUIData[i].action.text = heroData[i].myTacticController.ChosenAction.Name + " > " +
+                                                tempToUse.charName;
+                //}
             }
             else
             {

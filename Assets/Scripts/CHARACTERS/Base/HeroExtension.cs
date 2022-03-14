@@ -21,14 +21,18 @@ public abstract class HeroExtension : CharacterTemplate
     [BoxGroup("LEVEL ATTRIBUTES")]
     [PropertyOrder(2)]
     protected internal int _Level;
+    public int Level { get { return _Level; }
+                       set { _Level = Mathf.Clamp(value, 1, 100); }
+    }
     [BoxGroup("LEVEL ATTRIBUTES")]
     [PropertyOrder(2)]
     public int _TotalExperience;
     [SerializeField]
     [BoxGroup("LEVEL ATTRIBUTES")]
     [PropertyOrder(2)]
-    protected int _ExperienceToNextLevel;
-    internal int ExperienceThreshold { get { return (int)(15 * Mathf.Pow(_Level, 2.3f) + (15 * _Level)); } }
+    protected internal int _ExperienceToNextLevel { get { return ExperienceThreshold - _TotalExperience; } }  // How Much (Relative) you need
+    internal int ExperienceThreshold { get { return (int)(15 * Mathf.Pow(_Level, 2.3f) + (15 * _Level)); } }  // How Much (Total) you need
+    internal int PrevExperienceThreshold { get { return (int)(15 * Mathf.Pow((_Level-1), 2.3f) + (15 * (_Level-1))); } }
 
     private protected float _GrowthRateHyper = 0.5f;
     private protected float _GrowthRateStrong = 0.3f;
@@ -44,18 +48,29 @@ public abstract class HeroExtension : CharacterTemplate
     [LabelWidth(100)]
     [PropertyOrder(3)]
     protected internal Weapon _Weapon;
+
+    [TitleGroup("EQUIPMENT ATTRIBUTES")]
+    [SerializeField]
+    internal Weapon.WeaponType myWeaponType;
+
     [SerializeField]
     [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left")]
     [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
     [LabelWidth(100)]
     [PropertyOrder(3)]
     protected internal Armour _Armour;
+
+    [TitleGroup("EQUIPMENT ATTRIBUTES")]
+    [SerializeField]
+    internal Armour.ArmourType myArmourType;
+
     [SerializeField]
     [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left")]
     [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
     [LabelWidth(100)]
     [PropertyOrder(3)]
     protected internal Accessory _AccessoryOne;
+
     [SerializeField]
     [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left")]
     [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
@@ -81,24 +96,28 @@ public abstract class HeroExtension : CharacterTemplate
     [LabelWidth(120)]
     [PropertyOrder(3)]
     protected private int equipAttack;
+
     [SerializeField]
     [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
     [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
     [LabelWidth(120)]
     [PropertyOrder(3)]
     protected private int equipMagAttack;
+
     [SerializeField]
     [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
     [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
     [LabelWidth(120)]
     [PropertyOrder(3)]
     protected private int equipDefense;
+
     [SerializeField]
     [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
     [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
     [LabelWidth(120)]
     [PropertyOrder(3)]
     protected private int equipMagDefense;
+
     [SerializeField]
     [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
     [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
@@ -161,7 +180,6 @@ public abstract class HeroExtension : CharacterTemplate
             LevelUpCheck();
             AssignStats();
         }
-        _ExperienceToNextLevel = ExperienceThreshold - _TotalExperience;
     }
     #endregion
     #region Stats & Levelling Up
@@ -173,7 +191,6 @@ public abstract class HeroExtension : CharacterTemplate
             LevelUpCheck();
             AssignStats();
         }
-        _ExperienceToNextLevel = ExperienceThreshold - _TotalExperience;
     }
     internal void EquipStats()
     {

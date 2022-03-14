@@ -6,19 +6,23 @@ using Sirenix.OdinInspector;
 [InlineEditor]
 public class Tactic : MonoBehaviour
 {
-    public bool isTurnedOn;                   // Is this Gambit activated?
+    public bool isTurnedOn;                            // Is this Gambit activated?
 
     public BattleCharacterController _Performer;       // Who is performing Action
     public BattleCharacterController _Target;          // Who is target of Action
 
-    public Action _Action;                    // What is to be done
-    public Condition _Condition;              // What needs to be met to perform Action
+    public Action _Action;                             // What is to be done
+    public Condition _Condition;                       // What needs to be met to perform Action
 
-    public bool ConditionIsMet;               // Is condition met?
+    public bool ConditionIsMet;                        // Is condition met?
 
     public CharacterType RetrieveTargetType()
     {
-        return _Condition.targetType;        // Either CHARACTER or ENEMY
+        return _Condition.targetType;                  // Either CHARACTER or ENEMY
+    }
+    public CharacterActiveStatus RetrieveTargetStatus()
+    {
+        return _Condition.targetStatus;                // Either ACTIVE or DOWNED
     }
     public void CallCheck()
     {

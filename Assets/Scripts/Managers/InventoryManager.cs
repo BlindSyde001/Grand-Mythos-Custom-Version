@@ -105,8 +105,147 @@ public class InventoryManager : MonoBehaviour
             }
         }
     }
-    public void AddToInventory()
+    public void AddToInventory(ItemCapsule item)
     {
+        switch(item.thisItem._ItemType)
+        {
+            case ItemType.CONSUMABLE:
+                if(ConsumablesInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                   ConsumablesInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                }
+                else
+                {
+                    ConsumablesInBag.Add(item);
+                }
+                break;
 
+            case ItemType.WEAPON:
+                if (_WeaponsInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    EquipmentInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                    _WeaponsInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                }
+                else
+                {
+                    EquipmentInBag.Add(item);
+                    _WeaponsInBag.Add(item);
+                }
+                break;
+
+            case ItemType.ARMOUR:
+                if (_ArmourInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    EquipmentInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                    _ArmourInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                }
+                else
+                {
+                    EquipmentInBag.Add(item);
+                    _ArmourInBag.Add(item);
+                }
+                break;
+
+            case ItemType.ACCESSORY:
+                if (_AccessoryInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    EquipmentInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                    _AccessoryInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                }
+                else
+                {
+                    EquipmentInBag.Add(item);
+                    _AccessoryInBag.Add(item);
+                }
+                break;
+
+            case ItemType.KEYITEM:
+                if (KeyItemsInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    KeyItemsInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                }
+                else
+                {
+                    KeyItemsInBag.Add(item);
+                }
+                break;
+
+            case ItemType.LOOT:
+                if (LootInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    LootInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
+                }
+                else
+                {
+                    LootInBag.Add(item);
+                }
+                break;
+        }
+    }
+    public bool CheckInventoryforItem(ItemCapsule item)
+    {
+        switch (item.thisItem._ItemType)
+        {
+            case ItemType.CONSUMABLE:
+                if (ConsumablesInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            case ItemType.WEAPON:
+                if (_WeaponsInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            case ItemType.ARMOUR:
+                if (_ArmourInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            case ItemType.ACCESSORY:
+                if (_AccessoryInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            case ItemType.KEYITEM:
+                if (KeyItemsInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            case ItemType.LOOT:
+                if (LootInBag.Find(x => x.thisItem == item.thisItem) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+        }
+        return false;
     }
 }

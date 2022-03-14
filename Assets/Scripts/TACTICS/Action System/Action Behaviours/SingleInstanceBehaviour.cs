@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-[CreateAssetMenu(menuName = "Single Instance Behaviour")]
 public class SingleInstanceBehaviour : ActionBehaviour
 {
     [TextArea]
     public string description = "Activates a Single Instance of either Damage or Healing.";
     protected override void PerformAction(BattleCharacterController caster, Action action, BattleCharacterController target)
     {
+        #region Downscaling Controller types and Stats
         CharacterTemplate casterStats;
         CharacterTemplate targetStats;
-        int amount;
-        bool isCrit;
-        #region Downscaling Controller types and Stats
         if (caster.myType == BattleCharacterController.ControllerType.HERO)
         {
             BattleHeroController casterDownScale = caster as BattleHeroController;
@@ -38,6 +35,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
         }
         #endregion
         #region Crit roll
+        bool isCrit;
         if (Random.Range(1, 101) <= action.critChance)
         {
             isCrit = true;
@@ -48,6 +46,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
         }
         #endregion
 
+        int amount;
         switch (action.ActionEffect)
         {
             case ActionEffect.DAMAGE:
@@ -67,7 +66,6 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 {
                     targetStats._CurrentHP -= amount;
                     targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
-                    //Debug.Log(targetStats.name + " has taken " + amount + " damage from " + casterStats.charName);
                     target.DieCheck();
                 }
                 break;
@@ -87,7 +85,6 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 {
                     targetStats._CurrentHP += amount;
                     targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
-                    //Debug.Log(target + " has restored " + amount + " health from " + caster);
                 }
                 break;
 

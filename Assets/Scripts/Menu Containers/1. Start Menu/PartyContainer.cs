@@ -11,4 +11,5 @@ public class PartyContainer : MonoBehaviour
     public TextMeshProUGUI displayLevel;
     public Image displayEXPBar;
     public TextMeshProUGUI displayHP;
+    public TextMeshProUGUI displayEXPToNextLevel;
 }

@@ -30,8 +30,6 @@ public abstract class CharacterTemplate : MonoBehaviour
     [HideLabel]
     internal GameObject _CharacterModel;
 
-    internal GameObject _MyInstantiatedModel;
-
     [TitleGroup("CHARACTER ATTRIBUTES")]
     [HorizontalGroup("CHARACTER ATTRIBUTES/Split")]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]

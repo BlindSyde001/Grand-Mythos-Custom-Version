@@ -66,14 +66,11 @@ public class StartMenuActions : MonoBehaviour
         {
             displayList[i].gameObject.SetActive(true);
             displayList[i].displayName.text = gameManager._PartyLineup[i].charName;
-
             displayList[i].displayBanner.sprite = gameManager._PartyLineup[i].charBanner;
+            displayList[i].displayLevel.text = gameManager._PartyLineup[i].Level.ToString();
 
-            displayList[i].displayLevel.text = gameManager._PartyLineup[i]._Level.ToString();
-
-            displayList[i].displayEXPBar.fillAmount =
-                (float)gameManager._PartyLineup[i]._TotalExperience /
-                gameManager._PartyLineup[i].ExperienceThreshold;
+            displayList[i].displayEXPBar.fillAmount = (float)(gameManager._PartyLineup[i]._TotalExperience - gameManager._PartyLineup[i].PrevExperienceThreshold) /
+                                                             (gameManager._PartyLineup[i].ExperienceThreshold - gameManager._PartyLineup[i].PrevExperienceThreshold);
 
             displayList[i].displayHP.text =
                 gameManager._PartyLineup[i]._CurrentHP.ToString() + " / " +

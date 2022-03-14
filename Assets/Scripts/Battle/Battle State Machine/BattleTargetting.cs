@@ -24,6 +24,7 @@ public class BattleTargetting : MonoBehaviour
 
     public GameObject targetPanel;
     public List<BattleTargetsListContainer> Targets;  //1, 2, 3, 4
+    internal List<BattleHeroController> heroTargets = new();
 
     private bool skillsOpen;
     private bool itemsOpen;
@@ -57,21 +58,24 @@ public class BattleTargetting : MonoBehaviour
             mainCommands[0].Select();
             return;
         }
-        actionsPanel.SetActive(true);
-        targetPanel.SetActive(false);
-        skillsOpen = true;
-        itemsOpen = false;
-
-        // Add the Data of the Hero's skills onto each button
-        for(int i = 0; i < battlUIController.CurrentHero._AvailableActions.Count; i++)
+        if (BattleStateMachine._CombatState != CombatState.END && BattleStateMachine._CombatState != CombatState.START)
         {
-            actions[i].myName.text = "";
-            int j = i;
-            actions[i].myAction = battlUIController.CurrentHero._AvailableActions[i];
-            actions[i].myName.text = battlUIController.CurrentHero._AvailableActions[i].Name;
-            actions[i].myButton.onClick.AddListener(delegate {SetAction(actions[j].myAction); });
+            actionsPanel.SetActive(true);
+            targetPanel.SetActive(false);
+            skillsOpen = true;
+            itemsOpen = false;
+
+            // Add the Data of the Hero's skills onto each button
+            for (int i = 0; i < battlUIController.CurrentHero._AvailableActions.Count; i++)
+            {
+                actions[i].myName.text = "";
+                int j = i;
+                actions[i].myAction = battlUIController.CurrentHero._AvailableActions[i];
+                actions[i].myName.text = battlUIController.CurrentHero._AvailableActions[i].Name;
+                actions[i].myButton.onClick.AddListener(delegate { SetAction(actions[j].myAction); });
+            }
+            actions[0].GetComponent<Button>().Select();
         }
-        actions[0].GetComponent<Button>().Select();
     }
     public void OpenItemsList()
     {
@@ -83,34 +87,40 @@ public class BattleTargetting : MonoBehaviour
             mainCommands[0].Select();
             return;
         }
-        actionsPanel.SetActive(true);
-        targetPanel.SetActive(false);
-        skillsOpen = false;
-        itemsOpen = true;
+        if (BattleStateMachine._CombatState != CombatState.END && BattleStateMachine._CombatState != CombatState.START)
+        {
+            actionsPanel.SetActive(true);
+            targetPanel.SetActive(false);
+            skillsOpen = false;
+            itemsOpen = true;
 
-        // Reset Button, then add Usable Items data onto them
-        foreach (BattleActionsListContainer a in actions)
-        {
-            a.myName.text = "";
-            a.myAction = null;
-            a.myButton.onClick.RemoveAllListeners();
+            // Reset Button, then add Usable Items data onto them
+            foreach (BattleActionsListContainer a in actions)
+            {
+                a.myName.text = "";
+                a.myAction = null;
+                a.myButton.onClick.RemoveAllListeners();
+            }
+            for (int i = 0; i < inventoryManager.ConsumablesInBag.Count; i++)
+            {
+                Consumable consumable = (Consumable)inventoryManager.ConsumablesInBag[i].thisItem;
+                int j = i;
+                actions[i].myAction = consumable.myAction;
+                actions[i].myName.text = consumable._ItemName + " x " + inventoryManager.ConsumablesInBag[i].ItemAmount;
+                actions[i].myButton.onClick.AddListener(delegate { SetAction(actions[j].myAction); });
+            }
+            actions[0].GetComponent<Button>().Select();
         }
-        for (int i = 0; i < inventoryManager.ConsumablesInBag.Count; i++)
-        {
-            Consumable consumable = (Consumable)inventoryManager.ConsumablesInBag[i].thisItem;
-            int j = i;
-            actions[i].myAction = consumable.myAction;
-            actions[i].myName.text = consumable._ItemName;
-            actions[i].myButton.onClick.AddListener(delegate { SetAction(actions[j].myAction); });
-        }
-        actions[0].GetComponent<Button>().Select();
     }
     
     public void SetAction(Action action)
     {
-        chosenAction = action;
-        OpenTargetList(action.ActionEffect == ActionEffect.HEAL? 1 : 0);
-        Targets[0].GetComponent<Button>().Select();
+        if (BattleStateMachine._CombatState != CombatState.END && BattleStateMachine._CombatState != CombatState.START)
+        {
+            chosenAction = action;
+            OpenTargetList(action.ActionEffect == ActionEffect.HEAL ? 1 : 0);
+            Targets[0].GetComponent<Button>().Select();
+        }
     }
     public void OpenTargetList(int enemyOrHero)
     {
@@ -141,11 +151,7 @@ public class BattleTargetting : MonoBehaviour
             case 1:
                 // hero list
                 List<HeroExtension> allHeroes = new();
-                foreach (BattleHeroController a in BattleStateMachine._HeroesActive)
-                {
-                    allHeroes.Add(a.myHero);
-                }
-                foreach(BattleHeroController a in BattleStateMachine._HeroesDowned)
+                foreach (BattleHeroController a in heroTargets)
                 {
                     allHeroes.Add(a.myHero);
                 }
@@ -174,12 +180,5 @@ public class BattleTargetting : MonoBehaviour
         battlUIController.CurrentHero.myTacticController.ActionIsInputted = true;
         battlUIController.CurrentHero.myTacticController.ChosenAction = action;
         battlUIController.CurrentHero.myTacticController.ChosenTarget = target;
-        if(action.ActionType == ActionType.ITEM)
-        {
-            Consumable consumable = GameManager._instance._ConsumablesDatabase.Find(x => x.myAction == action);
-            ItemCapsule itemCapsule = inventoryManager.ConsumablesInBag.Find(x => x.thisItem == consumable);
-
-            inventoryManager.RemoveFromInventory(itemCapsule);
-        }
     }
 }

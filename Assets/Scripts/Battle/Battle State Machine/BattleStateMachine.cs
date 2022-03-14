@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 using Cinemachine;
 
 public class BattleStateMachine : MonoBehaviour
 {
     private BattleUIController BU;
     private GameManager gameManager;
+    [SerializeField]
+    private BattleTargetting battleTargetting;
+    [SerializeField]
+    private BattleResolution battleResolution;
 
     // VARIABLES
     public List<Transform> _HeroSpawns;    // Where do they initially spawn?
@@ -30,7 +35,6 @@ public class BattleStateMachine : MonoBehaviour
     public delegate void SwitchToNewState(CombatState CS);
     public static event SwitchToNewState OnNewStateSwitched;
 
-
     public static CombatState _CombatState;
     public GameObject losePanel;
     private bool _EndBattleLock;
@@ -42,15 +46,16 @@ public class BattleStateMachine : MonoBehaviour
     {
         BU = FindObjectOfType<BattleUIController>();
         rotateCam = FindObjectOfType<CinemachineFreeLook>();
-        //Cursor.visible = false;
+        Cursor.visible = false;
     }
     private void Start()
     {
+        battleTargetting = FindObjectOfType<BattleTargetting>();
         gameManager = GameManager._instance;
         _EndBattleLock = false;
         SpawnCharacterModels();
         SwitchCombatState(CombatState.START);
-        StartCoroutine(BattleIntermission(5));
+        StartCoroutine(BattleIntermission(5, CombatState.START));
     }
     private void Update()
     {
@@ -119,6 +124,7 @@ public class BattleStateMachine : MonoBehaviour
                                                       GameObject.Find("Hero Model Data").transform);
             instantiatedHeroModel.name = _HeroControllers[i].myHero.charName + " Model";
             _HeroModels.Add(instantiatedHeroModel);
+            _HeroControllers[i].myBattlingModel = instantiatedHeroModel.transform;
 
             // Add to Active/Downed list Based on Health
             switch (_HeroControllers[i].myHero._CurrentHP)
@@ -129,13 +135,13 @@ public class BattleStateMachine : MonoBehaviour
 
                 case > 0:
                     _HeroesActive.Add(_HeroControllers[i]);
+                    battleTargetting.heroTargets.Add(_HeroControllers[i]);
                     break;
             }
 
             // Attach Relevant References
-            _HeroControllers[i].myHero._MyInstantiatedModel = instantiatedHeroModel;        // The Battle Model Im using
             _HeroControllers[i].animator = instantiatedHeroModel.GetComponent<Animator>();  // The Animator Component
-            BU.AttachHeroUIData(_HeroControllers[i].myHero, i);                                    // Battle UI Component
+            BU.AttachHeroUIData(_HeroControllers[i].myHero, i);                             // Battle UI Component
             _HeroControllers[i].myMovementController = instantiatedHeroModel.GetComponent<BattleArenaMovement>();
         }
         foreach (BattleHeroController a in _HeroesActive)
@@ -163,8 +169,8 @@ public class BattleStateMachine : MonoBehaviour
             _EnemiesActive.Add(gameManager._EnemyLineup[i].myBattleEnemyController);
 
             // Attach Relevant References
-            gameManager._EnemyLineup[i]._MyInstantiatedModel = instantiatedEnemyModel;               // the Model Im using in Battle
-            _EnemyControllers[i].animator = instantiatedEnemyModel.GetComponent<Animator>();             // The Animator Component
+            _EnemyControllers[i].myBattlingModel = instantiatedEnemyModel.transform;
+            _EnemyControllers[i].animator = instantiatedEnemyModel.GetComponent<Animator>();         // The Animator Component
             BU.CreateEnemyUI(gameManager._EnemyLineup[i], instantiatedEnemyModel.transform);         // the Battle UI  Component
 
             _EnemyControllers[i].myEnemy._ActionChargeAmount = Random.Range(0, 50);                  // The ATB Bar
@@ -174,19 +180,21 @@ public class BattleStateMachine : MonoBehaviour
     #region CHANGE IN BATTLE STATE
     private void BattleIsActive()
     {
-        foreach(BattleHeroController hero in _HeroControllers)
+        if (CheckStateOfPlay())
         {
-            hero.ActiveStateBehaviour();
-        }
-        foreach(BattleEnemyController enemy in _EnemyControllers)
-        {
-            enemy.ActiveStateBehaviour();
+            foreach (BattleHeroController hero in _HeroesActive)
+            {
+                hero.ActiveStateBehaviour();
+            }
+            foreach (BattleEnemyController enemy in _EnemiesActive)
+            {
+                enemy.ActiveStateBehaviour();
+            }
         }
     }
-    private IEnumerator BattleIntermission(float x)
+    private IEnumerator BattleIntermission(float x, CombatState combatState)
     {
-        //_CombatState = CombatState.START;
-        SwitchCombatState(CombatState.WAIT);
+        SwitchCombatState(combatState);
         yield return new WaitForSeconds(x);
         SwitchCombatState(CombatState.ACTIVE);
     }
@@ -209,49 +217,22 @@ public class BattleStateMachine : MonoBehaviour
     {
         if (_HeroesActive.Count > 0 && _EnemiesActive.Count <= 0)
         {
-            SwitchCombatState(CombatState.WAIT);
+            SwitchCombatState(CombatState.END);
             StartCoroutine(VictoryTransition());
         }
         else if (_EnemiesActive.Count > 0 && _HeroesActive.Count <= 0)
         {
-            SwitchCombatState(CombatState.WAIT);
+            SwitchCombatState(CombatState.END);
             StartCoroutine(DefeatTransition());
         }
     }
-
 
     private IEnumerator VictoryTransition()
     {
         // Victory poses, exp gaining, items, transition back to overworld
         _EndBattleLock = true;
-        Debug.Log("VICTORY!!!");
-        DistributeTheRewards();
-        yield return null;
-    }
-    private void DistributeTheRewards()
-    {
-        int sharedExp = 0;
-        int creditsEarned = 0;
-        foreach(BattleEnemyController enemy in _EnemiesDowned)
-        {
-            sharedExp += enemy.myEnemy.experiencePool;
-            creditsEarned += enemy.myEnemy.creditPool;
-        }
-        foreach(BattleHeroController hero in _HeroesActive)
-        {
-            hero.myHero._TotalExperience += sharedExp / _HeroesActive.Count;
-            hero.myHero.LevelUpCheck();
-        }
-        InventoryManager._instance.creditsInBag += creditsEarned;
-        StartCoroutine(ReturnToOverworldPrep());
-    }
-    private IEnumerator ReturnToOverworldPrep()
-    {
-        ClearData();
-        yield return new WaitForSeconds(2);
-        Cursor.visible = true;
-        // reload scene and create player moving character at coordinates
-        EventManager._instance.SwitchNewScene(2);
+        yield return new WaitForSeconds(1f);
+        StartCoroutine(battleResolution.ResolveBattle(0));
     }
 
 
@@ -259,15 +240,15 @@ public class BattleStateMachine : MonoBehaviour
     {
         // Lost, Open up UI options to load saved game or return to title
         _EndBattleLock = true;
-        Debug.Log("GAME OVER!!!");
+        yield return new WaitForSeconds(1f);
+        StartCoroutine(battleResolution.ResolveBattle(1));
         OpenLoseMenu();
-        yield return null;
     }
     private void OpenLoseMenu()
     {
         losePanel.SetActive(true);
     }
-    public void ClearData()
+    internal static void ClearData()
     {
         _HeroModels.Clear();
         _HeroesActive.Clear();
@@ -279,11 +260,19 @@ public class BattleStateMachine : MonoBehaviour
         _EnemiesDowned.Clear();
         _EnemyControllers.Clear();
 
-        foreach(EnemyExtension ext in gameManager._EnemyLineup)
+        foreach(EnemyExtension ext in GameManager._instance._EnemyLineup)
         {
             Destroy(ext.gameObject);
         }
-        gameManager._EnemyLineup.Clear();
+        GameManager._instance._EnemyLineup.Clear();
     }
     #endregion
+
+    public static bool CheckStateOfPlay()
+    {
+        if (_CombatState != CombatState.START && _CombatState != CombatState.END)
+            return true;
+        else
+            return false;
+    }
 }

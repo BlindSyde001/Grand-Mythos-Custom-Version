@@ -28,8 +28,6 @@ public class AudioManager : MonoBehaviour
         BGMSource.loop = true;
         sfxSource = gameObject.AddComponent<AudioSource>();
     }
-
-    //METHODS
     private void OnEnable()
     {
         EventManager.OnGameStateChange += SwitchMusicTrackEvent;
@@ -39,14 +37,14 @@ public class AudioManager : MonoBehaviour
         EventManager.OnGameStateChange -= SwitchMusicTrackEvent;
     }
 
-
+    //METHODS
     public void SwitchMusicTrackEvent(GameState gs)
     {
         switch(gs)
         {
             case GameState.OVERWORLD:
-                PlayMusicWithFade(overworldTheme);
-                //PlayMusicWithDelay(overworldTheme);
+                //PlayMusicWithFade(overworldTheme);
+                PlayMusicWithDelay(overworldTheme);
                 break;
 
             case GameState.BATTLE:
@@ -55,7 +53,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-
+    #region Switching Tracks
     public void PlayMusicWithDelay(Sound music)
     {
         // Play Song, with a Delay window
@@ -100,7 +98,7 @@ public class AudioManager : MonoBehaviour
         }
 
     }
-
+    #endregion
 
     public void PlayOneShotSFX(AudioClip clip, float volume)
     {

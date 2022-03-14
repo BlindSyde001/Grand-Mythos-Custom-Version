@@ -34,6 +34,13 @@ public class BattleHeroController : BattleCharacterController
             ChangeAnimationState(myHero.myTacticController.ChosenAction.AnimationName);
             yield return new WaitForSeconds(myHero.myTacticController.ChosenAction.AnimationTiming);
 
+            if (myHero.myTacticController.ChosenAction.ActionType == ActionType.ITEM)
+            {
+                Consumable consumable = GameManager._instance._ConsumablesDatabase.Find(x => x.myAction == myHero.myTacticController.ChosenAction);
+                ItemCapsule itemCapsule = InventoryManager._instance.ConsumablesInBag.Find(x => x.thisItem == consumable);
+
+                InventoryManager._instance.RemoveFromInventory(itemCapsule);
+            }
             foreach (ActionBehaviour abehaviour in myHero.myTacticController.ChosenAction.Behaviours)
             {
                 abehaviour.PreActionTargetting(this,
@@ -58,6 +65,13 @@ public class BattleHeroController : BattleCharacterController
             ChangeAnimationState(myHero.myTacticController.ChosenAction.AnimationName);
             yield return new WaitForSeconds(myHero.myTacticController.ChosenAction.AnimationTiming);
 
+            if (_TacticToPerform._Action.ActionType == ActionType.ITEM)
+            {
+                Consumable consumable = GameManager._instance._ConsumablesDatabase.Find(x => x.myAction == _TacticToPerform._Action);
+                ItemCapsule itemCapsule = InventoryManager._instance.ConsumablesInBag.Find(x => x.thisItem == consumable);
+
+                InventoryManager._instance.RemoveFromInventory(itemCapsule);
+            }
             foreach (ActionBehaviour aBehaviour in _TacticToPerform._Action.Behaviours)
             {
                 aBehaviour.PreActionTargetting(_TacticToPerform._Performer,
@@ -84,9 +98,9 @@ public class BattleHeroController : BattleCharacterController
     {
         if (myHero._CurrentHP <= 0)
         {
+            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
             myHero._CurrentHP = 0;
             myHero._ActionChargeAmount = 0;
-            FindObjectOfType<BattleStateMachine>().CheckCharIsDead(this);
             ChangeAnimationState(Battle_Die);
         }
     }

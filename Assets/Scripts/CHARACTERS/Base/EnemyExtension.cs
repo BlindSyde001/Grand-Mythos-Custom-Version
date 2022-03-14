@@ -9,9 +9,14 @@ public abstract class EnemyExtension : CharacterTemplate
     internal BattleEnemyController myBattleEnemyController;
 
     [SerializeField]
-    internal int experiencePool; // How much EXP the enemy Gives
+    internal int experiencePool;                // How much EXP the enemy Gives
     [SerializeField]
-    internal int creditPool;     // How many Credits the enemy Gives
+    internal int creditPool;                    // How many Credits the enemy Gives
+
+    [SerializeField]
+    internal List<ItemCapsule> DropItems;       // Loot that the enemy drops
+    [SerializeField]
+    internal List<float> DropRate;
 
     public override void AssignStats()
     {

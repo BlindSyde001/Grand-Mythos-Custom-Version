@@ -15,6 +15,8 @@ public abstract class BattleCharacterController : MonoBehaviour
     internal Animator animator;
     [SerializeField]
     protected internal BattleArenaMovement myMovementController;
+    [SerializeField]
+    internal Transform myBattlingModel;
 
     // UPDATES
     private void Start()

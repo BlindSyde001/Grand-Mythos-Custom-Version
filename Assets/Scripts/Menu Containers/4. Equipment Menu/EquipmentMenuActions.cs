@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using DG.Tweening;
 
 public class EquipmentMenuActions : MonoBehaviour
@@ -21,6 +20,7 @@ public class EquipmentMenuActions : MonoBehaviour
 
     [SerializeField]
     private List<EquipNewItemContainer> equipNewItemContainers;
+    private List<Equipment> CurrentlyEquippedGear = new();
     public GameObject EquipNewItemList;
     private Button listToggle;
 
@@ -49,6 +49,7 @@ public class EquipmentMenuActions : MonoBehaviour
             inputManager.MenuItems[3].transform.GetChild(3).DOLocalMove(new Vector3(0, -320, 0), menuInputs.speed);
             SetStats(gameManager._PartyLineup[0]);
             SetLoadout(gameManager._PartyLineup[0]);
+            UpdateCurrentEquippedGear();
             SetHeroSelection();
         }
     }
@@ -186,13 +187,14 @@ public class EquipmentMenuActions : MonoBehaviour
         switch(equipSlot)
         {
             case 0:
-                switch(selectedHero._Weapon.name)
+                switch(selectedHero.myWeaponType)
                 {
                     #region Guns
-                    case string a when a.Contains("Gun"):
+                    case Weapon.WeaponType.Gun:
                         List<Weapon> guns = new();
                         foreach(ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
+                            // Add the Guns
                             if(weapon.thisItem.name.Contains("Gun"))
                             {
                                 Weapon wpToAdd = (Weapon)weapon.thisItem;
@@ -201,7 +203,15 @@ public class EquipmentMenuActions : MonoBehaviour
                         }
                         for(int i = 0; i < guns.Count; i++)
                         {
-                            int j = i;
+                            int j = i; 
+                            if(CheckOnEquippedGear(guns[i]))
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = true;
+                            }
+                            else
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = false;
+                            }
                             equipNewItemContainers[i].EquipName.text = guns[i]._ItemName;
                             equipNewItemContainers[i].ThisEquipment = guns[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(guns[j], 0); });
@@ -209,7 +219,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         break;
                     #endregion
                     #region Warhammer
-                    case string a when a.Contains("Warhammer"):
+                    case Weapon.WeaponType.Warhammer:
                         List<Weapon> warhammers = new();
                         foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
@@ -221,6 +231,14 @@ public class EquipmentMenuActions : MonoBehaviour
                         }
                         for (int i = 0; i < warhammers.Count; i++)
                         {
+                            if (CheckOnEquippedGear(warhammers[i]))
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = true;
+                            }
+                            else
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = false;
+                            }
                             int j = i;
                             equipNewItemContainers[i].EquipName.text = warhammers[i]._ItemName;
                             equipNewItemContainers[i].ThisEquipment = warhammers[i];
@@ -229,7 +247,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         break;
                     #endregion
                     #region Power Glove
-                    case string a when a.Contains("Power Glove"):
+                    case Weapon.WeaponType.PowerGlove:
                         List<Weapon> powergloves = new();
                         foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
@@ -241,6 +259,14 @@ public class EquipmentMenuActions : MonoBehaviour
                         }
                         for (int i = 0; i < powergloves.Count; i++)
                         {
+                            if (CheckOnEquippedGear(powergloves[i]))
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = true;
+                            }
+                            else
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = false;
+                            }
                             int j = i;
                             equipNewItemContainers[i].EquipName.text = powergloves[i]._ItemName;
                             equipNewItemContainers[i].ThisEquipment = powergloves[i];
@@ -249,7 +275,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         break;
                     #endregion
                     #region Grimoire
-                    case string a when a.Contains("Grimoire"):
+                    case Weapon.WeaponType.Grimoire:
                         List<Weapon> grimoire = new();
                         foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
@@ -261,6 +287,14 @@ public class EquipmentMenuActions : MonoBehaviour
                         }
                         for (int i = 0; i < grimoire.Count; i++)
                         {
+                            if (CheckOnEquippedGear(grimoire[i]))
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = true;
+                            }
+                            else
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = false;
+                            }
                             int j = i;
                             equipNewItemContainers[i].EquipName.text = grimoire[i]._ItemName;
                             equipNewItemContainers[i].ThisEquipment = grimoire[i];
@@ -272,10 +306,10 @@ public class EquipmentMenuActions : MonoBehaviour
                 break;
 
             case 1:
-                switch(selectedHero._Armour.name)
+                switch(selectedHero.myArmourType)
                 {
                     #region Leather
-                    case string a when a.Contains("Leather"):
+                    case Armour.ArmourType.Leather:
                         List<Armour> leather = new();
                         foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
@@ -287,6 +321,14 @@ public class EquipmentMenuActions : MonoBehaviour
                         }
                         for (int i = 0; i < leather.Count; i++)
                         {
+                            if (CheckOnEquippedGear(leather[i]))
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = true;
+                            }
+                            else
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = false;
+                            }
                             int j = i;
                             equipNewItemContainers[i].EquipName.text = leather[i]._ItemName;
                             equipNewItemContainers[i].ThisEquipment = leather[i];
@@ -295,7 +337,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         break;
                     #endregion
                     #region Mail
-                    case string a when a.Contains("Mail"):
+                    case Armour.ArmourType.Mail:
                         List<Armour> mail = new();
                         foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
@@ -307,6 +349,14 @@ public class EquipmentMenuActions : MonoBehaviour
                         }
                         for (int i = 0; i < mail.Count; i++)
                         {
+                            if (CheckOnEquippedGear(mail[i]))
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = true;
+                            }
+                            else
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = false;
+                            }
                             int j = i;
                             equipNewItemContainers[i].EquipName.text = mail[i]._ItemName;
                             equipNewItemContainers[i].ThisEquipment = mail[i];
@@ -315,7 +365,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         break;
                     #endregion
                     #region Chasis
-                    case string a when a.Contains("Chasis"):
+                    case Armour.ArmourType.Chasis:
                         List<Armour> chasis = new();
                         foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
@@ -327,6 +377,14 @@ public class EquipmentMenuActions : MonoBehaviour
                         }
                         for (int i = 0; i < chasis.Count; i++)
                         {
+                            if (CheckOnEquippedGear(chasis[i]))
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = true;
+                            }
+                            else
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = false;
+                            }
                             int j = i;
                             equipNewItemContainers[i].EquipName.text = chasis[i]._ItemName;
                             equipNewItemContainers[i].ThisEquipment = chasis[i];
@@ -335,7 +393,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         break;
                     #endregion
                     #region Robe
-                    case string a when a.Contains("Robe"):
+                    case Armour.ArmourType.Robes:
                         List<Armour> robe = new();
                         foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
@@ -347,6 +405,14 @@ public class EquipmentMenuActions : MonoBehaviour
                         }
                         for (int i = 0; i < robe.Count; i++)
                         {
+                            if (CheckOnEquippedGear(robe[i]))
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = true;
+                            }
+                            else
+                            {
+                                equipNewItemContainers[i].ThisButton.interactable = false;
+                            }
                             int j = i;
                             equipNewItemContainers[i].EquipName.text = robe[i]._ItemName;
                             equipNewItemContainers[i].ThisEquipment = robe[i];
@@ -361,8 +427,16 @@ public class EquipmentMenuActions : MonoBehaviour
                 #region Accessory
                 for (int i = 0; i < inventoryManager._AccessoryInBag.Count; i++)
                 {
-                    int j = i;
                     Accessory accessory = (Accessory)inventoryManager._AccessoryInBag[i].thisItem;
+                    if (CheckOnEquippedGear(accessory))
+                    {
+                        equipNewItemContainers[i].ThisButton.interactable = true;
+                    }
+                    else
+                    {
+                        equipNewItemContainers[i].ThisButton.interactable = false;
+                    }
+                    int j = i;
                     equipNewItemContainers[i].EquipName.text = accessory._ItemName;
                     equipNewItemContainers[i].ThisEquipment = accessory;
                     equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(accessory, equipSlot); });
@@ -392,9 +466,56 @@ public class EquipmentMenuActions : MonoBehaviour
                 selectedHero._AccessoryTwo = newEquip as Accessory;
                 break;
         }
+        UpdateCurrentEquippedGear();
         selectedHero.EquipStats();
         SetStats(selectedHero);
         SetLoadout(selectedHero);
         EquipNewItemList.SetActive(false);
+    }
+
+
+
+    private void UpdateCurrentEquippedGear()
+    {
+        CurrentlyEquippedGear.Clear();
+        for (int i = 0; i < gameManager._PartyLineup.Count; i++)
+        {
+            // Add Currently Equipped Gear
+            CurrentlyEquippedGear.Add(gameManager._PartyLineup[i]._Weapon);
+            CurrentlyEquippedGear.Add(gameManager._PartyLineup[i]._Armour);
+            if (gameManager._PartyLineup[i]._AccessoryOne != null)
+            {
+                CurrentlyEquippedGear.Add(gameManager._PartyLineup[i]._AccessoryOne);
+            }
+            if (gameManager._PartyLineup[i]._AccessoryTwo != null)
+            {
+                CurrentlyEquippedGear.Add(gameManager._PartyLineup[i]._AccessoryTwo);
+            }
+        }
+    }
+    private bool CheckOnEquippedGear(Equipment equipment)
+    {
+        int amountEquipped = 0;
+        int amountInInventory = 0;
+
+        ItemCapsule a = inventoryManager.EquipmentInBag.Find(x => x.thisItem == equipment);
+        amountInInventory = a.ItemAmount;
+
+        foreach(Equipment comparison in CurrentlyEquippedGear)
+        {
+            if(comparison == equipment)
+            {
+                Debug.Log("Found One!");
+                amountEquipped++;
+            }
+        }
+        if(amountEquipped < amountInInventory)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

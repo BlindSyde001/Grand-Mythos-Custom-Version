@@ -82,6 +82,11 @@ MonoBehaviour:
   myBattleEnemyController: {fileID: 3924320506975913875}
   experiencePool: 300
   creditPool: 120
+  DropItems:
+  - thisItem: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+    ItemAmount: 1
+  DropRate:
+  - 50
 --- !u!114 &3924320506975913875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,5 +100,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 1
-  anim: {fileID: 0}
+  animator: {fileID: 0}
+  myMovementController: {fileID: 0}
   myEnemy: {fileID: 4298728654131661726}

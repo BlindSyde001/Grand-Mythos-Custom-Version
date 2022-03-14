@@ -26,28 +26,88 @@ public class HeroTacticController : MonoBehaviour
         // 4. Check if CALLCHECK Works with this target
         // 5. Repeat from step 3 until all in list have been tried
         CharacterType x = _TacticsList[i].RetrieveTargetType();
+        if (_TacticsList[i]._Action.ActionType == ActionType.ITEM)
+        {
+            Consumable consumable = GameManager._instance._ConsumablesDatabase.Find(x => x.myAction == _TacticsList[i]._Action);
+            ItemCapsule itemCapsule = InventoryManager._instance.ConsumablesInBag.Find(x => x.thisItem == consumable);
+            if(itemCapsule == null)
+            {
+                _TacticsList[i].ConditionIsMet = false;
+                return;
+            }
+        }
         switch (x)
         {
             case CharacterType.CHARACTER:
-                for(int j = 0; j < BattleStateMachine._HeroesActive.Count; j++)
+                if (_TacticsList[i].RetrieveTargetStatus() == CharacterActiveStatus.ACTIVE)
                 {
-                    _TacticsList[i]._Target = BattleStateMachine._HeroesActive[j];
-                    _TacticsList[i].CallCheck();
-                    if (_TacticsList[i].ConditionIsMet)
+                    if(BattleStateMachine._HeroesActive.Count == 0)
                     {
+                        _TacticsList[i].ConditionIsMet = false;
                         break;
+                    }
+                    for (int j = 0; j < BattleStateMachine._HeroesActive.Count; j++)
+                    {
+                        _TacticsList[i]._Target = BattleStateMachine._HeroesActive[j];
+                        _TacticsList[i].CallCheck();
+                        if (_TacticsList[i].ConditionIsMet)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (BattleStateMachine._HeroesDowned.Count == 0)
+                    {
+                        _TacticsList[i].ConditionIsMet = false;
+                        break;
+                    }
+                    for (int j = 0; j < BattleStateMachine._HeroesDowned.Count; j++)
+                    {
+                        _TacticsList[i]._Target = BattleStateMachine._HeroesDowned[j];
+                        _TacticsList[i].CallCheck();
+                        if (_TacticsList[i].ConditionIsMet)
+                        {
+                            break;
+                        }
                     }
                 }
                 break;
 
             case CharacterType.ENEMY:
-                for(int j = 0; j < BattleStateMachine._EnemiesActive.Count; j++)
+                if (_TacticsList[i].RetrieveTargetStatus() == CharacterActiveStatus.ACTIVE)
                 {
-                    _TacticsList[i]._Target = BattleStateMachine._EnemiesActive[j];
-                    _TacticsList[i].CallCheck();
-                    if (_TacticsList[i].ConditionIsMet)
+                    if (BattleStateMachine._EnemiesActive.Count == 0)
                     {
+                        _TacticsList[i].ConditionIsMet = false;
                         break;
+                    }
+                    for (int j = 0; j < BattleStateMachine._EnemiesActive.Count; j++)
+                    {
+                        _TacticsList[i]._Target = BattleStateMachine._EnemiesActive[j];
+                        _TacticsList[i].CallCheck();
+                        if (_TacticsList[i].ConditionIsMet)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (BattleStateMachine._EnemiesDowned.Count == 0)
+                    {
+                        _TacticsList[i].ConditionIsMet = false;
+                        break;
+                    }
+                    for (int j = 0; j < BattleStateMachine._EnemiesDowned.Count; j++)
+                    {
+                        _TacticsList[i]._Target = BattleStateMachine._EnemiesDowned[j];
+                        _TacticsList[i].CallCheck();
+                        if (_TacticsList[i].ConditionIsMet)
+                        {
+                            break;
+                        }
                     }
                 }
                 break;
@@ -73,7 +133,7 @@ public class HeroTacticController : MonoBehaviour
                         {
                             ChosenAction = _TacticsList[i]._Action;
                             ChosenTarget = _TacticsList[i]._Target;
-                            myHeroCtrlr.myMovementController.myTarget = ChosenTarget.animator.GetComponent<Transform>();
+                            myHeroCtrlr.myMovementController.myTarget = ChosenTarget.myBattlingModel;
                             break;
                         }
                     }
@@ -90,7 +150,7 @@ public class HeroTacticController : MonoBehaviour
                 }
                 else
                 {
-                    myHeroCtrlr.myMovementController.myTarget = ChosenTarget.animator.GetComponent<Transform>();
+                    myHeroCtrlr.myMovementController.myTarget = ChosenTarget.myBattlingModel;
                 }
             }
             else
