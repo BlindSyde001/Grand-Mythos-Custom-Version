@@ -133,17 +133,29 @@ public class SaveMenuActions : MonoBehaviour
             heroSave.currentMPData = hero._CurrentMP;
 
             SerializableTacticController tacticSave = new();
-            for(int i = 0; i < hero.myTacticController._TacticsList.Count; i++)
+            // Go through all 10 Tactics, add info to the tacticSave
+            for (int i = 0; i < hero.myTacticController._TacticsList.Count; i++)
             {
                 tacticSave.tacticToggleList[i] = hero.myTacticController._TacticsList[i].isTurnedOn;
                 if(hero.myTacticController._TacticsList[i]._Condition != null)
                 {
                     tacticSave.tacticCndList[i] = hero.myTacticController._TacticsList[i]._Condition.name;
                 }
-                if(hero.myTacticController._TacticsList[i]._Action != null)
+                if(hero.myTacticController._TacticsList[i]._Actions != null)
                 {
-                    tacticSave.tacticActionTypeList[i] = hero.myTacticController._TacticsList[i]._Action.ActionType.ToString();
-                    tacticSave.tacticActionList[i] = hero.myTacticController._TacticsList[i]._Action.Name;
+                    SerializableTacticActions tacticActions = new();
+                    for(int j = 0; j < hero.myTacticController._TacticsList[j]._Actions.Count; j++)
+                    {
+                        if (hero.myTacticController._TacticsList[i]._Actions[j] != null)
+                        {
+                            tacticActions.tacticActions[j] = hero.myTacticController._TacticsList[i]._Actions[j].Name;
+                            tacticActions.tacticActionTypes[j] = hero.myTacticController._TacticsList[i]._Actions[j].ActionType.ToString();
+                            //tacticSave.tacticActionCapsulesList[i].tacticActionTypes[j] = hero.myTacticController._TacticsList[i]._Actions[j].ActionType.ToString();
+                            //tacticSave.tacticActionCapsulesList[i].tacticActions[j] = hero.myTacticController._TacticsList[i]._Actions[j].Name;
+                            //tacticSave.tacticActionCapsulesList[i] = tacticActions;
+                        }
+                    }
+                    tacticSave.tacticActionCapsulesList.Add(tacticActions);
                 }
             }
 

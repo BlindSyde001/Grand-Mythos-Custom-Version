@@ -8,6 +8,7 @@ public class BattleHeroController : BattleCharacterController
     [SerializeField]
     internal HeroExtension myHero;
     private string currentAnimState;
+    private bool isPerformingActions;
 
     const string Battle_EnterFight = "Enter Fight";
     const string Battle_Stance = "Stance";
@@ -25,74 +26,117 @@ public class BattleHeroController : BattleCharacterController
 
     // METHODS
     #region Standard Action Methods
-    internal IEnumerator PerformManualActionWithAnim()
+    internal IEnumerator DoManualAction(List<Action> chosenActions, BattleCharacterController target, int targetList)
     {
         // Play Anim
         if (myHero._CurrentHP > 0)
         {
-            myHero._ActionChargeAmount = 0;
-            ChangeAnimationState(myHero.myTacticController.ChosenAction.AnimationName);
-            yield return new WaitForSeconds(myHero.myTacticController.ChosenAction.AnimationTiming);
-
-            if (myHero.myTacticController.ChosenAction.ActionType == ActionType.ITEM)
+            isPerformingActions = true;
+            for (int i = 0; i < chosenActions.Count; i++)
             {
-                Consumable consumable = GameManager._instance._ConsumablesDatabase.Find(x => x.myAction == myHero.myTacticController.ChosenAction);
-                ItemCapsule itemCapsule = InventoryManager._instance.ConsumablesInBag.Find(x => x.thisItem == consumable);
-
-                InventoryManager._instance.RemoveFromInventory(itemCapsule);
-            }
-            foreach (ActionBehaviour abehaviour in myHero.myTacticController.ChosenAction.Behaviours)
-            {
-                abehaviour.PreActionTargetting(this,
-                                               myHero.myTacticController.ChosenAction,
-                                               myHero.myTacticController.ChosenTarget);
+                if (chosenActions[i] != null)
+                {
+                    if (myHero.myTacticController.CheckIfStillInList(target, targetList))
+                    {
+                        // DO EACH IN SEQUENCE (ONE AFTER THE OTHER)
+                        yield return DoActionSegment(chosenActions[i], target, targetList);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
             }
         }
         else
         {
             yield return null;
         }
-        myHero.myTacticController.ChosenAction = null;
+        isPerformingActions = false;
+        myHero.myTacticController.ChosenActions = null;
         myHero.myTacticController.ChosenTarget = null;
-        myHero.myTacticController.ActionIsInputted = false;
+        myHero.myTacticController.ManualActionInput = false;
     }
-    internal IEnumerator PerformTacticWithAnim(Tactic _TacticToPerform)
+    internal IEnumerator DoTacticAction(Tactic _TacticToPerform, int targetList)
     {
         // Play Anim Here
         if (myHero._CurrentHP > 0)
         {
-            myHero._ActionChargeAmount = 0;
-            ChangeAnimationState(myHero.myTacticController.ChosenAction.AnimationName);
-            yield return new WaitForSeconds(myHero.myTacticController.ChosenAction.AnimationTiming);
-
-            if (_TacticToPerform._Action.ActionType == ActionType.ITEM)
+            isPerformingActions = true;
+            for(int i = 0; i < _TacticToPerform._Actions.Count; i++)
             {
-                Consumable consumable = GameManager._instance._ConsumablesDatabase.Find(x => x.myAction == _TacticToPerform._Action);
-                ItemCapsule itemCapsule = InventoryManager._instance.ConsumablesInBag.Find(x => x.thisItem == consumable);
-
-                InventoryManager._instance.RemoveFromInventory(itemCapsule);
-            }
-            foreach (ActionBehaviour aBehaviour in _TacticToPerform._Action.Behaviours)
-            {
-                aBehaviour.PreActionTargetting(_TacticToPerform._Performer,
-                                               _TacticToPerform._Action,
-                                               _TacticToPerform._Target);
+                if (_TacticToPerform._Actions[i] != null)
+                {
+                    if (myHero.myTacticController.CheckIfStillInList(_TacticToPerform._Target, targetList))
+                    {
+                        // DO EACH IN SEQUENCE (ONE AFTER THE OTHER)
+                        yield return DoActionSegment(_TacticToPerform._Actions[i], _TacticToPerform._Target, targetList);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
             }
         }
         else
         {
-            yield return null;
+            yield break;
         }
+        isPerformingActions = false;
         _TacticToPerform._Target = null;
-        myHero.myTacticController.ChosenAction = null;
+        myHero.myTacticController.ChosenActions = null;
         myHero.myTacticController.ChosenTarget = null;
     }
+    private IEnumerator DoActionSegment(Action action, BattleCharacterController target, int targetList)
+    {
+        myHero._ActionChargeAmount -= 25 * action._SegmentCost;
+        ChangeAnimationState(action.AnimationName);
 
+        yield return new WaitForSeconds(action.AnimationTiming);
+        if (myHero.myTacticController.CheckIfStillInList(target, targetList))
+        {
+            if (action.ActionType == ActionType.ITEM)
+            {
+                Consumable consumable = GameManager._instance._ConsumablesDatabase.Find(x => x.myAction == action);
+                ItemCapsule itemCapsule = InventoryManager._instance.ConsumablesInBag.Find(x => x.thisItem == consumable);
+
+                if (itemCapsule != null)
+                {
+                    InventoryManager._instance.RemoveFromInventory(itemCapsule);
+                }
+                else
+                {
+                    yield return null;
+                }
+            }
+            foreach (ActionBehaviour aBehaviour in action.Behaviours)
+            {
+                aBehaviour.PreActionTargetting(this, action, target);
+            }
+        }
+        yield return new WaitForSeconds(1f);
+    }
+    #endregion
+    #region Basic Commands
     public override void ActiveStateBehaviour()
     {
-        myHero._ActionChargeAmount += myHero._ActionRechargeSpeed * Time.deltaTime;
-        myHero._ActionChargeAmount = Mathf.Clamp(myHero._ActionChargeAmount, 0, 100);
-        myHero.myTacticController.SetNextAction();
+        if (!isPerformingActions)
+        {
+            myHero._ActionChargeAmount += myHero._ActionRechargeSpeed * Time.deltaTime;
+            myHero._ActionChargeAmount = Mathf.Clamp(myHero._ActionChargeAmount, 0, 100);
+            myHero.myTacticController.SetNextAction();
+        }
+    }
+    public void Revivecheck()
+    {
+        if (myHero._CurrentHP > 0)
+        {
+            BattleStateMachine._HeroesDowned.Remove(this);
+            BattleStateMachine._HeroesActive.Add(this);
+            myMovementController.agent.isStopped = false;
+            myMovementController.isRoaming = true;
+        }
     }
     public override void DieCheck()
     {
@@ -102,6 +146,8 @@ public class BattleHeroController : BattleCharacterController
             myHero._CurrentHP = 0;
             myHero._ActionChargeAmount = 0;
             ChangeAnimationState(Battle_Die);
+            myMovementController.agent.isStopped = true;
+            myMovementController.isRoaming = false;
         }
     }
     #endregion
@@ -126,6 +172,10 @@ public class BattleHeroController : BattleCharacterController
                 {
                     ChangeAnimationState(Battle_Stance);
                     myMovementController.isRoaming = true;
+                }
+                else
+                {
+                    myMovementController.isRoaming = false;
                 }
                 break;
 

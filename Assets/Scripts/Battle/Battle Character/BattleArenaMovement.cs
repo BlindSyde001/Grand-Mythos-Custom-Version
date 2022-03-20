@@ -21,6 +21,7 @@ public class BattleArenaMovement : MonoBehaviour
     internal NavMeshAgent agent;
     [SerializeField]
     internal Transform myTarget;
+    [SerializeField]
     internal bool isRoaming;
     #region Timer
     float t = 5;
@@ -30,10 +31,10 @@ public class BattleArenaMovement : MonoBehaviour
     // UPDATES
     private void Update()
     {
-        //if(isRoaming)
-        //{
-        //    MoveAroundArena();
-        //}
+        if (isRoaming)
+        {
+            //MoveAroundArena();
+        }
     }
 
     // METHODS

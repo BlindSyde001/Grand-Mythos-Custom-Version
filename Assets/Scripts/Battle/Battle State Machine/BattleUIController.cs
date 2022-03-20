@@ -90,10 +90,8 @@ public class BattleUIController : MonoBehaviour
     {
         for (int i = 0; i < heroData.Count; i++)
         {
-            if (heroData[i].myTacticController.ChosenAction != null && BattleStateMachine.CheckStateOfPlay())
+            if (heroData[i].myTacticController.ChosenActions != null && BattleStateMachine.CheckStateOfPlay())
             {
-                //if (heroData[i].myTacticController.ChosenTarget != null)
-                //{
                     CharacterTemplate tempToUse;
                     switch (heroData[i].myTacticController.ChosenTarget.myType)
                     {
@@ -111,13 +109,10 @@ public class BattleUIController : MonoBehaviour
                                 break;
                             }
                     }
-                    heroUIData[i].action.text = heroData[i].myTacticController.ChosenAction.Name + " > " +
-                                                tempToUse.charName;
-                //}
             }
             else
             {
-                heroUIData[i].action.text = "";
+                //heroUIData[i].action.text = "";
             }
             heroUIData[i].atbBar.fillAmount = heroData[i]._ActionChargeAmount / 100;
 

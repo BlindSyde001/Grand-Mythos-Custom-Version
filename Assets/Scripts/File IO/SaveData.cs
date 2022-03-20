@@ -54,15 +54,6 @@ public class SerializableHero
     #endregion
 }
 
-[System.Serializable]
-public class SerializableTacticController
-{
-    public List<bool> tacticToggleList = new() { false, false, false, false, false, false, false, false, false, false };
-    public List<string> tacticCndList = new() { "", "", "", "", "", "", "", "", "", "" };
-
-    public List<string> tacticActionTypeList = new() { "", "", "", "", "", "", "", "", "", "" };
-    public List<string> tacticActionList = new() { "", "", "", "", "", "", "", "", "", "" };
-}
 
 [System.Serializable]
 public class SerializableInventory
@@ -80,4 +71,67 @@ public class SerializableInventory
     public List<int> KeyItemsIdData = new();
     public List<int> ConditionsIdData = new();
     public int CreditsAmountData = new();
+}
+
+[System.Serializable]
+public class SerializableTacticController       // Tactics consist of {Toggle, Condition, Actions & their Conditions}
+{
+    public List<bool> tacticToggleList = new() 
+    {
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    };
+    public List<string> tacticCndList = new() 
+    {
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+    };
+    public List<SerializableTacticActions> tacticActionCapsulesList = new()
+    {
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+        //new SerializableTacticActions(),
+    };
+}
+
+[System.Serializable]
+public class SerializableTacticActions
+{
+    public List<string> tacticActions = new()
+    {
+        "",
+        "",
+        "",
+        ""
+    };
+    public List<string> tacticActionTypes = new()
+    {
+        "",
+        "",
+        "",
+        ""
+    };
 }

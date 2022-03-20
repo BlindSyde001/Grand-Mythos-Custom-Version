@@ -29,12 +29,15 @@ public class Action : ScriptableObject
     [BoxGroup("Basic Info")]
     public int _ActionID;
     [BoxGroup("Basic Info")]
+    public int _SegmentCost;
+    [BoxGroup("Basic Info")]
     public string AnimationName;
     [BoxGroup("Basic Info")]
     public float AnimationTiming;
     [BoxGroup("Basic Info")]
     [TextArea]
     public string Description;
+
 
     [BoxGroup("Modifiers")]
     public int _Cost;

@@ -128,7 +128,9 @@ MonoBehaviour:
   - {fileID: 6670761358748513403}
   - {fileID: 6670761357633114876}
   - {fileID: 6670761358085841380}
-  ActionIsInputted: 0
+  ManualActionInput: 0
+  ChosenTarget: {fileID: 0}
+  ChosenTargetList: 0
 --- !u!114 &4810895447908699503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +146,7 @@ MonoBehaviour:
   myType: 0
   animator: {fileID: 0}
   myMovementController: {fileID: 0}
+  myBattlingModel: {fileID: 0}
   myHero: {fileID: 9187409409059822420}
 --- !u!1 &9187409409519369571
 GameObject:
@@ -278,6 +281,18 @@ PrefabInstance:
       propertyPath: _Condition
       value: 
       objectReference: {fileID: 11400000, guid: ec4ddbadfdea3d8438b3a96d0ca62a74, type: 2}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 926dde0cb7e589640817142120e350e4, type: 2}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[2]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -362,6 +377,22 @@ PrefabInstance:
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: isTurnedOn
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 31a65cd091113b54a8f2e440dd0b4d02, type: 2}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[2]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[3]
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: m_RootOrder
@@ -525,6 +556,22 @@ PrefabInstance:
       propertyPath: isTurnedOn
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+    - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
+      propertyPath: _Actions.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
     - target: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: m_RootOrder
       value: 2

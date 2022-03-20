@@ -91,6 +91,7 @@ public class BattleLoseContainer : MonoBehaviour
         }
         #endregion
         #region Hero Data
+        // HERO LIST
         for (int i = 0; i < gameManager._AllPartyMembers.Count; i++)
         {
             gameManager._AllPartyMembers[i]._TotalExperience = SD.heroSaveData[i].totalExperienceSave;
@@ -98,31 +99,37 @@ public class BattleLoseContainer : MonoBehaviour
             SaveManager.LoadWeaponData(SD, i);
             SaveManager.LoadArmourData(SD, i);
             SaveManager.LoadAccessoryData(SD, i);
-
+            // ITERATE TACTICS LIST
             for (int j = 0; j < gameManager._AllPartyMembers[i].myTacticController._TacticsList.Count; j++)
             {
                 gameManager._AllPartyMembers[i].myTacticController._TacticsList[j].isTurnedOn = SD.heroTacticData[i].tacticToggleList[j];
-
+                // If the Condition isn't empty, find and insert the correct condition
                 if (SD.heroTacticData[i].tacticCndList[j] != "")
                 {
                     gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Condition = gameManager._ConditionsDatabase.Find(x => x.name == SD.heroTacticData[i].tacticCndList[j]);
                 }
-                if (SD.heroTacticData[i].tacticActionList[j] != "")
+
+                // ITERATE ACTIONS LIST IN TACTIC
+                for (int k = 0; k < gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Actions.Count; k++)
                 {
-                    if (SD.heroTacticData[i].tacticActionTypeList[j] == "SKILL")
+                    // ITERATE ACTIONS IN SAVE DATA (1 LEVEL LOWER THAN GAME DATA)
+                    for (int l = 0; l < SD.heroTacticData[i].tacticActionCapsulesList[k].tacticActions.Count; l++)
                     {
-                        if (SD.heroTacticData[i].tacticActionList[j] == "Attack")
+                        if (SD.heroTacticData[i].tacticActionCapsulesList[j].tacticActionTypes[l] == "SKILL")
                         {
-                            gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Action = gameManager._AllPartyMembers[i]._BasicAttack;
+                            if (SD.heroTacticData[i].tacticActionCapsulesList[j].tacticActions[l] == "Attack")
+                            {
+                                gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Actions[l] = gameManager._AllPartyMembers[i]._BasicAttack;
+                            }
+                            else
+                            {
+                                gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Actions[l] = gameManager._HeroSkillsDatabase.Find(x => x.Name == SD.heroTacticData[i].tacticActionCapsulesList[j].tacticActions[l]);
+                            }
                         }
-                        else
+                        else if (SD.heroTacticData[i].tacticActionCapsulesList[j].tacticActionTypes[l] == "ITEM")
                         {
-                            gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Action = gameManager._HeroSkillsDatabase.Find(x => x.Name == SD.heroTacticData[i].tacticActionList[j]);
+                            gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Actions[l] = gameManager._ItemSkillsDatabase.Find(x => x.Name == SD.heroTacticData[i].tacticActionCapsulesList[j].tacticActions[l]);
                         }
-                    }
-                    else if (SD.heroTacticData[i].tacticActionTypeList[j] == "ITEM")
-                    {
-                        gameManager._AllPartyMembers[i].myTacticController._TacticsList[j]._Action = gameManager._ItemSkillsDatabase.Find(x => x.Name == SD.heroTacticData[i].tacticActionList[j]);
                     }
                 }
             }

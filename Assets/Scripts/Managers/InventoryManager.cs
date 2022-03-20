@@ -74,34 +74,38 @@ public class InventoryManager : MonoBehaviour
 
     public void RemoveFromInventory(ItemCapsule item)
     {
-        item.ItemAmount--;
-        if(item.ItemAmount <= 0)
+        if (item != null)
         {
-            switch (item.thisItem._ItemType)
+            Debug.Log(item.thisItem._ItemName + " has been used");
+            item.ItemAmount--;
+            if (item.ItemAmount <= 0)
             {
-                case ItemType.CONSUMABLE:
-                    ConsumablesInBag.Remove(item);
-                    break;
+                switch (item.thisItem._ItemType)
+                {
+                    case ItemType.CONSUMABLE:
+                        ConsumablesInBag.Remove(item);
+                        break;
 
-                case ItemType.WEAPON:
-                    _WeaponsInBag.Remove(item);
-                    break;
+                    case ItemType.WEAPON:
+                        _WeaponsInBag.Remove(item);
+                        break;
 
-                case ItemType.ARMOUR:
-                    _ArmourInBag.Remove(item);
-                    break;
+                    case ItemType.ARMOUR:
+                        _ArmourInBag.Remove(item);
+                        break;
 
-                case ItemType.ACCESSORY:
-                    _AccessoryInBag.Remove(item);
-                    break;
+                    case ItemType.ACCESSORY:
+                        _AccessoryInBag.Remove(item);
+                        break;
 
-                case ItemType.KEYITEM:
-                    KeyItemsInBag.Remove(item);
-                    break;
+                    case ItemType.KEYITEM:
+                        KeyItemsInBag.Remove(item);
+                        break;
 
-                case ItemType.LOOT:
-                    LootInBag.Remove(item);
-                    break;
+                    case ItemType.LOOT:
+                        LootInBag.Remove(item);
+                        break;
+                }
             }
         }
     }

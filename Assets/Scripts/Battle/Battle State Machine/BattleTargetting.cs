@@ -115,11 +115,14 @@ public class BattleTargetting : MonoBehaviour
     
     public void SetAction(Action action)
     {
-        if (BattleStateMachine._CombatState != CombatState.END && BattleStateMachine._CombatState != CombatState.START)
-        {
+        if (BattleStateMachine._CombatState != CombatState.START && BattleStateMachine._CombatState != CombatState.END)
+        {   // Set Actions, then, if the Action Segments are full, go Select the Target
             chosenAction = action;
-            OpenTargetList(action.ActionEffect == ActionEffect.HEAL ? 1 : 0);
-            Targets[0].GetComponent<Button>().Select();
+            if (!AddActionSegment(battlUIController.CurrentHero.myTacticController, chosenAction))
+            {
+                OpenTargetList(action.ActionEffect == ActionEffect.HEAL ? 1 : 0);
+                Targets[0].GetComponent<Button>().Select();
+            }
         }
     }
     public void OpenTargetList(int enemyOrHero)
@@ -168,7 +171,7 @@ public class BattleTargetting : MonoBehaviour
         }
     }
 
-    public void ChooseTarget(BattleCharacterController target)
+    public void ChooseTarget(BattleCharacterController target) // Select the Target, input an Action into the next Segment
     {
         chosenTarget = target;
         targetPanel.SetActive(false);
@@ -177,8 +180,22 @@ public class BattleTargetting : MonoBehaviour
     }
     private void InputHeroCommand(Action action, BattleCharacterController target)
     {
-        battlUIController.CurrentHero.myTacticController.ActionIsInputted = true;
-        battlUIController.CurrentHero.myTacticController.ChosenAction = action;
+        battlUIController.CurrentHero.myTacticController.ManualActionInput = true;
         battlUIController.CurrentHero.myTacticController.ChosenTarget = target;
+    }
+
+    private bool AddActionSegment(HeroTacticController controller, Action action)
+    {
+        int segmentSize = controller.ActionSegments;
+        for(int i = 0; i < controller.ChosenActions.Count; i++)
+        {
+            if (controller.ChosenActions[i] == null && (segmentSize - action._SegmentCost) > 0)
+            {
+                controller.ChosenActions[i] = action;
+                segmentSize = action._SegmentCost;
+                return true;
+            }
+        }
+        return false;
     }
 }

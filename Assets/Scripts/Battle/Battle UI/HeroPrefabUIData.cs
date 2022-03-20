@@ -12,5 +12,5 @@ public class HeroPrefabUIData : MonoBehaviour
     public Image atbBar;
     public Image healthBar;
     public Image manaBar;
-    public TextMeshProUGUI action;
+    //public TextMeshProUGUI action;
 }

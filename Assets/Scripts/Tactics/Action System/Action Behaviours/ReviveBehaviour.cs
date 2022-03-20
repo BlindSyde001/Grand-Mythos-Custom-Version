@@ -16,9 +16,8 @@ public class ReviveBehaviour : ActionBehaviour
                 BattleHeroController heroCast = target as BattleHeroController;
                 if(BattleStateMachine._HeroesDowned.Contains(heroCast))
                 {
-                    heroCast.myHero._CurrentHP += (int)(action.PowerModifier * heroCast.myHero.MaxHP);
-                    BattleStateMachine._HeroesDowned.Remove(heroCast);
-                    BattleStateMachine._HeroesActive.Add(heroCast);
+                    heroCast.myHero._CurrentHP += (int)(action.PowerModifier/100 * heroCast.myHero.MaxHP);
+                    heroCast.Revivecheck();
                 }
                 break;
 
@@ -26,7 +25,7 @@ public class ReviveBehaviour : ActionBehaviour
                 BattleEnemyController enemyCast = target as BattleEnemyController;
                 if(BattleStateMachine._EnemiesDowned.Contains(enemyCast))
                 {
-                    enemyCast.myEnemy._CurrentHP += (int)(action.PowerModifier * enemyCast.myEnemy.MaxHP);
+                    enemyCast.myEnemy._CurrentHP += (int)(action.PowerModifier/100 * enemyCast.myEnemy.MaxHP);
                     BattleStateMachine._EnemiesDowned.Remove(enemyCast);
                     BattleStateMachine._EnemiesActive.Add(enemyCast);
                 }

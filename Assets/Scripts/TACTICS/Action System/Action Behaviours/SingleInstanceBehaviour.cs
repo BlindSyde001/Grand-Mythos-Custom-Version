@@ -83,6 +83,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 }
                 if (target != null)
                 {
+                    Debug.Log(action.Name + target + " " + amount);
                     targetStats._CurrentHP += amount;
                     targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
                 }
