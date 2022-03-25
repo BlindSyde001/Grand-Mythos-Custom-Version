@@ -13,7 +13,7 @@ public class BattleTargetting : MonoBehaviour
 
     // VARIABLES
     [SerializeField]
-    private BattleUIController battlUIController;
+    private BattleUIController battleUIController;
     private InventoryManager inventoryManager;
 
     public GameObject mainCommandsPanel;
@@ -48,6 +48,7 @@ public class BattleTargetting : MonoBehaviour
         mainCommands[0].Select();
     }
 
+    #region STEP 1: Navigating your Actions
     public void OpenSkillsList()
     {
         // Panel toggling stuff
@@ -66,12 +67,12 @@ public class BattleTargetting : MonoBehaviour
             itemsOpen = false;
 
             // Add the Data of the Hero's skills onto each button
-            for (int i = 0; i < battlUIController.CurrentHero._AvailableActions.Count; i++)
+            for (int i = 0; i < battleUIController.CurrentHero._AvailableActions.Count; i++)
             {
                 actions[i].myName.text = "";
                 int j = i;
-                actions[i].myAction = battlUIController.CurrentHero._AvailableActions[i];
-                actions[i].myName.text = battlUIController.CurrentHero._AvailableActions[i].Name;
+                actions[i].myAction = battleUIController.CurrentHero._AvailableActions[i];
+                actions[i].myName.text = battleUIController.CurrentHero._AvailableActions[i].Name;
                 actions[i].myButton.onClick.AddListener(delegate { SetAction(actions[j].myAction); });
             }
             actions[0].GetComponent<Button>().Select();
@@ -112,19 +113,22 @@ public class BattleTargetting : MonoBehaviour
             actions[0].GetComponent<Button>().Select();
         }
     }
-    
+    #endregion
+    #region STEP 2: Setting your Actions
     public void SetAction(Action action)
     {
         if (BattleStateMachine._CombatState != CombatState.START && BattleStateMachine._CombatState != CombatState.END)
         {   // Set Actions, then, if the Action Segments are full, go Select the Target
             chosenAction = action;
-            if (!AddActionSegment(battlUIController.CurrentHero.myTacticController, chosenAction))
+            if (CheckSegmentAllowance())
             {
                 OpenTargetList(action.ActionEffect == ActionEffect.HEAL ? 1 : 0);
                 Targets[0].GetComponent<Button>().Select();
             }
         }
     }
+    #endregion
+    #region STEP 3: Setting your Target
     public void OpenTargetList(int enemyOrHero)
     {
         actionsPanel.SetActive(false);
@@ -170,7 +174,6 @@ public class BattleTargetting : MonoBehaviour
                 break;
         }
     }
-
     public void ChooseTarget(BattleCharacterController target) // Select the Target, input an Action into the next Segment
     {
         chosenTarget = target;
@@ -178,24 +181,16 @@ public class BattleTargetting : MonoBehaviour
         InputHeroCommand(chosenAction, chosenTarget);
         mainCommands[0].Select();
     }
+    #endregion
+    #region STEP 4: Input the Actions
     private void InputHeroCommand(Action action, BattleCharacterController target)
     {
-        battlUIController.CurrentHero.myTacticController.ManualActionInput = true;
-        battlUIController.CurrentHero.myTacticController.ChosenTarget = target;
+        battleUIController.CurrentHero.myTacticController.ManualActionInput = true;
+        battleUIController.CurrentHero.myTacticController.ChosenTarget = target;
     }
-
-    private bool AddActionSegment(HeroTacticController controller, Action action)
+    #endregion
+    private bool CheckSegmentAllowance()
     {
-        int segmentSize = controller.ActionSegments;
-        for(int i = 0; i < controller.ChosenActions.Count; i++)
-        {
-            if (controller.ChosenActions[i] == null && (segmentSize - action._SegmentCost) > 0)
-            {
-                controller.ChosenActions[i] = action;
-                segmentSize = action._SegmentCost;
-                return true;
-            }
-        }
         return false;
     }
 }

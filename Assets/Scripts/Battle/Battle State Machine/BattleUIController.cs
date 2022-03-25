@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class BattleUIController : MonoBehaviour
 {
@@ -12,15 +13,28 @@ public class BattleUIController : MonoBehaviour
     public GameObject heroUIPrefab;
     public GameObject enemyUIPrefab;
 
+
     public List<HeroExtension> heroData;
     public List<HeroPrefabUIData> heroUIData = new();
 
     public List<EnemyExtension> enemyData;
     public List<EnemyPrefabUIData> enemyUIData = new();
 
+    private PlayerControls playerControls;
+
     [SerializeField]
     internal HeroExtension CurrentHero; // This is who is being referenced in the Command Panel
-    private PlayerControls playerControls;
+    public HeroPrefabUIData currentHeroUI;
+    #region Actions UI
+    [SerializeField]
+    internal List<GameObject> singleActions;
+    [SerializeField]
+    internal List<GameObject> doubleActions;
+    [SerializeField]
+    internal List<GameObject> tripleActions;
+    [SerializeField]
+    internal GameObject quadAction;
+    #endregion
 
     // UPDATES
     private void Awake()
@@ -29,8 +43,8 @@ public class BattleUIController : MonoBehaviour
     }
     private void Start()
     {
-        StartUIData();
         CurrentHero = BattleStateMachine._HeroesActive[0].myHero;
+        StartUIData();
     }
     private void Update()
     {
@@ -68,63 +82,47 @@ public class BattleUIController : MonoBehaviour
         }
     }
 
-
     private void StartUIData()
     {
+        SetCurrentHeroData();
+        int j = 0;
         for (int i = 0; i < heroData.Count; i++)
         {
-            heroUIData[i].atbBar.fillAmount = heroData[i]._ActionChargeAmount;
-
-            heroUIData[i].healthBar.fillAmount = (float)heroData[i]._CurrentHP / heroData[i].MaxHP;
-
-            heroUIData[i].manaBar.fillAmount = (float)heroData[i]._CurrentMP / heroData[i].MaxMP;
-
-            heroUIData[i].health.text = heroData[i]._CurrentHP.ToString() + " / " +
-                                        heroData[i].MaxHP.ToString();
-
-            heroUIData[i].mana.text = heroData[i]._CurrentMP.ToString() + " / " +
-                                      heroData[i].MaxMP.ToString();
+            if (heroData[i] == CurrentHero)
+            if (heroData[i] != CurrentHero)
+            {
+                heroUIData[j].gameObject.SetActive(true);
+                heroUIData[j].characterIcon.sprite = heroData[i].charPortrait;
+                heroUIData[j].atbBar.fillAmount = heroData[i]._ActionChargeAmount;
+                heroUIData[j].healthBar.fillAmount = (float)heroData[i]._CurrentHP / heroData[i].MaxHP;
+                heroUIData[j].health.text = heroData[i]._CurrentHP.ToString() + " / " +
+                                            heroData[i].MaxHP.ToString();
+                j++;
+            }
         }
     }                   // Hero Info in Battle
+    private void SetCurrentHeroData()
+    {
+        currentHeroUI.characterIcon.sprite = CurrentHero.charPortrait;
+        currentHeroUI.atbBar.fillAmount = CurrentHero._ActionChargeAmount / 100;
+        currentHeroUI.healthBar.fillAmount = (float)CurrentHero._CurrentHP / CurrentHero.MaxHP;
+        currentHeroUI.health.text = CurrentHero._CurrentHP.ToString();
+    }
     private void SetUIData()
     {
+        SetCurrentHeroData();
+        SetCurrentHeroActionsUI();
+        int j = 0;
         for (int i = 0; i < heroData.Count; i++)
         {
-            if (heroData[i].myTacticController.ChosenActions != null && BattleStateMachine.CheckStateOfPlay())
+            if (heroData[i] != CurrentHero)
             {
-                    CharacterTemplate tempToUse;
-                    switch (heroData[i].myTacticController.ChosenTarget.myType)
-                    {
-                        case BattleCharacterController.ControllerType.HERO:
-                            {
-                                BattleHeroController a = heroData[i].myTacticController.ChosenTarget as BattleHeroController;
-                                tempToUse = a.myHero;
-                                break;
-                            }
-
-                        default:
-                            {
-                                BattleEnemyController a = heroData[i].myTacticController.ChosenTarget as BattleEnemyController;
-                                tempToUse = a.myEnemy;
-                                break;
-                            }
-                    }
+                heroUIData[j].characterIcon.sprite = heroData[i].charPortrait;
+                heroUIData[j].atbBar.fillAmount = heroData[i]._ActionChargeAmount / 100;
+                heroUIData[j].healthBar.fillAmount = (float)heroData[i]._CurrentHP / heroData[i].MaxHP;
+                heroUIData[j].health.text = heroData[i]._CurrentHP.ToString();
+                j++;
             }
-            else
-            {
-                //heroUIData[i].action.text = "";
-            }
-            heroUIData[i].atbBar.fillAmount = heroData[i]._ActionChargeAmount / 100;
-
-            heroUIData[i].healthBar.fillAmount = (float)heroData[i]._CurrentHP / heroData[i].MaxHP;
-
-            heroUIData[i].manaBar.fillAmount = (float)heroData[i]._CurrentMP / heroData[i].MaxMP;
-
-            heroUIData[i].health.text = heroData[i]._CurrentHP.ToString() + "/" +
-                                        heroData[i].MaxHP.ToString() + " HP";
-
-            heroUIData[i].mana.text = heroData[i]._CurrentMP.ToString() + "/" +
-                                      heroData[i].MaxMP.ToString() + " MP";
         }
         for (int i = 0; i < enemyData.Count; i++)
         {
@@ -132,13 +130,49 @@ public class BattleUIController : MonoBehaviour
             enemyUIData[i].health.text = enemyData[i]._CurrentHP.ToString();
         }
     }                     // Updating Hero Info in Battle
-    public void AttachHeroUIData(HeroExtension hero, int i)
+
+    private void SetCurrentHeroActionsUI()
     {
-        heroData.Add(hero);
-        heroUIData[i].gameObject.SetActive(true);
-        heroUIData[i].name = hero.charName + "UI";
-        heroUIData[i].characterIcon.sprite = hero.charPortrait;
+        foreach(GameObject a in singleActions)
+        {
+            a.SetActive(false);
+        }
+        foreach (GameObject a in doubleActions)
+        {
+            a.SetActive(false);
+        }
+        foreach (GameObject a in tripleActions)
+        {
+            a.SetActive(false);
+        }
+        quadAction.SetActive(false);
+        for (int i = 0; i < CurrentHero.myTacticController.ChosenActions.Count; i++)
+        {
+            if (CurrentHero.myTacticController.ChosenActions[i] != null)
+            {
+                switch (CurrentHero.myTacticController.ChosenActions[i]._SegmentCost)
+                {
+                    case 1:
+                        singleActions[i].SetActive(true);
+                        singleActions[i].GetComponentInChildren<TextMeshProUGUI>().text = CurrentHero.myTacticController.ChosenActions[i].Name;
+                        break;
+                    case 2:
+                        doubleActions[i].SetActive(true);
+                        doubleActions[i].GetComponentInChildren<TextMeshProUGUI>().text = CurrentHero.myTacticController.ChosenActions[i].Name;
+                        break;
+                    case 3:
+                        tripleActions[i].SetActive(true);
+                        tripleActions[i].GetComponentInChildren<TextMeshProUGUI>().text = CurrentHero.myTacticController.ChosenActions[i].Name;
+                        break;
+                    case 4:
+                        quadAction.SetActive(true);
+                        quadAction.GetComponent<TextMeshProUGUI>().text = CurrentHero.myTacticController.ChosenActions[i].Name;
+                        break;
+                }
+            }
+        }
     }
+
     public void CreateEnemyUI(EnemyExtension enemy, Transform enemyModel)
     {
         enemyData.Add(enemy);
@@ -154,5 +188,9 @@ public class BattleUIController : MonoBehaviour
         data.healthBar.fillAmount = enemy.MaxHP;
 
         enemyUIData.Add(data);
+    }
+    public void ToggleTactics()
+    {
+        CurrentHero.myTacticController.tacticsAreActive = !CurrentHero.myTacticController.tacticsAreActive;
     }
 }

@@ -8,7 +8,7 @@ public class BattleHeroController : BattleCharacterController
     [SerializeField]
     internal HeroExtension myHero;
     private string currentAnimState;
-    private bool isPerformingActions;
+    internal bool isPerformingActions;
 
     const string Battle_EnterFight = "Enter Fight";
     const string Battle_Stance = "Stance";
@@ -39,7 +39,7 @@ public class BattleHeroController : BattleCharacterController
                     if (myHero.myTacticController.CheckIfStillInList(target, targetList))
                     {
                         // DO EACH IN SEQUENCE (ONE AFTER THE OTHER)
-                        yield return DoActionSegment(chosenActions[i], target, targetList);
+                        yield return DoActionSegment(chosenActions[i], target, targetList, i);
                     }
                     else
                     {
@@ -63,14 +63,14 @@ public class BattleHeroController : BattleCharacterController
         if (myHero._CurrentHP > 0)
         {
             isPerformingActions = true;
-            for(int i = 0; i < _TacticToPerform._Actions.Count; i++)
+            for(int i = _TacticToPerform._Actions.Count - 1; i >= 0; i--)
             {
                 if (_TacticToPerform._Actions[i] != null)
                 {
                     if (myHero.myTacticController.CheckIfStillInList(_TacticToPerform._Target, targetList))
                     {
                         // DO EACH IN SEQUENCE (ONE AFTER THE OTHER)
-                        yield return DoActionSegment(_TacticToPerform._Actions[i], _TacticToPerform._Target, targetList);
+                        yield return DoActionSegment(_TacticToPerform._Actions[i], _TacticToPerform._Target, targetList, i);
                     }
                     else
                     {
@@ -88,11 +88,11 @@ public class BattleHeroController : BattleCharacterController
         myHero.myTacticController.ChosenActions = null;
         myHero.myTacticController.ChosenTarget = null;
     }
-    private IEnumerator DoActionSegment(Action action, BattleCharacterController target, int targetList)
+    private IEnumerator DoActionSegment(Action action, BattleCharacterController target, int targetList, int ActionPosition)
     {
         myHero._ActionChargeAmount -= 25 * action._SegmentCost;
         ChangeAnimationState(action.AnimationName);
-
+        
         yield return new WaitForSeconds(action.AnimationTiming);
         if (myHero.myTacticController.CheckIfStillInList(target, targetList))
         {
@@ -115,6 +115,7 @@ public class BattleHeroController : BattleCharacterController
                 aBehaviour.PreActionTargetting(this, action, target);
             }
         }
+        myHero.myTacticController.ChosenActions[ActionPosition] = null;
         yield return new WaitForSeconds(1f);
     }
     #endregion
@@ -132,8 +133,8 @@ public class BattleHeroController : BattleCharacterController
     {
         if (myHero._CurrentHP > 0)
         {
-            BattleStateMachine._HeroesDowned.Remove(this);
             BattleStateMachine._HeroesActive.Add(this);
+            BattleStateMachine._HeroesDowned.Remove(this);
             myMovementController.agent.isStopped = false;
             myMovementController.isRoaming = true;
         }

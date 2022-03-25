@@ -86,10 +86,8 @@ public class BattleResolution : MonoBehaviour
     {
         foreach (BattleEnemyController enemy in BattleStateMachine._EnemiesDowned)
         {
-            Debug.Log(enemy.name + " : " + enemy.myEnemy.experiencePool);
             sharedExp += enemy.myEnemy.experiencePool;
             creditsEarned += enemy.myEnemy.creditPool;
-            Debug.Log(sharedExp);
         }
         ExperienceRewards.text = "Experience: " + sharedExp.ToString() + "  (" + (sharedExp / BattleStateMachine._HeroesActive.Count).ToString() + ")"; ;
         CurrencyRewards.text = "Credits: " + creditsEarned.ToString();

@@ -505,7 +505,7 @@ public class EquipmentMenuActions : MonoBehaviour
         {
             if(comparison == equipment)
             {
-                Debug.Log("Found One!");
+                //Debug.Log("Found One!");
                 amountEquipped++;
             }
         }

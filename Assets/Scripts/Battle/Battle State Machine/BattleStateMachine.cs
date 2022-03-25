@@ -141,7 +141,7 @@ public class BattleStateMachine : MonoBehaviour
 
             // Attach Relevant References
             _HeroControllers[i].animator = instantiatedHeroModel.GetComponent<Animator>();  // The Animator Component
-            BU.AttachHeroUIData(_HeroControllers[i].myHero, i);                             // Battle UI Component
+            BU.heroData.Add(_HeroControllers[i].myHero);                                    // Battle UI Component
             _HeroControllers[i].myMovementController = instantiatedHeroModel.GetComponent<BattleArenaMovement>();
         }
         foreach (BattleHeroController a in _HeroesActive)
