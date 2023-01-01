@@ -373,7 +373,6 @@ public class TacticsMenuActions : MonoBehaviour
     }
     #endregion
 
-
     public void ToggleTactics(TacticsModuleContainer thisContainer, Tactic tactic)
     {
         if(tactic._Condition == null || !CheckActionsStatus(tactic))

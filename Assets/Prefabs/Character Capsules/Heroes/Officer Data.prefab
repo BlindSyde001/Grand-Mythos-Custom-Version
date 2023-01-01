@@ -128,7 +128,9 @@ MonoBehaviour:
   - {fileID: 6670761358748513403}
   - {fileID: 6670761357633114876}
   - {fileID: 6670761358085841380}
+  tacticsAreActive: 1
   ManualActionInput: 0
+  ChosenActions: []
   ChosenTarget: {fileID: 0}
   ChosenTargetList: 0
 --- !u!114 &4810895447908699503
@@ -147,6 +149,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   myMovementController: {fileID: 0}
   myBattlingModel: {fileID: 0}
+  isAlive: 1
   myHero: {fileID: 9187409409059822420}
 --- !u!1 &9187409409519369571
 GameObject:

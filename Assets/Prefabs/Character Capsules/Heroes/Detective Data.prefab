@@ -169,7 +169,9 @@ MonoBehaviour:
   - {fileID: 7761677192811430008}
   - {fileID: 7761677193417200921}
   - {fileID: 7761677193617011592}
+  tacticsAreActive: 1
   ManualActionInput: 0
+  ChosenActions: []
   ChosenTarget: {fileID: 0}
   ChosenTargetList: 0
 --- !u!114 &8430257081442506228
@@ -188,6 +190,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   myMovementController: {fileID: 0}
   myBattlingModel: {fileID: 0}
+  isAlive: 1
   myHero: {fileID: 5234438934277658765}
 --- !u!1001 &5234438933414526721
 PrefabInstance:
@@ -202,24 +205,24 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 4d7e2509ed4cf6a4f911d7db835cb454, type: 2}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: isTurnedOn
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+      objectReference: {fileID: 11400000, guid: c3684dcaf6693f142ae4da282ede482d, type: 2}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+      objectReference: {fileID: 11400000, guid: c3684dcaf6693f142ae4da282ede482d, type: 2}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.data[2]
       value: 
-      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.data[3]
       value: 
-      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -916,7 +919,7 @@ PrefabInstance:
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Condition
       value: 
-      objectReference: {fileID: 11400000, guid: 17694b97b04574b4b92f1a42d74c165f, type: 2}
+      objectReference: {fileID: 11400000, guid: 4d7e2509ed4cf6a4f911d7db835cb454, type: 2}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.size
       value: 4
@@ -924,19 +927,19 @@ PrefabInstance:
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: c3684dcaf6693f142ae4da282ede482d, type: 2}
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: c3684dcaf6693f142ae4da282ede482d, type: 2}
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.data[2]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
     - target: {fileID: 2527489379129971516, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: _Actions.Array.data[3]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
     - target: {fileID: 2527489379129971517, guid: e6252492a7af12248a0819a807ef3561, type: 3}
       propertyPath: m_RootOrder
       value: 0

@@ -29,7 +29,7 @@ public class BattleTargetting : MonoBehaviour
     private bool skillsOpen;
     private bool itemsOpen;
 
-    private Action chosenAction;
+    private List<Action> chosenActions = new();
     private BattleCharacterController chosenTarget;
 
     // UPDATES
@@ -67,12 +67,12 @@ public class BattleTargetting : MonoBehaviour
             itemsOpen = false;
 
             // Add the Data of the Hero's skills onto each button
-            for (int i = 0; i < battleUIController.CurrentHero._AvailableActions.Count; i++)
+            for (int i = 0; i < battleUIController.ChosenHero._AvailableActions.Count; i++)
             {
                 actions[i].myName.text = "";
                 int j = i;
-                actions[i].myAction = battleUIController.CurrentHero._AvailableActions[i];
-                actions[i].myName.text = battleUIController.CurrentHero._AvailableActions[i].Name;
+                actions[i].myAction = battleUIController.ChosenHero._AvailableActions[i];
+                actions[i].myName.text = battleUIController.ChosenHero._AvailableActions[i].Name;
                 actions[i].myButton.onClick.AddListener(delegate { SetAction(actions[j].myAction); });
             }
             actions[0].GetComponent<Button>().Select();
@@ -119,12 +119,59 @@ public class BattleTargetting : MonoBehaviour
     {
         if (BattleStateMachine._CombatState != CombatState.START && BattleStateMachine._CombatState != CombatState.END)
         {   // Set Actions, then, if the Action Segments are full, go Select the Target
-            chosenAction = action;
-            if (CheckSegmentAllowance())
+            if (ActionSegmentsAreFilled(action))
             {
+                mainCommandsPanel.SetActive(false);
                 OpenTargetList(action.ActionEffect == ActionEffect.HEAL ? 1 : 0);
                 Targets[0].GetComponent<Button>().Select();
             }
+        }
+    }
+
+    private bool ActionSegmentsAreFilled(Action action)
+    {
+        int allowance = battleUIController.ChosenHero.myTacticController.ActionAllowance;
+        switch(allowance + action._SegmentCost)
+        {
+            case > 4:
+                return true;
+
+            case 4:
+                AddActionSegment(action, allowance);
+                return true;
+
+            case < 4:
+                AddActionSegment(action, allowance);
+                return false;
+        }
+    }
+    private void AddActionSegment(Action action, int allowance)
+    {
+        switch (action._SegmentCost)
+        {
+            case 1:
+                battleUIController.ChosenHero.myTacticController.ActionAllowance += action._SegmentCost;
+                chosenActions.Add(action);
+                StartCoroutine(battleUIController.AddHeroActionUI(action, allowance));
+                break;
+
+            case 2:
+                battleUIController.ChosenHero.myTacticController.ActionAllowance += action._SegmentCost;
+                chosenActions.Add(action);
+                StartCoroutine(battleUIController.AddHeroActionUI(action, allowance));
+                break;
+
+            case 3:
+                battleUIController.ChosenHero.myTacticController.ActionAllowance += action._SegmentCost;
+                chosenActions.Add(action);
+                StartCoroutine(battleUIController.AddHeroActionUI(action, allowance));
+                break;
+
+            case 4:
+                battleUIController.ChosenHero.myTacticController.ActionAllowance += action._SegmentCost;
+                chosenActions.Add(action);
+                StartCoroutine(battleUIController.AddHeroActionUI(action, allowance));
+                break;
         }
     }
     #endregion
@@ -178,19 +225,15 @@ public class BattleTargetting : MonoBehaviour
     {
         chosenTarget = target;
         targetPanel.SetActive(false);
-        InputHeroCommand(chosenAction, chosenTarget);
-        mainCommands[0].Select();
+        InputHeroCommand(chosenActions, chosenTarget);
+        //mainCommands[0].Select();
     }
     #endregion
     #region STEP 4: Input the Actions
-    private void InputHeroCommand(Action action, BattleCharacterController target)
+    private void InputHeroCommand(List<Action> action, BattleCharacterController target)
     {
-        battleUIController.CurrentHero.myTacticController.ManualActionInput = true;
-        battleUIController.CurrentHero.myTacticController.ChosenTarget = target;
+        battleUIController.ChosenHero.myTacticController.ManualActionInput = true;
+        battleUIController.ChosenHero.myTacticController.ChosenTarget = target;
     }
     #endregion
-    private bool CheckSegmentAllowance()
-    {
-        return false;
-    }
 }

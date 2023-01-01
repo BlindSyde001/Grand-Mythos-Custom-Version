@@ -13,17 +13,21 @@ public class ReviveBehaviour : ActionBehaviour
         switch (target.myType)
         {
             case BattleCharacterController.ControllerType.HERO:
+
                 BattleHeroController heroCast = target as BattleHeroController;
-                if(BattleStateMachine._HeroesDowned.Contains(heroCast))
+
+                if(BattleStateMachine._HeroesDowned.Contains(heroCast) && !heroCast.isAlive)
                 {
                     heroCast.myHero._CurrentHP += (int)(action.PowerModifier/100 * heroCast.myHero.MaxHP);
-                    heroCast.Revivecheck();
+                    heroCast.HasRevived();
                 }
                 break;
 
             case BattleCharacterController.ControllerType.ENEMY:
+                
                 BattleEnemyController enemyCast = target as BattleEnemyController;
-                if(BattleStateMachine._EnemiesDowned.Contains(enemyCast))
+
+                if(BattleStateMachine._EnemiesDowned.Contains(enemyCast) && !enemyCast.isAlive)
                 {
                     enemyCast.myEnemy._CurrentHP += (int)(action.PowerModifier/100 * enemyCast.myEnemy.MaxHP);
                     BattleStateMachine._EnemiesDowned.Remove(enemyCast);

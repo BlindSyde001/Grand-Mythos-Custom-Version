@@ -27,22 +27,20 @@ public class BattleEnemyController : BattleCharacterController
     #region Standard Action Methods
     internal IEnumerator PerformEnemyAction(Action action, BattleCharacterController target)
     {
-        if (myEnemy._CurrentHP > 0)
+        if (!HasDied())
         {
             myEnemy._ActionChargeAmount = 0;
             ChangeAnimationState(action.AnimationName);
-            yield return new WaitForSeconds(action.AnimationTiming);
+        }
+        yield return new WaitForSeconds(action.AnimationTiming);
+        if (!HasDied())
+        {
             foreach (ActionBehaviour aBehaviour in action.Behaviours)
             {
                 aBehaviour.PreActionTargetting(myEnemy.myBattleEnemyController, action, target);
             }
         }
-        else
-        {
-            yield return null;
-        }
     }
-
 
     public override void ActiveStateBehaviour()
     {
@@ -53,7 +51,7 @@ public class BattleEnemyController : BattleCharacterController
             myEnemy.EnemyAct();
         }
     }
-    public override void DieCheck()
+    public override bool HasDied()
     {
         if (myEnemy._CurrentHP <= 0)
         {
@@ -61,7 +59,10 @@ public class BattleEnemyController : BattleCharacterController
             myEnemy._CurrentHP = 0;
             myEnemy._ActionChargeAmount = 0;
             ChangeAnimationState(Battle_Die);
+            isAlive = false;
+            return true;
         }
+        return false;
     }
     #endregion
 

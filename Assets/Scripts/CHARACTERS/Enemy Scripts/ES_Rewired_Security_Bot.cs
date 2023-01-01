@@ -18,10 +18,8 @@ public class ES_Rewired_Security_Bot : EnemyExtension
     }
     private void BasicAttack()
     {
-        //Debug.Log("Check: " + CheckForHeroTarget());
         if (CheckForHeroTarget())
         {
-            //Debug.Log(charName + " has Attacked!");
             int x = Random.Range(0, BattleStateMachine._HeroesActive.Count);
             StartCoroutine(myBattleEnemyController.PerformEnemyAction(_BasicAttack, BattleStateMachine._HeroesActive[x]));
         }

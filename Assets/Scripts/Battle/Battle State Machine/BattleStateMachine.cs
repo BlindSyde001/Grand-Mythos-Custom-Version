@@ -203,13 +203,43 @@ public class BattleStateMachine : MonoBehaviour
     // DEATH CHECK. Called when a char is hit
     public void CheckCharIsDead(BattleHeroController hero)
     {
-        _HeroesActive.Remove(hero);
-        _HeroesDowned.Add(hero);
+        if (_HeroesActive.Find(x => x == hero) != null)
+        {
+            _HeroesActive.Remove(hero);
+        }
+        else
+        {
+            Debug.Log(hero.myHero.charName + " is not in Active List!");
+        }
+
+        if (_HeroesDowned.Find(x => x == hero) == null)
+        {
+            _HeroesDowned.Add(hero);
+        }
+        else
+        {
+            Debug.Log(hero.myHero.charName + " is already in Downed List!");
+        }
     }
     public void CheckCharIsDead(BattleEnemyController enemy)
     {
-        _EnemiesActive.Remove(enemy);
-        _EnemiesDowned.Add(enemy);
+        if(_EnemiesActive.Find(x => x == enemy) != null)
+        {
+            _EnemiesActive.Remove(enemy);
+        }
+        else
+        {
+            Debug.Log(enemy.myEnemy.charName + " is not in Active List!");
+        }
+
+        if (_EnemiesDowned.Find(x => x == enemy) == null)
+        {
+            _EnemiesDowned.Add(enemy);
+        }
+        else
+        {
+            Debug.Log(enemy.myEnemy.charName + " is already in Downed List!");
+        }
     }
     #endregion
     #region End of Battle
@@ -259,7 +289,10 @@ public class BattleStateMachine : MonoBehaviour
         _EnemiesActive.Clear();
         _EnemiesDowned.Clear();
         _EnemyControllers.Clear();
-
+        foreach(HeroExtension a in GameManager._instance._PartyLineup)
+        {
+            a.myTacticController.ActionAllowance = 0;
+        }
         foreach(EnemyExtension ext in GameManager._instance._EnemyLineup)
         {
             Destroy(ext.gameObject);

@@ -17,6 +17,8 @@ public abstract class BattleCharacterController : MonoBehaviour
     protected internal BattleArenaMovement myMovementController;
     [SerializeField]
     internal Transform myBattlingModel;
+    [SerializeField]
+    internal bool isAlive = true;
 
     // UPDATES
     private void Start()
@@ -29,8 +31,8 @@ public abstract class BattleCharacterController : MonoBehaviour
     {
 
     }
-    public virtual void DieCheck()
+    public virtual bool HasDied()
     {
-
+        return false;
     }
 }

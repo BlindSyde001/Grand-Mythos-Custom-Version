@@ -874,8 +874,11 @@ GameObject:
   - component: {fileID: 155364968}
   - component: {fileID: 155364969}
   - component: {fileID: 155364970}
+  - component: {fileID: 155364972}
+  - component: {fileID: 155364971}
+  - component: {fileID: 155364973}
   m_Layer: 0
-  m_Name: BATTLE SCRIPTS
+  m_Name: Battle Scripts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -909,7 +912,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa24ba1c24a87f344b4dab225a2a25e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleTargetting: {fileID: 1852918378}
+  battleTargetting: {fileID: 155364971}
   battleResolution: {fileID: 155364970}
   _HeroSpawns:
   - {fileID: 1829077270}
@@ -960,6 +963,97 @@ MonoBehaviour:
   - {fileID: 757640512}
   - {fileID: 1652238810}
   VideoAnimator: {fileID: 1460729177}
+--- !u!114 &155364971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155364967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29dc582375327df4fba5d3ed8fdca568, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleUIController: {fileID: 155364972}
+  mainCommandsPanel: {fileID: 58367589}
+  mainCommands:
+  - {fileID: 954836201}
+  - {fileID: 843113171}
+  - {fileID: 1414247698}
+  actionsPanel: {fileID: 1134624644}
+  actions:
+  - {fileID: 1569300148}
+  - {fileID: 1207605283}
+  - {fileID: 1929388244}
+  - {fileID: 1433307613}
+  - {fileID: 823812556}
+  - {fileID: 1240913516}
+  - {fileID: 829373942}
+  - {fileID: 1194130250}
+  targetPanel: {fileID: 1348771206}
+  Targets:
+  - {fileID: 1397742776}
+  - {fileID: 556004658}
+  - {fileID: 600717315}
+  - {fileID: 787927678}
+--- !u!114 &155364972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155364967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a93b7328b20ab264aa01e2a4c8f1ffda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleTargetting: {fileID: 155364971}
+  heroContainer: {fileID: 1554070358}
+  heroUIPrefab: {fileID: 8036486310420569695, guid: 941dcdaef873a5d4db5a86fd12a3e6e0, type: 3}
+  enemyUIPrefab: {fileID: 440796494752359125, guid: fafde2508c23059448642c4e6aacfb2c, type: 3}
+  heroData: []
+  heroUIData:
+  - {fileID: 841263021}
+  - {fileID: 1092096631}
+  - {fileID: 1662098433}
+  enemyData: []
+  enemyUIData: []
+  ChosenHero: {fileID: 0}
+  ChosenHeroActions:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  ChosenHeroUI: {fileID: 1664468196}
+  singleActions:
+  - {fileID: 1887660906}
+  - {fileID: 1424823326}
+  - {fileID: 1809588961}
+  - {fileID: 1303001319}
+  doubleActions:
+  - {fileID: 264507019}
+  - {fileID: 568990053}
+  - {fileID: 359606078}
+  tripleActions:
+  - {fileID: 1123999644}
+  - {fileID: 27550010}
+  quadAction: {fileID: 269103506}
+--- !u!114 &155364973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155364967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 084da8a5a83c994439df01eec6a16387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battleUIController: {fileID: 155364972}
+  battleTargetting: {fileID: 155364971}
 --- !u!224 &166753001 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6592224030047554568, guid: bc91db47167aae243975934ace2be3c7, type: 3}
@@ -1676,9 +1770,8 @@ GameObject:
   - component: {fileID: 297536092}
   - component: {fileID: 297536091}
   - component: {fileID: 297536090}
-  - component: {fileID: 297536094}
   m_Layer: 5
-  m_Name: BATTLE UI
+  m_Name: Battle UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1768,44 +1861,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &297536094
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 297536089}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a93b7328b20ab264aa01e2a4c8f1ffda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  battleTargetting: {fileID: 1852918378}
-  heroContainer: {fileID: 1554070358}
-  heroUIPrefab: {fileID: 8036486310420569695, guid: 941dcdaef873a5d4db5a86fd12a3e6e0, type: 3}
-  enemyUIPrefab: {fileID: 440796494752359125, guid: fafde2508c23059448642c4e6aacfb2c, type: 3}
-  heroData: []
-  heroUIData:
-  - {fileID: 841263021}
-  - {fileID: 1092096631}
-  - {fileID: 1662098433}
-  enemyData: []
-  enemyUIData: []
-  CurrentHero: {fileID: 0}
-  currentHeroUI: {fileID: 1664468196}
-  singleActions:
-  - {fileID: 1887660906}
-  - {fileID: 1424823326}
-  - {fileID: 1809588961}
-  - {fileID: 1303001319}
-  doubleActions:
-  - {fileID: 264507019}
-  - {fileID: 568990053}
-  - {fileID: 359606078}
-  tripleActions:
-  - {fileID: 1123999644}
-  - {fileID: 27550010}
-  quadAction: {fileID: 269103506}
 --- !u!1 &303572504
 GameObject:
   m_ObjectHideFlags: 0
@@ -2577,7 +2632,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.2, y: 0}
   m_SizeDelta: {x: 2, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &439078008
@@ -2714,7 +2769,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 934923513}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleLoseContainer, Assembly-CSharp
         m_MethodName: OpenLoadFiles
         m_Mode: 1
@@ -4353,7 +4408,7 @@ PrefabInstance:
     - target: {fileID: 7449740409392564998, guid: f0ac5ffb0dbc2054cbdf309de12bef3c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 934923513}
+      objectReference: {fileID: 0}
     - target: {fileID: 7449740409392564998, guid: f0ac5ffb0dbc2054cbdf309de12bef3c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -4967,7 +5022,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -5043,8 +5098,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Navigation.m_Mode
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 1929388245}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
       value: 1
@@ -5057,9 +5116,17 @@ PrefabInstance:
       propertyPath: m_Colors.m_SelectedColor.r
       value: 0.41960785
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 829373941}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 1240913517}
     - target: {fileID: 2695032183488238293, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Name
-      value: Battle - Action Button (4)
+      value: Battle - Left Action Button (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
@@ -5079,6 +5146,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531bfc54dbbcfa747ba12e34e99dc432, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &823812557 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 823812554}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &829373939
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5096,7 +5174,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -5172,8 +5250,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Navigation.m_Mode
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 823812557}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
       value: 1
@@ -5186,9 +5268,17 @@ PrefabInstance:
       propertyPath: m_Colors.m_SelectedColor.r
       value: 0.41960785
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 2695032182338374779}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 1194130249}
     - target: {fileID: 2695032183488238293, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Name
-      value: Battle - Action Button (6)
+      value: Battle - Left Action Button (3)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
@@ -5197,6 +5287,28 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
   m_PrefabInstance: {fileID: 829373939}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &829373941 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 829373939}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &829373942 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238286, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 829373939}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 531bfc54dbbcfa747ba12e34e99dc432, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &841263019
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5310,7 +5422,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8036486310420569695, guid: 941dcdaef873a5d4db5a86fd12a3e6e0, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 941dcdaef873a5d4db5a86fd12a3e6e0, type: 3}
@@ -5414,7 +5526,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1852918378}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleTargetting, Assembly-CSharp
         m_MethodName: OpenSkillsList
         m_Mode: 1
@@ -5895,7 +6007,7 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 1414247698}
+    m_SelectOnUp: {fileID: 2007485611}
     m_SelectOnDown: {fileID: 843113171}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
@@ -5924,7 +6036,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1852918378}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleTargetting, Assembly-CSharp
         m_MethodName: SetAction
         m_Mode: 2
@@ -6058,7 +6170,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 934923513}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleLoseContainer, Assembly-CSharp
         m_MethodName: QuitGame
         m_Mode: 1
@@ -6631,7 +6743,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: 0}
+  m_AnchoredPosition: {x: 292.18, y: 0}
   m_SizeDelta: {x: 2, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1086159764
@@ -6938,12 +7050,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1569300144}
-  - {fileID: 1207605282}
   - {fileID: 1929388243}
-  - {fileID: 1433307612}
   - {fileID: 823812555}
-  - {fileID: 1240913515}
   - {fileID: 829373940}
+  - {fileID: 1207605282}
+  - {fileID: 1433307612}
+  - {fileID: 1240913515}
   - {fileID: 1194130248}
   m_Father: {fileID: 1852918377}
   m_RootOrder: 3
@@ -7506,8 +7618,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Navigation.m_Mode
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 1240913517}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
       value: 1
@@ -7520,9 +7636,17 @@ PrefabInstance:
       propertyPath: m_Colors.m_SelectedColor.r
       value: 0.41960785
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 1207605284}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 829373941}
     - target: {fileID: 2695032183488238293, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Name
-      value: Battle - Action Button (7)
+      value: Battle - Right Action Button (3)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
@@ -7531,6 +7655,28 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
   m_PrefabInstance: {fileID: 1194130247}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1194130249 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 1194130247}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1194130250 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238286, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 1194130247}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 531bfc54dbbcfa747ba12e34e99dc432, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1207605281
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7548,7 +7694,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -7624,8 +7770,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Navigation.m_Mode
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 1194130249}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
       value: 1
@@ -7638,9 +7788,17 @@ PrefabInstance:
       propertyPath: m_Colors.m_SelectedColor.r
       value: 0.41960785
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 1433307614}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 2695032182338374779}
     - target: {fileID: 2695032183488238293, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Name
-      value: Battle - Action Button (1)
+      value: Battle - Right Action Button
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
@@ -7658,6 +7816,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 531bfc54dbbcfa747ba12e34e99dc432, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1207605284 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 1207605281}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1209291944
@@ -8109,7 +8278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -8185,8 +8354,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Navigation.m_Mode
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 1433307614}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
       value: 1
@@ -8199,9 +8372,17 @@ PrefabInstance:
       propertyPath: m_Colors.m_SelectedColor.r
       value: 0.41960785
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 1194130249}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 823812557}
     - target: {fileID: 2695032183488238293, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Name
-      value: Battle - Action Button (5)
+      value: Battle - Right Action Button (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
@@ -8219,6 +8400,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 531bfc54dbbcfa747ba12e34e99dc432, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1240913517 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 1240913514}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1263064930
@@ -8751,7 +8943,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 843113171}
-    m_SelectOnDown: {fileID: 954836201}
+    m_SelectOnDown: {fileID: 2007485611}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -8779,7 +8971,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 297536094}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleUIController, Assembly-CSharp
         m_MethodName: ToggleTactics
         m_Mode: 1
@@ -8923,7 +9115,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -8999,8 +9191,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Navigation.m_Mode
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 1207605284}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
       value: 1
@@ -9013,9 +9209,17 @@ PrefabInstance:
       propertyPath: m_Colors.m_SelectedColor.r
       value: 0.41960785
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 1194130249}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 1929388245}
     - target: {fileID: 2695032183488238293, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Name
-      value: Battle - Action Button (3)
+      value: Battle - Right Action Button (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
@@ -9035,6 +9239,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531bfc54dbbcfa747ba12e34e99dc432, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1433307614 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 1433307611}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1460729174
 GameObject:
   m_ObjectHideFlags: 0
@@ -9044,8 +9259,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1460729175}
-  - component: {fileID: 1460729177}
   - component: {fileID: 1460729176}
+  - component: {fileID: 1460729177}
   m_Layer: 5
   m_Name: Win Menu
   m_TagString: Untagged
@@ -9764,7 +9979,7 @@ PrefabInstance:
     - target: {fileID: 7449740409392564998, guid: f0ac5ffb0dbc2054cbdf309de12bef3c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 934923513}
+      objectReference: {fileID: 0}
     - target: {fileID: 7449740409392564998, guid: f0ac5ffb0dbc2054cbdf309de12bef3c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: LoadGameData
@@ -10539,7 +10754,7 @@ PrefabInstance:
     - target: {fileID: 7449740409392564998, guid: f0ac5ffb0dbc2054cbdf309de12bef3c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 934923513}
+      objectReference: {fileID: 0}
     - target: {fileID: 7449740409392564998, guid: f0ac5ffb0dbc2054cbdf309de12bef3c, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -10637,7 +10852,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -300, y: 0}
+  m_AnchoredPosition: {x: -292.44, y: 0}
   m_SizeDelta: {x: 2, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1700928439
@@ -11739,7 +11954,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1852918377}
-  - component: {fileID: 1852918378}
   m_Layer: 5
   m_Name: Player Information
   m_TagString: Untagged
@@ -11772,39 +11986,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1852918378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1852918376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29dc582375327df4fba5d3ed8fdca568, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  battleUIController: {fileID: 0}
-  mainCommandsPanel: {fileID: 58367589}
-  mainCommands:
-  - {fileID: 954836201}
-  - {fileID: 843113171}
-  - {fileID: 1414247698}
-  actionsPanel: {fileID: 1134624644}
-  actions:
-  - {fileID: 1569300148}
-  - {fileID: 1207605283}
-  - {fileID: 1929388244}
-  - {fileID: 1433307613}
-  - {fileID: 823812556}
-  - {fileID: 1240913516}
-  targetPanel: {fileID: 1348771206}
-  Targets:
-  - {fileID: 1397742776}
-  - {fileID: 556004658}
-  - {fileID: 600717315}
-  - {fileID: 787927678}
-  - {fileID: 0}
 --- !u!1 &1860745930
 GameObject:
   m_ObjectHideFlags: 0
@@ -12034,7 +12215,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238282, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -12110,8 +12291,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Navigation.m_Mode
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 2695032182338374779}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
       value: 1
@@ -12124,9 +12309,21 @@ PrefabInstance:
       propertyPath: m_Colors.m_SelectedColor.r
       value: 0.41960785
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 823812557}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 1433307614}
     - target: {fileID: 2695032183488238293, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Name
-      value: Battle - Action Button (2)
+      value: Battle - Left Action Button (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
@@ -12144,6 +12341,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 531bfc54dbbcfa747ba12e34e99dc432, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1929388245 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 1929388242}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1987219493
@@ -12336,7 +12544,7 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 843113171}
+    m_SelectOnUp: {fileID: 1414247698}
     m_SelectOnDown: {fileID: 954836201}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
@@ -12365,7 +12573,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1852918378}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BattleTargetting, Assembly-CSharp
         m_MethodName: OpenItemsList
         m_Mode: 1
@@ -13137,8 +13345,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Navigation.m_Mode
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 829373941}
     - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
       value: 1
@@ -13151,12 +13363,35 @@ PrefabInstance:
       propertyPath: m_Colors.m_SelectedColor.r
       value: 0.41960785
       objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 1929388245}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 1207605284}
     - target: {fileID: 2695032183488238293, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
       propertyPath: m_Name
-      value: Battle - Action Button
+      value: Battle - Left Action Button
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+--- !u!114 &2695032182338374779 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2695032183488238283, guid: c05632d685fd0ac41b4e3db97ef19edd, type: 3}
+  m_PrefabInstance: {fileID: 2695032182338374778}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &2981952701481873045
 CanvasRenderer:
   m_ObjectHideFlags: 0

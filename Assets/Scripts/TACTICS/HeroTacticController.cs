@@ -21,7 +21,7 @@ public class HeroTacticController : MonoBehaviour
     internal BattleCharacterController ChosenTarget;
     [SerializeField]
     internal int ChosenTargetList = 0;
-    internal int ActionSegments = 4;
+    internal int ActionAllowance = 0;
 
     // METHODS
     private void TryTacticTargets(int i)
@@ -186,7 +186,7 @@ public class HeroTacticController : MonoBehaviour
         // Automated AI Tactic
         if (!ManualActionInput)
         {
-            if (tacticsAreActive && !myHeroCtrlr.isPerformingActions) // TOGGLED On/Off in battle OR when choosing your actions
+            if (tacticsAreActive && !myHeroCtrlr.isPerformingActions) // TOGGLED On/Off in battle OR when doing my actions
             {
                 if (_TacticsList != null) // Checks: TURNED ON => CONDITION MET => (ITEM) HAS ENOUGH IN INVENTORY => FULL ACTION BAR
                 {
@@ -195,17 +195,16 @@ public class HeroTacticController : MonoBehaviour
                         _TacticsList[i]._Performer = myHeroCtrlr;
                         if (_TacticsList[i].isTurnedOn) // > IS TURNED ON?
                         {
-                            TryTacticTargets(i); // > IS TARGET ELIGIBLE
-                            if (_TacticsList[i].ConditionIsMet && myHeroCtrlr.myHero._ActionChargeAmount == 100) // IS ACTION BAR FULL?
-                            {
-                                StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.DoTacticAction(_TacticsList[i], ChosenTargetList)); // Do all the Actions & Behaviours on the action
-                            }
-                            else if (_TacticsList[i].ConditionIsMet)
+                            TryTacticTargets(i); // > IS TARGET ELIGIBLE?
+                            if (_TacticsList[i].ConditionIsMet)
                             {
                                 ChosenActions = new(_TacticsList[i]._Actions);
                                 ChosenTarget = _TacticsList[i]._Target;
                                 myHeroCtrlr.myMovementController.myTarget = ChosenTarget.myBattlingModel;
-                                break;
+                            }
+                            if (_TacticsList[i].ConditionIsMet && myHeroCtrlr.myHero._ActionChargeAmount == 100) // IS ACTION BAR FULL?
+                            {
+                                StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.DoActionSequence(ChosenActions, ChosenTarget, ChosenTargetList)); // Do all the Actions & Behaviours on the action
                             }
                         }
                     }
@@ -219,7 +218,7 @@ public class HeroTacticController : MonoBehaviour
             {
                 if (myHeroCtrlr.myHero._ActionChargeAmount == 100)
                 {
-                    StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.DoManualAction(ChosenActions, ChosenTarget, ChosenTargetList));
+                    StartCoroutine(myHeroCtrlr.myHero.myBattleHeroController.DoActionSequence(ChosenActions, ChosenTarget, ChosenTargetList));
                 }
                 else
                 {

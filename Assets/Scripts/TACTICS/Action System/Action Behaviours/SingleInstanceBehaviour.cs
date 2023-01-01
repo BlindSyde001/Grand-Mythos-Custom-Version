@@ -62,11 +62,11 @@ public class SingleInstanceBehaviour : ActionBehaviour
                     amount = (int)action.PowerModifier;
                 }
 
-                if (target != null)
+                if (target != null && target.isAlive)
                 {
                     targetStats._CurrentHP -= amount;
                     targetStats._CurrentHP = Mathf.Clamp(targetStats._CurrentHP, 0, targetStats.MaxHP);
-                    target.DieCheck();
+                    target.HasDied();
                 }
                 break;
 
@@ -81,7 +81,7 @@ public class SingleInstanceBehaviour : ActionBehaviour
                 {
                     amount = (int)action.PowerModifier;
                 }
-                if (target != null)
+                if (target != null && target.isAlive)
                 {
                     Debug.Log(action.Name + target + " " + amount);
                     targetStats._CurrentHP += amount;
