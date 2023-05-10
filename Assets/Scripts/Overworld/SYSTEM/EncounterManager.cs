@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyInformation : MonoBehaviour
+public class EncounterManager : MonoBehaviour
 {
     private GameManager gameManager;
 
@@ -23,7 +23,7 @@ public class EnemyInformation : MonoBehaviour
     // Enemy Chance to Appear
     [SerializeField]
     internal float[] SpawnTable = new float[4];
-    public static EnemyInformation _instance;
+    public static EncounterManager _instance;
 
     // UPDATES
     private void Awake()

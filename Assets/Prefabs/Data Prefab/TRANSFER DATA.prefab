@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4282536386010947271}
   - component: {fileID: 4282536386010947268}
   m_Layer: 0
-  m_Name: TRANSFER DATA
+  m_Name: Transfer Data
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28,6 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4282536386139815877}
   - {fileID: 4282536386060529411}
@@ -46,15 +47,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9c33206682c27c4ba112d06b83401e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _LastKnownScene: 
-  _LastKnownPosition: {x: 0, y: 0, z: 0}
-  _LastKnownRotation: {x: 0, y: 0, z: 0, w: 0}
+  DoorwayIndex: 0
+  LastKnownScene: 
+  LastKnownPosition: {x: 0, y: 0, z: 0}
+  LastKnownRotation: {x: 0, y: 0, z: 0, w: 0}
+  LastKnownReferenceDirection: 0
   _AllPartyMembers:
   - {fileID: 4282536386139815898}
   - {fileID: 4282536386060529408}
   _PartyLineup:
   - {fileID: 4282536386139815898}
   - {fileID: 4282536386060529408}
+  _ReservesLineup: []
   _EnemyLineup: []
   _GunsDatabase:
   - {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
@@ -122,24 +126,14 @@ MonoBehaviour:
   _AccessoryDatabase:
   - {fileID: 11400000, guid: 112d6aea410489a4896b0dc5d6b0ad3d, type: 2}
   - {fileID: 11400000, guid: de1c8f5a28252d2499e8d4ba617ab355, type: 2}
-  _SkillsDatabase: []
-  _MagicDatabase:
-  - {fileID: 11400000, guid: cb4a7239bccc0b2419aa8cee096b899d, type: 2}
-  - {fileID: 11400000, guid: d200424630211874f949bc81e48f85a1, type: 2}
   _ConsumablesDatabase:
   - {fileID: 11400000, guid: 07037ddf06baf4949aa79642c6963225, type: 2}
   _KeyItemsDatabase:
   - {fileID: 11400000, guid: ecdb5c098bf76004fbd1052a153596a7, type: 2}
-  _AllyConditionDatabase:
-  - {fileID: 11400000, guid: 5c7ab33d4ec4cb441a12a5e2009ddd2f, type: 2}
-  - {fileID: 11400000, guid: c920cc82d06cee746bec1f0a6605b6b0, type: 2}
-  - {fileID: 11400000, guid: 58a30e5e93461de40bdea13d411b0f76, type: 2}
-  - {fileID: 11400000, guid: 9d1e8f8dfc3082f47988d7b861e60a2a, type: 2}
-  _EnemyConditionDatabase:
-  - {fileID: 11400000, guid: 4d7e2509ed4cf6a4f911d7db835cb454, type: 2}
-  - {fileID: 11400000, guid: 64c4ba83b51d6e04da1041bed995ae8b, type: 2}
-  - {fileID: 11400000, guid: 3f06cf9ae8519ab4698deb863c0b1594, type: 2}
-  - {fileID: 11400000, guid: 02e8f42908ad88447a1b1fc8d4e6a16e, type: 2}
+  _LootDatabase: []
+  _HeroSkillsDatabase: []
+  _ItemSkillsDatabase: []
+  _ConditionsDatabase: []
 --- !u!114 &4282536386010947268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4b7faa30177664db76fa2a83c275f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GM: {fileID: 4282536386010947271}
+  gameManager: {fileID: 0}
+  inputManager: {fileID: 0}
+  sceneChangeManager: {fileID: 0}
   _GameState: 1
 --- !u!1 &4282536386060529409
 GameObject:
@@ -181,6 +177,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4282536386010947270}
   m_RootOrder: 1
@@ -200,6 +197,7 @@ MonoBehaviour:
   _CSA: {fileID: 11400000, guid: d5b57b749a688d94bbc29e8ab87c5314, type: 2}
   characterType: 0
   charName: 
+  charPortrait: {fileID: 0}
   _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
   _CurrentHP: 0
   _CurrentMP: 0
@@ -209,6 +207,7 @@ MonoBehaviour:
   _MagAttack: 0
   _Defense: 0
   _MagDefense: 0
+  _Speed: 0
   _AffinityFIRE: 0
   _AffinityICE: 0
   _AffinityLIGHTNING: 0
@@ -216,17 +215,26 @@ MonoBehaviour:
   _ResistBLIND: 0
   _ResistSILENCE: 0
   _ResistFUROR: 0
+  _ResistPARALYSIS: 0
   _ResistPHYSICAL: 0
   _ResistMAGICAL: 0
+  _IsBlinded: 0
+  _IsSilenced: 0
+  _IsFurored: 0
+  _IsParalysed: 0
+  _IsPhysDown: 0
+  _IsMagDown: 0
   _ActionRechargeSpeed: 0
   _ActionChargeAmount: 0
+  _BasicAttack: {fileID: 0}
   _AvailableActions:
   - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
   _Level: 1
   _TotalExperience: 0
-  _ExperienceToNextLevel: 0
   _Weapon: {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
+  myWeaponType: 0
   _Armour: {fileID: 11400000, guid: 370d5bab6d025854ab86d6f8679d5c32, type: 2}
+  myArmourType: 0
   _AccessoryOne: {fileID: 11400000, guid: 112d6aea410489a4896b0dc5d6b0ad3d, type: 2}
   _AccessoryTwo: {fileID: 11400000, guid: de1c8f5a28252d2499e8d4ba617ab355, type: 2}
   equipHP: 0
@@ -235,9 +243,12 @@ MonoBehaviour:
   equipMagAttack: 0
   equipDefense: 0
   equipMagDefense: 0
+  equipSpeed: 0
+  myBattleHeroController: {fileID: 0}
+  charBanner: {fileID: 0}
   _AllUsableActions:
   - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
-  myGambitController: {fileID: 11400000, guid: 9320d056d8f584a41b0c077b3a3c4444, type: 2}
+  myTacticController: {fileID: 0}
 --- !u!1 &4282536386139815899
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,6 +276,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4282536386010947270}
   m_RootOrder: 0
@@ -284,6 +296,7 @@ MonoBehaviour:
   _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
   characterType: 0
   charName: 
+  charPortrait: {fileID: 0}
   _CharacterModel: {fileID: 4490411090106156790, guid: ecfaac94aced2394e9a93a4cd99c7e04, type: 3}
   _CurrentHP: 0
   _CurrentMP: 0
@@ -293,6 +306,7 @@ MonoBehaviour:
   _MagAttack: 0
   _Defense: 0
   _MagDefense: 0
+  _Speed: 0
   _AffinityFIRE: 0
   _AffinityICE: 0
   _AffinityLIGHTNING: 0
@@ -300,17 +314,26 @@ MonoBehaviour:
   _ResistBLIND: 0
   _ResistSILENCE: 0
   _ResistFUROR: 0
+  _ResistPARALYSIS: 0
   _ResistPHYSICAL: 0
   _ResistMAGICAL: 0
+  _IsBlinded: 0
+  _IsSilenced: 0
+  _IsFurored: 0
+  _IsParalysed: 0
+  _IsPhysDown: 0
+  _IsMagDown: 0
   _ActionRechargeSpeed: 0
   _ActionChargeAmount: 0
+  _BasicAttack: {fileID: 0}
   _AvailableActions:
   - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
   _Level: 1
   _TotalExperience: 0
-  _ExperienceToNextLevel: 0
   _Weapon: {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
+  myWeaponType: 0
   _Armour: {fileID: 11400000, guid: 370d5bab6d025854ab86d6f8679d5c32, type: 2}
+  myArmourType: 0
   _AccessoryOne: {fileID: 11400000, guid: 112d6aea410489a4896b0dc5d6b0ad3d, type: 2}
   _AccessoryTwo: {fileID: 11400000, guid: de1c8f5a28252d2499e8d4ba617ab355, type: 2}
   equipHP: 0
@@ -319,8 +342,11 @@ MonoBehaviour:
   equipMagAttack: 0
   equipDefense: 0
   equipMagDefense: 0
+  equipSpeed: 0
+  myBattleHeroController: {fileID: 0}
+  charBanner: {fileID: 0}
   _AllUsableActions:
   - {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
   - {fileID: 11400000, guid: 3dfc7614cff8ec945910a39562371202, type: 2}
   - {fileID: 11400000, guid: 47223203b46173546a02708669aad6dd, type: 2}
-  myGambitController: {fileID: 11400000, guid: 5adca43a73fd55345abe01bb9d1ba388, type: 2}
+  myTacticController: {fileID: 0}
