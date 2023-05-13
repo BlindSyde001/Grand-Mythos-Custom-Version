@@ -18,19 +18,19 @@ public class BattleStateMachine : MonoBehaviour
     public List<Transform> _EnemySpawns;
 
     #region Controller Variables
-    public static List<BattleHeroController> _HeroControllers = new(); // Where all actions for Battle are
-    public static List<BattleEnemyController> _EnemyControllers = new();
+    public static List<BattleHeroModelController> _HeroControllers = new(); // Where all actions for Battle are
+    public static List<BattleEnemyModelController> _EnemyControllers = new();
     #endregion
     #region Model Variables
     private static List<GameObject> _HeroModels = new();  // The character models in scene
     private static List<GameObject> _EnemyModels = new();
     #endregion
     #region Character State Variables
-    public static List<BattleHeroController> _HeroesActive = new();
-    public static List<BattleHeroController> _HeroesDowned = new();
+    public static List<BattleHeroModelController> _HeroesActive = new();
+    public static List<BattleHeroModelController> _HeroesDowned = new();
 
-    public static List<BattleEnemyController> _EnemiesActive = new();
-    public static List<BattleEnemyController> _EnemiesDowned = new();
+    public static List<BattleEnemyModelController> _EnemiesActive = new();
+    public static List<BattleEnemyModelController> _EnemiesDowned = new();
     #endregion
     public delegate void SwitchToNewState(CombatState CS);
     public static event SwitchToNewState OnNewStateSwitched;
@@ -144,7 +144,7 @@ public class BattleStateMachine : MonoBehaviour
             BU.heroData.Add(_HeroControllers[i].myHero);                                    // Battle UI Component
             _HeroControllers[i].myMovementController = instantiatedHeroModel.GetComponent<BattleArenaMovement>();
         }
-        foreach (BattleHeroController a in _HeroesActive)
+        foreach (BattleHeroModelController a in _HeroesActive)
         {
             a.myHero._ActionChargeAmount = Random.Range(0, 50);
         }                                // Set ATB Bar
@@ -182,11 +182,11 @@ public class BattleStateMachine : MonoBehaviour
     {
         if (CheckStateOfPlay())
         {
-            foreach (BattleHeroController hero in _HeroesActive)
+            foreach (BattleHeroModelController hero in _HeroesActive)
             {
                 hero.ActiveStateBehaviour();
             }
-            foreach (BattleEnemyController enemy in _EnemiesActive)
+            foreach (BattleEnemyModelController enemy in _EnemiesActive)
             {
                 enemy.ActiveStateBehaviour();
             }
@@ -201,7 +201,7 @@ public class BattleStateMachine : MonoBehaviour
     #endregion
     #region CHECK STATE OF BATTLERS
     // DEATH CHECK. Called when a char is hit
-    public void CheckCharIsDead(BattleHeroController hero)
+    public void CheckCharIsDead(BattleHeroModelController hero)
     {
         if (_HeroesActive.Find(x => x == hero) != null)
         {
@@ -221,7 +221,7 @@ public class BattleStateMachine : MonoBehaviour
             Debug.Log(hero.myHero.charName + " is already in Downed List!");
         }
     }
-    public void CheckCharIsDead(BattleEnemyController enemy)
+    public void CheckCharIsDead(BattleEnemyModelController enemy)
     {
         if(_EnemiesActive.Find(x => x == enemy) != null)
         {
@@ -256,7 +256,6 @@ public class BattleStateMachine : MonoBehaviour
             StartCoroutine(DefeatTransition());
         }
     }
-
     private IEnumerator VictoryTransition()
     {
         // Victory poses, exp gaining, items, transition back to overworld
@@ -264,8 +263,6 @@ public class BattleStateMachine : MonoBehaviour
         yield return new WaitForSeconds(1f);
         StartCoroutine(battleResolution.ResolveBattle(0));
     }
-
-
     private IEnumerator DefeatTransition()
     {
         // Lost, Open up UI options to load saved game or return to title

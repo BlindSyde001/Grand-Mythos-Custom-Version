@@ -14,23 +14,23 @@ public class SingleInstanceBehaviour : ActionBehaviour
         CharacterTemplate targetStats;
         if (caster.myType == BattleCharacterController.ControllerType.HERO)
         {
-            BattleHeroController casterDownScale = caster as BattleHeroController;
+            BattleHeroModelController casterDownScale = caster as BattleHeroModelController;
             casterStats = casterDownScale.myHero;
         }
         else
         {
-            BattleEnemyController casterDownScale = caster as BattleEnemyController;
+            BattleEnemyModelController casterDownScale = caster as BattleEnemyModelController;
             casterStats = casterDownScale.myEnemy;
         }
 
         if (target.myType == BattleCharacterController.ControllerType.HERO)
         {
-            BattleHeroController targetDownScale = target as BattleHeroController;
+            BattleHeroModelController targetDownScale = target as BattleHeroModelController;
             targetStats = targetDownScale.myHero;
         } 
         else
         {
-            BattleEnemyController targetDownScale = target as BattleEnemyController;
+            BattleEnemyModelController targetDownScale = target as BattleEnemyModelController;
             targetStats = targetDownScale.myEnemy;
         }
         #endregion

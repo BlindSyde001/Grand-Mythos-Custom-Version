@@ -24,7 +24,7 @@ public class BattleTargetting : MonoBehaviour
 
     public GameObject targetPanel;
     public List<BattleTargetsListContainer> Targets;  //1, 2, 3, 4
-    internal List<BattleHeroController> heroTargets = new();
+    internal List<BattleHeroModelController> heroTargets = new();
 
     private bool skillsOpen;
     private bool itemsOpen;
@@ -205,7 +205,7 @@ public class BattleTargetting : MonoBehaviour
             case 1:
                 // hero list
                 List<HeroExtension> allHeroes = new();
-                foreach (BattleHeroController a in heroTargets)
+                foreach (BattleHeroModelController a in heroTargets)
                 {
                     allHeroes.Add(a.myHero);
                 }

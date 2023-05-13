@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9115676008236007250}
   - component: {fileID: 9115676008236007249}
-  - component: {fileID: 659661335794905614}
+  - component: {fileID: 8310485216847915982}
   m_Layer: 0
   m_Name: Terrorist Gunner Data
   m_TagString: Untagged
@@ -81,7 +81,7 @@ MonoBehaviour:
   _AvailableActions:
   - {fileID: 11400000, guid: 31a65cd091113b54a8f2e440dd0b4d02, type: 2}
   - {fileID: 11400000, guid: 56b23aa04b633404ba4e4c704525d621, type: 2}
-  myBattleEnemyController: {fileID: 659661335794905614}
+  myBattleEnemyController: {fileID: 8310485216847915982}
   experiencePool: 250
   creditPool: 150
   DropItems:
@@ -92,7 +92,7 @@ MonoBehaviour:
   DropRate:
   - 65
   - 30
---- !u!114 &659661335794905614
+--- !u!114 &8310485216847915982
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9115676008236007251}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae144f2cba8224b47bb7614f52ad5459, type: 3}
+  m_Script: {fileID: 11500000, guid: 06676af7be6610c449c2f90e75f23bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 1

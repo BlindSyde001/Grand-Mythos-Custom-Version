@@ -12,8 +12,8 @@ public class ActionBehaviour : ScriptableObject
         if (action.ActionTargetType == ActionTargetType.MULTI)
         {   // FIND WHERE THE GUY IS IN WHAT LIST => THEN DO IT TO EM ALL
 
-            BattleHeroController a = target as BattleHeroController;
-            BattleEnemyController b = target as BattleEnemyController;
+            BattleHeroModelController a = target as BattleHeroModelController;
+            BattleEnemyModelController b = target as BattleEnemyModelController;
 
             // Check Hero Lists
             if (BattleStateMachine._HeroesActive.Contains(a))

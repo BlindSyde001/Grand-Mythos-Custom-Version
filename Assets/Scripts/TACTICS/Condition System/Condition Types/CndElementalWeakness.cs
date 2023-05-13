@@ -18,14 +18,14 @@ public class CndElementalWeakness : Condition
         {
             case BattleCharacterController.ControllerType.HERO:
                 {
-                    BattleHeroController a = target as BattleHeroController;
+                    BattleHeroModelController a = target as BattleHeroModelController;
                     tempToUse = a.myHero;
                     break;
                 }
 
             default:
                 {
-                    BattleEnemyController a = target as BattleEnemyController;
+                    BattleEnemyModelController a = target as BattleEnemyModelController;
                     tempToUse = a.myEnemy;
                     break;
                 }

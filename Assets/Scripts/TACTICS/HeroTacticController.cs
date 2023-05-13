@@ -8,7 +8,7 @@ public class HeroTacticController : MonoBehaviour
 {
     // VARIABLES
     [SerializeField]
-    internal BattleHeroController myHeroCtrlr;
+    internal BattleHeroModelController myHeroCtrlr;
     public List<Tactic> _TacticsList;
     [SerializeField]
     internal bool tacticsAreActive = true;
@@ -24,6 +24,12 @@ public class HeroTacticController : MonoBehaviour
     internal int ActionAllowance = 0;
 
     // METHODS
+    private void Start()
+    {
+        myHeroCtrlr = GetComponent<BattleHeroModelController>();
+    }
+
+
     private void TryTacticTargets(int i)
     {
         // FIND CHARACTER TO INPUT INTO CALLCHECK
@@ -136,9 +142,8 @@ public class HeroTacticController : MonoBehaviour
         switch (targetList)
         {
             case 1:
-                if (BattleStateMachine._HeroesActive.Contains(currentTarget as BattleHeroController))
+                if (BattleStateMachine._HeroesActive.Contains(currentTarget as BattleHeroModelController))
                 {
-                    //Debug.Log("1. checking for Target: " + currentTarget);
                     return true;
                 }
                 else
@@ -147,9 +152,8 @@ public class HeroTacticController : MonoBehaviour
                 }
 
             case 2:
-                if (BattleStateMachine._HeroesDowned.Contains(currentTarget as BattleHeroController))
+                if (BattleStateMachine._HeroesDowned.Contains(currentTarget as BattleHeroModelController))
                 {
-                    //Debug.Log("1. checking for Target: " + currentTarget);
                     return true;
                 }
                 else
@@ -158,9 +162,8 @@ public class HeroTacticController : MonoBehaviour
                 }
 
             case 3:
-                if (BattleStateMachine._EnemiesActive.Contains(currentTarget as BattleEnemyController))
+                if (BattleStateMachine._EnemiesActive.Contains(currentTarget as BattleEnemyModelController))
                 {
-                    //Debug.Log("1. checking for Target: " + currentTarget);
                     return true;
                 }
                 else
@@ -169,9 +172,8 @@ public class HeroTacticController : MonoBehaviour
                 }
 
             case 4:
-                if (BattleStateMachine._EnemiesDowned.Contains(currentTarget as BattleEnemyController))
+                if (BattleStateMachine._EnemiesDowned.Contains(currentTarget as BattleEnemyModelController))
                 {
-                    //Debug.Log("1. checking for Target: " + currentTarget);
                     return true;
                 }
                 else

@@ -137,7 +137,7 @@ public abstract class HeroExtension : CharacterTemplate
 
     [SerializeField]
     [PropertyOrder(-1)]
-    internal BattleHeroController myBattleHeroController;
+    internal BattleHeroModelController myBattleHeroController;
 
     [SerializeField]
     [PreviewField(100)]
@@ -169,7 +169,7 @@ public abstract class HeroExtension : CharacterTemplate
         _TotalExperience = _CSA._BaseExperience;
         LevelUpCheck();
 
-        myTacticController.myHeroCtrlr = myBattleHeroController;
+        //myTacticController.myHeroCtrlr = myBattleHeroController;
     }
     public void InitializeLevel()
     {

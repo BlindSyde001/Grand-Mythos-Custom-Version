@@ -84,7 +84,7 @@ public class BattleResolution : MonoBehaviour
 
     private IEnumerator DistributeRewards()
     {
-        foreach (BattleEnemyController enemy in BattleStateMachine._EnemiesDowned)
+        foreach (BattleEnemyModelController enemy in BattleStateMachine._EnemiesDowned)
         {
             sharedExp += enemy.myEnemy.experiencePool;
             creditsEarned += enemy.myEnemy.creditPool;
@@ -92,7 +92,7 @@ public class BattleResolution : MonoBehaviour
         ExperienceRewards.text = "Experience: " + sharedExp.ToString() + "  (" + (sharedExp / BattleStateMachine._HeroesActive.Count).ToString() + ")"; ;
         CurrencyRewards.text = "Credits: " + creditsEarned.ToString();
 
-        foreach (BattleHeroController hero in BattleStateMachine._HeroesActive)
+        foreach (BattleHeroModelController hero in BattleStateMachine._HeroesActive)
         {
             StartCoroutine(ReceiveExperienceRewards(hero));
         }
@@ -102,7 +102,7 @@ public class BattleResolution : MonoBehaviour
         yield return new WaitForSeconds(duration * 2);
         StartCoroutine(ReceiveItemRewards());
     }
-    private IEnumerator ReceiveExperienceRewards(BattleHeroController hero)
+    private IEnumerator ReceiveExperienceRewards(BattleHeroModelController hero)
     {
         int start = hero.myHero._TotalExperience;
         float t = 0f;
@@ -124,7 +124,7 @@ public class BattleResolution : MonoBehaviour
         ItemRewardPanel.SetActive(true);
 
         // Grab all dropped items
-        foreach (BattleEnemyController enemy in BattleStateMachine._EnemiesDowned)
+        foreach (BattleEnemyModelController enemy in BattleStateMachine._EnemiesDowned)
         {
             for (int j = 0; j < enemy.myEnemy.DropItems.Count; j++)
             {
@@ -152,7 +152,7 @@ public class BattleResolution : MonoBehaviour
 
     private static void ReturnToOverworld()
     {
-        foreach(BattleHeroController hero in BattleStateMachine._HeroesDowned)
+        foreach(BattleHeroModelController hero in BattleStateMachine._HeroesDowned)
         {
             hero.myHero._CurrentHP = 1;
         }

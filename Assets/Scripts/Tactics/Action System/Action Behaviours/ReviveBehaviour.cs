@@ -14,7 +14,7 @@ public class ReviveBehaviour : ActionBehaviour
         {
             case BattleCharacterController.ControllerType.HERO:
 
-                BattleHeroController heroCast = target as BattleHeroController;
+                BattleHeroModelController heroCast = target as BattleHeroModelController;
 
                 if(BattleStateMachine._HeroesDowned.Contains(heroCast) && !heroCast.isAlive)
                 {
@@ -25,7 +25,7 @@ public class ReviveBehaviour : ActionBehaviour
 
             case BattleCharacterController.ControllerType.ENEMY:
                 
-                BattleEnemyController enemyCast = target as BattleEnemyController;
+                BattleEnemyModelController enemyCast = target as BattleEnemyModelController;
 
                 if(BattleStateMachine._EnemiesDowned.Contains(enemyCast) && !enemyCast.isAlive)
                 {

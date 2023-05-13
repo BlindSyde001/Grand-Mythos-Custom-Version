@@ -6,7 +6,7 @@ public abstract class EnemyExtension : CharacterTemplate
 {
 
     [SerializeField]
-    internal BattleEnemyController myBattleEnemyController;
+    internal BattleEnemyModelController myBattleEnemyController;
 
     [SerializeField]
     internal int experiencePool;                // How much EXP the enemy Gives

@@ -52,7 +52,7 @@ GameObject:
   - component: {fileID: 5234438934277658764}
   - component: {fileID: 5234438934277658765}
   - component: {fileID: 5234438934277658767}
-  - component: {fileID: 8430257081442506228}
+  - component: {fileID: 694925813897819391}
   m_Layer: 0
   m_Name: Detective Data
   m_TagString: Untagged
@@ -139,7 +139,7 @@ MonoBehaviour:
   equipDefense: 0
   equipMagDefense: 0
   equipSpeed: 0
-  myBattleHeroController: {fileID: 8430257081442506228}
+  myBattleHeroController: {fileID: 694925813897819391}
   charBanner: {fileID: 21300000, guid: e2368ee01c9e284449a43aa5be256c28, type: 3}
   _AllUsableActions:
   - {fileID: 11400000, guid: 053c51e6f2bdb0b448dc7244681873de, type: 2}
@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 355bb38e0df31c740b142dc22624f14c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myHeroCtrlr: {fileID: 8430257081442506228}
+  myHeroCtrlr: {fileID: 694925813897819391}
   _TacticsList:
   - {fileID: 5037729868258460265}
   - {fileID: 7761677194110757949}
@@ -174,7 +174,7 @@ MonoBehaviour:
   ChosenActions: []
   ChosenTarget: {fileID: 0}
   ChosenTargetList: 0
---- !u!114 &8430257081442506228
+--- !u!114 &694925813897819391
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -183,7 +183,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5234438934277658762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07d13343315557f429cf35d080b3c7d5, type: 3}
+  m_Script: {fileID: 11500000, guid: e19ac63caa489724c90c0e6fba56d879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 0

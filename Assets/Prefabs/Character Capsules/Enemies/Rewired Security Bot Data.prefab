@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4298728654131661727}
   - component: {fileID: 4298728654131661726}
-  - component: {fileID: 3924320506975913875}
+  - component: {fileID: 6680291149716936155}
   m_Layer: 0
   m_Name: Rewired Security Bot Data
   m_TagString: Untagged
@@ -79,7 +79,7 @@ MonoBehaviour:
   _ActionChargeAmount: 0
   _BasicAttack: {fileID: 11400000, guid: 39dc324d8e4614a4ab96cccd9afa400d, type: 2}
   _AvailableActions: []
-  myBattleEnemyController: {fileID: 3924320506975913875}
+  myBattleEnemyController: {fileID: 6680291149716936155}
   experiencePool: 300
   creditPool: 120
   DropItems:
@@ -87,7 +87,7 @@ MonoBehaviour:
     ItemAmount: 1
   DropRate:
   - 50
---- !u!114 &3924320506975913875
+--- !u!114 &6680291149716936155
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -96,7 +96,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4298728654131661724}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae144f2cba8224b47bb7614f52ad5459, type: 3}
+  m_Script: {fileID: 11500000, guid: 06676af7be6610c449c2f90e75f23bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 1

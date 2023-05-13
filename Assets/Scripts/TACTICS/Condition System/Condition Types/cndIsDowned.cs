@@ -9,7 +9,7 @@ public class cndIsDowned : Condition
         switch(targetType)
         {
             case CharacterType.CHARACTER:
-                BattleHeroController hero = target as BattleHeroController;
+                BattleHeroModelController hero = target as BattleHeroModelController;
                 if (BattleStateMachine._HeroesDowned.Contains(hero))
                 {
                     return true;
@@ -20,7 +20,7 @@ public class cndIsDowned : Condition
                 }
 
             case CharacterType.ENEMY:
-                BattleEnemyController enemy = target as BattleEnemyController;
+                BattleEnemyModelController enemy = target as BattleEnemyModelController;
                 if (BattleStateMachine._EnemiesDowned.Contains(enemy))
                 {
                     return true;
