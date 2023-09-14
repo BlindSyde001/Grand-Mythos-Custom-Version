@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -18,9 +17,12 @@ public class VideoAnimation : MonoBehaviour
     public IEnumerator PlayVideoClip(VideoClip videoClip)
     {
         time = (float)videoClip.length;
+        videoScreen.enabled = true;
         videoPlayer.clip = videoClip;
         videoPlayer.Play();
         yield return new WaitForSeconds(time);
         videoScreen.DOFade(0, 1f);
+        yield return new WaitForSeconds(1);
+        videoScreen.enabled = false;
     }
 }
