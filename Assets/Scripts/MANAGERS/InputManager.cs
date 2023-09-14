@@ -31,6 +31,8 @@ public class InputManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+
+        this.transform.parent = null;
         DontDestroyOnLoad(this.gameObject);
     }
 

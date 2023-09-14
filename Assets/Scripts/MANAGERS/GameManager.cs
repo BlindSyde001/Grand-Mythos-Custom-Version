@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+        this.transform.parent = null;
         DontDestroyOnLoad(this.gameObject);
     }
 
@@ -32,9 +33,6 @@ public class GameManager : MonoBehaviour
     [BoxGroup("SCENE DATA")]
     [SerializeField]
     internal Quaternion LastKnownRotation;
-    [BoxGroup("SCENE DATA")]
-    [SerializeField]
-    internal int LastKnownReferenceDirection;
     #endregion
     #region BATTLE DATA
     [BoxGroup("PARTY DATA")]
@@ -108,17 +106,5 @@ public class GameManager : MonoBehaviour
     [TitleGroup("LIBRARY COLLECTION")]
     [BoxGroup("LIBRARY COLLECTION/ITEMS")]
     public List<Loot> _LootDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ACTIONS")]
-    public List<Action> _HeroSkillsDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ACTIONS")]
-    public List<Action> _ItemSkillsDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/CONDITIONS")]
-    public List<Condition> _ConditionsDatabase;
     #endregion
 }

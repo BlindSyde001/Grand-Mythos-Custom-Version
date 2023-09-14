@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class SaveData
@@ -22,7 +20,6 @@ public class SaveData
     public string savedScene;
     public Vector3 overworldPos;
     public Quaternion overworldRot;
-    public int overworldRefDirection;
 
     public int playTimeData;
 
@@ -38,10 +35,10 @@ public class SerializableHero
     public int totalExperienceSave;
     public string sprite;
     #region Player Loadout Data
-    public int weaponIDSave;
-    public int armourIDSave;
-    public int accessoryOneIDSave;
-    public int accessoryTwoIDSave;
+    public guid weaponIDSave;
+    public guid armourIDSave;
+    public guid accessoryOneIDSave;
+    public guid accessoryTwoIDSave;
 
     public string weaponSave;
     public string armourSave;
@@ -58,17 +55,17 @@ public class SerializableHero
 [System.Serializable]
 public class SerializableInventory
 {
-    public List<int> ConsumablesIdData = new();
+    public List<guid> ConsumablesIdData = new();
     public List<int> ConsumablesAmountData = new();
 
     public List<string> EquipmentNameData = new();
-    public List<int> EquipmentIdData = new();
+    public List<guid> EquipmentIdData = new();
     public List<int> EquipmentAmountData = new();
 
-    public List<int> LootIdData = new();
+    public List<guid> LootIdData = new();
     public List<int> LootAmountData = new();
 
-    public List<int> KeyItemsIdData = new();
+    public List<guid> KeyItemsIdData = new();
     public List<int> ConditionsIdData = new();
     public int CreditsAmountData = new();
 }

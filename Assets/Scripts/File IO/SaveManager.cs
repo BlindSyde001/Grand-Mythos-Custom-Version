@@ -39,7 +39,7 @@ public static class SaveManager
                 case "Gun":
                     try
                     {
-                        GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._GunsDatabase.Find(x => x._ItemID == SD.heroSaveData[i].weaponIDSave);
+                        GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._GunsDatabase.Find(x => x.guid == SD.heroSaveData[i].weaponIDSave);
                     }
                     catch
                     {
@@ -49,7 +49,7 @@ public static class SaveManager
                 case "Warhammer":
                     try
                     {
-                        GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._WarhammersDatabase.Find(x => x._ItemID == SD.heroSaveData[i].weaponIDSave);
+                        GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._WarhammersDatabase.Find(x => x.guid == SD.heroSaveData[i].weaponIDSave);
                     }
                     catch
                     {
@@ -59,7 +59,7 @@ public static class SaveManager
                 case "PowerGlove":
                     try
                     {
-                        GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._PowerGlovesDatabase.Find(x => x._ItemID == SD.heroSaveData[i].weaponIDSave);
+                        GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._PowerGlovesDatabase.Find(x => x.guid == SD.heroSaveData[i].weaponIDSave);
                     }
                     catch
                     {
@@ -69,7 +69,7 @@ public static class SaveManager
                 case "Grimoire":
                     try
                     {
-                        GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._GrimoiresDatabase.Find(x => x._ItemID == SD.heroSaveData[i].weaponIDSave);
+                        GameManager._instance._AllPartyMembers[i]._Weapon = GameManager._instance._GrimoiresDatabase.Find(x => x.guid == SD.heroSaveData[i].weaponIDSave);
                     }
                     catch
                     {
@@ -92,7 +92,7 @@ public static class SaveManager
                 case "Leather":
                     try
                     {
-                        GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._LeatherDatabase.Find(x => x._ItemID == SD.heroSaveData[i].armourIDSave);
+                        GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._LeatherDatabase.Find(x => x.guid == SD.heroSaveData[i].armourIDSave);
                     }
                     catch
                     {
@@ -102,7 +102,7 @@ public static class SaveManager
                 case "Mail":
                     try
                     {
-                        GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._MailDatabase.Find(x => x._ItemID == SD.heroSaveData[i].armourIDSave);
+                        GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._MailDatabase.Find(x => x.guid == SD.heroSaveData[i].armourIDSave);
                     }
                     catch
                     {
@@ -112,7 +112,7 @@ public static class SaveManager
                 case "Chasis":
                     try
                     {
-                        GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._ChasisDatabase.Find(x => x._ItemID == SD.heroSaveData[i].armourIDSave);
+                        GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._ChasisDatabase.Find(x => x.guid == SD.heroSaveData[i].armourIDSave);
                     }
                     catch
                     {
@@ -122,7 +122,7 @@ public static class SaveManager
                 case "Robes":
                     try
                     {
-                        GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._RobesDatabase.Find(x => x._ItemID == SD.heroSaveData[i].armourIDSave);
+                        GameManager._instance._AllPartyMembers[i]._Armour = GameManager._instance._RobesDatabase.Find(x => x.guid == SD.heroSaveData[i].armourIDSave);
                     }
                     catch
                     {
@@ -142,7 +142,7 @@ public static class SaveManager
         {
             try
             {
-                GameManager._instance._AllPartyMembers[i]._AccessoryOne = GameManager._instance._AccessoryDatabase.Find(x => x._ItemID == SD.heroSaveData[i].accessoryOneIDSave);
+                GameManager._instance._AllPartyMembers[i]._AccessoryOne = GameManager._instance._AccessoryDatabase.Find(x => x.guid == SD.heroSaveData[i].accessoryOneIDSave);
             }
             catch
             {
@@ -153,7 +153,7 @@ public static class SaveManager
         {
             try
             {
-                GameManager._instance._AllPartyMembers[i]._AccessoryTwo = GameManager._instance._AccessoryDatabase.Find(x => x._ItemID == SD.heroSaveData[i].accessoryTwoIDSave);
+                GameManager._instance._AllPartyMembers[i]._AccessoryTwo = GameManager._instance._AccessoryDatabase.Find(x => x.guid == SD.heroSaveData[i].accessoryTwoIDSave);
             }
             catch
             {
