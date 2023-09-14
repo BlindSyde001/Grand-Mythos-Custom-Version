@@ -8,6 +8,4 @@ public class NpcCircuit : MonoBehaviour
     internal NpcMoveNode _NPCMoveNode;
     [SerializeField]
     internal NpcColliderNode _NPCColliderNode;
-    [SerializeField]
-    internal NpcTalkNode _NPCTalkNode;
 }
