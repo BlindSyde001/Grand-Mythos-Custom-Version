@@ -76,7 +76,7 @@ MonoBehaviour:
   _IsPhysDown: 0
   _IsMagDown: 0
   ActionRechargeSpeed: 0
-  ActionChargeAmount: 0
+  ActionChargePercent: 0
   ActionChargeMax: 4
   Inventory:
     rid: 1000
@@ -85,11 +85,13 @@ MonoBehaviour:
   Skills:
     _backingArray: []
   Tactics:
-  - Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
+  - IsOn: 1
+    Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
     Actions:
       ActionsAssets:
       - {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
-  - Condition: {fileID: 11400000, guid: 97b02931ab499854281981eb72b1b5e1, type: 2}
+  - IsOn: 1
+    Condition: {fileID: 11400000, guid: 97b02931ab499854281981eb72b1b5e1, type: 2}
     Actions:
       ActionsAssets:
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
@@ -133,9 +135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19ac63caa489724c90c0e6fba56d879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myType: 0
   animator: {fileID: 0}
   myMovementController: {fileID: 0}
-  myBattlingModel: {fileID: 0}
-  isAlive: 1
   myHero: {fileID: 9187409409059822420}

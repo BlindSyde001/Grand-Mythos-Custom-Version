@@ -7,7 +7,8 @@ using UnityEngine;
 [Serializable]
 public class Tactics
 {
-    [SerializeReference] public ActionCondition Condition;
+    public bool IsOn = true;
+    public ActionCondition Condition;
     [HideLabel] public IActionCollection Actions = new();
 }
 

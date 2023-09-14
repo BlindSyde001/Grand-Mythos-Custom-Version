@@ -167,7 +167,7 @@ public class BattleStateMachine : MonoBehaviour
             {
                 foreach (var tactic in unit.Tactics)
                 {
-                    if (tactic.Condition.CanExecuteWithAction(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection))
+                    if (tactic.IsOn && tactic.Condition.CanExecuteWithAction(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection))
                     {
                         chosenTactic = tactic;
                         break;

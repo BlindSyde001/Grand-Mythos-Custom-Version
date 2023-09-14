@@ -22,6 +22,8 @@ public class MenuInputs : MonoBehaviour
     [SerializeField]
     internal StatusMenuActions statusMenuActions;
     [SerializeField]
+    internal TacticsMenuActions tacticsMenuActions;
+    [SerializeField]
     internal JournalMenuActions journalMenuActions;
     [SerializeField]
     internal SaveMenuActions saveMenuActions;
@@ -82,7 +84,8 @@ public class MenuInputs : MonoBehaviour
                 currentMenuOpen = 4;
                 break;
             case 5:         // Tactics
-                Debug.LogError("NOT IMPLEMENTED YET");
+                StartCoroutine(tacticsMenuActions.TacticsMenuOpen());
+                currentMenuOpen = 5;
                 break;
             case 6:         // Journal
                 StartCoroutine(journalMenuActions.JournalMenuOpen());
@@ -125,7 +128,7 @@ public class MenuInputs : MonoBehaviour
                 StartCoroutine(statusMenuActions.StatusMenuClose(closeAllOverride));
                 break;
             case 5:
-                Debug.LogError("NOT IMPLEMENTED YET");
+                StartCoroutine(tacticsMenuActions.TacticsMenuClose(closeAllOverride));
                 break;
             case 6:
                 StartCoroutine(journalMenuActions.JournalMenuClose(closeAllOverride));

@@ -85,11 +85,13 @@ MonoBehaviour:
   Skills:
     _backingArray: []
   Tactics:
-  - Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
+  - IsOn: 1
+    Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
     Actions:
       ActionsAssets:
       - {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
-  - Condition: {fileID: 11400000, guid: 97b02931ab499854281981eb72b1b5e1, type: 2}
+  - IsOn: 1
+    Condition: {fileID: 11400000, guid: 97b02931ab499854281981eb72b1b5e1, type: 2}
     Actions:
       ActionsAssets:
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}

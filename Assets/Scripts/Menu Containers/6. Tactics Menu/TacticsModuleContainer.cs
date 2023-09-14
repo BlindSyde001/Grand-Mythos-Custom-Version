@@ -23,5 +23,5 @@ public class TacticsModuleContainer : MonoBehaviour
     public List<TextMeshProUGUI> triplesText;
     public TextMeshProUGUI quadruplesText;
 
-    public int actionAllowance = 0;
+    public uint actionAllowance = 0;
 }
