@@ -53,6 +53,9 @@ namespace Editor
                 _utility.Clear();
                 go.GetComponents(_utility);
                 Component mainComponent = _utility.Count > 1 ? _utility[1] : null; // First component is the transform, ignore it
+                if (mainComponent is CanvasRenderer && _utility.Count > 2)
+                    mainComponent = _utility[2];
+
                 if (mainComponent == null)
                     return false; // Null can also occur with missing prefabs in a scene
 
