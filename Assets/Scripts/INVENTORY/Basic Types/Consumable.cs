@@ -1,7 +1,90 @@
+using System;
+using System.Collections;
+using Conditions;
+using Effects;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Consumable", menuName = "Consumables")]
-public class Consumable : BaseItem
+public class Consumable : BaseItem, IAction
 {
-    public Action myAction;
+    const string TargetInfoTextShort = "The state the TARGET of this consumable MUST ABSOLUTELY BE IN to be able to use this consumable ON THEM.";
+    const string TargetInfoText = "The state the TARGET of this consumable MUST ABSOLUTELY BE IN to be able to use this consumable ON THEM.\n" +
+                                  "Do not check for missing health when this consumable heals, that's for Tactics to decide";
+
+    const string PreconditionInfoTextShort = "What MUST ABSOLUTELY be true to be able to use this consumable.";
+    const string PreconditionInfoText = "What MUST ABSOLUTELY be true to be able to use this consumable.\n" +
+                                        "Do not check if the person has one instance of this consumable, this is always checked.\n" +
+                                        "This is more for items that should NEVER be used in a specific context. Eg: Items requiring mana to be used when self doesn't have enough mana";
+
+    [Space]
+    public uint ATBCost = 1;
+
+    [Space]
+    [ListDrawerSettings(ShowFoldout = false)]
+    [LabelText(@"@""Effects:   "" + this.UIDisplayText")]
+    [SerializeReference]
+    public IEffect[] Effects;
+
+    [BoxGroup(nameof(TargetConstraint), LabelText = @"@""Target Constraint:   "" + this.TargetConstraint?.UIDisplayText")]
+    [DetailedInfoBox(TargetInfoTextShort, TargetInfoText)]
+    [HideLabel]
+    [SerializeReference]
+    public Condition TargetConstraint;
+
+    [BoxGroup(nameof(InnerPrecondition), LabelText = @"@""Precondition To Use:   "" + this.InnerPrecondition?.UIDisplayText")]
+    [DetailedInfoBox(PreconditionInfoTextShort, PreconditionInfoText)]
+    [HideLabel]
+    [SerializeReference]
+    public Condition InnerPrecondition;
+
+    [NonSerialized] And _basePrecondition;
+    [NonSerialized] And _fullPrecondition;
+
+    uint IAction.ATBCost => ATBCost;
+    Condition IAction.TargetFilter => TargetConstraint;
+
+    /// <summary>
+    /// This one contains both the has item test and the additional precondition specific to this consumable
+    /// </summary>
+    public Condition Precondition
+    {
+        get
+        {
+            _basePrecondition ??= new IsSelf() & new ItemCarried { Item = this, AtLeastThisAmount = 1 };
+            if (InnerPrecondition == null)
+                return _basePrecondition;
+            _fullPrecondition ??= new();
+            _fullPrecondition.Left = _basePrecondition;
+            _fullPrecondition.Right = InnerPrecondition;
+            return _fullPrecondition;
+        }
+    }
+
+    public IEnumerable Perform(TargetCollection targets, EvaluationContext context)
+    {
+        foreach (var effect in Effects)
+        {
+            foreach (var yield in effect.Apply(targets, context))
+                yield return yield;
+        }
+    }
+
+    public Consumable()
+    {
+        Effects = new IEffect[]
+        {
+            new ApplyOnCaster
+            {
+                Effects = new IEffect[]
+                {
+                    new RemoveItem { Item = this, Amount = 1 }
+                }
+            }
+        };
+    }
+
+    public string UIDisplayText => Effects.UIDisplayText();
+
+    string IAction.Name => name;
 }
