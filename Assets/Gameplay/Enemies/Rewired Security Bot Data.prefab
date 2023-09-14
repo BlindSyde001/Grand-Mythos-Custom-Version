@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4298728654131661724
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4298728654131661727}
+  - component: {fileID: 4298728654131661726}
+  - component: {fileID: 6680291149716936155}
+  m_Layer: 0
+  m_Name: Rewired Security Bot Data
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4298728654131661727
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4298728654131661724}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4298728654131661726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4298728654131661724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47efaf2218985440b5f3cfad29711ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CSA: {fileID: 11400000, guid: 6be5c1e4894b40a40b8ea7fa913207bd, type: 2}
+  charName: 
+  Team: {fileID: 11400000, guid: 998822fe4b9cbd14e99fabd4b5e31caa, type: 2}
+  charPortrait: {fileID: 0}
+  _CharacterModel: {fileID: 5499571375476555240, guid: 1eb592d996651674d93b63d2df0729e2, type: 3}
+  _CurrentHP: 0
+  _CurrentMP: 0
+  _MaxHP: 0
+  _MaxMP: 0
+  _Attack: 0
+  _MagAttack: 0
+  _Defense: 0
+  _MagDefense: 0
+  _Speed: 0
+  _AffinityFIRE: 0
+  _AffinityICE: 0
+  _AffinityLIGHTNING: 0
+  _AffinityWATER: 0
+  _ResistBLIND: 0
+  _ResistSILENCE: 0
+  _ResistFUROR: 0
+  _ResistPARALYSIS: 0
+  _ResistPHYSICAL: 0
+  _ResistMAGICAL: 0
+  _IsBlinded: 0
+  _IsSilenced: 0
+  _IsFurored: 0
+  _IsParalysed: 0
+  _IsPhysDown: 0
+  _IsMagDown: 0
+  ActionRechargeSpeed: 0
+  ActionChargePercent: 0
+  ActionChargeMax: 4
+  Inventory:
+    rid: 7439448747336007701
+  BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  SkillTree: {fileID: 0}
+  Skills:
+    _backingArray: []
+  Tactics:
+  - Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
+    Actions:
+      ActionsAssets:
+      - {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+  - Condition: {fileID: 11400000, guid: 97b02931ab499854281981eb72b1b5e1, type: 2}
+    Actions:
+      ActionsAssets:
+      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  myBattleEnemyController: {fileID: 6680291149716936155}
+  experiencePool: 300
+  creditPool: 120
+  DropItems:
+  - thisItem: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+    ItemAmount: 1
+  DropRate:
+  - 50
+  references:
+    version: 2
+    RefIds:
+    - rid: 7439448747336007701
+      type: {class: InlineInventory, ns: , asm: Assembly-CSharp}
+      data:
+        Items:
+          _backingArray:
+          - Key: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+            Value: 1
+--- !u!114 &6680291149716936155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4298728654131661724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06676af7be6610c449c2f90e75f23bb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  myMovementController: {fileID: 0}
+  myEnemy: {fileID: 4298728654131661726}

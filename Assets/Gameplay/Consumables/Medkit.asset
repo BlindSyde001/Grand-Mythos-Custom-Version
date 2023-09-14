@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7afe243da054e946be5ebdee7e8105b, type: 3}
+  m_Name: Medkit
+  m_EditorClassIdentifier: 
+  Description: The latest in healing ArcanoTech, the medkit can be used to instantly
+    apply emergency aid in the field.
+  guid:
+    a: 5694411272221503122
+    b: 13552375456326909598
+  ATBCost: 1
+  Effects:
+  - rid: 7439448764490973222
+  - rid: 7439448747336007692
+  TargetConstraint:
+    rid: -2
+  InnerPrecondition:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7439448747336007692
+      type: {class: ApplyOnCaster, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Effects:
+        - rid: 7439448747336007693
+    - rid: 7439448747336007693
+      type: {class: RemoveItem, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Item: {fileID: 11400000}
+        Amount: 1
+    - rid: 7439448764490973222
+      type: {class: ConditionalEffect, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Condition:
+          rid: 7439448773025857548
+        Effects:
+        - rid: 7439448764490973224
+    - rid: 7439448764490973224
+      type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Attribute: 0
+        Amount: 2000
+        Scaling: 0
+        Variance: 0
+        CritChance: 0
+        CritMultiplier: 2.5
+    - rid: 7439448773025857548
+      type: {class: IsAlive, ns: Conditions, asm: Assembly-CSharp}

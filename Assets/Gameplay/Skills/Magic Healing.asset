@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00d19563990c46f190b108ccb4d28df2, type: 3}
+  m_Name: Magic Healing
+  m_EditorClassIdentifier: 
+  Cost: 2
+  Effects:
+  - rid: 7439448773025857549
+  - rid: 7439448773025857550
+  TargetConstraint:
+    rid: -2
+  PreconditionToUse:
+    rid: 7439448773025857553
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7439448773025857549
+      type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Attribute: 0
+        Amount: 1000
+        Scaling: 0
+        Variance: 5
+        CritChance: 50
+        CritMultiplier: 2.5
+    - rid: 7439448773025857550
+      type: {class: ApplyOnCaster, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Effects:
+        - rid: 7439448773025857552
+    - rid: 7439448773025857552
+      type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Attribute: 1
+        Amount: -10
+        Scaling: 0
+        Variance: 0
+        CritChance: 0
+        CritMultiplier: 2.5
+    - rid: 7439448773025857553
+      type: {class: And, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        Left:
+          rid: 7439448773025857554
+        Right:
+          rid: 7439448773025857555
+    - rid: 7439448773025857554
+      type: {class: IsSelf, ns: Conditions, asm: Assembly-CSharp}
+    - rid: 7439448773025857555
+      type: {class: AttributeFilter, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        TargetAttribute: 1
+        Comparison: 4
+        Value: 10

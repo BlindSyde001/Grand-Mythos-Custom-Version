@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7afe243da054e946be5ebdee7e8105b, type: 3}
+  m_Name: Tactical Nuke
+  m_EditorClassIdentifier: 
+  Description: Nukes go boom
+  guid:
+    a: 5179099304869793340
+    b: 4521989134607831987
+  ATBCost: 4
+  Effects:
+  - rid: 7439448773025857558
+  - rid: 7439448773025857556
+  TargetConstraint:
+    rid: -2
+  InnerPrecondition:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 7439448773025857556
+      type: {class: ApplyOnCaster, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Effects:
+        - rid: 7439448773025857557
+    - rid: 7439448773025857557
+      type: {class: RemoveItem, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Item: {fileID: 11400000}
+        Amount: 1
+    - rid: 7439448773025857558
+      type: {class: AttributeSet, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Attribute: 0
+        Value: 0
+        Variance: 0
