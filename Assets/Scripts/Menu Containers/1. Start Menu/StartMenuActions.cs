@@ -79,9 +79,8 @@ public class StartMenuActions : MonoBehaviour
     }
     internal void DisplayMisc()
     {
-        SceneInformation a = FindObjectOfType<SceneInformation>();
-        miscList.miscArea.text = a.areaName;
-        miscList.miscZone.text = a.zoneName;
+        miscList.miscArea.text = this.gameObject.scene.name;
+        miscList.miscZone.text = SpawnPoint.LastSpawnUsed != null ? SpawnPoint.LastSpawnUsed.Reference.SpawnName : "Unknown";
         miscList.miscCurrency.text = inventoryManager.creditsInBag.ToString();
     }
 }

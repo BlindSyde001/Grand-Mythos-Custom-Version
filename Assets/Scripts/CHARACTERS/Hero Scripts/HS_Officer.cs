@@ -28,7 +28,7 @@ public class HS_Officer : HeroExtension
         _MagDefense = BaseMagDefense + equipMagDefense;
         _Speed = BaseSpeed + equipSpeed;
 
-        _ActionRechargeSpeed = _Speed;
+        ActionRechargeSpeed = _Speed;
         _CurrentHP = _MaxHP;
         _CurrentMP = _MaxMP;
     }

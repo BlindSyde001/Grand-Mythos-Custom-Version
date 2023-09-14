@@ -1,156 +1,64 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Video;
 using Cinemachine;
+using Random = UnityEngine.Random;
 
 public class BattleStateMachine : MonoBehaviour
 {
-    private BattleUIController BU;
-    private GameManager gameManager;
-    [SerializeField]
-    private BattleTargetting battleTargetting;
-    [SerializeField]
-    private BattleResolution battleResolution;
+    public Team PlayerTeam;
+    public SerializableHashSet<CharacterTemplate> Units = new();
+
+    [NonSerialized]
+    public BlockBattleFlags blocked;
+
+    List<CharacterTemplate> _unitsCopy = new();
+    Dictionary<CharacterTemplate, Tactics> _orders = new();
+    [SerializeField] BattleResolution battleResolution;
 
     // VARIABLES
     public List<Transform> _HeroSpawns;    // Where do they initially spawn?
     public List<Transform> _EnemySpawns;
 
     #region Controller Variables
-    public static List<BattleHeroModelController> _HeroControllers = new(); // Where all actions for Battle are
-    public static List<BattleEnemyModelController> _EnemyControllers = new();
-    #endregion
-    #region Model Variables
-    private static List<GameObject> _HeroModels = new();  // The character models in scene
-    private static List<GameObject> _EnemyModels = new();
-    #endregion
-    #region Character State Variables
-    public static List<BattleHeroModelController> _HeroesActive = new();
-    public static List<BattleHeroModelController> _HeroesDowned = new();
-
-    public static List<BattleEnemyModelController> _EnemiesActive = new();
-    public static List<BattleEnemyModelController> _EnemiesDowned = new();
+    List<BattleHeroModelController> _HeroControllers = new(); // Where all actions for Battle are
+    List<BattleEnemyModelController> _EnemyControllers = new();
     #endregion
     public delegate void SwitchToNewState(CombatState CS);
     public static event SwitchToNewState OnNewStateSwitched;
 
     public static CombatState _CombatState;
-    public GameObject losePanel;
-    private bool _EndBattleLock;
-
-    private CinemachineFreeLook rotateCam;
+    CinemachineFreeLook rotateCam;
 
     // UPDATES
-    private void Awake()
+    void Awake()
     {
-        BU = FindObjectOfType<BattleUIController>();
         rotateCam = FindObjectOfType<CinemachineFreeLook>();
-        Cursor.visible = false;
-    }
-    private void Start()
-    {
-        battleTargetting = FindObjectOfType<BattleTargetting>();
-        gameManager = GameManager._instance;
-        _EndBattleLock = false;
-        SpawnCharacterModels();
-        SwitchCombatState(CombatState.START);
-        StartCoroutine(BattleIntermission(5, CombatState.START));
-    }
-    private void Update()
-    {
-        if(!_EndBattleLock)
-        {
-            switch (_CombatState)
-            {
-                case CombatState.ACTIVE:
-                    EndBattleCondition();
-                    BattleIsActive();
-                    rotateCam.GetComponent<CinemachineFreeLook>().enabled = true;
-                    break;
-
-                case CombatState.WAIT:
-                    EndBattleCondition();
-                    rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
-                    break;
-            }
-        }
     }
 
-    // METHODS
-    private void SwitchCombatState(CombatState newCombatState)
+    void Start()
     {
-        switch(newCombatState)
-        {
-            case CombatState.START:
-                _CombatState = CombatState.START;
-                OnNewStateSwitched(newCombatState);
-                break;
-
-            case CombatState.ACTIVE:
-                _CombatState = CombatState.ACTIVE;
-                OnNewStateSwitched(newCombatState);
-                break;
-
-            case CombatState.WAIT:
-                _CombatState = CombatState.WAIT;
-                OnNewStateSwitched(newCombatState);
-                break;
-
-            case CombatState.END:
-                _CombatState = CombatState.END;
-                OnNewStateSwitched(newCombatState);
-                break;
-        }
-    }
-
-    #region START OF BATTLE
-    private void SpawnCharacterModels() // Spawn models into game, add heroes into active or downed list for battle.
-    {
-        AddHeroIntoBattle();
-        AddEnemyIntoBattle();
-    }
-    private void AddHeroIntoBattle()
-    {
+        var gameManager = GameManager._instance;
         for (int i = 0; i < gameManager._PartyLineup.Count; i++)
         {
             // Add the Controller
-             _HeroControllers.Add(gameManager._PartyLineup[i].myBattleHeroController);
+            _HeroControllers.Add(gameManager._PartyLineup[i].myBattleHeroController);
 
             // Add Model into Battle
-            GameObject instantiatedHeroModel = Instantiate(_HeroControllers[i].myHero._CharacterModel, 
-                                                      _HeroSpawns[i].position, 
-                                                      _HeroSpawns[i].rotation, 
-                                                      GameObject.Find("Hero Model Data").transform);
+            GameObject instantiatedHeroModel = Instantiate(_HeroControllers[i].myHero._CharacterModel,
+                _HeroSpawns[i].position,
+                _HeroSpawns[i].rotation,
+                GameObject.Find("Hero Model Data").transform);
             instantiatedHeroModel.name = _HeroControllers[i].myHero.charName + " Model";
-            _HeroModels.Add(instantiatedHeroModel);
-            _HeroControllers[i].myBattlingModel = instantiatedHeroModel.transform;
-
-            // Add to Active/Downed list Based on Health
-            switch (_HeroControllers[i].myHero._CurrentHP)
-            {
-                case <= 0:
-                    _HeroesDowned.Add(_HeroControllers[i]);
-                    break;
-
-                case > 0:
-                    _HeroesActive.Add(_HeroControllers[i]);
-                    battleTargetting.heroTargets.Add(_HeroControllers[i]);
-                    break;
-            }
 
             // Attach Relevant References
             _HeroControllers[i].animator = instantiatedHeroModel.GetComponent<Animator>();  // The Animator Component
-            BU.heroData.Add(_HeroControllers[i].myHero);                                    // Battle UI Component
             _HeroControllers[i].myMovementController = instantiatedHeroModel.GetComponent<BattleArenaMovement>();
+
+            gameManager._PartyLineup[i].ActionChargePercent = Random.Range(0, 50);
         }
-        foreach (BattleHeroModelController a in _HeroesActive)
-        {
-            a.myHero._ActionChargeAmount = Random.Range(0, 50);
-        }                                // Set ATB Bar
-    }
-    private void AddEnemyIntoBattle()
-    {
+
         for (int i = 0; i < gameManager._EnemyLineup.Count; i++)
         {
             // Add Controller
@@ -158,151 +66,230 @@ public class BattleStateMachine : MonoBehaviour
 
             // Add Model into Battle
             GameObject instantiatedEnemyModel = Instantiate(_EnemyControllers[i].myEnemy._CharacterModel,
-                                                            _EnemySpawns[i].position,
-                                                            _EnemySpawns[i].rotation,
-                                                            GameObject.Find("Enemy Model Data").transform);
+                _EnemySpawns[i].position,
+                _EnemySpawns[i].rotation,
+                _EnemyControllers[i].myEnemy.transform);
 
             instantiatedEnemyModel.name = _EnemyControllers[i].myEnemy.charName + " Model " + i;
-            _EnemyModels.Add(instantiatedEnemyModel);
-
-            // Add to Active List
-            _EnemiesActive.Add(gameManager._EnemyLineup[i].myBattleEnemyController);
 
             // Attach Relevant References
-            _EnemyControllers[i].myBattlingModel = instantiatedEnemyModel.transform;
             _EnemyControllers[i].animator = instantiatedEnemyModel.GetComponent<Animator>();         // The Animator Component
-            BU.CreateEnemyUI(gameManager._EnemyLineup[i], instantiatedEnemyModel.transform);         // the Battle UI  Component
 
-            _EnemyControllers[i].myEnemy._ActionChargeAmount = Random.Range(0, 50);                  // The ATB Bar
+            _EnemyControllers[i].myEnemy.ActionChargePercent = Random.Range(0, 50);                  // The ATB Bar
         }
+
+        SwitchCombatState(CombatState.START);
+        StartCoroutine(BattleIntermission(5, CombatState.START));
     }
-    #endregion
-    #region CHANGE IN BATTLE STATE
-    private void BattleIsActive()
+
+    void OnEnable()
     {
-        if (CheckStateOfPlay())
+        #warning this is not flexible enough, what if a character comes in in the middle of a fight
+        foreach (CharacterTemplate target in FindObjectsOfType<CharacterTemplate>())
+            Units.Add(target);
+    }
+
+    void CleanUpdate()
+    {
+        if (blocked != 0)
+            return;
+
+        int alliesLeft = 0;
+        int hostilesLeft = 0;
+        foreach (var target in Units)
         {
-            foreach (BattleHeroModelController hero in _HeroesActive)
-            {
-                hero.ActiveStateBehaviour();
-            }
-            foreach (BattleEnemyModelController enemy in _EnemiesActive)
-            {
-                enemy.ActiveStateBehaviour();
-            }
+            if (target._CurrentHP == 0)
+                continue;
+            if (PlayerTeam.Allies.Contains(target.Team))
+                alliesLeft++;
+            else
+                hostilesLeft++;
+        }
+
+        if (hostilesLeft == 0)
+        {
+            rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
+            SwitchCombatState(CombatState.END);
+            enabled = false;
+            StartCoroutine(VictoryTransition());
+        }
+        else if (alliesLeft == 0)
+        {
+            rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
+            SwitchCombatState(CombatState.END);
+            enabled = false;
+            StartCoroutine(DefeatTransition());
+        }
+
+        foreach (var unit in Units)
+        {
+            if (unit._CurrentHP != 0)
+                unit.ActionChargePercent += unit.ActionRechargeSpeed * Time.deltaTime;
+            // DO NOT CLAMP THE CHARGE, WE SHOULDN'T REMOVE ANY CHARGE THE UNIT GAINED
+        }
+
+        _unitsCopy.Clear();
+        _unitsCopy.AddRange(Units);
+        foreach (var unit in Units)
+        {
+            if (unit._CurrentHP == 0)
+                continue;
+
+            if (unit.ActionChargePercent < 100)
+                continue;
+
+            blocked |= BlockBattleFlags.UnitAct;
+            StartCoroutine(ProcessUnit(unit));
+            return;
         }
     }
-    private IEnumerator BattleIntermission(float x, CombatState combatState)
+
+
+    IEnumerator ProcessUnit(CharacterTemplate unit)
+    {
+        blocked |= BlockBattleFlags.UnitAct;
+        #if UNITY_EDITOR
+        // Halting execution to reload assemblies while this enumerator is running
+        // may put the state of the combat into an unrecoverable state, make sure that doesn't happen
+        UnityEditor.EditorApplication.LockReloadAssemblies();
+        #endif
+        try
+        {
+            unit.Context.Source = unit;
+            bool foundTactics = false;
+            Tactics chosenTactic;
+            TargetCollection selection = default;
+            if (_orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecuteWithAction(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection))
+            {
+                // We're taking care of this explicit order
+            }
+            else
+            {
+                foreach (var tactic in unit.Tactics)
+                {
+                    if (tactic.Condition.CanExecuteWithAction(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection))
+                    {
+                        chosenTactic = tactic;
+                        break;
+                    }
+                }
+            }
+            _orders.Remove(unit);
+
+            if (chosenTactic != null)
+            {
+                foreach (var action in chosenTactic.Actions)
+                {
+                    float percentCost = action.ATBCost * 100f / unit.ActionChargeMax;
+                    if (unit.ActionChargePercent < percentCost)
+                        break;
+
+                    foundTactics = true;
+                    unit.ActionChargePercent -= percentCost;
+
+                    foreach (var yield in action.Perform(selection, unit.Context))
+                        yield return yield;
+
+                    if (Units.Contains(unit) == false)
+                        break;
+                }
+
+                chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
+                chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
+                foreach (var action in chosenTactic.Actions)
+                {
+                    action.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
+                    action.Precondition?.NotifyUsedCondition(selection, unit.Context);
+                }
+
+                unit.Context.Round++;
+            }
+
+            if (foundTactics == false)
+                unit.ActionChargePercent -= 100f / unit.ActionChargeMax;
+        }
+        finally
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.UnlockReloadAssemblies();
+#endif
+            blocked &= ~BlockBattleFlags.UnitAct;
+        }
+    }
+
+    public List<HeroExtension> PartyLineup => GameManager._instance._PartyLineup;
+
+    public void SetOrderFor(CharacterTemplate character, Tactics specificTactic) => _orders[character] = specificTactic;
+
+    void Update()
+    {
+        CleanUpdate();
+    }
+
+    // METHODS
+    void SwitchCombatState(CombatState newCombatState)
+    {
+        switch(newCombatState)
+        {
+            case CombatState.START:
+                _CombatState = CombatState.START;
+                OnNewStateSwitched?.Invoke(newCombatState);
+                break;
+
+            case CombatState.ACTIVE:
+                _CombatState = CombatState.ACTIVE;
+                OnNewStateSwitched?.Invoke(newCombatState);
+                break;
+
+            case CombatState.WAIT:
+                _CombatState = CombatState.WAIT;
+                OnNewStateSwitched?.Invoke(newCombatState);
+                break;
+
+            case CombatState.END:
+                _CombatState = CombatState.END;
+                OnNewStateSwitched?.Invoke(newCombatState);
+                break;
+        }
+    }
+
+    #region CHANGE IN BATTLE STATE
+    IEnumerator BattleIntermission(float x, CombatState combatState)
     {
         SwitchCombatState(combatState);
         yield return new WaitForSeconds(x);
         SwitchCombatState(CombatState.ACTIVE);
     }
     #endregion
-    #region CHECK STATE OF BATTLERS
-    // DEATH CHECK. Called when a char is hit
-    public void CheckCharIsDead(BattleHeroModelController hero)
-    {
-        if (_HeroesActive.Find(x => x == hero) != null)
-        {
-            _HeroesActive.Remove(hero);
-        }
-        else
-        {
-            Debug.Log(hero.myHero.charName + " is not in Active List!");
-        }
-
-        if (_HeroesDowned.Find(x => x == hero) == null)
-        {
-            _HeroesDowned.Add(hero);
-        }
-        else
-        {
-            Debug.Log(hero.myHero.charName + " is already in Downed List!");
-        }
-    }
-    public void CheckCharIsDead(BattleEnemyModelController enemy)
-    {
-        if(_EnemiesActive.Find(x => x == enemy) != null)
-        {
-            _EnemiesActive.Remove(enemy);
-        }
-        else
-        {
-            Debug.Log(enemy.myEnemy.charName + " is not in Active List!");
-        }
-
-        if (_EnemiesDowned.Find(x => x == enemy) == null)
-        {
-            _EnemiesDowned.Add(enemy);
-        }
-        else
-        {
-            Debug.Log(enemy.myEnemy.charName + " is already in Downed List!");
-        }
-    }
-    #endregion
     #region End of Battle
-    private void EndBattleCondition()
-    {
-        if (_HeroesActive.Count > 0 && _EnemiesActive.Count <= 0)
-        {
-            SwitchCombatState(CombatState.END);
-            StartCoroutine(VictoryTransition());
-        }
-        else if (_EnemiesActive.Count > 0 && _HeroesActive.Count <= 0)
-        {
-            SwitchCombatState(CombatState.END);
-            StartCoroutine(DefeatTransition());
-        }
-    }
-    private IEnumerator VictoryTransition()
+    IEnumerator VictoryTransition()
     {
         // Victory poses, exp gaining, items, transition back to overworld
-        _EndBattleLock = true;
         yield return new WaitForSeconds(1f);
-        StartCoroutine(battleResolution.ResolveBattle(0));
+        foreach (var yields in battleResolution.ResolveBattle(true, this))
+            yield return yields;
     }
-    private IEnumerator DefeatTransition()
+    IEnumerator DefeatTransition()
     {
         // Lost, Open up UI options to load saved game or return to title
-        _EndBattleLock = true;
         yield return new WaitForSeconds(1f);
-        StartCoroutine(battleResolution.ResolveBattle(1));
-        OpenLoseMenu();
-    }
-    private void OpenLoseMenu()
-    {
-        losePanel.SetActive(true);
+        foreach (var yields in battleResolution.ResolveBattle(false, this))
+            yield return yields;
     }
     internal static void ClearData()
     {
-        _HeroModels.Clear();
-        _HeroesActive.Clear();
-        _HeroesDowned.Clear();
-        _HeroControllers.Clear();
-
-        _EnemyModels.Clear();
-        _EnemiesActive.Clear();
-        _EnemiesDowned.Clear();
-        _EnemyControllers.Clear();
-        foreach(HeroExtension a in GameManager._instance._PartyLineup)
-        {
-            a.myTacticController.ActionAllowance = 0;
-        }
+        #warning clean this stuff up
         foreach(EnemyExtension ext in GameManager._instance._EnemyLineup)
-        {
             Destroy(ext.gameObject);
-        }
         GameManager._instance._EnemyLineup.Clear();
     }
     #endregion
+}
 
-    public static bool CheckStateOfPlay()
-    {
-        if (_CombatState != CombatState.START && _CombatState != CombatState.END)
-            return true;
-        else
-            return false;
-    }
+
+[Flags]
+public enum BlockBattleFlags
+{
+    UnitAct = 0b0001,
+    PreparingOrders = 0b0010,
 }

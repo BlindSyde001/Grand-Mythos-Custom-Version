@@ -129,13 +129,13 @@ public class EquipmentMenuActions : MonoBehaviour
             switch(i)
             {
                 case 0:
-                    equipLoadoutContainers[i].EquippedName.text = hero._Weapon._ItemName;
+                    equipLoadoutContainers[i].EquippedName.text = hero._Weapon.name;
                     equipLoadoutContainers[i].thisEquipment = hero._Weapon;
                     equipLoadoutContainers[i].ThisButton.onClick.AddListener(delegate { EquippableItemOpen(0, equipLoadoutContainers[j].ThisButton); });
                     break;
 
                 case 1:
-                    equipLoadoutContainers[i].EquippedName.text = hero._Armour._ItemName;
+                    equipLoadoutContainers[i].EquippedName.text = hero._Armour.name;
                     equipLoadoutContainers[i].thisEquipment = hero._Armour;
                     equipLoadoutContainers[i].ThisButton.onClick.AddListener(delegate { EquippableItemOpen(1, equipLoadoutContainers[j].ThisButton); });
                     break;
@@ -143,7 +143,7 @@ public class EquipmentMenuActions : MonoBehaviour
                 case 2:
                     if (hero._AccessoryOne != null)
                     {
-                        equipLoadoutContainers[i].EquippedName.text = hero._AccessoryOne._ItemName;
+                        equipLoadoutContainers[i].EquippedName.text = hero._AccessoryOne.name;
                         equipLoadoutContainers[i].thisEquipment = hero._AccessoryOne;
                     }
                     else
@@ -156,7 +156,7 @@ public class EquipmentMenuActions : MonoBehaviour
                 case 3:
                     if (hero._AccessoryTwo != null)
                     {
-                        equipLoadoutContainers[i].EquippedName.text = hero._AccessoryTwo._ItemName;
+                        equipLoadoutContainers[i].EquippedName.text = hero._AccessoryTwo.name;
                         equipLoadoutContainers[i].thisEquipment = hero._AccessoryTwo;
                     }
                     else
@@ -195,7 +195,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         foreach(ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
                             // Add the Guns
-                            if(weapon.thisItem.name.Contains("Gun"))
+                            if(((Object)weapon.thisItem).name.Contains("Gun"))
                             {
                                 Weapon wpToAdd = (Weapon)weapon.thisItem;
                                 guns.Add(wpToAdd);
@@ -212,7 +212,7 @@ public class EquipmentMenuActions : MonoBehaviour
                             {
                                 equipNewItemContainers[i].ThisButton.interactable = false;
                             }
-                            equipNewItemContainers[i].EquipName.text = guns[i]._ItemName;
+                            equipNewItemContainers[i].EquipName.text = guns[i].name;
                             equipNewItemContainers[i].ThisEquipment = guns[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(guns[j], 0); });
                         }
@@ -223,7 +223,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         List<Weapon> warhammers = new();
                         foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
-                            if (weapon.thisItem.name.Contains("Warhammer"))
+                            if (((Object)weapon.thisItem).name.Contains("Warhammer"))
                             {
                                 Weapon wpToAdd = (Weapon)weapon.thisItem;
                                 warhammers.Add(wpToAdd);
@@ -240,7 +240,7 @@ public class EquipmentMenuActions : MonoBehaviour
                                 equipNewItemContainers[i].ThisButton.interactable = false;
                             }
                             int j = i;
-                            equipNewItemContainers[i].EquipName.text = warhammers[i]._ItemName;
+                            equipNewItemContainers[i].EquipName.text = warhammers[i].name;
                             equipNewItemContainers[i].ThisEquipment = warhammers[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(warhammers[j], 0); });
                         }
@@ -251,7 +251,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         List<Weapon> powergloves = new();
                         foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
-                            if (weapon.thisItem.name.Contains("Power Glove"))
+                            if (((Object)weapon.thisItem).name.Contains("Power Glove"))
                             {
                                 Weapon wpToAdd = (Weapon)weapon.thisItem;
                                 powergloves.Add(wpToAdd);
@@ -268,7 +268,7 @@ public class EquipmentMenuActions : MonoBehaviour
                                 equipNewItemContainers[i].ThisButton.interactable = false;
                             }
                             int j = i;
-                            equipNewItemContainers[i].EquipName.text = powergloves[i]._ItemName;
+                            equipNewItemContainers[i].EquipName.text = powergloves[i].name;
                             equipNewItemContainers[i].ThisEquipment = powergloves[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(powergloves[j], 0); });
                         }
@@ -279,7 +279,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         List<Weapon> grimoire = new();
                         foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
                         {
-                            if (weapon.thisItem.name.Contains("Grimoire"))
+                            if (((Object)weapon.thisItem).name.Contains("Grimoire"))
                             {
                                 Weapon wpToAdd = (Weapon)weapon.thisItem;
                                 grimoire.Add(wpToAdd);
@@ -296,7 +296,7 @@ public class EquipmentMenuActions : MonoBehaviour
                                 equipNewItemContainers[i].ThisButton.interactable = false;
                             }
                             int j = i;
-                            equipNewItemContainers[i].EquipName.text = grimoire[i]._ItemName;
+                            equipNewItemContainers[i].EquipName.text = grimoire[i].name;
                             equipNewItemContainers[i].ThisEquipment = grimoire[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(grimoire[j], 0); });
                         }
@@ -313,7 +313,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         List<Armour> leather = new();
                         foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
-                            if (armour.thisItem.name.Contains("Leather"))
+                            if (((Object)armour.thisItem).name.Contains("Leather"))
                             {
                                 Armour armToAdd = (Armour)armour.thisItem;
                                 leather.Add(armToAdd);
@@ -330,7 +330,7 @@ public class EquipmentMenuActions : MonoBehaviour
                                 equipNewItemContainers[i].ThisButton.interactable = false;
                             }
                             int j = i;
-                            equipNewItemContainers[i].EquipName.text = leather[i]._ItemName;
+                            equipNewItemContainers[i].EquipName.text = leather[i].name;
                             equipNewItemContainers[i].ThisEquipment = leather[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(leather[j], 1); });
                         }
@@ -341,7 +341,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         List<Armour> mail = new();
                         foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
-                            if (armour.thisItem.name.Contains("Mail"))
+                            if (((Object)armour.thisItem).name.Contains("Mail"))
                             {
                                 Armour armToAdd = (Armour)armour.thisItem;
                                 mail.Add(armToAdd);
@@ -358,7 +358,7 @@ public class EquipmentMenuActions : MonoBehaviour
                                 equipNewItemContainers[i].ThisButton.interactable = false;
                             }
                             int j = i;
-                            equipNewItemContainers[i].EquipName.text = mail[i]._ItemName;
+                            equipNewItemContainers[i].EquipName.text = mail[i].name;
                             equipNewItemContainers[i].ThisEquipment = mail[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(mail[j], 1); });
                         }
@@ -369,7 +369,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         List<Armour> chasis = new();
                         foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
-                            if (armour.thisItem.name.Contains("Chasis"))
+                            if (((Object)armour.thisItem).name.Contains("Chasis"))
                             {
                                 Armour armToAdd = (Armour)armour.thisItem;
                                 chasis.Add(armToAdd);
@@ -386,7 +386,7 @@ public class EquipmentMenuActions : MonoBehaviour
                                 equipNewItemContainers[i].ThisButton.interactable = false;
                             }
                             int j = i;
-                            equipNewItemContainers[i].EquipName.text = chasis[i]._ItemName;
+                            equipNewItemContainers[i].EquipName.text = chasis[i].name;
                             equipNewItemContainers[i].ThisEquipment = chasis[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(chasis[j], 1); });
                         }
@@ -397,7 +397,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         List<Armour> robe = new();
                         foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
                         {
-                            if (armour.thisItem.name.Contains("Robe"))
+                            if (((Object)armour.thisItem).name.Contains("Robe"))
                             {
                                 Armour armToAdd = (Armour)armour.thisItem;
                                 robe.Add(armToAdd);
@@ -414,7 +414,7 @@ public class EquipmentMenuActions : MonoBehaviour
                                 equipNewItemContainers[i].ThisButton.interactable = false;
                             }
                             int j = i;
-                            equipNewItemContainers[i].EquipName.text = robe[i]._ItemName;
+                            equipNewItemContainers[i].EquipName.text = robe[i].name;
                             equipNewItemContainers[i].ThisEquipment = robe[i];
                             equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(robe[j], 1); });
                         }
@@ -437,7 +437,7 @@ public class EquipmentMenuActions : MonoBehaviour
                         equipNewItemContainers[i].ThisButton.interactable = false;
                     }
                     int j = i;
-                    equipNewItemContainers[i].EquipName.text = accessory._ItemName;
+                    equipNewItemContainers[i].EquipName.text = accessory.name;
                     equipNewItemContainers[i].ThisEquipment = accessory;
                     equipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(accessory, equipSlot); });
                 }

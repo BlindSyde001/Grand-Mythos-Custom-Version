@@ -145,13 +145,6 @@ public abstract class HeroExtension : CharacterTemplate
     [HideLabel]
     internal Sprite charBanner;
 
-    [SerializeField]
-    [PropertyOrder(5)]
-    internal protected List<Action> _AllUsableActions;
-    [SerializeField]
-    [PropertyOrder(6)]
-    internal protected HeroTacticController myTacticController;
-
     // UPDATES
     protected override void Awake()
     {
@@ -164,7 +157,6 @@ public abstract class HeroExtension : CharacterTemplate
     protected void InitializeCharacter()
     {
         charName = _CSA._Name;
-        characterType = _CSA._CharacterType;
 
         _TotalExperience = _CSA._BaseExperience;
         LevelUpCheck();
@@ -190,6 +182,11 @@ public abstract class HeroExtension : CharacterTemplate
             _Level++;
             LevelUpCheck();
             AssignStats();
+            if (SkillTree != null)
+            {
+                foreach (var skill in SkillTree.GetSkillsForLevel((uint)_Level))
+                    Skills.Add(skill);
+            }
         }
     }
     internal void EquipStats()

@@ -98,17 +98,5 @@ public class AbilitiesMenuActions : MonoBehaviour
         {
             a.gameObject.SetActive(false);
         }
-        for(int i = 0; i < hero._AvailableActions.Count; i++)
-        {
-            int j = i;
-            abilityButtons[i].gameObject.SetActive(true);
-            abilityButtons[i].buttonName.text = hero._AvailableActions[i].Name;
-            abilityButtons[i].thisButton.onClick.AddListener(delegate { SetDescription(hero._AvailableActions[j]); });
-        }
-    }
-    public void SetDescription(Action action)
-    {
-        abilityDescriptionContainer.abilityNameTitle.text = action.Name;
-        abilityDescriptionContainer.abilityDescription.text = action.Description;
     }
 }

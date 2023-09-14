@@ -2,44 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class BattleResolution : MonoBehaviour
 {
     // VARIABLES
-    private GameManager gameManager;
-    private PlayerControls playerControls;
-    #region Fill In Panel Effect
+    GameManager gameManager;
+
+    [Header("Fill In Panel Effect")]
     public Image RewardBackground;
     public Image HeroGridBackground;
-    private float speed = 0.5f;
-    #endregion
-    #region Rewards
+    float speed = 0.5f;
+
+    [Header("Rewards")]
     public TextMeshProUGUI ExperienceRewards;
     public TextMeshProUGUI CurrencyRewards;
     public List<PartyContainer> HeroPanels;
-    private bool activateUpdate;
-    private int sharedExp = 0;
-    private int creditsEarned = 0;
+    bool activateUpdate;
 
     float duration = 3f;
     public GameObject ItemRewardPanel;
     internal List<ItemCapsule> ItemsDropped = new();
     public List<TextMeshProUGUI> ItemRewardsText;
-    #endregion
-    #region Audio and Video
+
+    [Header("Audio and Video")]
     public VideoAnimation VideoAnimator;
-    #endregion
+
+    public GameObject LosePanel;
 
     // UPDATES
-    private void Start()
+    void Start()
     {
-        playerControls = new PlayerControls();
         gameManager = GameManager._instance;
     }
-    private void Update()
+
+    void Update()
     {
         if (activateUpdate)
         {
@@ -54,16 +53,25 @@ public class BattleResolution : MonoBehaviour
     }
 
     // METHODS
-    public IEnumerator ResolveBattle(int clipNo)
+    public IEnumerable ResolveBattle(bool victory, BattleStateMachine battleStateMachine)
     {
-        StartCoroutine(VideoAnimator.PlayVideoClip(VideoAnimator.videoClips[clipNo]));
-        yield return new WaitForSeconds(VideoAnimator.time);
-        if (clipNo == 0)
+        var enumerator = VideoAnimator.PlayVideoClip(VideoAnimator.videoClips[victory ? 0 : 1]);
+        while (enumerator.MoveNext())
+            yield return enumerator.Current;
+
+        if (victory)
         {
-            StartCoroutine(ActivatePanel());
+            foreach (var yields in ActivatePanel())
+                yield return yields;
+            foreach (var yields in DistributeRewards(battleStateMachine))
+                yield return yields;
+        }
+        else
+        {
+            LosePanel.SetActive(true);
         }
     }
-    private IEnumerator ActivatePanel()
+    IEnumerable ActivatePanel()
     {
         RewardBackground.DOFillAmount(1, speed);                                   // Cool Anim Effect
         HeroGridBackground.DOFillAmount(1, speed);                                 // Cool Anim effect
@@ -79,98 +87,110 @@ public class BattleResolution : MonoBehaviour
         }
         ExperienceRewards.gameObject.SetActive(true);
         CurrencyRewards.gameObject.SetActive(true);
-        StartCoroutine(DistributeRewards());
     }
 
-    private IEnumerator DistributeRewards()
+    IEnumerable DistributeRewards(BattleStateMachine battle)
     {
-        foreach (BattleEnemyModelController enemy in BattleStateMachine._EnemiesDowned)
+        int sharedExp = 0;
+        int creditsEarned = 0;
+        foreach (var unit in battle.Units)
         {
-            sharedExp += enemy.myEnemy.experiencePool;
-            creditsEarned += enemy.myEnemy.creditPool;
+            #warning would be nice to remove the cast/test here
+            if (unit.Team.Allies.Contains(battle.PlayerTeam) == false && unit is EnemyExtension enemy)
+            {
+                sharedExp += enemy.experiencePool;
+                creditsEarned += enemy.creditPool;
+            }
         }
-        ExperienceRewards.text = "Experience: " + sharedExp.ToString() + "  (" + (sharedExp / BattleStateMachine._HeroesActive.Count).ToString() + ")"; ;
-        CurrencyRewards.text = "Credits: " + creditsEarned.ToString();
 
-        foreach (BattleHeroModelController hero in BattleStateMachine._HeroesActive)
+        List<HeroExtension> heroesAlive = new();
+        foreach (var unit in battle.Units)
         {
-            StartCoroutine(ReceiveExperienceRewards(hero));
+#warning would be nice to remove the cast/test here
+            if (unit._CurrentHP > 0 && unit.Team == battle.PlayerTeam && unit is HeroExtension hero)
+                heroesAlive.Add(hero);
         }
+
+        Debug.Assert(heroesAlive.Count != 0);
+
+        int individualExperience = sharedExp / heroesAlive.Count;
+        ExperienceRewards.text = $"Experience: {sharedExp}  ({individualExperience})"; ;
+        CurrencyRewards.text = $"Credits: {creditsEarned}";
+
+        foreach (var hero in heroesAlive)
+            StartCoroutine(ReceiveExperienceRewards(hero, individualExperience, duration));
+
         activateUpdate = true;
         InventoryManager._instance.creditsInBag += creditsEarned;
         
         yield return new WaitForSeconds(duration * 2);
-        StartCoroutine(ReceiveItemRewards());
-    }
-    private IEnumerator ReceiveExperienceRewards(BattleHeroModelController hero)
-    {
-        int start = hero.myHero._TotalExperience;
-        float t = 0f;
-        while (t < 1f)
-        {
-            hero.myHero._TotalExperience = (int)Mathf.Lerp(start, start + sharedExp / BattleStateMachine._HeroesActive.Count, t);
-            t += Time.deltaTime / duration;
-            hero.myHero.LevelUpCheck();
-            yield return null;
-        }
-        yield return new WaitForSeconds(duration);
-    }
-    private IEnumerator ReceiveItemRewards()
-    {
+
         foreach (PartyContainer a in HeroPanels)
-        {
             a.gameObject.SetActive(false);
-        }
+
         ItemRewardPanel.SetActive(true);
 
         // Grab all dropped items
-        foreach (BattleEnemyModelController enemy in BattleStateMachine._EnemiesDowned)
+        foreach (CharacterTemplate unit in battle.Units)
         {
-            for (int j = 0; j < enemy.myEnemy.DropItems.Count; j++)
+            if (unit is not EnemyExtension enemy)
+                continue;
+
+            for (int j = 0; j < enemy.DropItems.Count; j++)
             {
-                bool dropped = DidItemDrop(enemy.myEnemy.DropRate[j]);
-                if (dropped == true)
-                {
-                    ItemsDropped.Add(enemy.myEnemy.DropItems[j]);
-                }
+                if (Random.Range(0, 100) < enemy.DropRate[j])
+                    ItemsDropped.Add(enemy.DropItems[j]);
             }
         }
-        // Write em in the UI
-        for (int i = 0; i < ItemsDropped.Count; i++)
+
+        int max = ItemsDropped.Count;
+        if (max > ItemRewardsText.Count)
         {
-            ItemRewardsText[i].text = ItemsDropped[i].ItemAmount.ToString() + " x " + ItemsDropped[i].thisItem._ItemName;
+            Debug.LogError($"Not enough reward text for the amount of items provided ({ItemsDropped.Count}/{ItemRewardsText.Count})");
+            max = ItemRewardsText.Count;
         }
+
+        // Write em in the UI
+        for (int i = 0; i < max; i++)
+            ItemRewardsText[i].text = $"{ItemsDropped[i].ItemAmount} x {ItemsDropped[i].thisItem.name}";
 
         foreach (ItemCapsule item in ItemsDropped)
-        {
             InventoryManager._instance.AddToInventory(item);
-        }
+
         yield return new WaitForSeconds(duration);
 
-        ReturnToOverworld();
+        ReturnToOverworld(battle);
     }
 
-    private static void ReturnToOverworld()
+    static IEnumerator ReceiveExperienceRewards(HeroExtension myHero, int individualExperience, float duration)
     {
-        foreach(BattleHeroModelController hero in BattleStateMachine._HeroesDowned)
+        int start = myHero._TotalExperience;
+        float t = 0f;
+        while (t < 1f)
         {
-            hero.myHero._CurrentHP = 1;
+            myHero._TotalExperience = (int)Mathf.Lerp(start, start + individualExperience, t);
+            t += Time.deltaTime / duration;
+            myHero.LevelUpCheck();
+            yield return null;
         }
+        myHero._TotalExperience = start + individualExperience;
+    }
+
+    static void ReturnToOverworld(BattleStateMachine battle)
+    {
+        foreach (var hero in battle.PartyLineup)
+            hero._CurrentHP = hero._CurrentHP == 0 ? 1 : hero._CurrentHP;
         BattleStateMachine.ClearData();
-        Cursor.visible = true;
-        EventManager._instance.SwitchNewScene(2);
-    }
 
-    private bool DidItemDrop(float dropChance)
-    {
-        float f = Random.Range(0, 101);
-        if (f <= dropChance)
+        if (battle.gameObject.scene == SceneManager.GetActiveScene())
         {
-            return true;
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                if (SceneManager.GetSceneAt(i) != battle.gameObject.scene)
+                    SceneManager.SetActiveScene(SceneManager.GetSceneAt(i));
+            }
         }
-        else
-        {
-            return false;
-        }
+
+        SceneManager.UnloadSceneAsync(battle.gameObject.scene);
     }
 }

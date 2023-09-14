@@ -26,13 +26,13 @@ public class InventoryManager : MonoBehaviour
     public List<ItemCapsule> LootInBag;
     #endregion
 
-    public List<Condition> ConditionsAcquired;
+    public List<ActionCondition> ConditionsAcquired;
 
     [SerializeField]
     internal int creditsInBag;
 
     // UPDATES
-    private void Awake()
+    private void OnEnable()
     {
         if (_instance == null)
         {
@@ -53,56 +53,51 @@ public class InventoryManager : MonoBehaviour
         switch(listToSort)
         {
             case 0:
-                ConsumablesInBag = ConsumablesInBag.OrderBy(i => i.ItemID).ToList();
+                ConsumablesInBag = ConsumablesInBag.OrderBy(i => i.thisItem.guid).ToList();
                 break;
             case 1:
-                EquipmentInBag = EquipmentInBag.OrderBy(i => i.thisItem._ItemType).ThenBy(i => i.ItemID).ToList();
+                EquipmentInBag = EquipmentInBag.OrderBy(i => i.thisItem.GetType().FullName).ThenBy(i => i.thisItem.guid).ToList();
                 break;
             case 2:
-                KeyItemsInBag = KeyItemsInBag.OrderBy(i => i.ItemID).ToList();
+                KeyItemsInBag = KeyItemsInBag.OrderBy(i => i.thisItem.guid).ToList();
                 break;
             case 3:
-                LootInBag = LootInBag.OrderBy(i => i.ItemID).ToList();
+                LootInBag = LootInBag.OrderBy(i => i.thisItem.guid).ToList();
                 break;
         }
-    }
-
-    public ItemType SortByItemType(ItemType item1, ItemType item2)
-    {
-        return (ItemType)item1.CompareTo(item2);
     }
 
     public void RemoveFromInventory(ItemCapsule item)
     {
         if (item != null)
         {
-            Debug.Log(item.thisItem._ItemName + " has been used");
+            Debug.Log(item.thisItem.name + " has been used");
             item.ItemAmount--;
             if (item.ItemAmount <= 0)
             {
-                switch (item.thisItem._ItemType)
+                switch (item.thisItem)
                 {
-                    case ItemType.CONSUMABLE:
+                    case Consumable:
                         ConsumablesInBag.Remove(item);
                         break;
 
-                    case ItemType.WEAPON:
+                    case Weapon:
                         _WeaponsInBag.Remove(item);
                         break;
 
-                    case ItemType.ARMOUR:
+                    case Armour:
                         _ArmourInBag.Remove(item);
                         break;
 
-                    case ItemType.ACCESSORY:
+                    case Accessory:
                         _AccessoryInBag.Remove(item);
                         break;
 
-                    case ItemType.KEYITEM:
+                    case KeyItem:
                         KeyItemsInBag.Remove(item);
                         break;
 
-                    case ItemType.LOOT:
+                    case Loot:
                         LootInBag.Remove(item);
                         break;
                 }
@@ -111,9 +106,9 @@ public class InventoryManager : MonoBehaviour
     }
     public void AddToInventory(ItemCapsule item)
     {
-        switch(item.thisItem._ItemType)
+        switch(item.thisItem)
         {
-            case ItemType.CONSUMABLE:
+            case Consumable:
                 if(ConsumablesInBag.Find(x => x.thisItem == item.thisItem) != null)
                 {
                    ConsumablesInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
@@ -124,7 +119,7 @@ public class InventoryManager : MonoBehaviour
                 }
                 break;
 
-            case ItemType.WEAPON:
+            case Weapon:
                 if (_WeaponsInBag.Find(x => x.thisItem == item.thisItem) != null)
                 {
                     EquipmentInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
@@ -137,7 +132,7 @@ public class InventoryManager : MonoBehaviour
                 }
                 break;
 
-            case ItemType.ARMOUR:
+            case Armour:
                 if (_ArmourInBag.Find(x => x.thisItem == item.thisItem) != null)
                 {
                     EquipmentInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
@@ -150,7 +145,7 @@ public class InventoryManager : MonoBehaviour
                 }
                 break;
 
-            case ItemType.ACCESSORY:
+            case Accessory:
                 if (_AccessoryInBag.Find(x => x.thisItem == item.thisItem) != null)
                 {
                     EquipmentInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
@@ -163,7 +158,7 @@ public class InventoryManager : MonoBehaviour
                 }
                 break;
 
-            case ItemType.KEYITEM:
+            case KeyItem:
                 if (KeyItemsInBag.Find(x => x.thisItem == item.thisItem) != null)
                 {
                     KeyItemsInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
@@ -174,7 +169,7 @@ public class InventoryManager : MonoBehaviour
                 }
                 break;
 
-            case ItemType.LOOT:
+            case Loot:
                 if (LootInBag.Find(x => x.thisItem == item.thisItem) != null)
                 {
                     LootInBag.Find(x => x.thisItem == item.thisItem).ItemAmount += item.ItemAmount;
@@ -186,13 +181,15 @@ public class InventoryManager : MonoBehaviour
                 break;
         }
     }
-    public bool CheckInventoryforItem(ItemCapsule item)
+    public bool FindItem(ItemCapsule item, out uint count)
     {
-        switch (item.thisItem._ItemType)
+        count = 0;
+        switch (item.thisItem)
         {
-            case ItemType.CONSUMABLE:
-                if (ConsumablesInBag.Find(x => x.thisItem == item.thisItem) != null)
+            case Consumable:
+                if (ConsumablesInBag.Find(x => x.thisItem == item.thisItem) is {} v)
                 {
+                    count = (uint)v.ItemAmount;
                     return true;
                 }
                 else
@@ -200,9 +197,10 @@ public class InventoryManager : MonoBehaviour
                     return false;
                 }
 
-            case ItemType.WEAPON:
-                if (_WeaponsInBag.Find(x => x.thisItem == item.thisItem) != null)
+            case Weapon:
+                if (_WeaponsInBag.Find(x => x.thisItem == item.thisItem) is {} v2)
                 {
+                    count = (uint)v2.ItemAmount;
                     return true;
                 }
                 else
@@ -210,9 +208,10 @@ public class InventoryManager : MonoBehaviour
                     return false;
                 }
 
-            case ItemType.ARMOUR:
-                if (_ArmourInBag.Find(x => x.thisItem == item.thisItem) != null)
+            case Armour:
+                if (_ArmourInBag.Find(x => x.thisItem == item.thisItem) is {} v3)
                 {
+                    count = (uint)v3.ItemAmount;
                     return true;
                 }
                 else
@@ -220,9 +219,10 @@ public class InventoryManager : MonoBehaviour
                     return false;
                 }
 
-            case ItemType.ACCESSORY:
-                if (_AccessoryInBag.Find(x => x.thisItem == item.thisItem) != null)
+            case Accessory:
+                if (_AccessoryInBag.Find(x => x.thisItem == item.thisItem) is {} v4)
                 {
+                    count = (uint)v4.ItemAmount;
                     return true;
                 }
                 else
@@ -230,9 +230,10 @@ public class InventoryManager : MonoBehaviour
                     return false;
                 }
 
-            case ItemType.KEYITEM:
-                if (KeyItemsInBag.Find(x => x.thisItem == item.thisItem) != null)
+            case KeyItem:
+                if (KeyItemsInBag.Find(x => x.thisItem == item.thisItem) is {} v5)
                 {
+                    count = (uint)v5.ItemAmount;
                     return true;
                 }
                 else
@@ -240,9 +241,10 @@ public class InventoryManager : MonoBehaviour
                     return false;
                 }
 
-            case ItemType.LOOT:
-                if (LootInBag.Find(x => x.thisItem == item.thisItem) != null)
+            case Loot:
+                if (LootInBag.Find(x => x.thisItem == item.thisItem) is {} v6)
                 {
+                    count = (uint)v6.ItemAmount;
                     return true;
                 }
                 else

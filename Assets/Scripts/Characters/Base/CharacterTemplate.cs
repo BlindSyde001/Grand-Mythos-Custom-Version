@@ -1,34 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.UI;
 using Sirenix.OdinInspector;
 
 public abstract class CharacterTemplate : MonoBehaviour
 {
-    // VARIABLES
-    #region CHARACTER TEMPLATE VARIABLES
     [SerializeField]
     [PropertyOrder(0)]
-    internal CharacterStatsAsset _CSA;
-    [SerializeField]
-    [PropertyOrder(0)]
-    internal CharacterType characterType;
+    public CharacterStatsAsset _CSA;
 
     [PropertyOrder(0)]
     public string charName;
 
-    [SerializeField]
-    [PreviewField(100)]
+    [Required]
     [PropertyOrder(0)]
-    [HideLabel]
-    internal Sprite charPortrait;
+    public Team Team;
 
     [SerializeField]
     [PreviewField(100)]
     [PropertyOrder(0)]
     [HideLabel]
-    internal GameObject _CharacterModel;
+    public Sprite charPortrait;
+
+    [SerializeField]
+    [PreviewField(100)]
+    [PropertyOrder(0)]
+    [HideLabel]
+    public GameObject _CharacterModel;
 
     [TitleGroup("CHARACTER ATTRIBUTES")]
     [HorizontalGroup("CHARACTER ATTRIBUTES/Split")]
@@ -170,19 +167,47 @@ public abstract class CharacterTemplate : MonoBehaviour
     [PropertyOrder(1.3f)]
     public bool _IsMagDown;
 
+    [BoxGroup("ATB")]
     [PropertyOrder(4)]
-    public float _ActionRechargeSpeed;
+    public float ActionRechargeSpeed;
+
+    [BoxGroup("ATB")]
     [PropertyRange(0, 100)]
     [PropertyOrder(4)]
-    public float _ActionChargeAmount;
+    public float ActionChargePercent;
 
-    [SerializeField]
+    [BoxGroup("ATB")]
+    [PropertyOrder(4)]
+    public uint ActionChargeMax = 4;
+
+    [NonSerialized]
+    public EvaluationContext Context = new();
+
+    [BoxGroup("INVENTORY")]
+    [SerializeReference]
+    [Required]
     [PropertyOrder(5)]
-    protected internal Action _BasicAttack;
+    public IInventory Inventory = new InlineInventory();
+
+    [BoxGroup("SKILLS")]
     [SerializeField]
-    [PropertyOrder(5)]
-    protected internal List<Action> _AvailableActions;
-    #endregion
+    [Required]
+    [PropertyOrder(6)]
+    public Skill BasicAttack;
+
+    [BoxGroup("SKILLS")]
+    [SerializeField]
+    [PropertyOrder(6)]
+    public SkillTree SkillTree;
+
+    [BoxGroup("SKILLS")]
+    [SerializeField]
+    [PropertyOrder(6)]
+    public SerializableHashSet<Skill> Skills;
+
+    [Required]
+    [PropertyOrder(7)]
+    public Tactics[] Tactics = Array.Empty<Tactics>();
 
     // UPDATES
     protected virtual void Awake()
@@ -195,4 +220,92 @@ public abstract class CharacterTemplate : MonoBehaviour
     {
 
     }
+
+    public bool IsHostileTo(CharacterTemplate character)
+    {
+        return Team.Allies.Contains(character.Team) == false;
+    }
+
+    public int GetAttribute(Attribute attribute) => attribute switch
+    {
+        Attribute.Health => _CurrentHP,
+        Attribute.Mana => _CurrentMP,
+        Attribute.HealthPercent => Mathf.CeilToInt((float)_CurrentHP / _MaxHP * 100f),
+        Attribute.ManaPercent => Mathf.CeilToInt((float)_CurrentMP / _MaxMP * 100f),
+        Attribute.MaxHealth => _MaxHP,
+        Attribute.MaxMana => _MaxMP,
+        Attribute.Attack => _Attack,
+        Attribute.MagicAttack => _MagAttack,
+        Attribute.Defense => _Defense,
+        Attribute.MagicDefense => _MagDefense,
+        Attribute.Speed => _Speed,
+        _ => throw new ArgumentOutOfRangeException(nameof(attribute), attribute, null)
+    };
+
+    public void SetAttribute(Attribute attribute, int value)
+    {
+        switch(attribute)
+        {
+            case Attribute.Health: _CurrentHP = Mathf.Clamp(value, 0, _MaxHP); break;
+            case Attribute.Mana: _CurrentMP = Mathf.Clamp(value, 0, _MaxMP); break;
+            case Attribute.HealthPercent: _CurrentHP = Mathf.CeilToInt(value / 100f * _MaxHP); break;
+            case Attribute.ManaPercent: _CurrentMP = Mathf.CeilToInt(value / 100f * _MaxMP); break;
+            case Attribute.MaxHealth: _MaxHP = value; break;
+            case Attribute.MaxMana: _MaxMP = value; break;
+            case Attribute.Attack: _Attack = value; break;
+            case Attribute.MagicAttack: _MagAttack = value; break;
+            case Attribute.Defense: _Defense = value; break;
+            case Attribute.MagicDefense: _MagDefense = value; break;
+            case Attribute.Speed: _Speed = value; break;
+            default: throw new ArgumentOutOfRangeException(nameof(attribute), attribute, null);
+        }
+    }
+
+    public bool HasStatus(Status status) => status switch
+    {
+        Status.Blind => _IsBlinded,
+        Status.Silenced => _IsSilenced,
+        Status.Furored => _IsFurored,
+        Status.Paralysed => _IsParalysed,
+        Status.PhysDown => _IsPhysDown,
+        Status.MagDown => _IsMagDown,
+        _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
+    };
+
+    public int GetStatusResistance(Status status) => status switch
+    {
+        Status.Blind => _ResistBLIND,
+        Status.Silenced => _ResistSILENCE,
+        Status.Furored => _ResistFUROR,
+        Status.Paralysed => _ResistPARALYSIS,
+        Status.PhysDown => _ResistPHYSICAL,
+        Status.MagDown => _ResistMAGICAL,
+        _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
+    };
+}
+
+
+public enum Attribute
+{
+    Health,
+    Mana,
+    HealthPercent,
+    ManaPercent,
+    MaxHealth,
+    MaxMana,
+    Attack,
+    MagicAttack,
+    Defense,
+    MagicDefense,
+    Speed,
+}
+
+public enum Status
+{
+    Blind,
+    Silenced,
+    Furored,
+    Paralysed,
+    PhysDown,
+    MagDown,
 }

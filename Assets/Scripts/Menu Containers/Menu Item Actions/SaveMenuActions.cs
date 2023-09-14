@@ -88,14 +88,12 @@ public class SaveMenuActions : MonoBehaviour
     {
         #region Positional & Zone Data
         gameManager.LastKnownScene = SceneManager.GetActiveScene().name;
-        gameManager.LastKnownPosition = FindObjectOfType<OverworldPlayerCircuit>().transform.position;
-        gameManager.LastKnownRotation = FindObjectOfType<OverworldPlayerCircuit>().transform.rotation;
-        gameManager.LastKnownReferenceDirection = Camera.main.GetComponent<CameraManager>().ReferenceDirections.IndexOf(FindObjectOfType<OverworldPlayerCircuit>().referenceDirection);
+        gameManager.LastKnownPosition = FindObjectOfType<OverworldPlayerControlsNode>().transform.position;
+        gameManager.LastKnownRotation = FindObjectOfType<OverworldPlayerControlsNode>().transform.rotation;
 
         SaveData.current.savedScene = gameManager.LastKnownScene;
         SaveData.current.overworldPos = gameManager.LastKnownPosition;
         SaveData.current.overworldRot = gameManager.LastKnownRotation;
-        SaveData.current.overworldRefDirection = gameManager.LastKnownReferenceDirection;
         #endregion
         #region Lineup Data
         // Set x as Index Number of Hero in AllList, so that you can pull that hero by Index when making the Lineup
@@ -114,16 +112,16 @@ public class SaveMenuActions : MonoBehaviour
             SerializableHero heroSave = new();
             heroSave.totalExperienceSave = hero._TotalExperience;
 
-            heroSave.weaponIDSave = hero._Weapon._ItemID;
-            heroSave.armourIDSave = hero._Armour._ItemID;
+            heroSave.weaponIDSave = hero._Weapon.guid;
+            heroSave.armourIDSave = hero._Armour.guid;
             if (hero._AccessoryOne != null)
             {
-                heroSave.accessoryOneIDSave = hero._AccessoryOne._ItemID;
+                heroSave.accessoryOneIDSave = hero._AccessoryOne.guid;
                 heroSave.accessoryOneSave = true;
             }
             if (hero._AccessoryTwo != null)
             {
-                heroSave.accessoryTwoIDSave = hero._AccessoryTwo._ItemID;
+                heroSave.accessoryTwoIDSave = hero._AccessoryTwo.guid;
                 heroSave.accessoryTwoSave = true;
             }
             heroSave.weaponSave = hero._Weapon.weaponType.ToString();
@@ -133,31 +131,6 @@ public class SaveMenuActions : MonoBehaviour
             heroSave.currentMPData = hero._CurrentMP;
 
             SerializableTacticController tacticSave = new();
-            // Go through all 10 Tactics, add info to the tacticSave
-            for (int i = 0; i < hero.myTacticController._TacticsList.Count; i++)
-            {
-                tacticSave.tacticToggleList[i] = hero.myTacticController._TacticsList[i].isTurnedOn;
-                if(hero.myTacticController._TacticsList[i]._Condition != null)
-                {
-                    tacticSave.tacticCndList[i] = hero.myTacticController._TacticsList[i]._Condition.name;
-                }
-                if(hero.myTacticController._TacticsList[i]._Actions != null)
-                {
-                    SerializableTacticActions tacticActions = new();
-                    for(int j = 0; j < hero.myTacticController._TacticsList[j]._Actions.Count; j++)
-                    {
-                        if (hero.myTacticController._TacticsList[i]._Actions[j] != null)
-                        {
-                            tacticActions.tacticActions[j] = hero.myTacticController._TacticsList[i]._Actions[j].Name;
-                            tacticActions.tacticActionTypes[j] = hero.myTacticController._TacticsList[i]._Actions[j].ActionType.ToString();
-                            //tacticSave.tacticActionCapsulesList[i].tacticActionTypes[j] = hero.myTacticController._TacticsList[i]._Actions[j].ActionType.ToString();
-                            //tacticSave.tacticActionCapsulesList[i].tacticActions[j] = hero.myTacticController._TacticsList[i]._Actions[j].Name;
-                            //tacticSave.tacticActionCapsulesList[i] = tacticActions;
-                        }
-                    }
-                    tacticSave.tacticActionCapsulesList.Add(tacticActions);
-                }
-            }
 
             SaveData.current.heroSaveData.Add(heroSave);
             SaveData.current.heroTacticData.Add(tacticSave);
@@ -168,27 +141,23 @@ public class SaveMenuActions : MonoBehaviour
 
         foreach (ItemCapsule a in inventoryManager.ConsumablesInBag)
         {
-            SaveData.current.inventorySaveData.ConsumablesIdData.Add(a.thisItem._ItemID);
+            SaveData.current.inventorySaveData.ConsumablesIdData.Add(a.thisItem.guid);
             SaveData.current.inventorySaveData.ConsumablesAmountData.Add(a.ItemAmount);
         }
         foreach (ItemCapsule a in inventoryManager.EquipmentInBag)
         {
-            SaveData.current.inventorySaveData.EquipmentNameData.Add(a.thisItem.name);
-            SaveData.current.inventorySaveData.EquipmentIdData.Add(a.ItemID);
+            SaveData.current.inventorySaveData.EquipmentNameData.Add(((Object)a.thisItem).name);
+            SaveData.current.inventorySaveData.EquipmentIdData.Add(a.thisItem.guid);
             SaveData.current.inventorySaveData.EquipmentAmountData.Add(a.ItemAmount);
         }
         foreach (ItemCapsule a in inventoryManager.KeyItemsInBag)
         {
-            SaveData.current.inventorySaveData.KeyItemsIdData.Add(a.ItemID);
+            SaveData.current.inventorySaveData.KeyItemsIdData.Add(a.thisItem.guid);
         }
         foreach (ItemCapsule a in inventoryManager.LootInBag)
         {
-            SaveData.current.inventorySaveData.LootIdData.Add(a.ItemID);
+            SaveData.current.inventorySaveData.LootIdData.Add(a.thisItem.guid);
             SaveData.current.inventorySaveData.LootAmountData.Add(a.ItemAmount);
-        }
-        foreach (Condition a in inventoryManager.ConditionsAcquired)
-        {
-            SaveData.current.inventorySaveData.ConditionsIdData.Add(a.cndID);
         }
         SaveData.current.inventorySaveData.CreditsAmountData = inventoryManager.creditsInBag;
         #endregion

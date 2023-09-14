@@ -28,7 +28,7 @@ public class HS_Detective : HeroExtension
         _MagDefense = BaseMagDefense + equipMagDefense;
         _Speed = BaseSpeed + equipSpeed;
 
-        _ActionRechargeSpeed = Speed;
+        ActionRechargeSpeed = Speed;
         _CurrentHP = _MaxHP;
         _CurrentMP = _MaxMP;
     }
