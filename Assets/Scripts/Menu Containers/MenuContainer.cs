@@ -7,7 +7,7 @@ public abstract class MenuContainer : MonoBehaviour
     protected GameManager GameManager { get; private set; }
     protected InventoryManager InventoryManager { get; private set; }
 
-    protected virtual void Awake()
+    protected virtual void OnEnable()
     {
         MenuInputs = FindObjectOfType<MenuInputs>();
         GameManager = GameManager._instance;

@@ -16,8 +16,6 @@ public class InputManager : MonoBehaviour
     #region Menu Items
     [SerializeField]
     internal GameObject MenuBackground;
-    [SerializeField]
-    internal List<GameObject> MenuItems;
     #endregion
 
     // UPDATES

@@ -8,6 +8,8 @@ public class StartMenuActions : MenuContainer
     [SerializeField]
     private List<PartyContainer> displayList;
     [SerializeField]
+    private List<ReserveContainer> reserveDisplayList;
+    [SerializeField]
     private MiscContainer miscList;
     [SerializeField]
     private InGameClock inGameClock;
@@ -29,8 +31,9 @@ public class StartMenuActions : MenuContainer
         }
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-740, 150, 0), menuInputs.speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(0, 0, 0), menuInputs.speed);
-        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(200, 30, 0), menuInputs.speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(200, 30, 0), menuInputs.speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(200, gameObject.transform.GetChild(2).localPosition.y, 0), menuInputs.speed);
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, 0, 0), menuInputs.speed);
         DisplayPartyHeroes();
         DisplayMisc();
         yield break;
@@ -40,31 +43,46 @@ public class StartMenuActions : MenuContainer
         if (!menuInputs.coroutineRunning)
         {
             gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 150, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(0, -150, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, 30, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(1700, 30, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, gameObject.transform.GetChild(2).localPosition.y, 0), menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, -150, 0), menuInputs.speed);
             yield return new WaitForSeconds(menuInputs.speed);
             gameObject.SetActive(false);
         }
     }
     internal void DisplayPartyHeroes()
     {
+        OnEnable(); // Ensure managers are up to date
         foreach (PartyContainer a in displayList)
         {
             a.gameObject.SetActive(false);
         }
         for (int i = 0; i < GameManager._PartyLineup.Count; i++)
         {
+            var hero = GameManager._PartyLineup[i];
             displayList[i].gameObject.SetActive(true);
-            displayList[i].displayName.text = GameManager._PartyLineup[i].charName;
-            displayList[i].displayBanner.sprite = GameManager._PartyLineup[i].charBanner;
-            displayList[i].displayLevel.text = GameManager._PartyLineup[i].Level.ToString();
+            displayList[i].displayName.text = hero.charName;
+            displayList[i].displayBanner.sprite = hero.charBanner;
+            displayList[i].displayLevel.text = hero.Level.ToString();
 
-            displayList[i].displayEXPBar.fillAmount = (float)(GameManager._PartyLineup[i]._TotalExperience - GameManager._PartyLineup[i].PrevExperienceThreshold) /
-                                                             (GameManager._PartyLineup[i].ExperienceThreshold - GameManager._PartyLineup[i].PrevExperienceThreshold);
+            displayList[i].displayEXPBar.fillAmount = (float)(hero._TotalExperience - hero.PrevExperienceThreshold) /
+                                                             (hero.ExperienceThreshold - hero.PrevExperienceThreshold);
 
             displayList[i].displayHP.text =
-                GameManager._PartyLineup[i]._CurrentHP.ToString() + " / " +
-                GameManager._PartyLineup[i].MaxHP.ToString();
+                hero._CurrentHP.ToString() + " / " +
+                hero.MaxHP.ToString();
+        }
+
+        foreach (ReserveContainer a in reserveDisplayList)
+        {
+            a.gameObject.SetActive(false);
+        }
+        for (int i = 0; i < GameManager._ReservesLineup.Count; i++)
+        {
+            var hero = GameManager._ReservesLineup[i];
+            var display = reserveDisplayList[i];
+            display.gameObject.SetActive(true);
+            display.displayBanner.sprite = hero.charBanner;
         }
     }
     internal void DisplayMisc()

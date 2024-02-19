@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -37,8 +38,7 @@ public class MenuInputs : MonoBehaviour
 
     internal bool menuFlowIsRunning = false;
 
-    private int heroLineupChangeOne;
-    private int heroLineupChangeTwo;
+    private ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) lineupChange;
 
 
     // UPDATES
@@ -66,8 +66,7 @@ public class MenuInputs : MonoBehaviour
     {
         if (menuToClose is StartMenuActions)
         {
-            heroLineupChangeOne = 0;
-            heroLineupChangeTwo = 0;
+            lineupChange = default;
         }
 
         StartCoroutine(CloseWithOverride(menuToClose, closeAllOverride));
@@ -125,28 +124,38 @@ public class MenuInputs : MonoBehaviour
 
     public void ChangePartyLineup(int selectedToChange)
     {
-        if(heroLineupChangeOne == 0)
-        {
-            heroLineupChangeOne = selectedToChange;
-        }
-        else if(heroLineupChangeTwo == 0)
-        {
-            heroLineupChangeTwo = selectedToChange;
-            PerformSwap(heroLineupChangeOne, heroLineupChangeTwo);
-        }
+        ChangePartyLineup((GameManager._PartyLineup, selectedToChange-1));
     }
-    private void PerformSwap(int heroOne, int heroTwo)
+
+    public void ChangePartyLineupFromReserve(int selectedToChange)
     {
-        HeroExtension a = GameManager._PartyLineup[heroOne - 1];
-        HeroExtension b = GameManager._PartyLineup[heroTwo - 1];
-
-        GameManager._PartyLineup[heroOne - 1] = b;
-        GameManager._PartyLineup[heroTwo - 1] = a;
-        startMenuActions.DisplayPartyHeroes();
-
-        heroLineupChangeOne = 0;
-        heroLineupChangeTwo = 0;
+        ChangePartyLineup((GameManager._ReservesLineup, selectedToChange-1));
     }
+
+    void ChangePartyLineup((List<HeroExtension> _PartyLineup, int selectedToChange) data)
+    {
+        if (lineupChange.sourceA.collection == null)
+        {
+            lineupChange.sourceA = data;
+        }
+        else
+        {
+            lineupChange.sourceB = data;
+
+
+            var (sourceA, sourceB) = lineupChange;
+            lineupChange = default;
+
+            var elementA = sourceA.collection[sourceA.index];
+            var elementB = sourceB.collection[sourceB.index];
+
+            sourceA.collection[sourceA.index] = elementB;
+            sourceB.collection[sourceB.index] = elementA;
+
+            startMenuActions.DisplayPartyHeroes();
+        }
+    }
+
     private void QuitApplication()
     {
         Application.Quit();
