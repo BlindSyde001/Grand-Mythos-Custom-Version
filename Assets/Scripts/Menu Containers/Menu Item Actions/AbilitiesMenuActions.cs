@@ -5,69 +5,49 @@ using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
 
-public class AbilitiesMenuActions : MonoBehaviour
+public class AbilitiesMenuActions : MenuContainer
 {
-
-    // VARIABLES
-    [SerializeField]
-    private GameManager gameManager;
-    private InputManager inputManager;
-    private MenuInputs menuInputs;
-
     public List<Button> heroSelections;
     public List<AbilityButtonContainer> abilityButtons;
     public AbilityDescriptionContainer abilityDescriptionContainer;
 
     private HeroExtension selectedHero;
-    // UPDATES
-    private void Start()
-    {
-        gameManager = GameManager._instance;
-        inputManager = InputManager._instance;
-        menuInputs = FindObjectOfType<MenuInputs>();
-    }
 
     // METHODS
-    internal IEnumerator AbilitiesMenuOpen()
+    public override IEnumerable Open(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[2].SetActive(true);
-            inputManager.MenuItems[2].transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[2].transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
-            inputManager.MenuItems[2].transform.GetChild(2).GetComponent<Image>().DOFillAmount(1, menuInputs.speed);
+            gameObject.SetActive(true);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).GetComponent<Image>().DOFillAmount(1, menuInputs.speed);
             foreach(AbilityButtonContainer a in abilityButtons)
             {
                 a.thisButton.GetComponent<Image>().DOFade(1, menuInputs.speed);
                 a.buttonName.DOFade(1, menuInputs.speed);
             }
             SetHeroSelection();
-            SetAbilities(gameManager._PartyLineup[0]);
+            SetAbilities(GameManager._PartyLineup[0]);
         }
     }
-    internal IEnumerator AbilitiesMenuClose(bool closeAllOverride)
+    public override IEnumerable Close(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             menuInputs.coroutineRunning = true;
-            inputManager.MenuItems[2].transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[2].transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
-            inputManager.MenuItems[2].transform.GetChild(2).GetComponent<Image>().DOFillAmount(0, menuInputs.speed);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).GetComponent<Image>().DOFillAmount(0, menuInputs.speed);
             foreach (AbilityButtonContainer a in abilityButtons)
             {
                 a.thisButton.GetComponent<Image>().DOFade(0, .5f * menuInputs.speed);
                 a.buttonName.DOFade(0, .5f * menuInputs.speed);
             }
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[2].SetActive(false);
+            gameObject.SetActive(false);
             menuInputs.coroutineRunning = false;
-        }
-        if (!closeAllOverride)
-        {
-            menuInputs.startMenuActions.StartMenuOpen();
-            yield return new WaitForSeconds(menuInputs.speed);
-            menuInputs.currentMenuOpen = 0;
         }
     }
 
@@ -80,12 +60,12 @@ public class AbilitiesMenuActions : MonoBehaviour
             a.gameObject.SetActive(false);
             a.onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < gameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager._PartyLineup.Count; i++)
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
-            heroSelections[i].GetComponent<Image>().sprite = gameManager._PartyLineup[j].charPortrait;
-            heroSelections[i].onClick.AddListener(delegate { SetAbilities(gameManager._PartyLineup[j]); });
+            heroSelections[i].GetComponent<Image>().sprite = GameManager._PartyLineup[j].charPortrait;
+            heroSelections[i].onClick.AddListener(delegate { SetAbilities(GameManager._PartyLineup[j]); });
         }
     }
     public void SetAbilities(HeroExtension hero)

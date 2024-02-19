@@ -4,15 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class EquipmentMenuActions : MonoBehaviour
+public class EquipmentMenuActions : MenuContainer
 {
-    // VARIABLES
-    [SerializeField]
-    private GameManager gameManager;
-    private InputManager inputManager;
-    private InventoryManager inventoryManager;
-    private MenuInputs menuInputs;
-
     [SerializeField]
     private EquipStatsContainer equipStatsContainer;
     [SerializeField]
@@ -27,51 +20,37 @@ public class EquipmentMenuActions : MonoBehaviour
     public List<Button> heroSelections;
 
     private HeroExtension selectedHero;
-    // UPDATES
-    private void Start()
-    {
-        gameManager = GameManager._instance;
-        inputManager = InputManager._instance;
-        inventoryManager = InventoryManager._instance;
-        menuInputs = FindObjectOfType<MenuInputs>();
-    }
 
     // METHODS
-    internal IEnumerator EquipmentMenuOpen()
+    public override IEnumerable Open(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[3].SetActive(true);
-            inputManager.MenuItems[3].transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[3].transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
-            inputManager.MenuItems[3].transform.GetChild(2).DOLocalMove(new Vector3(-580, -320, 0), menuInputs.speed);
-            inputManager.MenuItems[3].transform.GetChild(3).DOLocalMove(new Vector3(0, -320, 0), menuInputs.speed);
-            SetStats(gameManager._PartyLineup[0]);
-            SetLoadout(gameManager._PartyLineup[0]);
+            gameObject.SetActive(true);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-580, -320, 0), menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, -320, 0), menuInputs.speed);
+            SetStats(GameManager._PartyLineup[0]);
+            SetLoadout(GameManager._PartyLineup[0]);
             UpdateCurrentEquippedGear();
             SetHeroSelection();
         }
     }
-    internal IEnumerator EquipmentMenuClose(bool closeAllOverride)
+    public override IEnumerable Close(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             menuInputs.coroutineRunning = true;
-            inputManager.MenuItems[3].transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[3].transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
-            inputManager.MenuItems[3].transform.GetChild(2).DOLocalMove(new Vector3(-1400, -320, 0), menuInputs.speed);
-            inputManager.MenuItems[3].transform.GetChild(3).DOLocalMove(new Vector3(1200, -320, 0), menuInputs.speed);
-            inputManager.MenuItems[3].transform.GetChild(4).gameObject.SetActive(false);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-1400, -320, 0), menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(1200, -320, 0), menuInputs.speed);
+            gameObject.transform.GetChild(4).gameObject.SetActive(false);
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[3].SetActive(false);
+            gameObject.SetActive(false);
             menuInputs.coroutineRunning = false;
-        }
-        if (!closeAllOverride)
-        {
-            menuInputs.startMenuActions.StartMenuOpen();
-            yield return new WaitForSeconds(menuInputs.speed);
-            menuInputs.currentMenuOpen = 0;
         }
     }
 
@@ -82,13 +61,13 @@ public class EquipmentMenuActions : MonoBehaviour
             a.gameObject.SetActive(false);
             a.onClick.RemoveAllListeners();
         }
-        for(int i = 0; i < gameManager._PartyLineup.Count; i++)
+        for(int i = 0; i < GameManager._PartyLineup.Count; i++)
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
-            heroSelections[i].GetComponent<Image>().sprite = gameManager._PartyLineup[j].charPortrait;
-            heroSelections[i].onClick.AddListener(delegate {SetStats(gameManager._PartyLineup[j]); });
-            heroSelections[i].onClick.AddListener(delegate {SetLoadout(gameManager._PartyLineup[j]); });
+            heroSelections[i].GetComponent<Image>().sprite = GameManager._PartyLineup[j].charPortrait;
+            heroSelections[i].onClick.AddListener(delegate {SetStats(GameManager._PartyLineup[j]); });
+            heroSelections[i].onClick.AddListener(delegate {SetLoadout(GameManager._PartyLineup[j]); });
         }
         EquipNewItemList.SetActive(false);
     }
@@ -192,7 +171,7 @@ public class EquipmentMenuActions : MonoBehaviour
                     #region Guns
                     case Weapon.WeaponType.Gun:
                         List<Weapon> guns = new();
-                        foreach(ItemCapsule weapon in inventoryManager._WeaponsInBag)
+                        foreach(ItemCapsule weapon in InventoryManager._WeaponsInBag)
                         {
                             // Add the Guns
                             if(((Object)weapon.thisItem).name.Contains("Gun"))
@@ -221,7 +200,7 @@ public class EquipmentMenuActions : MonoBehaviour
                     #region Warhammer
                     case Weapon.WeaponType.Warhammer:
                         List<Weapon> warhammers = new();
-                        foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
+                        foreach (ItemCapsule weapon in InventoryManager._WeaponsInBag)
                         {
                             if (((Object)weapon.thisItem).name.Contains("Warhammer"))
                             {
@@ -249,7 +228,7 @@ public class EquipmentMenuActions : MonoBehaviour
                     #region Power Glove
                     case Weapon.WeaponType.PowerGlove:
                         List<Weapon> powergloves = new();
-                        foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
+                        foreach (ItemCapsule weapon in InventoryManager._WeaponsInBag)
                         {
                             if (((Object)weapon.thisItem).name.Contains("Power Glove"))
                             {
@@ -277,7 +256,7 @@ public class EquipmentMenuActions : MonoBehaviour
                     #region Grimoire
                     case Weapon.WeaponType.Grimoire:
                         List<Weapon> grimoire = new();
-                        foreach (ItemCapsule weapon in inventoryManager._WeaponsInBag)
+                        foreach (ItemCapsule weapon in InventoryManager._WeaponsInBag)
                         {
                             if (((Object)weapon.thisItem).name.Contains("Grimoire"))
                             {
@@ -311,7 +290,7 @@ public class EquipmentMenuActions : MonoBehaviour
                     #region Leather
                     case Armour.ArmourType.Leather:
                         List<Armour> leather = new();
-                        foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
+                        foreach (ItemCapsule armour in InventoryManager._ArmourInBag)
                         {
                             if (((Object)armour.thisItem).name.Contains("Leather"))
                             {
@@ -339,7 +318,7 @@ public class EquipmentMenuActions : MonoBehaviour
                     #region Mail
                     case Armour.ArmourType.Mail:
                         List<Armour> mail = new();
-                        foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
+                        foreach (ItemCapsule armour in InventoryManager._ArmourInBag)
                         {
                             if (((Object)armour.thisItem).name.Contains("Mail"))
                             {
@@ -367,7 +346,7 @@ public class EquipmentMenuActions : MonoBehaviour
                     #region Chasis
                     case Armour.ArmourType.Chasis:
                         List<Armour> chasis = new();
-                        foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
+                        foreach (ItemCapsule armour in InventoryManager._ArmourInBag)
                         {
                             if (((Object)armour.thisItem).name.Contains("Chasis"))
                             {
@@ -395,7 +374,7 @@ public class EquipmentMenuActions : MonoBehaviour
                     #region Robe
                     case Armour.ArmourType.Robes:
                         List<Armour> robe = new();
-                        foreach (ItemCapsule armour in inventoryManager._ArmourInBag)
+                        foreach (ItemCapsule armour in InventoryManager._ArmourInBag)
                         {
                             if (((Object)armour.thisItem).name.Contains("Robe"))
                             {
@@ -425,9 +404,9 @@ public class EquipmentMenuActions : MonoBehaviour
 
             case > 1:
                 #region Accessory
-                for (int i = 0; i < inventoryManager._AccessoryInBag.Count; i++)
+                for (int i = 0; i < InventoryManager._AccessoryInBag.Count; i++)
                 {
-                    Accessory accessory = (Accessory)inventoryManager._AccessoryInBag[i].thisItem;
+                    Accessory accessory = (Accessory)InventoryManager._AccessoryInBag[i].thisItem;
                     if (CheckOnEquippedGear(accessory))
                     {
                         equipNewItemContainers[i].ThisButton.interactable = true;
@@ -478,18 +457,18 @@ public class EquipmentMenuActions : MonoBehaviour
     private void UpdateCurrentEquippedGear()
     {
         CurrentlyEquippedGear.Clear();
-        for (int i = 0; i < gameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager._PartyLineup.Count; i++)
         {
             // Add Currently Equipped Gear
-            CurrentlyEquippedGear.Add(gameManager._PartyLineup[i]._Weapon);
-            CurrentlyEquippedGear.Add(gameManager._PartyLineup[i]._Armour);
-            if (gameManager._PartyLineup[i]._AccessoryOne != null)
+            CurrentlyEquippedGear.Add(GameManager._PartyLineup[i]._Weapon);
+            CurrentlyEquippedGear.Add(GameManager._PartyLineup[i]._Armour);
+            if (GameManager._PartyLineup[i]._AccessoryOne != null)
             {
-                CurrentlyEquippedGear.Add(gameManager._PartyLineup[i]._AccessoryOne);
+                CurrentlyEquippedGear.Add(GameManager._PartyLineup[i]._AccessoryOne);
             }
-            if (gameManager._PartyLineup[i]._AccessoryTwo != null)
+            if (GameManager._PartyLineup[i]._AccessoryTwo != null)
             {
-                CurrentlyEquippedGear.Add(gameManager._PartyLineup[i]._AccessoryTwo);
+                CurrentlyEquippedGear.Add(GameManager._PartyLineup[i]._AccessoryTwo);
             }
         }
     }
@@ -498,7 +477,7 @@ public class EquipmentMenuActions : MonoBehaviour
         int amountEquipped = 0;
         int amountInInventory = 0;
 
-        ItemCapsule a = inventoryManager.EquipmentInBag.Find(x => x.thisItem == equipment);
+        ItemCapsule a = InventoryManager.EquipmentInBag.Find(x => x.thisItem == equipment);
         amountInInventory = a.ItemAmount;
 
         foreach(Equipment comparison in CurrentlyEquippedGear)

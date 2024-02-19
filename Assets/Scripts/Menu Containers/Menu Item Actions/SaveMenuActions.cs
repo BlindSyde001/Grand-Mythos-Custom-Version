@@ -8,26 +8,11 @@ using TMPro;
 using DG.Tweening;
 
 
-public class SaveMenuActions : MonoBehaviour
+public class SaveMenuActions : MenuContainer
 {
-    //  VARIABLES
-    private MenuInputs menuInputs;
-    private InputManager inputManager;
-    private GameManager gameManager;
-    private InventoryManager inventoryManager;
-
     public GameObject LoadList;
     public List<SaveFileButton> SavedFiles;
     public TextMeshProUGUI savedtext;
-
-    // UPDATES
-    private void Start()
-    {
-        menuInputs = FindObjectOfType<MenuInputs>();
-        inputManager = InputManager._instance;
-        gameManager = GameManager._instance;
-        inventoryManager = InventoryManager._instance;
-    }
 
     // METHODS
     public void OpenLoadFiles()
@@ -45,7 +30,7 @@ public class SaveMenuActions : MonoBehaviour
                 List<HeroExtension> tempHero = new List<HeroExtension>();
                 for (int j = 0; j < SD.lineupSave.Count; j++)
                 {
-                    tempHero.Add(gameManager._AllPartyMembers[SD.lineupSave[j]]);
+                    tempHero.Add(GameManager._AllPartyMembers[SD.lineupSave[j]]);
                 }
 
                 // foreach party member, display their icon in order
@@ -87,13 +72,13 @@ public class SaveMenuActions : MonoBehaviour
     public void ClickSave(int SaveFileNumber)
     {
         #region Positional & Zone Data
-        gameManager.LastKnownScene = SceneManager.GetActiveScene().name;
-        gameManager.LastKnownPosition = FindObjectOfType<OverworldPlayerControlsNode>().transform.position;
-        gameManager.LastKnownRotation = FindObjectOfType<OverworldPlayerControlsNode>().transform.rotation;
+        GameManager.LastKnownScene = SceneManager.GetActiveScene().name;
+        GameManager.LastKnownPosition = FindObjectOfType<OverworldPlayerControlsNode>().transform.position;
+        GameManager.LastKnownRotation = FindObjectOfType<OverworldPlayerControlsNode>().transform.rotation;
 
-        SaveData.current.savedScene = gameManager.LastKnownScene;
-        SaveData.current.overworldPos = gameManager.LastKnownPosition;
-        SaveData.current.overworldRot = gameManager.LastKnownRotation;
+        SaveData.current.savedScene = GameManager.LastKnownScene;
+        SaveData.current.overworldPos = GameManager.LastKnownPosition;
+        SaveData.current.overworldRot = GameManager.LastKnownRotation;
         #endregion
         #region Lineup Data
         // Set x as Index Number of Hero in AllList, so that you can pull that hero by Index when making the Lineup
@@ -139,27 +124,27 @@ public class SaveMenuActions : MonoBehaviour
         #region Inventory Data
         SaveData.current.inventorySaveData = new();
 
-        foreach (ItemCapsule a in inventoryManager.ConsumablesInBag)
+        foreach (ItemCapsule a in InventoryManager.ConsumablesInBag)
         {
             SaveData.current.inventorySaveData.ConsumablesIdData.Add(a.thisItem.guid);
             SaveData.current.inventorySaveData.ConsumablesAmountData.Add(a.ItemAmount);
         }
-        foreach (ItemCapsule a in inventoryManager.EquipmentInBag)
+        foreach (ItemCapsule a in InventoryManager.EquipmentInBag)
         {
             SaveData.current.inventorySaveData.EquipmentNameData.Add(((Object)a.thisItem).name);
             SaveData.current.inventorySaveData.EquipmentIdData.Add(a.thisItem.guid);
             SaveData.current.inventorySaveData.EquipmentAmountData.Add(a.ItemAmount);
         }
-        foreach (ItemCapsule a in inventoryManager.KeyItemsInBag)
+        foreach (ItemCapsule a in InventoryManager.KeyItemsInBag)
         {
             SaveData.current.inventorySaveData.KeyItemsIdData.Add(a.thisItem.guid);
         }
-        foreach (ItemCapsule a in inventoryManager.LootInBag)
+        foreach (ItemCapsule a in InventoryManager.LootInBag)
         {
             SaveData.current.inventorySaveData.LootIdData.Add(a.thisItem.guid);
             SaveData.current.inventorySaveData.LootAmountData.Add(a.ItemAmount);
         }
-        SaveData.current.inventorySaveData.CreditsAmountData = inventoryManager.creditsInBag;
+        SaveData.current.inventorySaveData.CreditsAmountData = InventoryManager.creditsInBag;
         #endregion
         #region Time Data
         SaveData.current.playTimeData = FindObjectOfType<InGameClock>().playTime;
@@ -174,33 +159,27 @@ public class SaveMenuActions : MonoBehaviour
         savedtext.gameObject.SetActive(false);
     }
 
-    internal IEnumerator SaveMenuOpen()
+    public override IEnumerable Open(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[7].SetActive(true);
-            inputManager.MenuItems[7].transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[7].transform.GetChild(1).DOLocalMove(new Vector3(190, 0, 0), menuInputs.speed);
+            gameObject.SetActive(true);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(190, 0, 0), menuInputs.speed);
             OpenLoadFiles();
         }
     }
-    internal IEnumerator SaveMenuClose(bool closeAllOverride)
+    public override IEnumerable Close(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             menuInputs.coroutineRunning = true;
-            inputManager.MenuItems[7].transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[7].transform.GetChild(1).DOLocalMove(new Vector3(1750, 0, 0), menuInputs.speed);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(1750, 0, 0), menuInputs.speed);
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[7].SetActive(false);
+            gameObject.SetActive(false);
             menuInputs.coroutineRunning = false;
-        }
-        if (!closeAllOverride)
-        {
-            menuInputs.startMenuActions.StartMenuOpen();
-            yield return new WaitForSeconds(menuInputs.speed);
-            menuInputs.currentMenuOpen = 0;
         }
     }
 }

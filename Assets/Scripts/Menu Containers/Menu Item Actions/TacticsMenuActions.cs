@@ -4,14 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class TacticsMenuActions : MonoBehaviour
+public class TacticsMenuActions : MenuContainer
 {
-    // VARIABLES
-    private MenuInputs menuInputs;
-    private InputManager inputManager;
-    private GameManager gameManager;
-    private InventoryManager inventoryManager;
-
     private HeroExtension selectedHero;
     private bool listCoroutineRunning;
 
@@ -35,49 +29,33 @@ public class TacticsMenuActions : MonoBehaviour
     private TacticsModuleContainer currentContainer;
     #endregion
 
-    // UPDATES
-    private void Start()
-    {
-        gameManager = GameManager._instance;
-        menuInputs = FindObjectOfType<MenuInputs>();
-        inputManager = InputManager._instance;
-        inventoryManager = InventoryManager._instance;
-    }
-
     //METHODS
-    public IEnumerator TacticsMenuOpen()
+    public override IEnumerable Open(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[5].SetActive(true);
-            inputManager.MenuItems[5].transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[5].transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
-            inputManager.MenuItems[5].transform.GetChild(2).DOLocalMove(new Vector3(230, -100, 0), menuInputs.speed);
+            gameObject.SetActive(true);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(230, -100, 0), menuInputs.speed);
             SetHeroSelection();
-            SetTacticsList(gameManager._PartyLineup[0]);
+            SetTacticsList(GameManager._PartyLineup[0]);
         }
     }
-    public IEnumerator TacticsMenuClose(bool closeAllOverride)
+    public override IEnumerable Close(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             menuInputs.coroutineRunning = true;
-            inputManager.MenuItems[5].transform.GetChild(0).DOLocalMove(new Vector3(-1350, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[5].transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
-            inputManager.MenuItems[5].transform.GetChild(2).DOLocalMove(new Vector3(1700, -100, 0), menuInputs.speed);
-            inputManager.MenuItems[5].transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), menuInputs.speed);
-            inputManager.MenuItems[5].transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.speed);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1350, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, -100, 0), menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), menuInputs.speed);
+            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.speed);
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[5].SetActive(false);
+            gameObject.SetActive(false);
             menuInputs.coroutineRunning = false;
-
-        }
-        if (!closeAllOverride)
-        {
-            menuInputs.startMenuActions.StartMenuOpen();
-            yield return new WaitForSeconds(menuInputs.speed);
-            menuInputs.currentMenuOpen = 0;
         }
     }
 
@@ -86,9 +64,9 @@ public class TacticsMenuActions : MonoBehaviour
         if (!listCoroutineRunning)
         {
             listCoroutineRunning = true;
-            inputManager.MenuItems[5].transform.GetChild(3).DOLocalMove(new Vector3(-740, 328, 0), menuInputs.speed);
-            inputManager.MenuItems[5].transform.GetChild(4).DOLocalMove(new Vector3(-710, -100, 0), menuInputs.speed);
-            yield return new WaitForSeconds(menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-740, 328, 0), MenuInputs.speed);
+            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-710, -100, 0), MenuInputs.speed);
+            yield return new WaitForSeconds(MenuInputs.speed);
             listCoroutineRunning = false;
         }
     }
@@ -97,12 +75,12 @@ public class TacticsMenuActions : MonoBehaviour
         if(!listCoroutineRunning)
         {
             listCoroutineRunning = true;
-            inputManager.MenuItems[5].transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), menuInputs.speed);
-            inputManager.MenuItems[5].transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), MenuInputs.speed);
+            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), MenuInputs.speed);
             tacticToChange = null;
             tacticCndToChange = null;
             currentContainer = null;
-            yield return new WaitForSeconds(menuInputs.speed);
+            yield return new WaitForSeconds(MenuInputs.speed);
             listCoroutineRunning = false;
         }
     }
@@ -116,12 +94,12 @@ public class TacticsMenuActions : MonoBehaviour
             a.gameObject.SetActive(false);
             a.onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < gameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager._PartyLineup.Count; i++)
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
-            heroSelections[i].GetComponent<Image>().sprite = gameManager._PartyLineup[j].charPortrait;
-            heroSelections[i].onClick.AddListener(delegate { SetTacticsList(gameManager._PartyLineup[j]); });
+            heroSelections[i].GetComponent<Image>().sprite = GameManager._PartyLineup[j].charPortrait;
+            heroSelections[i].onClick.AddListener(delegate { SetTacticsList(GameManager._PartyLineup[j]); });
         }
     }
     public void SetTacticsList(HeroExtension hero)
@@ -311,11 +289,11 @@ public class TacticsMenuActions : MonoBehaviour
         for(int i = 0; i < newComponentList.Count; i++) // iterate through the Buttons
         {
             newComponentList[i].cmpName.text = "";
-            if(inventoryManager.ConditionsAcquired.Count > (pageNo * 10) + i) // Check if there's a cnd in that Slot
+            if(InventoryManager.ConditionsAcquired.Count > (pageNo * 10) + i) // Check if there's a cnd in that Slot
             {
-                if(inventoryManager.ConditionsAcquired.Contains(inventoryManager.ConditionsAcquired[(pageNo * 10) + i])) // Check if you unlocked that Cnd
+                if(InventoryManager.ConditionsAcquired.Contains(InventoryManager.ConditionsAcquired[(pageNo * 10) + i])) // Check if you unlocked that Cnd
                 { 
-                    newComponentList[i].selectedCnd = inventoryManager.ConditionsAcquired[(pageNo * 10) + i];
+                    newComponentList[i].selectedCnd = InventoryManager.ConditionsAcquired[(pageNo * 10) + i];
                     newComponentList[i].cmpName.text = newComponentList[i].selectedCnd.name;
 
                     int j = i;
@@ -329,7 +307,7 @@ public class TacticsMenuActions : MonoBehaviour
     {
         ActionsList.Clear();
         ActionsList.Add(selectedHero.BasicAttack);
-        foreach(var a in inventoryManager.ConsumablesInBag)
+        foreach(var a in InventoryManager.ConsumablesInBag)
         {
             ActionsList.Add((Consumable)a.thisItem);
         }
@@ -355,9 +333,9 @@ public class TacticsMenuActions : MonoBehaviour
                 }
                 else
                 {
-                    for (int k = 0; k < inventoryManager.ConsumablesInBag.Count; k++)
+                    for (int k = 0; k < InventoryManager.ConsumablesInBag.Count; k++)
                     {
-                        if(inventoryManager.ConsumablesInBag[k].thisItem.name == ActionsList[(pageNo * 10) + i].Name)
+                        if(InventoryManager.ConsumablesInBag[k].thisItem.name == ActionsList[(pageNo * 10) + i].Name)
                         {
                             newComponentList[i].selectedAction = ActionsList[(pageNo * 10) + i];
                             newComponentList[i].cmpName.text = newComponentList[i].selectedAction.Name;

@@ -3,29 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class StartMenuActions : MonoBehaviour
+public class StartMenuActions : MenuContainer
 {
-    // VARIABLES
-    private MenuInputs menuInputs;
-    private InputManager inputManager;
-    private GameManager gameManager;
-    private InventoryManager inventoryManager;
-
     [SerializeField]
     private List<PartyContainer> displayList;
     [SerializeField]
     private MiscContainer miscList;
     [SerializeField]
     private InGameClock inGameClock;
-
-    // UPDATES
-    private void Start()
-    {
-        menuInputs = FindObjectOfType<MenuInputs>();
-        inputManager = InputManager._instance;
-        gameManager = GameManager._instance;
-        inventoryManager = InventoryManager._instance;
-    }
 
     private void LateUpdate()
     {
@@ -34,26 +19,31 @@ public class StartMenuActions : MonoBehaviour
                                  ((inGameClock.second < 10)? ("0" + inGameClock.second) : inGameClock.second); 
     }
     // METHODS
-    internal void StartMenuOpen()
+    public override IEnumerable Open(MenuInputs menuInputs)
     {
-        foreach (GameObject a in inputManager.MenuItems)
+        foreach (MenuContainer a in menuInputs.GetComponentsInChildren<MenuContainer>())
         {
-            a.SetActive(false);
+            if (a == this)
+                continue;
+            a.gameObject.SetActive(false);
         }
-        inputManager.MenuItems[0].SetActive(true);
-        inputManager.MenuItems[0].transform.GetChild(0).DOLocalMove(new Vector3(-740, 150, 0), menuInputs.speed);
-        inputManager.MenuItems[0].transform.GetChild(1).DOLocalMove(new Vector3(0, 0, 0), menuInputs.speed);
-        inputManager.MenuItems[0].transform.GetChild(2).DOLocalMove(new Vector3(200, 30, 0), menuInputs.speed);
+        gameObject.SetActive(true);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-740, 150, 0), menuInputs.speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(0, 0, 0), menuInputs.speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(200, 30, 0), menuInputs.speed);
+        DisplayPartyHeroes();
+        DisplayMisc();
+        yield break;
     }
-    internal IEnumerator StartMenuClose()
+    public override IEnumerable Close(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
-            inputManager.MenuItems[0].transform.GetChild(0).DOLocalMove(new Vector3(-1200, 150, 0), menuInputs.speed);
-            inputManager.MenuItems[0].transform.GetChild(1).DOLocalMove(new Vector3(0, -150, 0), menuInputs.speed);
-            inputManager.MenuItems[0].transform.GetChild(2).DOLocalMove(new Vector3(1700, 30, 0), menuInputs.speed);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 150, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(0, -150, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, 30, 0), menuInputs.speed);
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[0].SetActive(false);
+            gameObject.SetActive(false);
         }
     }
     internal void DisplayPartyHeroes()
@@ -62,25 +52,25 @@ public class StartMenuActions : MonoBehaviour
         {
             a.gameObject.SetActive(false);
         }
-        for (int i = 0; i < gameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager._PartyLineup.Count; i++)
         {
             displayList[i].gameObject.SetActive(true);
-            displayList[i].displayName.text = gameManager._PartyLineup[i].charName;
-            displayList[i].displayBanner.sprite = gameManager._PartyLineup[i].charBanner;
-            displayList[i].displayLevel.text = gameManager._PartyLineup[i].Level.ToString();
+            displayList[i].displayName.text = GameManager._PartyLineup[i].charName;
+            displayList[i].displayBanner.sprite = GameManager._PartyLineup[i].charBanner;
+            displayList[i].displayLevel.text = GameManager._PartyLineup[i].Level.ToString();
 
-            displayList[i].displayEXPBar.fillAmount = (float)(gameManager._PartyLineup[i]._TotalExperience - gameManager._PartyLineup[i].PrevExperienceThreshold) /
-                                                             (gameManager._PartyLineup[i].ExperienceThreshold - gameManager._PartyLineup[i].PrevExperienceThreshold);
+            displayList[i].displayEXPBar.fillAmount = (float)(GameManager._PartyLineup[i]._TotalExperience - GameManager._PartyLineup[i].PrevExperienceThreshold) /
+                                                             (GameManager._PartyLineup[i].ExperienceThreshold - GameManager._PartyLineup[i].PrevExperienceThreshold);
 
             displayList[i].displayHP.text =
-                gameManager._PartyLineup[i]._CurrentHP.ToString() + " / " +
-                gameManager._PartyLineup[i].MaxHP.ToString();
+                GameManager._PartyLineup[i]._CurrentHP.ToString() + " / " +
+                GameManager._PartyLineup[i].MaxHP.ToString();
         }
     }
     internal void DisplayMisc()
     {
         miscList.miscArea.text = this.gameObject.scene.name;
         miscList.miscZone.text = SpawnPoint.LastSpawnUsed != null ? SpawnPoint.LastSpawnUsed.Reference.SpawnName : "Unknown";
-        miscList.miscCurrency.text = inventoryManager.creditsInBag.ToString();
+        miscList.miscCurrency.text = InventoryManager.creditsInBag.ToString();
     }
 }

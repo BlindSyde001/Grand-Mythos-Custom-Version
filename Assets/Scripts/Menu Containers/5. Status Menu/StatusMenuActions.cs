@@ -5,14 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 
-public class StatusMenuActions : MonoBehaviour
+public class StatusMenuActions : MenuContainer
 {
-    // VARIABLES
-    [SerializeField]
-    private GameManager gameManager;
-    private InputManager inputManager;
-    private MenuInputs menuInputs;
-
     public TextMeshProUGUI totalExp;
     public TextMeshProUGUI nextLevelExp;
 
@@ -22,54 +16,41 @@ public class StatusMenuActions : MonoBehaviour
     public List<Button> heroSelections;
 
     private HeroExtension selectedHero;
-    // UPDATES
-    private void Start()
-    {
-        gameManager = GameManager._instance;
-        inputManager = InputManager._instance;
-        menuInputs = FindObjectOfType<MenuInputs>();
-    }
 
     // METHODS
-    internal IEnumerator StatusMenuOpen()
+    public override IEnumerable Open(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[4].SetActive(true);
-            inputManager.MenuItems[4].transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(2).DOLocalMove(new Vector3(-600, -300, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(3).DOLocalMove(new Vector3(20, -300, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(4).DOLocalMove(new Vector3(640, -300, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(5).DOLocalMove(new Vector3(-600, -45, 0), menuInputs.speed);
-            SetExperience(gameManager._PartyLineup[0]);
-            SetAttributes(gameManager._PartyLineup[0]);
-            SetElemental(gameManager._PartyLineup[0]);
-            SetAffliction(gameManager._PartyLineup[0]);
+            gameObject.SetActive(true);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-600, -300, 0), menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(20, -300, 0), menuInputs.speed);
+            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(640, -300, 0), menuInputs.speed);
+            gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-600, -45, 0), menuInputs.speed);
+            SetExperience(GameManager._PartyLineup[0]);
+            SetAttributes(GameManager._PartyLineup[0]);
+            SetElemental(GameManager._PartyLineup[0]);
+            SetAffliction(GameManager._PartyLineup[0]);
             SetHeroSelection();
         }
     }
-    internal IEnumerator StatusMenuClose(bool closeAllOverride)
+    public override IEnumerable Close(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             menuInputs.coroutineRunning = true;
-            inputManager.MenuItems[4].transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(2).DOLocalMove(new Vector3(-600, -800, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(3).DOLocalMove(new Vector3(20, -800, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(4).DOLocalMove(new Vector3(640, -800, 0), menuInputs.speed);
-            inputManager.MenuItems[4].transform.GetChild(5).DOLocalMove(new Vector3(-600, -645, 0), menuInputs.speed);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-600, -800, 0), menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(20, -800, 0), menuInputs.speed);
+            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(640, -800, 0), menuInputs.speed);
+            gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-600, -645, 0), menuInputs.speed);
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[4].SetActive(false);
+            gameObject.SetActive(false);
             menuInputs.coroutineRunning = false;
-        }
-        if (!closeAllOverride)
-        {
-            menuInputs.startMenuActions.StartMenuOpen();
-            yield return new WaitForSeconds(menuInputs.speed);
-            menuInputs.currentMenuOpen = 0;
         }
     }
 
@@ -80,15 +61,15 @@ public class StatusMenuActions : MonoBehaviour
             a.gameObject.SetActive(false);
             a.onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < gameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager._PartyLineup.Count; i++)
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
-            heroSelections[i].GetComponent<Image>().sprite = gameManager._PartyLineup[j].charPortrait;
-            heroSelections[i].onClick.AddListener(delegate { SetExperience(gameManager._PartyLineup[j]); });
-            heroSelections[i].onClick.AddListener(delegate { SetAttributes(gameManager._PartyLineup[j]); });
-            heroSelections[i].onClick.AddListener(delegate { SetElemental(gameManager._PartyLineup[j]); });
-            heroSelections[i].onClick.AddListener(delegate { SetAffliction(gameManager._PartyLineup[j]); });
+            heroSelections[i].GetComponent<Image>().sprite = GameManager._PartyLineup[j].charPortrait;
+            heroSelections[i].onClick.AddListener(delegate { SetExperience(GameManager._PartyLineup[j]); });
+            heroSelections[i].onClick.AddListener(delegate { SetAttributes(GameManager._PartyLineup[j]); });
+            heroSelections[i].onClick.AddListener(delegate { SetElemental(GameManager._PartyLineup[j]); });
+            heroSelections[i].onClick.AddListener(delegate { SetAffliction(GameManager._PartyLineup[j]); });
         }
     }
 

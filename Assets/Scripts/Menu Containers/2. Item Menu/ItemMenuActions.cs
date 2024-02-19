@@ -5,13 +5,8 @@ using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
 
-public class ItemMenuActions : MonoBehaviour
+public class ItemMenuActions : MenuContainer
 {
-    // VARIABLES
-    private MenuInputs menuInputs;
-    private InputManager inputManager;
-    private InventoryManager inventoryManager;
-
     public List<GameObject> ItemButtons;
 
     public TextMeshProUGUI itemDescriptionName;
@@ -23,50 +18,36 @@ public class ItemMenuActions : MonoBehaviour
     [SerializeField]
     private Button SortButton;
 
-    // UPDATES
-    private void Start()
-    {
-        menuInputs = FindObjectOfType<MenuInputs>();
-        inputManager = InputManager._instance;
-        inventoryManager = InventoryManager._instance;
-    }
-
     // METHODS
-    internal IEnumerator ItemMenuOpen()
+    public override IEnumerable Open(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[1].SetActive(true);
-            inputManager.MenuItems[1].transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(1).DOLocalMove(new Vector3(-470, 200, 0), menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(2).DOLocalMove(new Vector3(-470, -250, 0),  menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(3).DOLocalMove(new Vector3(480, 450, 0), menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(4).DOLocalMove(new Vector3(480, -50, 0), menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(5).DOLocalMove(new Vector3(-400, 480, 0), menuInputs.speed);
+            gameObject.SetActive(true);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-470, 200, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-470, -250, 0),  menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(480, 450, 0), menuInputs.speed);
+            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(480, -50, 0), menuInputs.speed);
+            gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-400, 480, 0), menuInputs.speed);
             ShowConsumables();
         }
     }
-    internal IEnumerator ItemMenuClose(bool closeAllOverride)
+    public override IEnumerable Close(MenuInputs menuInputs)
     {
         if (!menuInputs.coroutineRunning)
         {
             menuInputs.coroutineRunning = true;
-            inputManager.MenuItems[1].transform.GetChild(0).DOLocalMove(new Vector3(-1750, 480, 0), menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(1).DOLocalMove(new Vector3(-1450, 200, 0), menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(2).DOLocalMove(new Vector3(-1450, -250, 0),  menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(3).DOLocalMove(new Vector3(1450, 450, 0), menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(4).DOLocalMove(new Vector3(1450, -50, 0), menuInputs.speed);
-            inputManager.MenuItems[1].transform.GetChild(5).DOLocalMove(new Vector3(-400, 600, 0), menuInputs.speed);
+            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1750, 480, 0), menuInputs.speed);
+            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1450, 200, 0), menuInputs.speed);
+            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-1450, -250, 0),  menuInputs.speed);
+            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(1450, 450, 0), menuInputs.speed);
+            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(1450, -50, 0), menuInputs.speed);
+            gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-400, 600, 0), menuInputs.speed);
             yield return new WaitForSeconds(menuInputs.speed);
-            inputManager.MenuItems[1].SetActive(false);
+            gameObject.SetActive(false);
             menuInputs.coroutineRunning = false;
-        }
-        if (!closeAllOverride)
-        {
-            menuInputs.startMenuActions.StartMenuOpen();
-            yield return new WaitForSeconds(menuInputs.speed);
-            menuInputs.currentMenuOpen = 0;
         }
     }
 
@@ -82,14 +63,14 @@ public class ItemMenuActions : MonoBehaviour
             a.GetComponent<ItemButtonContainer>().itemDescription = "";
             a.GetComponent<Button>().onClick.RemoveAllListeners();
         }
-        for(int i = 0; i < inventoryManager.ConsumablesInBag.Count; i++)
+        for(int i = 0; i < InventoryManager.ConsumablesInBag.Count; i++)
         {
             ItemButtons[i].SetActive(true);
             ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
             
-            btn.itemName.text = inventoryManager.ConsumablesInBag[i].thisItem.name;
-            btn.itemAmount.text = inventoryManager.ConsumablesInBag[i].ItemAmount.ToString();
-            btn.itemDescription = inventoryManager.ConsumablesInBag[i].thisItem.Description;
+            btn.itemName.text = InventoryManager.ConsumablesInBag[i].thisItem.name;
+            btn.itemAmount.text = InventoryManager.ConsumablesInBag[i].ItemAmount.ToString();
+            btn.itemDescription = InventoryManager.ConsumablesInBag[i].thisItem.Description;
 
             btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
         }
@@ -109,14 +90,14 @@ public class ItemMenuActions : MonoBehaviour
             a.GetComponent<ItemButtonContainer>().itemAmount.text = "";
             a.GetComponent<Button>().onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < inventoryManager.EquipmentInBag.Count; i++)
+        for (int i = 0; i < InventoryManager.EquipmentInBag.Count; i++)
         {
             ItemButtons[i].SetActive(true);
             ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
 
-            btn.itemName.text = inventoryManager.EquipmentInBag[i].thisItem.name;
-            btn.itemAmount.text = inventoryManager.EquipmentInBag[i].ItemAmount.ToString();
-            btn.itemDescription = inventoryManager.EquipmentInBag[i].thisItem.Description;
+            btn.itemName.text = InventoryManager.EquipmentInBag[i].thisItem.name;
+            btn.itemAmount.text = InventoryManager.EquipmentInBag[i].ItemAmount.ToString();
+            btn.itemDescription = InventoryManager.EquipmentInBag[i].thisItem.Description;
 
             btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
         }
@@ -137,14 +118,14 @@ public class ItemMenuActions : MonoBehaviour
             a.GetComponent<ItemButtonContainer>().itemDescription = "";
             a.GetComponent<Button>().onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < inventoryManager.KeyItemsInBag.Count; i++)
+        for (int i = 0; i < InventoryManager.KeyItemsInBag.Count; i++)
         {
             ItemButtons[i].SetActive(true);
             ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
 
-            btn.itemName.text = inventoryManager.KeyItemsInBag[i].thisItem.name;
-            btn.itemAmount.text = inventoryManager.KeyItemsInBag[i].ItemAmount.ToString();
-            btn.itemDescription = inventoryManager.KeyItemsInBag[i].thisItem.Description;
+            btn.itemName.text = InventoryManager.KeyItemsInBag[i].thisItem.name;
+            btn.itemAmount.text = InventoryManager.KeyItemsInBag[i].ItemAmount.ToString();
+            btn.itemDescription = InventoryManager.KeyItemsInBag[i].thisItem.Description;
 
             btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
         }
@@ -165,14 +146,14 @@ public class ItemMenuActions : MonoBehaviour
             a.GetComponent<ItemButtonContainer>().itemDescription = "";
             a.GetComponent<Button>().onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < inventoryManager.LootInBag.Count; i++)
+        for (int i = 0; i < InventoryManager.LootInBag.Count; i++)
         {
             ItemButtons[i].SetActive(true);
             ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
 
-            btn.itemName.text = inventoryManager.LootInBag[i].thisItem.name;
-            btn.itemAmount.text = inventoryManager.LootInBag[i].ItemAmount.ToString();
-            btn.itemDescription = inventoryManager.LootInBag[i].thisItem.Description;
+            btn.itemName.text = InventoryManager.LootInBag[i].thisItem.name;
+            btn.itemAmount.text = InventoryManager.LootInBag[i].ItemAmount.ToString();
+            btn.itemDescription = InventoryManager.LootInBag[i].thisItem.Description;
 
             btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
         }
@@ -189,6 +170,6 @@ public class ItemMenuActions : MonoBehaviour
 
     public void CallSortInventory()
     {
-        inventoryManager.SortInventory(selectedList);
+        InventoryManager.SortInventory(selectedList);
     }
 }
