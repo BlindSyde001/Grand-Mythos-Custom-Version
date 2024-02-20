@@ -95,7 +95,7 @@ public class SaveMenuActions : MenuContainer
         foreach (HeroExtension hero in GameManager._instance._AllPartyMembers)
         {
             SerializableHero heroSave = new();
-            heroSave.totalExperienceSave = hero._TotalExperience;
+            heroSave.totalExperienceSave = hero.Experience;
 
             heroSave.weaponIDSave = hero._Weapon.guid;
             heroSave.armourIDSave = hero._Armour.guid;
@@ -112,8 +112,8 @@ public class SaveMenuActions : MenuContainer
             heroSave.weaponSave = hero._Weapon.weaponType.ToString();
             heroSave.armourSave = hero._Armour.armourType.ToString();
 
-            heroSave.currentHPData = hero._CurrentHP;
-            heroSave.currentMPData = hero._CurrentMP;
+            heroSave.currentHPData = hero.CurrentHP;
+            heroSave.currentMPData = hero.CurrentMP;
 
             SerializableTacticController tacticSave = new();
 

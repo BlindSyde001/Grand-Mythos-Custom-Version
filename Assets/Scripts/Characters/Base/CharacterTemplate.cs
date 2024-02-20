@@ -3,15 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
+[Serializable]
+public struct Stats
+{
+    [HorizontalGroup("POINTS")]
+    [GUIColor(0.5f, 1f, 0.5f)]
+    public int HP;
+
+    [HorizontalGroup("POINTS")]
+    [GUIColor(0.5f, 0.5f, 0.9f)]
+    public int MP;
+
+    [HorizontalGroup("ATTACKS")]
+    [GUIColor(1f, 0.5f, 0.5f)]
+    public int Attack;
+
+    [HorizontalGroup("ATTACKS")]
+    [GUIColor(1f, 0.5f, 0.5f)]
+    public int MagAttack;
+
+    [HorizontalGroup("DEFENSE")]
+    [GUIColor(0.5f, 0.8f, 0.8f)]
+    public int Defense;
+
+    [HorizontalGroup("DEFENSE")]
+    [GUIColor(0.5f, 0.8f, 0.8f)]
+    public int MagDefense;
+
+    public int Speed;
+}
+
 public class CharacterTemplate : MonoBehaviour
 {
-    [SerializeField]
-    [PropertyOrder(0)]
-    public CharacterStatsAsset _CSA;
-
-    [PropertyOrder(0)]
-    public string charName;
-
     [Required]
     [PropertyOrder(0)]
     public Team Team;
@@ -31,68 +54,55 @@ public class CharacterTemplate : MonoBehaviour
     [TitleGroup("CHARACTER ATTRIBUTES")]
     [HorizontalGroup("CHARACTER ATTRIBUTES/Split")]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/CURRENT")]
-    [PropertyOrder(1)]
+    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/STATS")]
+    [HorizontalGroup("CHARACTER ATTRIBUTES/Split/Left/STATS/POINTS")]
     [GUIColor(0f, 1f, 0.3f)]
-    public int _CurrentHP;
+    public int CurrentHP;
 
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/CURRENT")]
-    [PropertyOrder(1)]
-    [GUIColor(0f, 0.8f, 1f)]
-    public int _CurrentMP;
+    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/STATS")]
+    [HorizontalGroup("CHARACTER ATTRIBUTES/Split/Left/STATS/POINTS")]
+    [GUIColor(0.5f, 0.5f, 0.9f)]
+    public int CurrentMP;
 
-    [SerializeField]
-    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/MAXIMUM")]
-    [PropertyOrder(1)]
-    [GUIColor(0f, 1f, 0.3f)]
-    protected private int _MaxHP;
-    public int MaxHP { get => _MaxHP; }
-
-    [SerializeField]
-    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/MAXIMUM")]
-    [PropertyOrder(1)]
-    [GUIColor(0f, 0.8f, 1f)]
-    protected private int _MaxMP;
-    public int MaxMP { get => _MaxMP; }
-
-    [SerializeField]
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/OFFENSIVE")]
-    [PropertyOrder(1)]
-    [GUIColor(1f, 0.2f, 0f)]
-    protected private int _Attack;
-    public int Attack { get => _Attack;  }
-    [SerializeField]
+    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/STATS")]
+    [OnValueChanged(nameof(UpdateDummyStats))]
+    public Stats BaseStats = new(){ HP = 22, MP = 10, Attack = 8, MagAttack = 8, Defense = 8, MagDefense = 8, Speed = 20 };
+
     [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/OFFENSIVE")]
-    [PropertyOrder(1)]
-    [GUIColor(1f, 0.2f, 0f)]
-    protected private int _MagAttack;
-    public int MagAttack { get => _MagAttack; }
+    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/STATS")]
     [SerializeField]
-    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/DEFENSIVE")]
-    [PropertyOrder(1)]
-    [GUIColor(1f, 1f, 0f)]
-    protected private int _Defense;
-    public int Defense { get => _Defense; }
-    [SerializeField]
-    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/DEFENSIVE")]
-    [PropertyOrder(1)]
-    [GUIColor(1f, 1f, 0f)]
-    protected private int _MagDefense;
-    public int MagDefense { get => _MagDefense; }
-    [SerializeField]
-    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Right")]
-    [BoxGroup("CHARACTER ATTRIBUTES/Split/Right/DEFENSIVE")]
-    [PropertyOrder(1)]
-    [GUIColor(1f, 1f, 0f)]
-    protected private int _Speed;
-    public int Speed { get => _Speed; }
+    [ReadOnly]
+    private Stats _effectiveStatsPreview;
+
+    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
+    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/STATS")]
+    public GrowthRate GrowthRate;
+
+    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
+    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/STATS")]
+    [OnValueChanged(nameof(UpdateLevelFromExperience))]
+    public int Experience;
+
+    [VerticalGroup("CHARACTER ATTRIBUTES/Split/Left")]
+    [BoxGroup("CHARACTER ATTRIBUTES/Split/Left/STATS")]
+    [OnValueChanged(nameof(UpdateExperienceFromLevel))]
+    public int StartingLevel = 1;
+
+    /// <summary>
+    /// Stats after all mods, like level, equipment and status effects, have been applied
+    /// </summary>
+    public virtual Stats EffectiveStats => new Stats
+    {
+        HP = (int)(BaseStats.HP + BaseStats.HP * GetGrowthRateMultiplier(GrowthRate) * StartingLevel),
+        MP = (int)(BaseStats.MP + BaseStats.MP * GetGrowthRateMultiplier(GrowthRate) * StartingLevel),
+        Attack = (int)(BaseStats.Attack + BaseStats.Attack * GetGrowthRateMultiplier(GrowthRate) * StartingLevel),
+        MagAttack = (int)(BaseStats.MagAttack + BaseStats.MagAttack * GetGrowthRateMultiplier(GrowthRate) * StartingLevel),
+        Defense = (int)(BaseStats.Defense + BaseStats.Defense * GetGrowthRateMultiplier(GrowthRate) * StartingLevel),
+        MagDefense = (int)(BaseStats.MagDefense + BaseStats.MagDefense * GetGrowthRateMultiplier(GrowthRate) * StartingLevel),
+        Speed = BaseStats.Speed,
+    };
 
     [BoxGroup("ELEMENTAL RESISTANCES")]
     [PropertyRange(-100, 100)]
@@ -168,9 +178,7 @@ public class CharacterTemplate : MonoBehaviour
     [PropertyOrder(1.3f)]
     public bool _IsMagDown;
 
-    [BoxGroup("ATB")]
-    [PropertyOrder(4)]
-    public float ActionRechargeSpeed;
+    public float ActionRechargeSpeed => EffectiveStats.Speed;
 
     [BoxGroup("ATB")]
     [PropertyRange(0, 100)]
@@ -180,9 +188,6 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("ATB")]
     [PropertyOrder(4)]
     public uint ActionChargeMax = 4;
-
-    [NonSerialized]
-    public EvaluationContext Context = new();
 
     [BoxGroup("INVENTORY")]
     [SerializeReference]
@@ -210,42 +215,92 @@ public class CharacterTemplate : MonoBehaviour
     [PropertyOrder(7)]
     public Tactics[] Tactics = Array.Empty<Tactics>();
 
-
     /// <summary>
-    /// How much EXP the enemy Gives
+    /// How much experience points this unit gives on death
     /// </summary>
+    [BoxGroup("DROP")]
     public int experiencePool;
     /// <summary>
-    /// How many Credits the enemy Gives
+    /// How many Credits this unit gives on death
     /// </summary>
+    [BoxGroup("DROP")]
     public int creditPool;
 
     /// <summary>
     /// Loot that the enemy drops
     /// </summary>
+    [BoxGroup("DROP")]
     public List<ItemCapsule> DropItems;
+    [BoxGroup("DROP")]
     public List<float> DropRate;
 
-    // UPDATES
-    protected virtual void Awake()
+
+
+    [NonSerialized]
+    public EvaluationContext Context = new();
+
+    void UpdateDummyStats()
     {
-        AssignStats();
+        RegenHealthAndMana();
+        _effectiveStatsPreview = EffectiveStats;
     }
 
-    // METHODS
-    public virtual void AssignStats()
+    void UpdateExperienceFromLevel()
     {
-        charName = _CSA._Name;
-        _MaxHP = _CSA._BaseHP;
-        _MaxMP = _CSA._BaseMP;
-        _Attack = _CSA._BaseAttack;
-        _MagAttack = _CSA._BaseMagAttack;
-        _Defense = _CSA._BaseDefense;
-        _MagDefense = _CSA._BaseMagDefense;
+        UpdateDummyStats();
+        Experience = GetAmountOfXPForLevel(StartingLevel);
+    }
 
-        ActionRechargeSpeed = _CSA._BaseSpeed;
-        _CurrentHP = _MaxHP;
-        _CurrentMP = _MaxMP;
+    void UpdateLevelFromExperience()
+    {
+        UpdateDummyStats();
+        StartingLevel = GetAmountOfLevelForXP(Experience);
+    }
+
+    public static int GetAmountOfXPForLevel(int level)
+    {
+        if (level <= 0)
+            return 0;
+        level -= 1;
+        double temp = level;
+        temp *= 5d;
+        temp = Math.Pow(temp, 2.3d);
+        return (int)Math.Floor(temp);
+    }
+
+    public static int GetAmountOfLevelForXP(int xp)
+    {
+        if (xp <= 0)
+            return 0;
+        double temp = Math.Pow(xp+1, 1d/2.3d);
+        temp /= 5d;
+        return ((int)temp) + 1;
+    }
+
+    public static float GetGrowthRateMultiplier(GrowthRate growthRate) => growthRate switch
+    {
+        GrowthRate.Average => 1.2f,
+        GrowthRate.Strong => 1.3f,
+        GrowthRate.Hyper => 1.5f,
+        GrowthRate.Weak => 1.1f,
+        GrowthRate.Fixed => 0f,
+        _ => throw new ArgumentOutOfRangeException(nameof(growthRate), growthRate, null)
+    };
+
+    public CharacterTemplate()
+    {
+        Context.Source = this;
+    }
+
+    protected virtual void Awake()
+    {
+        RegenHealthAndMana();
+    }
+
+    protected void RegenHealthAndMana()
+    {
+        CurrentHP = EffectiveStats.HP;
+        CurrentMP = EffectiveStats.MP;
     }
 
     public bool IsHostileTo(CharacterTemplate character)
@@ -255,17 +310,17 @@ public class CharacterTemplate : MonoBehaviour
 
     public int GetAttribute(Attribute attribute) => attribute switch
     {
-        Attribute.Health => _CurrentHP,
-        Attribute.Mana => _CurrentMP,
-        Attribute.HealthPercent => Mathf.CeilToInt((float)_CurrentHP / _MaxHP * 100f),
-        Attribute.ManaPercent => Mathf.CeilToInt((float)_CurrentMP / _MaxMP * 100f),
-        Attribute.MaxHealth => _MaxHP,
-        Attribute.MaxMana => _MaxMP,
-        Attribute.Attack => _Attack,
-        Attribute.MagicAttack => _MagAttack,
-        Attribute.Defense => _Defense,
-        Attribute.MagicDefense => _MagDefense,
-        Attribute.Speed => _Speed,
+        Attribute.Health => CurrentHP,
+        Attribute.Mana => CurrentMP,
+        Attribute.HealthPercent => Mathf.CeilToInt((float)CurrentHP / EffectiveStats.HP * 100f),
+        Attribute.ManaPercent => Mathf.CeilToInt((float)CurrentMP / EffectiveStats.MP * 100f),
+        Attribute.MaxHealth => EffectiveStats.HP,
+        Attribute.MaxMana => EffectiveStats.MP,
+        Attribute.Attack => EffectiveStats.Attack,
+        Attribute.MagicAttack => EffectiveStats.MagAttack,
+        Attribute.Defense => EffectiveStats.Defense,
+        Attribute.MagicDefense => EffectiveStats.MagDefense,
+        Attribute.Speed => EffectiveStats.Speed,
         _ => throw new ArgumentOutOfRangeException(nameof(attribute), attribute, null)
     };
 
@@ -273,17 +328,10 @@ public class CharacterTemplate : MonoBehaviour
     {
         switch(attribute)
         {
-            case Attribute.Health: _CurrentHP = Mathf.Clamp(value, 0, _MaxHP); break;
-            case Attribute.Mana: _CurrentMP = Mathf.Clamp(value, 0, _MaxMP); break;
-            case Attribute.HealthPercent: _CurrentHP = Mathf.CeilToInt(value / 100f * _MaxHP); break;
-            case Attribute.ManaPercent: _CurrentMP = Mathf.CeilToInt(value / 100f * _MaxMP); break;
-            case Attribute.MaxHealth: _MaxHP = value; break;
-            case Attribute.MaxMana: _MaxMP = value; break;
-            case Attribute.Attack: _Attack = value; break;
-            case Attribute.MagicAttack: _MagAttack = value; break;
-            case Attribute.Defense: _Defense = value; break;
-            case Attribute.MagicDefense: _MagDefense = value; break;
-            case Attribute.Speed: _Speed = value; break;
+            case Attribute.Health: CurrentHP = Mathf.Clamp(value, 0, EffectiveStats.HP); break;
+            case Attribute.Mana: CurrentMP = Mathf.Clamp(value, 0, EffectiveStats.MP); break;
+            case Attribute.HealthPercent: CurrentHP = Mathf.CeilToInt(value / 100f * EffectiveStats.HP); break;
+            case Attribute.ManaPercent: CurrentMP = Mathf.CeilToInt(value / 100f * EffectiveStats.MP); break;
             default: throw new ArgumentOutOfRangeException(nameof(attribute), attribute, null);
         }
     }
@@ -335,4 +383,14 @@ public enum Status
     Paralysed,
     PhysDown,
     MagDown,
+}
+
+
+public enum GrowthRate
+{
+    Fixed,
+    Weak,
+    Average,
+    Strong,
+    Hyper,
 }

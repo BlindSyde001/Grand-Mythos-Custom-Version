@@ -75,18 +75,18 @@ public class StatusMenuActions : MenuContainer
 
     public void SetExperience(HeroExtension hero)
     {
-        totalExp.text = hero._TotalExperience.ToString();
-        nextLevelExp.text = (hero.ExperienceThreshold - hero._TotalExperience).ToString();
+        totalExp.text = hero.Experience.ToString();
+        nextLevelExp.text = hero.ExperienceToNextLevel.ToString();
     }
     public void SetAttributes(HeroExtension hero)
     {
-        statusContainer.HP.text = hero.MaxHP.ToString();
-        statusContainer.MP.text = hero.MaxMP.ToString();
-        statusContainer.Atk.text = hero.Attack.ToString();
-        statusContainer.MAtk.text = hero.MagAttack.ToString();
-        statusContainer.Def.text = hero.Defense.ToString();
-        statusContainer.MDef.text = hero.MagDefense.ToString();
-        statusContainer.Spd.text = hero.Speed.ToString();
+        statusContainer.HP.text = hero.EffectiveStats.HP.ToString();
+        statusContainer.MP.text = hero.EffectiveStats.MP.ToString();
+        statusContainer.Atk.text = hero.EffectiveStats.Attack.ToString();
+        statusContainer.MAtk.text = hero.EffectiveStats.MagAttack.ToString();
+        statusContainer.Def.text = hero.EffectiveStats.Defense.ToString();
+        statusContainer.MDef.text = hero.EffectiveStats.MagDefense.ToString();
+        statusContainer.Spd.text = hero.EffectiveStats.Speed.ToString();
 
     }
     public void SetElemental(HeroExtension hero)

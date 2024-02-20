@@ -1,22 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
 public class HeroExtension : CharacterTemplate
 {
-    // VARIABLES
-    #region BASE STATS
-    public int BaseHP => (int)(_CSA._BaseHP * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
-    public int BaseMP => (int)(_CSA._BaseMP * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
-    public int BaseAttack => (int)(_CSA._BaseAttack * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
-    public int BaseMagAttack => (int)(_CSA._BaseMagAttack * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
-    public int BaseDefense => (int)(_CSA._BaseDefense * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
-    public int BaseMagDefense => (int)(_CSA._BaseMagDefense * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
-    public int BaseSpeed => _CSA._BaseSpeed;
-    #endregion
-
     #region LEVEL STATS
     [SerializeField]
     [PropertyRange(1, 100)]
@@ -28,15 +16,12 @@ public class HeroExtension : CharacterTemplate
         get => _Level;
         set => _Level = Mathf.Clamp(value, 1, 100);
     }
-    [BoxGroup("LEVEL ATTRIBUTES")]
-    [PropertyOrder(2)]
-    public int _TotalExperience;
     [SerializeField]
     [BoxGroup("LEVEL ATTRIBUTES")]
     [PropertyOrder(2)]
-    public int ExperienceToNextLevel => ExperienceThreshold - _TotalExperience; // How Much (Relative) you need
-    public int ExperienceThreshold => (int)(15 * Mathf.Pow(_Level, 2.3f) + (15 * _Level)); // How Much (Total) you need
-    public int PrevExperienceThreshold => (int)(15 * Mathf.Pow((_Level-1), 2.3f) + (15 * (_Level-1)));
+    public int ExperienceToNextLevel => ExperienceThreshold - Experience; // How Much (Relative) you need
+    public int ExperienceThreshold => GetAmountOfXPForLevel(_Level); // How Much (Total) you need
+    public int PrevExperienceThreshold => GetAmountOfXPForLevel(_Level-1);
     #endregion
     #region EQUIPMENT STATS
     [TitleGroup("EQUIPMENT ATTRIBUTES")]
@@ -139,17 +124,21 @@ public class HeroExtension : CharacterTemplate
     [HideLabel]
     internal Sprite charBanner;
 
-    public GrowthRate GrowthRate;
-
-    static float GetGrowthRateMultiplier(GrowthRate growthRate) => growthRate switch
+    public override Stats EffectiveStats
     {
-        GrowthRate.Average => 0.2f,
-        GrowthRate.Strong => 0.3f,
-        GrowthRate.Hyper => 0.5f,
-        GrowthRate.Weak => 0.1f,
-        GrowthRate.Fixed => 0f,
-        _ => throw new ArgumentOutOfRangeException(nameof(growthRate), growthRate, null)
-    };
+        get
+        {
+            var stats = base.EffectiveStats;
+            stats.HP += equipHP;
+            stats.MP += equipMP;
+            stats.Attack += equipAttack;
+            stats.MagAttack += equipMagAttack;
+            stats.Defense += equipDefense;
+            stats.MagDefense += equipMagDefense;
+            stats.Speed += equipSpeed;
+            return stats;
+        }
+    }
 
     // UPDATES
     protected override void Awake()
@@ -158,51 +147,32 @@ public class HeroExtension : CharacterTemplate
         EquipStats();
         base.Awake();
     }
-    public override void AssignStats()
-    {
-        _MaxHP = BaseHP + equipHP;
-        _MaxMP = BaseMP + equipMP;
-        _Attack = BaseAttack + equipAttack;
-        _MagAttack = BaseMagAttack + equipMagAttack;
-        _Defense = BaseDefense + equipDefense;
-        _MagDefense = BaseMagDefense + equipMagDefense;
-        _Speed = BaseSpeed + equipSpeed;
-
-        ActionRechargeSpeed = Speed;
-        _CurrentHP = _MaxHP;
-        _CurrentMP = _MaxMP;
-    }
 
     // METHODS
     #region Initialization
     protected void InitializeCharacter()
     {
-        charName = _CSA._Name;
-
-        _TotalExperience = _CSA._BaseExperience;
         LevelUpCheck();
-
-        //myTacticController.myHeroCtrlr = myBattleHeroController;
     }
     public void InitializeLevel()
     {
-        _Level = _CSA.startingLevel;
-        if (_TotalExperience >= ExperienceThreshold)
+        _Level = StartingLevel;
+        if (Experience >= ExperienceThreshold)
         {
             _Level++;
             LevelUpCheck();
-            AssignStats();
+            RegenHealthAndMana();
         }
     }
     #endregion
     #region Stats & Levelling Up
     public void LevelUpCheck()
     {
-        if (_TotalExperience >= ExperienceThreshold)
+        if (Experience >= ExperienceThreshold)
         {
             _Level++;
             LevelUpCheck();
-            AssignStats();
+            RegenHealthAndMana();
             if (SkillTree != null)
             {
                 foreach (var skill in SkillTree.GetSkillsForLevel((uint)_Level))
@@ -243,14 +213,4 @@ public class HeroExtension : CharacterTemplate
         }
     }
     #endregion
-}
-
-
-public enum GrowthRate
-{
-    Average,
-    Strong,
-    Hyper,
-    Weak,
-    Fixed,
 }

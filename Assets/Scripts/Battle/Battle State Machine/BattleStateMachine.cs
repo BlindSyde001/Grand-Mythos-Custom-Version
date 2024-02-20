@@ -62,7 +62,7 @@ public class BattleStateMachine : MonoBehaviour
             controller.animator = model.GetComponent<Animator>();  // The Animator Component
             controller.myMovementController = model.GetComponent<BattleArenaMovement>();
             controller.myHero = hero;
-            model.name = $"{hero.charName} Model";
+            model.name = $"{hero.gameObject.name} Model";
 
             gameManager._PartyLineup[i].ActionChargePercent = Random.Range(0, 50);
         }
@@ -81,7 +81,7 @@ public class BattleStateMachine : MonoBehaviour
                 controller = model.AddComponent<BattleEnemyModelController>();
             _EnemyControllers.Add(controller);
 
-            model.name = $"{enemy.charName} Model {i}";
+            model.name = $"{enemy.gameObject.name} Model {i}";
 
             // Attach Relevant References
             controller.animator = model.GetComponent<Animator>();         // The Animator Component
@@ -112,7 +112,7 @@ public class BattleStateMachine : MonoBehaviour
         int hostilesLeft = 0;
         foreach (var target in Units)
         {
-            if (target._CurrentHP == 0)
+            if (target.CurrentHP == 0)
                 continue;
             if (PlayerTeam.Allies.Contains(target.Team))
                 alliesLeft++;
@@ -137,7 +137,7 @@ public class BattleStateMachine : MonoBehaviour
 
         foreach (var unit in Units)
         {
-            if (unit._CurrentHP != 0)
+            if (unit.CurrentHP != 0)
                 unit.ActionChargePercent += unit.ActionRechargeSpeed * Time.deltaTime;
             // DO NOT CLAMP THE CHARGE, WE SHOULDN'T REMOVE ANY CHARGE THE UNIT GAINED
         }
@@ -146,7 +146,7 @@ public class BattleStateMachine : MonoBehaviour
         _unitsCopy.AddRange(Units);
         foreach (var unit in Units)
         {
-            if (unit._CurrentHP == 0 || TacticsDisabled.Contains(unit))
+            if (unit.CurrentHP == 0 || TacticsDisabled.Contains(unit))
                 continue;
 
             if (unit.ActionChargePercent < 100)

@@ -31,8 +31,8 @@ namespace Effects
                 amount = Scaling switch
                 {
                     ScalingType.Flat => amount,
-                    ScalingType.Physical => amount * context.Source.Attack,
-                    ScalingType.Magical => amount * context.Source.MagAttack,
+                    ScalingType.Physical => amount * context.Source.EffectiveStats.Attack,
+                    ScalingType.Magical => amount * context.Source.EffectiveStats.MagAttack,
                     _ => throw new ArgumentOutOfRangeException(Scaling.ToString())
                 };
 

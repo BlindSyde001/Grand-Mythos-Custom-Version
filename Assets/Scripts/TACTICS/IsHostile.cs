@@ -13,8 +13,8 @@ namespace Conditions
             {
                 return State switch
                 {
-                    AliveState.Alive => target._CurrentHP > 0,
-                    AliveState.Dead => target._CurrentHP == 0,
+                    AliveState.Alive => target.CurrentHP > 0,
+                    AliveState.Dead => target.CurrentHP == 0,
                     AliveState.Either => true,
                     _ => throw new ArgumentOutOfRangeException(State.ToString())
                 };

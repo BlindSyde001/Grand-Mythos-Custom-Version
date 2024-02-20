@@ -28,21 +28,21 @@ public class BattleEnemyModelController : BattleCharacterController
         switch (combatState)
         {
             case CombatState.START:
-                if(myEnemy._CurrentHP > 0)
+                if(myEnemy.CurrentHP > 0)
                     ChangeAnimationState(Battle_EnterFight);
                 else
                     ChangeAnimationState(Battle_Die);
                 break;
 
             case CombatState.ACTIVE:
-                if (myEnemy._CurrentHP > 0)
+                if (myEnemy.CurrentHP > 0)
                     ChangeAnimationState(Battle_Stance);
                 else
                     ChangeAnimationState(Battle_Die);
                 break;
 
             case CombatState.WAIT:
-                if (myEnemy._CurrentHP > 0)
+                if (myEnemy.CurrentHP > 0)
                     ChangeAnimationState(Battle_Stance);
                 else
                     ChangeAnimationState(Battle_Die);

@@ -44,20 +44,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d15068e09dc949b4892147541d528416, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
-  charName: 
   Team: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
   charPortrait: {fileID: 21300000, guid: 8c4789b052a71724eae732d73e226d70, type: 3}
   _CharacterModel: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
-  _CurrentHP: 0
-  _CurrentMP: 0
-  _MaxHP: 0
-  _MaxMP: 0
-  _Attack: 0
-  _MagAttack: 0
-  _Defense: 0
-  _MagDefense: 0
-  _Speed: 0
+  CurrentHP: 201
+  CurrentMP: 100
+  BaseStats:
+    HP: 20
+    MP: 10
+    Attack: 5
+    MagAttack: 5
+    Defense: 5
+    MagDefense: 5
+    Speed: 20
+  _effectiveStatsPreview:
+    HP: 201
+    MP: 100
+    Attack: 50
+    MagAttack: 50
+    Defense: 50
+    MagDefense: 50
+    Speed: 20
+  GrowthRate: 3
+  Experience: 2496
+  StartingLevel: 7
   _AffinityFIRE: 0
   _AffinityICE: 0
   _AffinityLIGHTNING: 0
@@ -74,7 +84,6 @@ MonoBehaviour:
   _IsParalysed: 0
   _IsPhysDown: 0
   _IsMagDown: 0
-  ActionRechargeSpeed: 0
   ActionChargePercent: 0
   ActionChargeMax: 4
   Inventory:
@@ -102,7 +111,6 @@ MonoBehaviour:
   DropItems: []
   DropRate: []
   _Level: 1
-  _TotalExperience: 0
   _Weapon: {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
   myWeaponType: 0
   _Armour: {fileID: 11400000, guid: 370d5bab6d025854ab86d6f8679d5c32, type: 2}
@@ -117,7 +125,6 @@ MonoBehaviour:
   equipMagDefense: 0
   equipSpeed: 0
   charBanner: {fileID: 21300000, guid: e2368ee01c9e284449a43aa5be256c28, type: 3}
-  GrowthRate: 1
   references:
     version: 2
     RefIds:

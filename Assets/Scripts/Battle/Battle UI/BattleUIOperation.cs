@@ -160,11 +160,11 @@ public class BattleUIOperation : MonoBehaviour
                 var rectTransform = enemyUI.GetComponent<RectTransform>();
                 enemyUI.transform.position = new Vector3(rendererTransform.position.x, renderer.bounds.max.y + rectTransform.sizeDelta.y, rendererTransform.position.z);
                 rectTransform.SetParent(rendererTransform, true);
-                enemyUI.name = $"{enemy.charName} UI";
+                enemyUI.name = $"{enemy.gameObject.name} UI";
 
                 EnemyPrefabUIData data = enemyUI.GetComponent<EnemyPrefabUIData>();
                 data.identity.text = enemy.name;
-                data.healthBar.fillAmount = enemy.MaxHP;
+                data.healthBar.fillAmount = enemy.EffectiveStats.HP;
 
                 enemyUIData.Add(data);
             }
@@ -172,8 +172,8 @@ public class BattleUIOperation : MonoBehaviour
 
         SelectedUI.characterIcon.sprite = UnitSelected.charPortrait;
         SelectedUI.atbBar.fillAmount = UnitSelected.ActionChargePercent / 100;
-        SelectedUI.healthBar.fillAmount = (float)UnitSelected._CurrentHP / UnitSelected.MaxHP;
-        SelectedUI.health.text = UnitSelected._CurrentHP.ToString();
+        SelectedUI.healthBar.fillAmount = (float)UnitSelected.CurrentHP / UnitSelected.EffectiveStats.HP;
+        SelectedUI.health.text = UnitSelected.CurrentHP.ToString();
         int j = 0;
         for (int i = 0; i < heroData.Count; i++)
         {
@@ -182,15 +182,15 @@ public class BattleUIOperation : MonoBehaviour
                 heroUIData[j].gameObject.SetActive(true);
                 heroUIData[j].characterIcon.sprite = heroData[i].charPortrait;
                 heroUIData[j].atbBar.fillAmount = heroData[i].ActionChargePercent / 100;
-                heroUIData[j].healthBar.fillAmount = (float)heroData[i]._CurrentHP / heroData[i].MaxHP;
-                heroUIData[j].health.text = heroData[i]._CurrentHP.ToString();
+                heroUIData[j].healthBar.fillAmount = (float)heroData[i].CurrentHP / heroData[i].EffectiveStats.HP;
+                heroUIData[j].health.text = heroData[i].CurrentHP.ToString();
                 j++;
             }
         }
         for (int i = 0; i < enemyData.Count; i++)
         {
-            enemyUIData[i].healthBar.fillAmount = (float)enemyData[i]._CurrentHP / enemyData[i].MaxHP;
-            enemyUIData[i].health.text = enemyData[i]._CurrentHP.ToString();
+            enemyUIData[i].healthBar.fillAmount = (float)enemyData[i].CurrentHP / enemyData[i].EffectiveStats.HP;
+            enemyUIData[i].health.text = enemyData[i].CurrentHP.ToString();
         }
     }
 
@@ -500,7 +500,7 @@ public class BattleUIOperation : MonoBehaviour
         // Search for the next unit forward or backwards in the list
         for (int k = Mod(indexOfOldSelection + sign, partyCount); k != indexOfOldSelection; k = Mod(k + sign, partyCount))
         {
-            if (BattleManagement.PartyLineup[k]._CurrentHP > 0)
+            if (BattleManagement.PartyLineup[k].CurrentHP > 0)
             {
                 UnitSelected = BattleManagement.PartyLineup[k];
                 UpdateTacticsButtonColor();

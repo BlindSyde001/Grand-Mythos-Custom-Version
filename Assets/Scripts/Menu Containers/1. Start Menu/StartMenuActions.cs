@@ -61,16 +61,14 @@ public class StartMenuActions : MenuContainer
         {
             var hero = GameManager._PartyLineup[i];
             displayList[i].gameObject.SetActive(true);
-            displayList[i].displayName.text = hero.charName;
+            displayList[i].displayName.text = hero.gameObject.name;
             displayList[i].displayBanner.sprite = hero.charBanner;
             displayList[i].displayLevel.text = hero.Level.ToString();
 
-            displayList[i].displayEXPBar.fillAmount = (float)(hero._TotalExperience - hero.PrevExperienceThreshold) /
+            displayList[i].displayEXPBar.fillAmount = (float)(hero.Experience - hero.PrevExperienceThreshold) /
                                                              (hero.ExperienceThreshold - hero.PrevExperienceThreshold);
 
-            displayList[i].displayHP.text =
-                hero._CurrentHP.ToString() + " / " +
-                hero.MaxHP.ToString();
+            displayList[i].displayHP.text = $"{hero.CurrentHP} / {hero.EffectiveStats.HP}";
         }
 
         foreach (ReserveContainer a in reserveDisplayList)

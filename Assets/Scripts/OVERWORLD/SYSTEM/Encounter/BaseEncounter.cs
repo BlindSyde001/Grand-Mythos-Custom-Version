@@ -65,7 +65,7 @@ public abstract class BaseEncounter : IEncounterDefinition
             {
 #warning this has to go, very restrictive too
                 var enemy = UnityEngine.Object.Instantiate(opponents[i], gameManager.transform);
-                enemy.name = opponents[i].charName + "Data" + i;
+                enemy.name = $"{opponents[i].gameObject.name} Data {i}";
                 gameManager._EnemyLineup.Add(enemy);
             }
 

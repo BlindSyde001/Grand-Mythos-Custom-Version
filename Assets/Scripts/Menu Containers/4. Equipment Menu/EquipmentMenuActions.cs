@@ -75,13 +75,13 @@ public class EquipmentMenuActions : MenuContainer
     {
         selectedHero = hero;
 
-        equipStatsContainer.baseHPText.text = hero.BaseHP.ToString();
-        equipStatsContainer.baseMPText.text = hero.BaseMP.ToString();
-        equipStatsContainer.baseAttackText.text = hero.BaseAttack.ToString();
-        equipStatsContainer.baseMagAttackText.text = hero.BaseMagAttack.ToString();
-        equipStatsContainer.baseDefenseText.text = hero.BaseDefense.ToString();
-        equipStatsContainer.baseMagDefenseText.text = hero.BaseMagDefense.ToString();
-        equipStatsContainer.baseSpeedText.text = hero.BaseSpeed.ToString();
+        equipStatsContainer.baseHPText.text = hero.BaseStats.HP.ToString();
+        equipStatsContainer.baseMPText.text = hero.BaseStats.MP.ToString();
+        equipStatsContainer.baseAttackText.text = hero.BaseStats.Attack.ToString();
+        equipStatsContainer.baseMagAttackText.text = hero.BaseStats.MagAttack.ToString();
+        equipStatsContainer.baseDefenseText.text = hero.BaseStats.Defense.ToString();
+        equipStatsContainer.baseMagDefenseText.text = hero.BaseStats.MagDefense.ToString();
+        equipStatsContainer.baseSpeedText.text = hero.BaseStats.Speed.ToString();
 
         equipStatsContainer.EquipHPText.text = hero.EquipHP.ToString();
         equipStatsContainer.EquipMPText.text = hero.EquipMP.ToString();
@@ -91,13 +91,13 @@ public class EquipmentMenuActions : MenuContainer
         equipStatsContainer.EquipMagDefenseText.text = hero.EquipMagDefense.ToString();
         equipStatsContainer.EquipSpeedText.text = hero.EquipSpeed.ToString();
 
-        equipStatsContainer.TotalHPText.text = hero.MaxHP.ToString();
-        equipStatsContainer.TotalMPText.text = hero.MaxMP.ToString();
-        equipStatsContainer.TotalAttackText.text = hero.Attack.ToString();
-        equipStatsContainer.TotalMagAttackText.text = hero.MagAttack.ToString();
-        equipStatsContainer.TotalDefenseText.text = hero.Defense.ToString();
-        equipStatsContainer.TotalMagDefenseText.text = hero.MagDefense.ToString();
-        equipStatsContainer.TotalSpeedText.text = hero.Speed.ToString();
+        equipStatsContainer.TotalHPText.text = hero.EffectiveStats.HP.ToString();
+        equipStatsContainer.TotalMPText.text = hero.EffectiveStats.MP.ToString();
+        equipStatsContainer.TotalAttackText.text = hero.EffectiveStats.Attack.ToString();
+        equipStatsContainer.TotalMagAttackText.text = hero.EffectiveStats.MagAttack.ToString();
+        equipStatsContainer.TotalDefenseText.text = hero.EffectiveStats.Defense.ToString();
+        equipStatsContainer.TotalMagDefenseText.text = hero.EffectiveStats.MagDefense.ToString();
+        equipStatsContainer.TotalSpeedText.text = hero.EffectiveStats.Speed.ToString();
     }
     public void SetLoadout(HeroExtension hero)
     {

@@ -14,7 +14,7 @@
 
         protected override bool Filter(CharacterTemplate target, EvaluationContext context)
         {
-            return target._CurrentHP > 0;
+            return target.CurrentHP > 0;
         }
     }
 }

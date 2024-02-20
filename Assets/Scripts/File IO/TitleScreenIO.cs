@@ -91,7 +91,7 @@ public class TitleScreenIO : MonoBehaviour
         // HERO LIST
         for (int i = 0; i < gameManager._AllPartyMembers.Count; i++)
         {
-            gameManager._AllPartyMembers[i]._TotalExperience = SD.heroSaveData[i].totalExperienceSave;
+            gameManager._AllPartyMembers[i].Experience = SD.heroSaveData[i].totalExperienceSave;
             gameManager._AllPartyMembers[i].InitializeLevel();
             SaveManager.LoadWeaponData(SD, i);
             SaveManager.LoadArmourData(SD, i);
@@ -100,8 +100,8 @@ public class TitleScreenIO : MonoBehaviour
 
         for (int i = 0; i < gameManager._PartyLineup.Count; i++)
         {
-            gameManager._PartyLineup[i]._CurrentHP = SD.heroSaveData[i].currentHPData;
-            gameManager._PartyLineup[i]._CurrentMP = SD.heroSaveData[i].currentMPData;
+            gameManager._PartyLineup[i].CurrentHP = SD.heroSaveData[i].currentHPData;
+            gameManager._PartyLineup[i].CurrentMP = SD.heroSaveData[i].currentMPData;
         }
         #endregion
         #region Inventory Data
