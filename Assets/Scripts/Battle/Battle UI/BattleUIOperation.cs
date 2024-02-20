@@ -63,6 +63,7 @@ public class BattleUIOperation : MonoBehaviour
     PlayerControls _playerControls;
     Color _initialTacticsColor, _disabledTacticsColor;
 
+    List<CharacterTemplate> _unitsCopy = new();
     Tactics _tempTactics = new();
     List<IAction> _currentActionHints = new();
     List<RectTransform> _currentActionHintsUI = new();
@@ -119,10 +120,26 @@ public class BattleUIOperation : MonoBehaviour
         Skills.interactable = UnitSelected.Skills.Count > 0;
         Items.interactable = UnitSelected.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
 
-        if (_currentActionHints.SequenceEqual(_tempTactics.Actions.BackingArray) == false)
+        Tactics tacticsPreviewed = _tempTactics;
+        if (_tempTactics.Actions.Length == 0) // Show preview of tactics chosen by the unit if no orders are provided
         {
+            _unitsCopy.AddRange(BattleManagement.Units);
+            foreach (var tactic in UnitSelected.Tactics)
+            {
+                if (tactic.IsOn && tactic.Condition.CanExecuteWithAction(tactic.Actions, new TargetCollection(_unitsCopy), UnitSelected.Context, out _, accountForCost:false))
+                {
+                    tacticsPreviewed = tactic;
+                    break;
+                }
+            }
+            _unitsCopy.Clear();
+        }
+
+        if (tacticsPreviewed != null && _currentActionHints.SequenceEqual(tacticsPreviewed.Actions.BackingArray) == false)
+        {
+            bool overriden = _tempTactics.Actions.Length != 0;
             _currentActionHints.Clear();
-            _currentActionHints.AddRange(_tempTactics.Actions.BackingArray);
+            _currentActionHints.AddRange(tacticsPreviewed.Actions.BackingArray);
 
             foreach (var rectTransform in _currentActionHintsUI)
                 Destroy(rectTransform.gameObject);
@@ -136,6 +153,8 @@ public class BattleUIOperation : MonoBehaviour
                     text.text = action.Name;
                 if (actionUI.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
                     tmp_text.text = action.Name;
+                if (overriden == false && actionUI.GetComponentInChildren<Image>() is Image image)
+                    image.color *= 0.5f;
 
                 _currentActionHintsUI.Add(actionUI);
             }
@@ -150,9 +169,9 @@ public class BattleUIOperation : MonoBehaviour
             {
                 heroData.Add(hero);
             }
-            else if (unit is CharacterTemplate enemy)
+            else
             {
-                enemyData.Add(enemy);
+                enemyData.Add(unit);
 
                 var renderer = unit.transform.GetComponentInChildren<Renderer>();
                 var rendererTransform = renderer.transform;
@@ -160,18 +179,18 @@ public class BattleUIOperation : MonoBehaviour
                 var rectTransform = enemyUI.GetComponent<RectTransform>();
                 enemyUI.transform.position = new Vector3(rendererTransform.position.x, renderer.bounds.max.y + rectTransform.sizeDelta.y, rendererTransform.position.z);
                 rectTransform.SetParent(rendererTransform, true);
-                enemyUI.name = $"{enemy.gameObject.name} UI";
+                enemyUI.name = $"{unit.gameObject.name} UI";
 
                 EnemyPrefabUIData data = enemyUI.GetComponent<EnemyPrefabUIData>();
-                data.identity.text = enemy.name;
-                data.healthBar.fillAmount = enemy.EffectiveStats.HP;
+                data.identity.text = unit.name;
+                data.healthBar.fillAmount = unit.EffectiveStats.HP;
 
                 enemyUIData.Add(data);
             }
         }
 
         SelectedUI.characterIcon.sprite = UnitSelected.charPortrait;
-        SelectedUI.atbBar.fillAmount = UnitSelected.ActionChargePercent / 100;
+        SelectedUI.atbBar.fillAmount = UnitSelected.ActionsCharged / UnitSelected.ActionChargeMax;
         SelectedUI.healthBar.fillAmount = (float)UnitSelected.CurrentHP / UnitSelected.EffectiveStats.HP;
         SelectedUI.health.text = UnitSelected.CurrentHP.ToString();
         int j = 0;
@@ -181,7 +200,7 @@ public class BattleUIOperation : MonoBehaviour
             {
                 heroUIData[j].gameObject.SetActive(true);
                 heroUIData[j].characterIcon.sprite = heroData[i].charPortrait;
-                heroUIData[j].atbBar.fillAmount = heroData[i].ActionChargePercent / 100;
+                heroUIData[j].atbBar.fillAmount = heroData[i].ActionsCharged / heroData[i].ActionChargeMax;
                 heroUIData[j].healthBar.fillAmount = (float)heroData[i].CurrentHP / heroData[i].EffectiveStats.HP;
                 heroUIData[j].health.text = heroData[i].CurrentHP.ToString();
                 j++;

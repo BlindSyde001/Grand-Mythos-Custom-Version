@@ -95,7 +95,6 @@ public class BattleResolution : MonoBehaviour
         int creditsEarned = 0;
         foreach (var unit in battle.Units)
         {
-            #warning would be nice to remove the cast/test here
             if (unit.Team.Allies.Contains(battle.PlayerTeam) == false)
             {
                 sharedExp += unit.experiencePool;

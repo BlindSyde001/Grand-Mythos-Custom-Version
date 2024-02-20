@@ -64,7 +64,7 @@ public class BattleStateMachine : MonoBehaviour
             controller.myHero = hero;
             model.name = $"{hero.gameObject.name} Model";
 
-            gameManager._PartyLineup[i].ActionChargePercent = Random.Range(0, 50);
+            hero.ActionsCharged = Random.Range(0, hero.ActionChargeMax);
         }
 
         for (int i = 0; i < gameManager._EnemyLineup.Count; i++)
@@ -86,7 +86,7 @@ public class BattleStateMachine : MonoBehaviour
             // Attach Relevant References
             controller.animator = model.GetComponent<Animator>();         // The Animator Component
             controller.myEnemy = enemy;
-            enemy.ActionChargePercent = Random.Range(0, 50);                  // The ATB Bar
+            enemy.ActionsCharged = Random.Range(0, enemy.ActionChargeMax);
         }
 
         SwitchCombatState(CombatState.START);
@@ -103,7 +103,82 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
 
-    void CleanUpdate()
+
+    IEnumerator ProcessUnit(CharacterTemplate unit)
+    {
+        blocked |= BlockBattleFlags.UnitAct;
+        #if UNITY_EDITOR
+        // Halting execution to reload assemblies while this enumerator is running
+        // may put the state of the combat into an unrecoverable state, make sure that doesn't happen
+        UnityEditor.EditorApplication.LockReloadAssemblies();
+        #endif
+        try
+        {
+            bool foundTactics = false;
+            Tactics chosenTactic;
+            TargetCollection selection = default;
+            if (_orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecuteWithAction(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
+            {
+                // We're taking care of this explicit order
+            }
+            else
+            {
+                foreach (var tactic in unit.Tactics)
+                {
+                    if (tactic.IsOn && tactic.Condition.CanExecuteWithAction(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
+                    {
+                        chosenTactic = tactic;
+                        break;
+                    }
+                }
+            }
+            _orders.Remove(unit);
+
+            if (chosenTactic != null)
+            {
+                foreach (var action in chosenTactic.Actions)
+                {
+                    if (unit.ActionsCharged < action.ATBCost)
+                        break;
+
+                    foundTactics = true;
+                    unit.ActionsCharged -= action.ATBCost;
+
+                    foreach (var yield in action.Perform(selection, unit.Context))
+                        yield return yield;
+
+                    if (Units.Contains(unit) == false)
+                        break;
+                }
+
+                chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
+                chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
+                foreach (var action in chosenTactic.Actions)
+                {
+                    action.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
+                    action.Precondition?.NotifyUsedCondition(selection, unit.Context);
+                }
+
+                unit.Context.Round++;
+            }
+
+            if (foundTactics == false)
+                unit.ActionsCharged -= 1f;
+        }
+        finally
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.UnlockReloadAssemblies();
+#endif
+            blocked &= ~BlockBattleFlags.UnitAct;
+        }
+    }
+
+    public List<HeroExtension> PartyLineup => GameManager._instance._PartyLineup;
+
+    public void SetOrderFor(CharacterTemplate character, Tactics specificTactic) => _orders[character] = specificTactic;
+
+    void Update()
     {
         if (blocked != 0)
             return;
@@ -135,13 +210,6 @@ public class BattleStateMachine : MonoBehaviour
             StartCoroutine(DefeatTransition());
         }
 
-        foreach (var unit in Units)
-        {
-            if (unit.CurrentHP != 0)
-                unit.ActionChargePercent += unit.ActionRechargeSpeed * Time.deltaTime;
-            // DO NOT CLAMP THE CHARGE, WE SHOULDN'T REMOVE ANY CHARGE THE UNIT GAINED
-        }
-
         _unitsCopy.Clear();
         _unitsCopy.AddRange(Units);
         foreach (var unit in Units)
@@ -149,95 +217,21 @@ public class BattleStateMachine : MonoBehaviour
             if (unit.CurrentHP == 0 || TacticsDisabled.Contains(unit))
                 continue;
 
-            if (unit.ActionChargePercent < 100)
-                continue;
-
-            blocked |= BlockBattleFlags.UnitAct;
-            StartCoroutine(ProcessUnit(unit));
-            return;
+            // This unit has its ATB full or the manual order can be executed given the current amount of charge
+            if (unit.ActionsCharged >= unit.ActionChargeMax || _orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecuteWithAction(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
+            {
+                blocked |= BlockBattleFlags.UnitAct;
+                StartCoroutine(ProcessUnit(unit));
+                return; // Explicitly return to prevent others from acting at the same time
+            }
         }
-    }
 
-
-    IEnumerator ProcessUnit(CharacterTemplate unit)
-    {
-        blocked |= BlockBattleFlags.UnitAct;
-        #if UNITY_EDITOR
-        // Halting execution to reload assemblies while this enumerator is running
-        // may put the state of the combat into an unrecoverable state, make sure that doesn't happen
-        UnityEditor.EditorApplication.LockReloadAssemblies();
-        #endif
-        try
+        foreach (var unit in Units)
         {
-            unit.Context.Source = unit;
-            bool foundTactics = false;
-            Tactics chosenTactic;
-            TargetCollection selection = default;
-            if (_orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecuteWithAction(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection))
-            {
-                // We're taking care of this explicit order
-            }
-            else
-            {
-                foreach (var tactic in unit.Tactics)
-                {
-                    if (tactic.IsOn && tactic.Condition.CanExecuteWithAction(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection))
-                    {
-                        chosenTactic = tactic;
-                        break;
-                    }
-                }
-            }
-            _orders.Remove(unit);
-
-            if (chosenTactic != null)
-            {
-                foreach (var action in chosenTactic.Actions)
-                {
-                    float percentCost = action.ATBCost * 100f / unit.ActionChargeMax;
-                    if (unit.ActionChargePercent < percentCost)
-                        break;
-
-                    foundTactics = true;
-                    unit.ActionChargePercent -= percentCost;
-
-                    foreach (var yield in action.Perform(selection, unit.Context))
-                        yield return yield;
-
-                    if (Units.Contains(unit) == false)
-                        break;
-                }
-
-                chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
-                chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
-                foreach (var action in chosenTactic.Actions)
-                {
-                    action.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
-                    action.Precondition?.NotifyUsedCondition(selection, unit.Context);
-                }
-
-                unit.Context.Round++;
-            }
-
-            if (foundTactics == false)
-                unit.ActionChargePercent -= 100f / unit.ActionChargeMax;
+            if (unit.CurrentHP != 0)
+                unit.ActionsCharged += unit.ActionRechargeSpeed * Time.deltaTime / 10f;
+            // DO NOT CLAMP HERE, DO IT AFTER ORDERS HAVE BEEN SCHEDULED
         }
-        finally
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.UnlockReloadAssemblies();
-#endif
-            blocked &= ~BlockBattleFlags.UnitAct;
-        }
-    }
-
-    public List<HeroExtension> PartyLineup => GameManager._instance._PartyLineup;
-
-    public void SetOrderFor(CharacterTemplate character, Tactics specificTactic) => _orders[character] = specificTactic;
-
-    void Update()
-    {
-        CleanUpdate();
     }
 
     // METHODS

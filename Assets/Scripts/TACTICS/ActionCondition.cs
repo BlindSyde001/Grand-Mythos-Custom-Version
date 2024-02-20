@@ -35,11 +35,14 @@ public class ActionCondition : ScriptableObject
         return true;
     }
 
-    public bool CanExecuteWithAction(IActionCollection actions, TargetCollection allTargets, EvaluationContext context, out TargetCollection selection)
+    public bool CanExecuteWithAction(IActionCollection actions, TargetCollection allTargets, EvaluationContext context, out TargetCollection selection, bool accountForCost)
     {
         selection = default;
 
         context.ExecutionFlags.Clear();
+
+        if (accountForCost && actions.CostTotal() > context.Source.ActionsCharged)
+            return false;
 
         foreach (var action in actions)
         {

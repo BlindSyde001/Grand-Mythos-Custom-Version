@@ -183,7 +183,7 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("ATB")]
     [PropertyRange(0, 100)]
     [PropertyOrder(4)]
-    public float ActionChargePercent;
+    public float ActionsCharged;
 
     [BoxGroup("ATB")]
     [PropertyOrder(4)]
