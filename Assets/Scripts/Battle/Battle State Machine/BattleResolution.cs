@@ -82,7 +82,7 @@ public class BattleResolution : MonoBehaviour
             HeroPanels[i].displayBanner.sprite = gameManager._PartyLineup[i].charBanner;
             HeroPanels[i].displayName.text = gameManager._PartyLineup[i].charName;
             HeroPanels[i].displayLevel.text = gameManager._PartyLineup[i].Level.ToString();
-            HeroPanels[i].displayEXPBar.fillAmount = (float)gameManager._PartyLineup[i]._ExperienceToNextLevel / gameManager._PartyLineup[i].ExperienceThreshold;
+            HeroPanels[i].displayEXPBar.fillAmount = (float)gameManager._PartyLineup[i].ExperienceToNextLevel / gameManager._PartyLineup[i].ExperienceThreshold;
             HeroPanels[i].displayEXPToNextLevel.text = (gameManager._PartyLineup[i].ExperienceThreshold - gameManager._PartyLineup[i]._TotalExperience).ToString();
         }
         ExperienceRewards.gameObject.SetActive(true);
@@ -96,10 +96,10 @@ public class BattleResolution : MonoBehaviour
         foreach (var unit in battle.Units)
         {
             #warning would be nice to remove the cast/test here
-            if (unit.Team.Allies.Contains(battle.PlayerTeam) == false && unit is EnemyExtension enemy)
+            if (unit.Team.Allies.Contains(battle.PlayerTeam) == false)
             {
-                sharedExp += enemy.experiencePool;
-                creditsEarned += enemy.creditPool;
+                sharedExp += unit.experiencePool;
+                creditsEarned += unit.creditPool;
             }
         }
 
@@ -133,13 +133,13 @@ public class BattleResolution : MonoBehaviour
         // Grab all dropped items
         foreach (CharacterTemplate unit in battle.Units)
         {
-            if (unit is not EnemyExtension enemy)
+            if (unit is HeroExtension)
                 continue;
 
-            for (int j = 0; j < enemy.DropItems.Count; j++)
+            for (int j = 0; j < unit.DropItems.Count; j++)
             {
-                if (Random.Range(0, 100) < enemy.DropRate[j])
-                    ItemsDropped.Add(enemy.DropItems[j]);
+                if (Random.Range(0, 100) < unit.DropRate[j])
+                    ItemsDropped.Add(unit.DropItems[j]);
             }
         }
 

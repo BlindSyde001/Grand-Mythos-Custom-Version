@@ -6,7 +6,7 @@ public class BattleEnemyModelController : BattleCharacterController
 {
     // VARIABLES
     [SerializeField]
-    internal EnemyExtension myEnemy;
+    internal CharacterTemplate myEnemy;
     private string currentAnimState;
 
     const string Battle_EnterFight = "Enter Fight";

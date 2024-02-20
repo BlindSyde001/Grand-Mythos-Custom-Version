@@ -25,7 +25,7 @@ public abstract class BaseEncounter : IEncounterDefinition
         encounterState.StartCoroutine(OverworldToBattleTransition(Scene, FormationToSpawn()));
     }
 
-    static IEnumerator OverworldToBattleTransition(SceneReference Scene, EnemyExtension[] opponents)
+    static IEnumerator OverworldToBattleTransition(SceneReference Scene, CharacterTemplate[] opponents)
     {
         List<GameObject> gameObjectsToReEnable = new List<GameObject>();
 
@@ -111,7 +111,7 @@ public abstract class BaseEncounter : IEncounterDefinition
     }
 
     protected abstract bool SubIsValid(out string error);
-    protected abstract EnemyExtension[] FormationToSpawn();
+    protected abstract CharacterTemplate[] FormationToSpawn();
 
     public class BackToOverworldOnDestroy : MonoBehaviour
     {

@@ -34,10 +34,10 @@ public class RandomEnemyEncounter : BaseEncounter
         return false;
     }
 
-    protected override EnemyExtension[] FormationToSpawn()
+    protected override CharacterTemplate[] FormationToSpawn()
     {
         int formationSize = Random.Range(FormationSize.Min, FormationSize.Max+1);
-        var output = new EnemyExtension[formationSize];
+        var output = new CharacterTemplate[formationSize];
         for (int j = 0; j < formationSize; j++)
         {
             uint total = 0;
@@ -74,7 +74,7 @@ public class RandomEnemyEncounter : BaseEncounter
     [Serializable]
     public struct EncounterAndRate
     {
-        public EnemyExtension Unit;
+        public CharacterTemplate Unit;
         public uint Chance;
     }
 }

@@ -24,7 +24,7 @@ public class BattleUIOperation : MonoBehaviour
     public List<HeroExtension> heroData;
     public List<HeroPrefabUIData> heroUIData;
 
-    public List<EnemyExtension> enemyData;
+    public List<CharacterTemplate> enemyData;
     public List<EnemyPrefabUIData> enemyUIData;
 
     [Header("Player Main Buttons")]
@@ -146,7 +146,11 @@ public class BattleUIOperation : MonoBehaviour
             if (!ProcessedUnits.Add(unit))
                 continue;
 
-            if (unit is EnemyExtension enemy)
+            if (unit is HeroExtension hero)
+            {
+                heroData.Add(hero);
+            }
+            else if (unit is CharacterTemplate enemy)
             {
                 enemyData.Add(enemy);
 
@@ -163,10 +167,6 @@ public class BattleUIOperation : MonoBehaviour
                 data.healthBar.fillAmount = enemy.MaxHP;
 
                 enemyUIData.Add(data);
-            }
-            else if (unit is HeroExtension hero)
-            {
-                heroData.Add(hero);
             }
         }
 

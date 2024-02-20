@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
     internal List<HeroExtension> _ReservesLineup;  // Who I have available in the Party
 
     [SerializeField]
-    internal List<EnemyExtension> _EnemyLineup;
+    internal List<CharacterTemplate> _EnemyLineup;
     #endregion
     #region DATABASE LIBRARY
     [TitleGroup("LIBRARY COLLECTION")]

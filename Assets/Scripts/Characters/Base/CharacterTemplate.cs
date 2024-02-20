@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public abstract class CharacterTemplate : MonoBehaviour
+public class CharacterTemplate : MonoBehaviour
 {
     [SerializeField]
     [PropertyOrder(0)]
@@ -209,6 +210,22 @@ public abstract class CharacterTemplate : MonoBehaviour
     [PropertyOrder(7)]
     public Tactics[] Tactics = Array.Empty<Tactics>();
 
+
+    /// <summary>
+    /// How much EXP the enemy Gives
+    /// </summary>
+    public int experiencePool;
+    /// <summary>
+    /// How many Credits the enemy Gives
+    /// </summary>
+    public int creditPool;
+
+    /// <summary>
+    /// Loot that the enemy drops
+    /// </summary>
+    public List<ItemCapsule> DropItems;
+    public List<float> DropRate;
+
     // UPDATES
     protected virtual void Awake()
     {
@@ -218,7 +235,17 @@ public abstract class CharacterTemplate : MonoBehaviour
     // METHODS
     public virtual void AssignStats()
     {
+        charName = _CSA._Name;
+        _MaxHP = _CSA._BaseHP;
+        _MaxMP = _CSA._BaseMP;
+        _Attack = _CSA._BaseAttack;
+        _MagAttack = _CSA._BaseMagAttack;
+        _Defense = _CSA._BaseDefense;
+        _MagDefense = _CSA._BaseMagDefense;
 
+        ActionRechargeSpeed = _CSA._BaseSpeed;
+        _CurrentHP = _MaxHP;
+        _CurrentMP = _MaxMP;
     }
 
     public bool IsHostileTo(CharacterTemplate character)

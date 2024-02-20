@@ -12,6 +12,6 @@ public class BattleUIController : MonoBehaviour
     public List<HeroExtension> heroData;
     public List<HeroPrefabUIData> heroUIData;
 
-    public List<EnemyExtension> enemyData;
+    public List<CharacterTemplate> enemyData;
     public List<EnemyPrefabUIData> enemyUIData;
 }

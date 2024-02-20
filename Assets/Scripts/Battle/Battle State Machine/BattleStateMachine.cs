@@ -293,8 +293,8 @@ public class BattleStateMachine : MonoBehaviour
     internal static void ClearData()
     {
         #warning clean this stuff up
-        foreach(EnemyExtension ext in GameManager._instance._EnemyLineup)
-            Destroy(ext.gameObject);
+        foreach(var hostile in GameManager._instance._EnemyLineup)
+            Destroy(hostile.gameObject);
         GameManager._instance._EnemyLineup.Clear();
     }
     #endregion

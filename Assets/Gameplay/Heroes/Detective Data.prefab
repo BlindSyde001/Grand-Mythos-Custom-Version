@@ -41,7 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5234438934277658762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0023f58a3811ddc47abfd8d0de6b1686, type: 3}
+  m_Script: {fileID: 11500000, guid: d15068e09dc949b4892147541d528416, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _CSA: {fileID: 11400000, guid: dd69228387ec27a43b9d8bcd30dbda95, type: 2}
@@ -97,6 +97,10 @@ MonoBehaviour:
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  experiencePool: 0
+  creditPool: 0
+  DropItems: []
+  DropRate: []
   _Level: 1
   _TotalExperience: 0
   _Weapon: {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
@@ -113,6 +117,7 @@ MonoBehaviour:
   equipMagDefense: 0
   equipSpeed: 0
   charBanner: {fileID: 21300000, guid: e2368ee01c9e284449a43aa5be256c28, type: 3}
+  GrowthRate: 1
   references:
     version: 2
     RefIds:

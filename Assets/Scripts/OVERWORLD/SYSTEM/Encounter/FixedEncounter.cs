@@ -3,7 +3,7 @@
 [Serializable]
 public class FixedEncounter : BaseEncounter
 {
-    public EnemyExtension[] Formation;
+    public CharacterTemplate[] Formation;
 
     protected override bool SubIsValid(out string error)
     {
@@ -17,5 +17,5 @@ public class FixedEncounter : BaseEncounter
         return true;
     }
 
-    protected override EnemyExtension[] FormationToSpawn() => Formation;
+    protected override CharacterTemplate[] FormationToSpawn() => Formation;
 }

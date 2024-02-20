@@ -1,28 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public abstract class HeroExtension : CharacterTemplate
+public class HeroExtension : CharacterTemplate
 {
     // VARIABLES
     #region BASE STATS
-    internal virtual int BaseHP { get => _CSA._BaseHP; }
-    internal virtual int BaseMP { get => _CSA._BaseMP; }
-    internal virtual int BaseAttack { get => _CSA._BaseAttack; }
-    internal virtual int BaseMagAttack { get => _CSA._BaseMagAttack; }
-    internal virtual int BaseDefense { get => _CSA._BaseDefense; }
-    internal virtual int BaseMagDefense { get => _CSA._BaseMagDefense; }
-    internal virtual int BaseSpeed { get => _CSA._BaseSpeed; }
+    public int BaseHP => (int)(_CSA._BaseHP * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
+    public int BaseMP => (int)(_CSA._BaseMP * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
+    public int BaseAttack => (int)(_CSA._BaseAttack * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
+    public int BaseMagAttack => (int)(_CSA._BaseMagAttack * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
+    public int BaseDefense => (int)(_CSA._BaseDefense * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
+    public int BaseMagDefense => (int)(_CSA._BaseMagDefense * (1 + GetGrowthRateMultiplier(GrowthRate)) * _Level);
+    public int BaseSpeed => _CSA._BaseSpeed;
     #endregion
+
     #region LEVEL STATS
     [SerializeField]
     [PropertyRange(1, 100)]
     [BoxGroup("LEVEL ATTRIBUTES")]
     [PropertyOrder(2)]
     protected internal int _Level;
-    public int Level { get { return _Level; }
-                       set { _Level = Mathf.Clamp(value, 1, 100); }
+    public int Level
+    {
+        get => _Level;
+        set => _Level = Mathf.Clamp(value, 1, 100);
     }
     [BoxGroup("LEVEL ATTRIBUTES")]
     [PropertyOrder(2)]
@@ -30,14 +34,9 @@ public abstract class HeroExtension : CharacterTemplate
     [SerializeField]
     [BoxGroup("LEVEL ATTRIBUTES")]
     [PropertyOrder(2)]
-    protected internal int _ExperienceToNextLevel { get { return ExperienceThreshold - _TotalExperience; } }  // How Much (Relative) you need
-    internal int ExperienceThreshold { get { return (int)(15 * Mathf.Pow(_Level, 2.3f) + (15 * _Level)); } }  // How Much (Total) you need
-    internal int PrevExperienceThreshold { get { return (int)(15 * Mathf.Pow((_Level-1), 2.3f) + (15 * (_Level-1))); } }
-
-    private protected float _GrowthRateHyper = 0.5f;
-    private protected float _GrowthRateStrong = 0.3f;
-    private protected float _GrowthRateAverage = 0.2f;
-    private protected float _GrowthRateWeak = 0.1f;
+    public int ExperienceToNextLevel => ExperienceThreshold - _TotalExperience; // How Much (Relative) you need
+    public int ExperienceThreshold => (int)(15 * Mathf.Pow(_Level, 2.3f) + (15 * _Level)); // How Much (Total) you need
+    public int PrevExperienceThreshold => (int)(15 * Mathf.Pow((_Level-1), 2.3f) + (15 * (_Level-1)));
     #endregion
     #region EQUIPMENT STATS
     [TitleGroup("EQUIPMENT ATTRIBUTES")]
@@ -140,11 +139,38 @@ public abstract class HeroExtension : CharacterTemplate
     [HideLabel]
     internal Sprite charBanner;
 
+    public GrowthRate GrowthRate;
+
+    static float GetGrowthRateMultiplier(GrowthRate growthRate) => growthRate switch
+    {
+        GrowthRate.Average => 0.2f,
+        GrowthRate.Strong => 0.3f,
+        GrowthRate.Hyper => 0.5f,
+        GrowthRate.Weak => 0.1f,
+        GrowthRate.Fixed => 0f,
+        _ => throw new ArgumentOutOfRangeException(nameof(growthRate), growthRate, null)
+    };
+
     // UPDATES
     protected override void Awake()
     {
         InitializeCharacter();
         EquipStats();
+        base.Awake();
+    }
+    public override void AssignStats()
+    {
+        _MaxHP = BaseHP + equipHP;
+        _MaxMP = BaseMP + equipMP;
+        _Attack = BaseAttack + equipAttack;
+        _MagAttack = BaseMagAttack + equipMagAttack;
+        _Defense = BaseDefense + equipDefense;
+        _MagDefense = BaseMagDefense + equipMagDefense;
+        _Speed = BaseSpeed + equipSpeed;
+
+        ActionRechargeSpeed = Speed;
+        _CurrentHP = _MaxHP;
+        _CurrentMP = _MaxMP;
     }
 
     // METHODS
@@ -217,4 +243,14 @@ public abstract class HeroExtension : CharacterTemplate
         }
     }
     #endregion
+}
+
+
+public enum GrowthRate
+{
+    Average,
+    Strong,
+    Hyper,
+    Weak,
+    Fixed,
 }

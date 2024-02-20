@@ -37,7 +37,7 @@ public class RandomFormationEncounter : BaseEncounter
         return false;
     }
 
-    protected override EnemyExtension[] FormationToSpawn()
+    protected override CharacterTemplate[] FormationToSpawn()
     {
         uint total = 0;
 
@@ -63,7 +63,7 @@ public class RandomFormationEncounter : BaseEncounter
     [Serializable]
     public struct EncounterAndRate
     {
-        public EnemyExtension[] Formation;
+        public CharacterTemplate[] Formation;
         public uint Chance;
     }
 }
