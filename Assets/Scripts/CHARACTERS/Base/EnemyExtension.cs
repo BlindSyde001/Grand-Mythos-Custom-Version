@@ -3,10 +3,6 @@ using UnityEngine;
 
 public class EnemyExtension : CharacterTemplate
 {
-
-    [SerializeField]
-    internal BattleEnemyModelController myBattleEnemyController;
-
     [SerializeField]
     internal int experiencePool;                // How much EXP the enemy Gives
     [SerializeField]

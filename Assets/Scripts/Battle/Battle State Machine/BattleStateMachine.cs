@@ -9,6 +9,7 @@ public class BattleStateMachine : MonoBehaviour
 {
     public Team PlayerTeam;
     public SerializableHashSet<CharacterTemplate> Units = new();
+    public SerializableHashSet<CharacterTemplate> TacticsDisabled = new();
 
     [NonSerialized]
     public BlockBattleFlags blocked;
@@ -28,7 +29,7 @@ public class BattleStateMachine : MonoBehaviour
     public delegate void SwitchToNewState(CombatState CS);
     public static event SwitchToNewState OnNewStateSwitched;
 
-    public static CombatState _CombatState;
+    CombatState _combatState;
     CinemachineFreeLook rotateCam;
 
     // UPDATES
@@ -40,42 +41,52 @@ public class BattleStateMachine : MonoBehaviour
     void Start()
     {
         var gameManager = GameManager._instance;
+        for (int i = 0; i < gameManager._ReservesLineup.Count; i++)
+            gameManager._ReservesLineup[i].gameObject.SetActive(false);
+
         for (int i = 0; i < gameManager._PartyLineup.Count; i++)
         {
-            // Add the Controller
-            _HeroControllers.Add(gameManager._PartyLineup[i].myBattleHeroController);
+            var hero = gameManager._PartyLineup[i];
 
             // Add Model into Battle
-            GameObject instantiatedHeroModel = Instantiate(_HeroControllers[i].myHero._CharacterModel,
+            var model = Instantiate(hero._CharacterModel,
                 _HeroSpawns[i].position,
                 _HeroSpawns[i].rotation,
                 GameObject.Find("Hero Model Data").transform);
-            instantiatedHeroModel.name = _HeroControllers[i].myHero.charName + " Model";
+
+            if (model.TryGetComponent(out BattleHeroModelController controller) == false)
+                controller = model.AddComponent<BattleHeroModelController>();
+            _HeroControllers.Add(controller);
 
             // Attach Relevant References
-            _HeroControllers[i].animator = instantiatedHeroModel.GetComponent<Animator>();  // The Animator Component
-            _HeroControllers[i].myMovementController = instantiatedHeroModel.GetComponent<BattleArenaMovement>();
+            controller.animator = model.GetComponent<Animator>();  // The Animator Component
+            controller.myMovementController = model.GetComponent<BattleArenaMovement>();
+            controller.myHero = hero;
+            model.name = $"{hero.charName} Model";
 
             gameManager._PartyLineup[i].ActionChargePercent = Random.Range(0, 50);
         }
 
         for (int i = 0; i < gameManager._EnemyLineup.Count; i++)
         {
-            // Add Controller
-            _EnemyControllers.Add(gameManager._EnemyLineup[i].myBattleEnemyController);
+            var enemy = gameManager._EnemyLineup[i];
 
             // Add Model into Battle
-            GameObject instantiatedEnemyModel = Instantiate(_EnemyControllers[i].myEnemy._CharacterModel,
+            var model = Instantiate(enemy._CharacterModel,
                 _EnemySpawns[i].position,
                 _EnemySpawns[i].rotation,
-                _EnemyControllers[i].myEnemy.transform);
+                enemy.transform);
 
-            instantiatedEnemyModel.name = _EnemyControllers[i].myEnemy.charName + " Model " + i;
+            if (model.TryGetComponent(out BattleEnemyModelController controller) == false)
+                controller = model.AddComponent<BattleEnemyModelController>();
+            _EnemyControllers.Add(controller);
+
+            model.name = $"{enemy.charName} Model {i}";
 
             // Attach Relevant References
-            _EnemyControllers[i].animator = instantiatedEnemyModel.GetComponent<Animator>();         // The Animator Component
-
-            _EnemyControllers[i].myEnemy.ActionChargePercent = Random.Range(0, 50);                  // The ATB Bar
+            controller.animator = model.GetComponent<Animator>();         // The Animator Component
+            controller.myEnemy = enemy;
+            enemy.ActionChargePercent = Random.Range(0, 50);                  // The ATB Bar
         }
 
         SwitchCombatState(CombatState.START);
@@ -86,7 +97,10 @@ public class BattleStateMachine : MonoBehaviour
     {
         #warning this is not flexible enough, what if a character comes in in the middle of a fight
         foreach (CharacterTemplate target in FindObjectsOfType<CharacterTemplate>())
-            Units.Add(target);
+        {
+            if (target.isActiveAndEnabled)
+                Units.Add(target);
+        }
     }
 
     void CleanUpdate()
@@ -132,7 +146,7 @@ public class BattleStateMachine : MonoBehaviour
         _unitsCopy.AddRange(Units);
         foreach (var unit in Units)
         {
-            if (unit._CurrentHP == 0)
+            if (unit._CurrentHP == 0 || TacticsDisabled.Contains(unit))
                 continue;
 
             if (unit.ActionChargePercent < 100)
@@ -232,22 +246,22 @@ public class BattleStateMachine : MonoBehaviour
         switch(newCombatState)
         {
             case CombatState.START:
-                _CombatState = CombatState.START;
+                _combatState = CombatState.START;
                 OnNewStateSwitched?.Invoke(newCombatState);
                 break;
 
             case CombatState.ACTIVE:
-                _CombatState = CombatState.ACTIVE;
+                _combatState = CombatState.ACTIVE;
                 OnNewStateSwitched?.Invoke(newCombatState);
                 break;
 
             case CombatState.WAIT:
-                _CombatState = CombatState.WAIT;
+                _combatState = CombatState.WAIT;
                 OnNewStateSwitched?.Invoke(newCombatState);
                 break;
 
             case CombatState.END:
-                _CombatState = CombatState.END;
+                _combatState = CombatState.END;
                 OnNewStateSwitched?.Invoke(newCombatState);
                 break;
         }

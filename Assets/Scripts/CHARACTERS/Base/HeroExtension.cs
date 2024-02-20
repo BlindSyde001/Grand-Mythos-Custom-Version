@@ -134,11 +134,6 @@ public abstract class HeroExtension : CharacterTemplate
     internal int EquipSpeed { get => equipSpeed; }
     #endregion
 
-
-    [SerializeField]
-    [PropertyOrder(-1)]
-    internal BattleHeroModelController myBattleHeroController;
-
     [SerializeField]
     [PreviewField(100)]
     [PropertyOrder(0)]

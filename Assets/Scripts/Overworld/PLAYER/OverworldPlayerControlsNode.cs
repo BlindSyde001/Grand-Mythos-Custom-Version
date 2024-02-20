@@ -215,6 +215,8 @@ public class OverworldPlayerControlsNode : ReloadableBehaviour
 
     void JumpLinkQuery()
     {
+        const Allocator allocator = Allocator.TempJob;
+
         var position = Controller.transform.position;
         var navMeshWorld = NavMeshWorld.GetDefaultWorld();
         if (navMeshWorld.IsValid() == false)
@@ -223,12 +225,12 @@ public class OverworldPlayerControlsNode : ReloadableBehaviour
             return;
         }
 
-        using var edgeVertices = new NativeArray<Vector3>(6, Allocator.Temp);
-        using var neighbors = new NativeArray<PolygonId>(32, Allocator.Temp);
-        using var indices = new NativeArray<byte>(neighbors.Length, Allocator.Temp);
-        using var edgeVerticesForLink = new NativeArray<Vector3>(4, Allocator.Temp);
+        using var edgeVertices = new NativeArray<Vector3>(6, allocator);
+        using var neighbors = new NativeArray<PolygonId>(32, allocator);
+        using var indices = new NativeArray<byte>(neighbors.Length, allocator);
+        using var edgeVerticesForLink = new NativeArray<Vector3>(4, allocator);
 
-        using var navQuery = new NavMeshQuery(navMeshWorld, Allocator.Temp);
+        using var navQuery = new NavMeshQuery(navMeshWorld, allocator);
         var closestLocation = navQuery.MapLocation(position, Vector3.one, agentTypeID:0);
         var neighborsResult = navQuery.GetEdgesAndNeighbors(closestLocation.polygon, edgeVertices, neighbors, indices, out int verticesCount, out int neighborsTotal);
 

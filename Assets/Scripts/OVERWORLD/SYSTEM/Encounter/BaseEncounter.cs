@@ -20,6 +20,8 @@ public abstract class BaseEncounter : IEncounterDefinition
         var battleTransition = new GameObject(nameof(EncounterState));
         UnityEngine.Object.DontDestroyOnLoad(battleTransition);
         var encounterState = battleTransition.AddComponent<EncounterState>();
+        foreach (var reserve in GameManager._instance._ReservesLineup)
+            reserve.gameObject.SetActive(false);
         encounterState.StartCoroutine(OverworldToBattleTransition(Scene, FormationToSpawn()));
     }
 

@@ -61,6 +61,7 @@ public class BattleUIOperation : MonoBehaviour
     Coroutine _runningUIOperation;
     bool _listenerBound;
     PlayerControls _playerControls;
+    Color _initialTacticsColor, _disabledTacticsColor;
 
     Tactics _tempTactics = new();
     List<IAction> _currentActionHints = new();
@@ -88,10 +89,13 @@ public class BattleUIOperation : MonoBehaviour
         if (_listenerBound == false)
         {
             _listenerBound = true;
+            _initialTacticsColor = Tactics.colors.normalColor;
+            _disabledTacticsColor = Tactics.colors.disabledColor;
+            UpdateTacticsButtonColor();
             Attack.onClick.AddListener(() => TryOrderWizard(PresentAttackUI().GetEnumerator()));
             Skills.onClick.AddListener(() => TryOrderWizard(PresentSkillsUI().GetEnumerator()));
             Items.onClick.AddListener(() => TryOrderWizard(PresentItemUI().GetEnumerator()));
-            Tactics.onClick.AddListener(() => TryOrderWizard(TacticsSelected().GetEnumerator()));
+            Tactics.onClick.AddListener(TacticsPressed);
 
             Schedule.onClick.AddListener(() => ScheduleOrder(_tempTactics));
             Discard.onClick.AddListener(CancelFullOrder);
@@ -323,10 +327,21 @@ public class BattleUIOperation : MonoBehaviour
         }
     }
 
-    IEnumerable TacticsSelected()
+    void TacticsPressed()
     {
-        Debug.LogError("Not implemented");
-        yield break;
+        if (BattleManagement.TacticsDisabled.Contains(UnitSelected))
+            BattleManagement.TacticsDisabled.Remove(UnitSelected);
+        else
+            BattleManagement.TacticsDisabled.Add(UnitSelected);
+        UpdateTacticsButtonColor();
+        Attack.Select();
+    }
+
+    void UpdateTacticsButtonColor()
+    {
+        var cols = Tactics.colors;
+        cols.normalColor = BattleManagement.TacticsDisabled.Contains(UnitSelected) ? _disabledTacticsColor : _initialTacticsColor;
+        Tactics.colors = cols;
     }
 
     IEnumerable PresentTargetSelectionUI()
@@ -488,6 +503,7 @@ public class BattleUIOperation : MonoBehaviour
             if (BattleManagement.PartyLineup[k]._CurrentHP > 0)
             {
                 UnitSelected = BattleManagement.PartyLineup[k];
+                UpdateTacticsButtonColor();
                 break;
             }
         }
