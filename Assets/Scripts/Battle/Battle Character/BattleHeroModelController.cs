@@ -7,7 +7,8 @@ public class BattleHeroModelController : BattleCharacterController
     // VARIABLES
     [SerializeField]
     internal HeroExtension myHero;
-    private string currentAnimState;
+
+    string currentAnimState;
     internal bool isPerformingActions;
 
     const string Battle_EnterFight = "Enter Fight";
@@ -15,16 +16,17 @@ public class BattleHeroModelController : BattleCharacterController
     const string Battle_Die = "Die";
 
     // UPDATES
-    private void OnEnable()
+    void OnEnable()
     {
         BattleStateMachine.OnNewStateSwitched += NewCombatState;
     }
-    private void OnDisable()
+
+    void OnDisable()
     {
         BattleStateMachine.OnNewStateSwitched -= NewCombatState;
     }
 
-    private void NewCombatState(CombatState combatState)
+    void NewCombatState(CombatState combatState)
     {
         switch(combatState)
         {
@@ -64,7 +66,8 @@ public class BattleHeroModelController : BattleCharacterController
                 break;
         }
     }
-    private void ChangeAnimationState(string newAnimState)
+
+    void ChangeAnimationState(string newAnimState)
     {
         animator.Play(newAnimState);
         currentAnimState = newAnimState;

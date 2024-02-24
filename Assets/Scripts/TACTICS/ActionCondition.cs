@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class ActionCondition : ScriptableObject
+public class ActionCondition : IdentifiableScriptableObject
 {
     [BoxGroup(nameof(TargetFilter), LabelText = @"@""TargetFilter:   "" + this.TargetFilter?.UIDisplayText")]
     [InfoBox("If at least one unit matches this condition, the AI will execute the action on them")]

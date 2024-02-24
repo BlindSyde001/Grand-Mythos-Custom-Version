@@ -6,10 +6,9 @@ using DG.Tweening;
 
 public class TacticsMenuActions : MenuContainer
 {
-    private HeroExtension selectedHero;
-    private bool listCoroutineRunning;
-
-    private List<IAction> ActionsList = new();
+    HeroExtension selectedHero;
+    bool listCoroutineRunning;
+    List<IAction> ActionsList = new();
     public GameObject segmentsWarning;
 
     #region GameObject References
@@ -19,14 +18,14 @@ public class TacticsMenuActions : MenuContainer
     public List<NewComponentContainer> newComponentList;
     #endregion
     #region Customising Tactics
-    private Tactics tacticCndToChange;
-    private ActionCondition cndToBecome;
 
-    private Tactics tacticToChange;
-    private int tacticActionOrderToChange = 4;
-    private IAction actionToBecome;
-    private int tacticActionListOrder;
-    private TacticsModuleContainer currentContainer;
+    Tactics tacticCndToChange;
+    ActionCondition cndToBecome;
+    Tactics tacticToChange;
+    int tacticActionOrderToChange = 4;
+    IAction actionToBecome;
+    int tacticActionListOrder;
+    TacticsModuleContainer currentContainer;
     #endregion
 
     //METHODS
@@ -40,7 +39,7 @@ public class TacticsMenuActions : MenuContainer
             gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
             gameObject.transform.GetChild(2).DOLocalMove(new Vector3(230, -100, 0), menuInputs.speed);
             SetHeroSelection();
-            SetTacticsList(GameManager._PartyLineup[0]);
+            SetTacticsList(GameManager.PartyLineup[0]);
         }
     }
     public override IEnumerable Close(MenuInputs menuInputs)
@@ -59,7 +58,7 @@ public class TacticsMenuActions : MenuContainer
         }
     }
 
-    private IEnumerator ComponentListOpen()
+    IEnumerator ComponentListOpen()
     {
         if (!listCoroutineRunning)
         {
@@ -70,7 +69,8 @@ public class TacticsMenuActions : MenuContainer
             listCoroutineRunning = false;
         }
     }
-    private IEnumerator ComponentListClose()
+
+    IEnumerator ComponentListClose()
     {
         if(!listCoroutineRunning)
         {
@@ -94,12 +94,12 @@ public class TacticsMenuActions : MenuContainer
             a.gameObject.SetActive(false);
             a.onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < GameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager.PartyLineup.Count; i++)
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
-            heroSelections[i].GetComponent<Image>().sprite = GameManager._PartyLineup[j].charPortrait;
-            heroSelections[i].onClick.AddListener(delegate { SetTacticsList(GameManager._PartyLineup[j]); });
+            heroSelections[i].GetComponent<Image>().sprite = GameManager.PartyLineup[j].Portrait;
+            heroSelections[i].onClick.AddListener(delegate { SetTacticsList(GameManager.PartyLineup[j]); });
         }
     }
     public void SetTacticsList(HeroExtension hero)
@@ -142,7 +142,8 @@ public class TacticsMenuActions : MenuContainer
         }
     }
     #region Action Segment Methods
-    private void ResetActionSegments()
+
+    void ResetActionSegments()
     {
         foreach(TacticsModuleContainer t in tacticsModules)
         {
@@ -174,7 +175,8 @@ public class TacticsMenuActions : MenuContainer
             }
         }
     }
-    private void SetActionsBasedOnSegmentCost(uint cost, int tOrder, int aOrder)
+
+    void SetActionsBasedOnSegmentCost(uint cost, int tOrder, int aOrder)
     {
         int allowance = (int)tacticsModules[tOrder].actionAllowance;
         if (allowance + cost > 4)
@@ -237,13 +239,15 @@ public class TacticsMenuActions : MenuContainer
             btn.onClick.AddListener(delegate { SelectTacticAction(tacticsModules[tOrder], selectedHero.Tactics[tOrder], FindEmptyActionSlot(tOrder)); });
         }
     }
-    private IEnumerator SendWarning()
+
+    IEnumerator SendWarning()
     {
         segmentsWarning.SetActive(true);
         yield return new WaitForSeconds(2f);
         segmentsWarning.SetActive(false);
     }
-    private void ReOrderActions(int tOrder, int aOrder)
+
+    void ReOrderActions(int tOrder, int aOrder)
     {
         uint eAllowance = 0;
         for (int i = 0; i < selectedHero.Tactics[tOrder].Actions.Length; i++)
@@ -262,7 +266,8 @@ public class TacticsMenuActions : MenuContainer
             }
         }
     }
-    private int FindEmptyActionSlot(int tOrder)
+
+    int FindEmptyActionSlot(int tOrder)
     {
         for(int i = 0; i < selectedHero.Tactics[tOrder].Actions.Length; i++)
         {
@@ -307,9 +312,9 @@ public class TacticsMenuActions : MenuContainer
     {
         ActionsList.Clear();
         ActionsList.Add(selectedHero.BasicAttack);
-        foreach(var a in InventoryManager.ConsumablesInBag)
+        foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
         {
-            ActionsList.Add((Consumable)a.thisItem);
+            ActionsList.Add(item);
         }
         foreach(var a in selectedHero.Skills)
         {
@@ -333,9 +338,9 @@ public class TacticsMenuActions : MenuContainer
                 }
                 else
                 {
-                    for (int k = 0; k < InventoryManager.ConsumablesInBag.Count; k++)
+                    foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
                     {
-                        if(InventoryManager.ConsumablesInBag[k].thisItem.name == ActionsList[(pageNo * 10) + i].Name)
+                        if (item.name == ActionsList[(pageNo * 10) + i].Name)
                         {
                             newComponentList[i].selectedAction = ActionsList[(pageNo * 10) + i];
                             newComponentList[i].cmpName.text = newComponentList[i].selectedAction.Name;
@@ -362,7 +367,8 @@ public class TacticsMenuActions : MenuContainer
         tactic.IsOn = !tactic.IsOn;
         thisContainer.onToggle.text = tactic.IsOn ? "On" : "Off";
     }
-    private bool CheckActionsStatus(Tactics tactic)
+
+    bool CheckActionsStatus(Tactics tactic)
     {
         foreach(IAction action in tactic.Actions)
         {
@@ -409,7 +415,8 @@ public class TacticsMenuActions : MenuContainer
         tacticCndToChange = null;
         StartCoroutine(ComponentListClose());
     }
-    private void SwapCnds()
+
+    void SwapCnds()
     {
         tacticCndToChange.Condition = cndToBecome;
         currentContainer.condition.text = tacticCndToChange.Condition.name;
@@ -449,7 +456,8 @@ public class TacticsMenuActions : MenuContainer
         tacticToChange = null;
         StartCoroutine(ComponentListClose());
     }
-    private void SwapActions()
+
+    void SwapActions()
     {
         // Swap Action Function
         tacticToChange.Actions[tacticActionOrderToChange] = actionToBecome;

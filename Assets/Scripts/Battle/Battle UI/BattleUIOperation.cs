@@ -189,7 +189,7 @@ public class BattleUIOperation : MonoBehaviour
             }
         }
 
-        SelectedUI.characterIcon.sprite = UnitSelected.charPortrait;
+        SelectedUI.characterIcon.sprite = UnitSelected.Portrait;
         SelectedUI.atbBar.fillAmount = UnitSelected.ActionsCharged / UnitSelected.ActionChargeMax;
         SelectedUI.healthBar.fillAmount = (float)UnitSelected.CurrentHP / UnitSelected.EffectiveStats.HP;
         SelectedUI.health.text = UnitSelected.CurrentHP.ToString();
@@ -199,7 +199,7 @@ public class BattleUIOperation : MonoBehaviour
             if (heroData[i] != UnitSelected)
             {
                 heroUIData[j].gameObject.SetActive(true);
-                heroUIData[j].characterIcon.sprite = heroData[i].charPortrait;
+                heroUIData[j].characterIcon.sprite = heroData[i].Portrait;
                 heroUIData[j].atbBar.fillAmount = heroData[i].ActionsCharged / heroData[i].ActionChargeMax;
                 heroUIData[j].healthBar.fillAmount = (float)heroData[i].CurrentHP / heroData[i].EffectiveStats.HP;
                 heroUIData[j].health.text = heroData[i].CurrentHP.ToString();

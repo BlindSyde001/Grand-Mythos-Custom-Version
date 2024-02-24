@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5234438934277658762
+--- !u!1 &9187409409059822421
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5234438934277658764}
-  - component: {fileID: 5234438934277658765}
+  - component: {fileID: 9187409409059822419}
+  - component: {fileID: 9187409409059822420}
   m_Layer: 0
-  m_Name: Detective Data
+  m_Name: Flagbearer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5234438934277658764
+--- !u!4 &9187409409059822419
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5234438934277658762}
+  m_GameObject: {fileID: 9187409409059822421}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,62 +32,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5234438934277658765
+--- !u!114 &9187409409059822420
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5234438934277658762}
+  m_GameObject: {fileID: 9187409409059822421}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d15068e09dc949b4892147541d528416, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Team: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
-  charPortrait: {fileID: 21300000, guid: 8c4789b052a71724eae732d73e226d70, type: 3}
-  _CharacterModel: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
-  CurrentHP: 201
-  CurrentMP: 100
+  BattlePrefab: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
+  Portrait: {fileID: 21300000, guid: e8ebef25f0f504b4aa936076404e341d, type: 3}
+  CurrentHP: 154
+  CurrentMP: 70
   BaseStats:
-    HP: 20
+    HP: 22
     MP: 10
-    Attack: 5
-    MagAttack: 5
-    Defense: 5
-    MagDefense: 5
+    Attack: 8
+    MagAttack: 8
+    Defense: 8
+    MagDefense: 8
     Speed: 20
   _effectiveStatsPreview:
-    HP: 201
-    MP: 100
-    Attack: 50
-    MagAttack: 50
-    Defense: 50
-    MagDefense: 50
+    HP: 154
+    MP: 70
+    Attack: 56
+    MagAttack: 56
+    Defense: 56
+    MagDefense: 56
     Speed: 20
-  GrowthRate: 3
-  Experience: 2496
-  StartingLevel: 7
-  _AffinityFIRE: 0
-  _AffinityICE: 0
-  _AffinityLIGHTNING: 0
-  _AffinityWATER: 0
-  _ResistBLIND: 0
-  _ResistSILENCE: 0
-  _ResistFUROR: 0
-  _ResistPARALYSIS: 0
-  _ResistPHYSICAL: 0
-  _ResistMAGICAL: 0
-  _IsBlinded: 0
-  _IsSilenced: 0
-  _IsFurored: 0
-  _IsParalysed: 0
-  _IsPhysDown: 0
-  _IsMagDown: 0
-  ActionChargePercent: 0
+  GrowthRate: 2
+  Experience: 982
+  StartingLevel: 5
+  AffinityFIRE: 0
+  AffinityICE: 0
+  AffinityLIGHTNING: 0
+  AffinityWATER: 0
+  IsBlinded: 0
+  IsSilenced: 0
+  IsFurored: 0
+  IsParalysed: 0
+  IsPhysDown: 0
+  IsMagDown: 0
+  ResistBLIND: 0
+  ResistSILENCE: 0
+  ResistFUROR: 0
+  ResistPARALYSIS: 0
+  ResistPHYSICAL: 0
+  ResistMAGICAL: 0
+  ActionsCharged: 0
   ActionChargeMax: 4
-  Inventory:
-    rid: 1000
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   SkillTree: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
   Skills:
@@ -106,11 +104,11 @@ MonoBehaviour:
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-  experiencePool: 0
-  creditPool: 0
+  Inventory:
+    rid: 1000
+  ExperiencePool: 0
+  CreditPool: 0
   DropItems: []
-  DropRate: []
-  _Level: 1
   _Weapon: {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
   myWeaponType: 0
   _Armour: {fileID: 11400000, guid: 370d5bab6d025854ab86d6f8679d5c32, type: 2}
@@ -124,7 +122,10 @@ MonoBehaviour:
   equipDefense: 0
   equipMagDefense: 0
   equipSpeed: 0
-  charBanner: {fileID: 21300000, guid: e2368ee01c9e284449a43aa5be256c28, type: 3}
+  Banner: {fileID: 21300000, guid: 727db8c394622dc489df6aba97aa5d2e, type: 3}
+  _guid:
+    a: 5052209774049475975
+    b: 3919714855663956155
   references:
     version: 2
     RefIds:
@@ -132,6 +133,4 @@ MonoBehaviour:
       type: {class: InlineInventory, ns: , asm: Assembly-CSharp}
       data:
         Items:
-          _backingArray:
-          - Key: {fileID: 11400000, guid: c3e8c33b06bdfd743b3d97ec82551ce3, type: 2}
-            Value: 1
+          _backingArray: []

@@ -13,10 +13,8 @@ public class ItemMenuActions : MenuContainer
     public TextMeshProUGUI itemDescriptionText;
     public TextMeshProUGUI itemDescriptionStats;
 
-    [SerializeField]
-    private int selectedList;
-    [SerializeField]
-    private Button SortButton;
+    [SerializeField] int selectedList;
+    [SerializeField] Button SortButton;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
@@ -51,117 +49,46 @@ public class ItemMenuActions : MenuContainer
         }
     }
 
-    public void ShowConsumables()
+    public void ShowConsumables() => Show<Consumable>();
+    public void ShowEquipment() => Show<Equipment>();
+
+    public void ShowKeyItems() => Show<KeyItem>();
+
+    public void ShowLoot() => Show<Loot>();
+
+    public void Show<T>() where T : BaseItem
     {
         itemDescriptionName.text = "";
         itemDescriptionText.text = "";
         itemDescriptionStats.text = "";
         foreach(GameObject a in ItemButtons)
         {
-            a.GetComponent<ItemButtonContainer>().itemName.text = "";
-            a.GetComponent<ItemButtonContainer>().itemAmount.text = "";
-            a.GetComponent<ItemButtonContainer>().itemDescription = "";
+            var btn = a.GetComponent<ItemButtonContainer>();
+            btn.itemName.text = "";
+            btn.itemAmount.text = "";
+            btn.itemDescription = "";
             a.GetComponent<Button>().onClick.RemoveAllListeners();
         }
-        for(int i = 0; i < InventoryManager.ConsumablesInBag.Count; i++)
+
+        int i = 0;
+        foreach (var (item, count) in InventoryManager.Enumerate<T>())
         {
             ItemButtons[i].SetActive(true);
-            ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
-            
-            btn.itemName.text = InventoryManager.ConsumablesInBag[i].thisItem.name;
-            btn.itemAmount.text = InventoryManager.ConsumablesInBag[i].ItemAmount.ToString();
-            btn.itemDescription = InventoryManager.ConsumablesInBag[i].thisItem.Description;
+            var btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
 
-            btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
+            btn.itemName.text = item.name;
+            btn.itemAmount.text = count.ToString();
+            btn.itemDescription = item.Description;
+
+            btn.GetComponent<Button>().onClick.AddListener(() => DisplayItemDescription(btn));
+            i++;
         }
         selectedList = 0;
         SortButton.onClick.RemoveAllListeners();
-        SortButton.onClick.AddListener(delegate { CallSortInventory(); });
-        SortButton.onClick.AddListener(delegate { ShowConsumables(); });
+        SortButton.onClick.AddListener(CallSortInventory);
+        SortButton.onClick.AddListener(ShowConsumables);
     }
-    public void ShowEquipment()
-    {
-        itemDescriptionName.text = "";
-        itemDescriptionText.text = "";
-        itemDescriptionStats.text = "";
-        foreach (GameObject a in ItemButtons)
-        {
-            a.GetComponent<ItemButtonContainer>().itemName.text = "";
-            a.GetComponent<ItemButtonContainer>().itemAmount.text = "";
-            a.GetComponent<Button>().onClick.RemoveAllListeners();
-        }
-        for (int i = 0; i < InventoryManager.EquipmentInBag.Count; i++)
-        {
-            ItemButtons[i].SetActive(true);
-            ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
 
-            btn.itemName.text = InventoryManager.EquipmentInBag[i].thisItem.name;
-            btn.itemAmount.text = InventoryManager.EquipmentInBag[i].ItemAmount.ToString();
-            btn.itemDescription = InventoryManager.EquipmentInBag[i].thisItem.Description;
-
-            btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
-        }
-        selectedList = 1;
-        SortButton.onClick.RemoveAllListeners();
-        SortButton.onClick.AddListener(delegate { CallSortInventory(); });
-        SortButton.onClick.AddListener(delegate { ShowEquipment(); });
-    }
-    public void ShowKeyItems()
-    {
-        itemDescriptionName.text = "";
-        itemDescriptionText.text = "";
-        itemDescriptionStats.text = "";
-        foreach (GameObject a in ItemButtons)
-        {
-            a.GetComponent<ItemButtonContainer>().itemName.text = "";
-            a.GetComponent<ItemButtonContainer>().itemAmount.text = "";
-            a.GetComponent<ItemButtonContainer>().itemDescription = "";
-            a.GetComponent<Button>().onClick.RemoveAllListeners();
-        }
-        for (int i = 0; i < InventoryManager.KeyItemsInBag.Count; i++)
-        {
-            ItemButtons[i].SetActive(true);
-            ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
-
-            btn.itemName.text = InventoryManager.KeyItemsInBag[i].thisItem.name;
-            btn.itemAmount.text = InventoryManager.KeyItemsInBag[i].ItemAmount.ToString();
-            btn.itemDescription = InventoryManager.KeyItemsInBag[i].thisItem.Description;
-
-            btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
-        }
-        selectedList = 2;
-        SortButton.onClick.RemoveAllListeners();
-        SortButton.onClick.AddListener(delegate { CallSortInventory(); });
-        SortButton.onClick.AddListener(delegate { ShowKeyItems(); });
-    }
-    public void ShowLoot()
-    {
-        itemDescriptionName.text = "";
-        itemDescriptionText.text = "";
-        itemDescriptionStats.text = "";
-        foreach (GameObject a in ItemButtons)
-        {
-            a.GetComponent<ItemButtonContainer>().itemName.text = "";
-            a.GetComponent<ItemButtonContainer>().itemAmount.text = "";
-            a.GetComponent<ItemButtonContainer>().itemDescription = "";
-            a.GetComponent<Button>().onClick.RemoveAllListeners();
-        }
-        for (int i = 0; i < InventoryManager.LootInBag.Count; i++)
-        {
-            ItemButtons[i].SetActive(true);
-            ItemButtonContainer btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
-
-            btn.itemName.text = InventoryManager.LootInBag[i].thisItem.name;
-            btn.itemAmount.text = InventoryManager.LootInBag[i].ItemAmount.ToString();
-            btn.itemDescription = InventoryManager.LootInBag[i].thisItem.Description;
-
-            btn.GetComponent<Button>().onClick.AddListener(delegate { DisplayItemDescription(btn); });
-        }
-        selectedList = 3;
-        SortButton.onClick.RemoveAllListeners();
-        SortButton.onClick.AddListener(delegate { CallSortInventory(); });
-        SortButton.onClick.AddListener(delegate { ShowLoot(); });
-    }
     internal void DisplayItemDescription(ItemButtonContainer data)
     {
         itemDescriptionName.text = data.itemName.text;
@@ -170,6 +97,6 @@ public class ItemMenuActions : MenuContainer
 
     public void CallSortInventory()
     {
-        InventoryManager.SortInventory(selectedList);
+        InventoryManager.SortBy(InventoryManager.Sort.Name);
     }
 }

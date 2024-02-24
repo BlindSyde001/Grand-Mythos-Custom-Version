@@ -5,21 +5,16 @@ using DG.Tweening;
 
 public class StartMenuActions : MenuContainer
 {
-    [SerializeField]
-    private List<PartyContainer> displayList;
-    [SerializeField]
-    private List<ReserveContainer> reserveDisplayList;
-    [SerializeField]
-    private MiscContainer miscList;
-    [SerializeField]
-    private InGameClock inGameClock;
+    [SerializeField] List<PartyContainer> displayList;
+    [SerializeField] List<ReserveContainer> reserveDisplayList;
+    [SerializeField] MiscContainer miscList;
+    [SerializeField] InGameClock inGameClock;
 
-    private void LateUpdate()
+    void LateUpdate()
     {
-        miscList.miscTime.text = ((inGameClock.hour < 10)? ("0" + inGameClock.hour) : inGameClock.hour) + ":" + 
-                                 ((inGameClock.minute < 10)? ("0" + inGameClock.minute) : inGameClock.minute) + ":" + 
-                                 ((inGameClock.second < 10)? ("0" + inGameClock.second) : inGameClock.second); 
+        miscList.miscTime.text = inGameClock.DurationTotal.ToString(@"hh\:mm\:ss");
     }
+
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
@@ -57,12 +52,12 @@ public class StartMenuActions : MenuContainer
         {
             a.gameObject.SetActive(false);
         }
-        for (int i = 0; i < GameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager.PartyLineup.Count; i++)
         {
-            var hero = GameManager._PartyLineup[i];
+            var hero = GameManager.PartyLineup[i];
             displayList[i].gameObject.SetActive(true);
             displayList[i].displayName.text = hero.gameObject.name;
-            displayList[i].displayBanner.sprite = hero.charBanner;
+            displayList[i].displayBanner.sprite = hero.Banner;
             displayList[i].displayLevel.text = hero.Level.ToString();
 
             displayList[i].displayEXPBar.fillAmount = (float)(hero.Experience - hero.PrevExperienceThreshold) /
@@ -75,18 +70,18 @@ public class StartMenuActions : MenuContainer
         {
             a.gameObject.SetActive(false);
         }
-        for (int i = 0; i < GameManager._ReservesLineup.Count; i++)
+        for (int i = 0; i < GameManager.ReservesLineup.Count; i++)
         {
-            var hero = GameManager._ReservesLineup[i];
+            var hero = GameManager.ReservesLineup[i];
             var display = reserveDisplayList[i];
             display.gameObject.SetActive(true);
-            display.displayBanner.sprite = hero.charBanner;
+            display.displayBanner.sprite = hero.Banner;
         }
     }
     internal void DisplayMisc()
     {
         miscList.miscArea.text = this.gameObject.scene.name;
         miscList.miscZone.text = SpawnPoint.LastSpawnUsed != null ? SpawnPoint.LastSpawnUsed.Reference.SpawnName : "Unknown";
-        miscList.miscCurrency.text = InventoryManager.creditsInBag.ToString();
+        miscList.miscCurrency.text = InventoryManager.Credits.ToString();
     }
 }

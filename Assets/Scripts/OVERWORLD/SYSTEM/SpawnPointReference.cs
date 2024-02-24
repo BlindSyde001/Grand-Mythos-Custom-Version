@@ -1,7 +1,6 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine.SceneManagement;
 
-public class SpawnPointReference : ScriptableObject
+public class SpawnPointReference : IdentifiableScriptableObject
 {
     public string SpawnName;
     public SpawnablePlayerCharacter PlayerCharacter;

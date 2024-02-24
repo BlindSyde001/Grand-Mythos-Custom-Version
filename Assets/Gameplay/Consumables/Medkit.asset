@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7afe243da054e946be5ebdee7e8105b, type: 3}
   m_Name: Medkit
   m_EditorClassIdentifier: 
-  Description: The latest in healing ArcanoTech, the medkit can be used to instantly
-    apply emergency aid in the field.
-  guid:
+  _guid:
     a: 5694411272221503122
     b: 13552375456326909598
+  Description: The latest in healing ArcanoTech, the medkit can be used to instantly
+    apply emergency aid in the field.
   ATBCost: 1
   Effects:
   - rid: 7439448764490973222
@@ -58,3 +58,4 @@ MonoBehaviour:
         CritMultiplier: 2.5
     - rid: 7439448773025857548
       type: {class: IsAlive, ns: Conditions, asm: Assembly-CSharp}
+      data: 

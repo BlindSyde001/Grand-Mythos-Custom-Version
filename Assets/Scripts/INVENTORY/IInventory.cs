@@ -52,29 +52,17 @@ public class ProxyForInventoryComponent : IInventory
 
     public bool HasItem(BaseItem item, out uint count)
     {
-        return Inventory.FindItem(new ItemCapsule() { thisItem = item }, out count);
+        return Inventory.FindItem(item, out count);
     }
 
     public void RemoveItem(BaseItem item, uint count)
     {
-        Inventory.RemoveFromInventory(new ItemCapsule(){ thisItem = item, ItemAmount = (int)count});
+        Inventory.Remove(item, count);
     }
 
     public IEnumerable<(BaseItem item, uint count)> Items()
     {
-        foreach (var capsule in Inventory._AccessoryInBag)
-            yield return (capsule.thisItem, (uint)capsule.ItemAmount);
-        foreach (var capsule in Inventory._ArmourInBag)
-            yield return (capsule.thisItem, (uint)capsule.ItemAmount);
-        foreach (var capsule in Inventory._WeaponsInBag)
-            yield return (capsule.thisItem, (uint)capsule.ItemAmount);
-        foreach (var capsule in Inventory.ConsumablesInBag)
-            yield return (capsule.thisItem, (uint)capsule.ItemAmount);
-        foreach (var capsule in Inventory.EquipmentInBag)
-            yield return (capsule.thisItem, (uint)capsule.ItemAmount);
-        foreach (var capsule in Inventory.LootInBag)
-            yield return (capsule.thisItem, (uint)capsule.ItemAmount);
-        foreach (var capsule in Inventory.KeyItemsInBag)
-            yield return (capsule.thisItem, (uint)capsule.ItemAmount);
+        foreach (var (item, count) in Inventory.Enumerate<BaseItem>())
+            yield return (item, count);
     }
 }

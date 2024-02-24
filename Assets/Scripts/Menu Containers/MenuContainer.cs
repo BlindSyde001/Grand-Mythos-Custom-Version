@@ -11,7 +11,7 @@ public abstract class MenuContainer : MonoBehaviour
     {
         MenuInputs = FindObjectOfType<MenuInputs>();
         GameManager = GameManager._instance;
-        InventoryManager = InventoryManager._instance;
+        InventoryManager = InventoryManager.Instance;
     }
 
     public abstract IEnumerable Open(MenuInputs menuInputs);

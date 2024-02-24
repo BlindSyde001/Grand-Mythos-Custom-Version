@@ -5,15 +5,14 @@ public class AudioManager : MonoBehaviour
 {
     // VARIABLES
     public static AudioManager _instance;
-
-    private AudioSource BGMSource;
-    private AudioSource sfxSource;
+    AudioSource BGMSource;
+    AudioSource sfxSource;
 
     public Sound overworldTheme;
     public Sound battleTheme;
 
     //UPDATES
-    private void Awake()
+    void Awake()
     {
         if (_instance == null)
         {
@@ -28,11 +27,13 @@ public class AudioManager : MonoBehaviour
         BGMSource.loop = true;
         sfxSource = gameObject.AddComponent<AudioSource>();
     }
-    private void OnEnable()
+
+    void OnEnable()
     {
         EventManager.OnGameStateChange += SwitchMusicTrackEvent;
     }
-    private void OnDisable()
+
+    void OnDisable()
     {
         EventManager.OnGameStateChange -= SwitchMusicTrackEvent;
     }
@@ -59,7 +60,8 @@ public class AudioManager : MonoBehaviour
         // Play Song, with a Delay window
         StartCoroutine(UpdateMusicWithDelay(music, 1f));
     }
-    private IEnumerator UpdateMusicWithDelay(Sound musicToPlay, float delayTime)
+
+    IEnumerator UpdateMusicWithDelay(Sound musicToPlay, float delayTime)
     {
         yield return new WaitForSeconds(delayTime);
         BGMSource.clip = musicToPlay.clip;
@@ -72,7 +74,8 @@ public class AudioManager : MonoBehaviour
     {
         StartCoroutine(UpdateMusicWithFade(music));
     }
-    private IEnumerator UpdateMusicWithFade(Sound newMusicToPlay)
+
+    IEnumerator UpdateMusicWithFade(Sound newMusicToPlay)
     {
         if(BGMSource.clip == newMusicToPlay.clip)
         {

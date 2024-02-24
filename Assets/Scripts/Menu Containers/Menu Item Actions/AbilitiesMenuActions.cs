@@ -10,8 +10,7 @@ public class AbilitiesMenuActions : MenuContainer
     public List<Button> heroSelections;
     public List<AbilityButtonContainer> abilityButtons;
     public AbilityDescriptionContainer abilityDescriptionContainer;
-
-    private HeroExtension selectedHero;
+    HeroExtension selectedHero;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
@@ -29,7 +28,7 @@ public class AbilitiesMenuActions : MenuContainer
                 a.buttonName.DOFade(1, menuInputs.speed);
             }
             SetHeroSelection();
-            SetAbilities(GameManager._PartyLineup[0]);
+            SetAbilities(GameManager.PartyLineup[0]);
         }
     }
     public override IEnumerable Close(MenuInputs menuInputs)
@@ -60,12 +59,12 @@ public class AbilitiesMenuActions : MenuContainer
             a.gameObject.SetActive(false);
             a.onClick.RemoveAllListeners();
         }
-        for (int i = 0; i < GameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < GameManager.PartyLineup.Count; i++)
         {
             int j = i;
             heroSelections[i].gameObject.SetActive(true);
-            heroSelections[i].GetComponent<Image>().sprite = GameManager._PartyLineup[j].charPortrait;
-            heroSelections[i].onClick.AddListener(delegate { SetAbilities(GameManager._PartyLineup[j]); });
+            heroSelections[i].GetComponent<Image>().sprite = GameManager.PartyLineup[j].Portrait;
+            heroSelections[i].onClick.AddListener(delegate { SetAbilities(GameManager.PartyLineup[j]); });
         }
     }
     public void SetAbilities(HeroExtension hero)

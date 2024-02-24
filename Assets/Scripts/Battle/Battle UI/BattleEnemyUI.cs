@@ -7,11 +7,12 @@ public class BattleEnemyUI : MonoBehaviour
 {
     public CinemachineFreeLook cam;
 
-    private void Start()
+    void Start()
     {
         cam = FindObjectOfType<CinemachineFreeLook>();
     }
-    private void LateUpdate()
+
+    void LateUpdate()
     {
         transform.rotation = Quaternion.LookRotation(transform.position - cam.transform.position);
     }

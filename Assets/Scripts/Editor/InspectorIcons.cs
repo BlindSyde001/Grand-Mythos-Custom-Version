@@ -4,8 +4,7 @@ using UnityEditor;
 
 namespace Editor
 {
-    [InitializeOnLoad]
-    static class InspectorIcons
+    [InitializeOnLoad] internal static class InspectorIcons
     {
         static Dictionary<int, Texture> _objIdToTexture = new();
         static List<Component> _utility = new();

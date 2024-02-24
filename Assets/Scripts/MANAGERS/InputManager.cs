@@ -19,7 +19,7 @@ public class InputManager : MonoBehaviour
     #endregion
 
     // UPDATES
-    private void Awake()
+    void Awake()
     {
         if (_instance == null)
         {

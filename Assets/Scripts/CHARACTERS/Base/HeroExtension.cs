@@ -2,127 +2,45 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.Serialization;
 
-public class HeroExtension : CharacterTemplate
+public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtension.SaveV1>, ISerializationCallbackReceiver
 {
-    #region LEVEL STATS
-    [SerializeField]
-    [PropertyRange(1, 100)]
-    [BoxGroup("LEVEL ATTRIBUTES")]
-    [PropertyOrder(2)]
-    protected internal int _Level;
-    public int Level
-    {
-        get => _Level;
-        set => _Level = Mathf.Clamp(value, 1, 100);
-    }
-    [SerializeField]
-    [BoxGroup("LEVEL ATTRIBUTES")]
-    [PropertyOrder(2)]
-    public int ExperienceToNextLevel => ExperienceThreshold - Experience; // How Much (Relative) you need
-    public int ExperienceThreshold => GetAmountOfXPForLevel(_Level); // How Much (Total) you need
-    public int PrevExperienceThreshold => GetAmountOfXPForLevel(_Level-1);
-    #endregion
-    #region EQUIPMENT STATS
-    [TitleGroup("EQUIPMENT ATTRIBUTES")]
-    [HorizontalGroup("EQUIPMENT ATTRIBUTES/Split")]
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
-    [LabelWidth(100)]
-    [PropertyOrder(3)]
+    [SerializeField, TitleGroup("EQUIPMENT ATTRIBUTES"), HorizontalGroup("EQUIPMENT ATTRIBUTES/Split"), VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left"), BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
     protected internal Weapon _Weapon;
 
-    [TitleGroup("EQUIPMENT ATTRIBUTES")]
-    [SerializeField]
+    [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
     internal Weapon.WeaponType myWeaponType;
 
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
-    [LabelWidth(100)]
-    [PropertyOrder(3)]
+    [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
     protected internal Armour _Armour;
 
-    [TitleGroup("EQUIPMENT ATTRIBUTES")]
-    [SerializeField]
+    [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
     internal Armour.ArmourType myArmourType;
 
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
-    [LabelWidth(100)]
-    [PropertyOrder(3)]
+    [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
     protected internal Accessory _AccessoryOne;
 
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
-    [LabelWidth(100)]
-    [PropertyOrder(3)]
+    [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
     protected internal Accessory _AccessoryTwo;
 
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
-    [LabelWidth(120)]
-    [PropertyOrder(3)]
-    protected private int equipHP;
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
-    [LabelWidth(120)]
-    [PropertyOrder(3)]
-    protected private int equipMP;
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
-    [LabelWidth(120)]
-    [PropertyOrder(3)]
-    protected private int equipAttack;
+    [SerializeField, VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right"), BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats"), LabelWidth(120)]
+    private protected int equipHP, equipMP, equipAttack, equipMagAttack, equipDefense,  equipMagDefense, equipSpeed;
 
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
-    [LabelWidth(120)]
-    [PropertyOrder(3)]
-    protected private int equipMagAttack;
+    public int EquipHP => equipHP;
+    public int EquipMP => equipMP;
+    public int EquipAttack => equipAttack;
+    public int EquipMagAttack => equipMagAttack;
+    public int EquipDefense => equipDefense;
+    public int EquipMagDefense => equipMagDefense;
+    public int EquipSpeed => equipSpeed;
 
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
-    [LabelWidth(120)]
-    [PropertyOrder(3)]
-    protected private int equipDefense;
+    public int ExperienceToNextLevel => ExperienceThreshold - Experience; // How Much (Relative) you need
+    public int ExperienceThreshold => GetAmountOfXPForLevel(Level); // How Much (Total) you need
+    public int PrevExperienceThreshold => GetAmountOfXPForLevel(Level-1);
 
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
-    [LabelWidth(120)]
-    [PropertyOrder(3)]
-    protected private int equipMagDefense;
-
-    [SerializeField]
-    [VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right")]
-    [BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats")]
-    [LabelWidth(120)]
-    [PropertyOrder(3)]
-    protected private int equipSpeed;
-
-    internal int EquipHP { get => equipHP; }
-    internal int EquipMP { get => equipMP; }
-    internal int EquipAttack { get => equipAttack; }
-    internal int EquipMagAttack { get => equipMagAttack; }
-    internal int EquipDefense { get => equipDefense; }
-    internal int EquipMagDefense { get => equipMagDefense; }
-    internal int EquipSpeed { get => equipSpeed; }
-    #endregion
-
-    [SerializeField]
-    [PreviewField(100)]
-    [PropertyOrder(0)]
-    [HideLabel]
-    internal Sprite charBanner;
+    [FormerlySerializedAs("charBanner"), HorizontalGroup("ASSETS"), SerializeField, PreviewField(100)]
+    internal Sprite Banner;
 
     public override Stats EffectiveStats
     {
@@ -143,9 +61,15 @@ public class HeroExtension : CharacterTemplate
     // UPDATES
     protected override void Awake()
     {
+        SavingSystem.TryRestore<HeroExtension, SaveV1>(this);
         InitializeCharacter();
         EquipStats();
         base.Awake();
+    }
+
+    void OnDestroy()
+    {
+        SavingSystem.StoreAndUnregister<HeroExtension, SaveV1>(this);
     }
 
     // METHODS
@@ -154,28 +78,17 @@ public class HeroExtension : CharacterTemplate
     {
         LevelUpCheck();
     }
-    public void InitializeLevel()
-    {
-        _Level = StartingLevel;
-        if (Experience >= ExperienceThreshold)
-        {
-            _Level++;
-            LevelUpCheck();
-            RegenHealthAndMana();
-        }
-    }
     #endregion
     #region Stats & Levelling Up
     public void LevelUpCheck()
     {
-        if (Experience >= ExperienceThreshold)
+        while (Experience >= ExperienceThreshold)
         {
-            _Level++;
-            LevelUpCheck();
+            Level++;
             RegenHealthAndMana();
             if (SkillTree != null)
             {
-                foreach (var skill in SkillTree.GetSkillsForLevel((uint)_Level))
+                foreach (var skill in SkillTree.GetSkillsForLevel((uint)Level))
                     Skills.Add(skill);
             }
         }
@@ -213,4 +126,54 @@ public class HeroExtension : CharacterTemplate
         }
     }
     #endregion
+
+
+    [InfoBox("Each character must have a unique GUID, characters will share GUID when duplicated, in which case you must press the button below on the new character", InfoMessageType.Warning)]
+    [SerializeField, DisplayAsString]
+    guid _guid;
+
+    public guid Guid => _guid;
+
+    guid ISaved.UniqueConstID => _guid;
+
+    void ISerializationCallbackReceiver.OnBeforeSerialize()
+    {
+#if UNITY_EDITOR
+        if (_guid == default)
+            _guid = System.Guid.NewGuid();
+#endif
+    }
+
+    void ISerializationCallbackReceiver.OnAfterDeserialize() => PlayableCharacters.EnsureRegistered(this);
+
+    [Button("Generate new GUID", ButtonSizes.Small)]
+    private void NewGuid()
+    {
+        _guid = System.Guid.NewGuid();
+    }
+
+    [Serializable] public struct SaveV1 : ISaveHandler<HeroExtension>
+    {
+        public uint Version => 1;
+
+        public int CurrentHP, CurrentMP;
+        public int Experience;
+        public guid Weapon;
+        public guid Armour;
+        public guid AccessoryOne;
+        public guid AccessoryTwo;
+        public List<guid> Skills;
+
+        public void Transfer(HeroExtension source, SavingSystem.Transfer transfer)
+        {
+            transfer.Value(ref CurrentHP, ref source.CurrentHP);
+            transfer.Value(ref CurrentMP, ref source.CurrentMP);
+            transfer.Value(ref Experience, ref source.Experience);
+            transfer.Identifiable(ref Weapon, ref source._Weapon);
+            transfer.Identifiable(ref Armour, ref source._Armour);
+            transfer.Identifiable(ref AccessoryOne, ref source._AccessoryOne);
+            transfer.Identifiable(ref AccessoryTwo, ref source._AccessoryTwo);
+            transfer.Identifiables<List<guid>, SerializableHashSet<Skill>, Skill>(ref Skills, ref source.Skills);
+        }
+    }
 }

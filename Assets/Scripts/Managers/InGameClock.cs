@@ -1,30 +1,44 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class InGameClock : MonoBehaviour
+public class InGameClock : MonoBehaviour, ISaved<InGameClock, InGameClock.SaveV1>
 {
-    public int playTime;
-    internal int hour;
-    internal int minute;
-    internal int second;
+    public static readonly guid Guid = new guid("ae74727b-3be1-48d8-9227-4b3eaf99a272");
 
-    private void Start()
+    public TimeSpan DurationTotal => _stopwatch.Elapsed + _lastPlaytime;
+    TimeSpan _lastPlaytime;
+    Stopwatch _stopwatch = Stopwatch.StartNew();
+
+    void Start()
     {
-        StartCoroutine(Timer());
+        SavingSystem.TryRestore<InGameClock, SaveV1>(this);
     }
 
-    private IEnumerator Timer()
+    void OnDestroy()
     {
-        while(true)
+        SavingSystem.StoreAndUnregister<InGameClock, SaveV1>(this);
+    }
+
+    public guid UniqueConstID => Guid;
+
+    [Serializable] public struct SaveV1 : ISaveHandler<InGameClock>
+    {
+        public TimeSpan TimeSpan => TimeSpan.FromTicks(Ticks);
+        public long Ticks;
+
+        public uint Version => 1;
+        public void Transfer(InGameClock source, SavingSystem.Transfer transfer)
         {
-            yield return new WaitForSeconds(1);
-            playTime += 1;
-            second = playTime % 60;
-            minute = playTime / 60 % 60;
-            hour = playTime / 3600 % 24;
+            if (transfer == SavingSystem.Transfer.PullFromSource)
+            {
+                Ticks = source.DurationTotal.Ticks;
+            }
+            else
+            {
+                source._lastPlaytime = TimeSpan.FromTicks(Ticks);
+                source._stopwatch.Restart();
+            }
         }
     }
 }

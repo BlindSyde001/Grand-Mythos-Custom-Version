@@ -9,14 +9,13 @@ public class EventManager : MonoBehaviour
     // VARIABLES
     public static EventManager _instance;
 
-    [SerializeField]
-    private InputManager inputManager;
+    [SerializeField] InputManager inputManager;
 
     public delegate void ChangeInGameState(GameState GS);
     public static event ChangeInGameState OnGameStateChange;
 
     // UPDATES
-    private void Awake()
+    void Awake()
     {
         if(_instance == null)
         {
@@ -30,7 +29,8 @@ public class EventManager : MonoBehaviour
         this.transform.parent = null;
         DontDestroyOnLoad(gameObject);
     }
-    private void OnEnable()
+
+    void OnEnable()
     {
         Awake();
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -40,7 +40,8 @@ public class EventManager : MonoBehaviour
         OnGameStateChange += BattleState;
         OnGameStateChange += CutsceneState;
     }
-    private void OnDisable()
+
+    void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
 
@@ -97,14 +98,15 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    private void TitleState(GameState GS)
+    void TitleState(GameState GS)
     {
         if(GS == GameState.TITLE)
         {
             inputManager.playerInput.SwitchCurrentActionMap("Title Map");
         }
     }
-    private void OverworldState(GameState GS)
+
+    void OverworldState(GameState GS)
     {
         if(GS == GameState.OVERWORLD)
         {
@@ -113,14 +115,16 @@ public class EventManager : MonoBehaviour
                 instance.enabled = true;
         }
     }
-    private void BattleState(GameState GS)
+
+    void BattleState(GameState GS)
     {
         if(GS == GameState.BATTLE)
         {
             inputManager.playerInput.SwitchCurrentActionMap("Battle Map");
         }
     }
-    private void CutsceneState(GameState GS)
+
+    void CutsceneState(GameState GS)
     {
         if(GS == GameState.CUTSCENE)
         {
@@ -129,7 +133,8 @@ public class EventManager : MonoBehaviour
                 instance.enabled = false;
         }
     }
-    private void MenuState(GameState GS)
+
+    void MenuState(GameState GS)
     {
         if(GS == GameState.MENU)
         {

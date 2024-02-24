@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd38c7e9e4d54dd59f19248625f677a0, type: 3}
   m_Name: Last Resort
   m_EditorClassIdentifier: 
+  _guid:
+    a: 4838886461203343958
+    b: 5560350009656222399
   TargetFilter:
     rid: 7439448773025857559
   AdditionalCondition:
@@ -44,6 +47,7 @@ MonoBehaviour:
           rid: 7439448773025857565
     - rid: 7439448773025857564
       type: {class: IsSelf, ns: Conditions, asm: Assembly-CSharp}
+      data: 
     - rid: 7439448773025857565
       type: {class: AttributeFilter, ns: Conditions, asm: Assembly-CSharp}
       data:

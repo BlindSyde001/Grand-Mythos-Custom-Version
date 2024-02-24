@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -18,6 +19,15 @@ public partial class DomainReloadHelper : MonoBehaviour
     public static System.Action<DomainReloadHelper> AfterReload;
 
 #if UNITY_EDITOR
+    /// <summary>
+    /// When the game is not entering or exiting edit mode, and exiting play mode
+    /// </summary>
+    public static LastPlayModeState LastState = LastPlayModeState.EnteredEditMode;
+#else
+    public static LastPlayModeState IsPlaying = LastPlayModeState.EnteredPlayMode;
+#endif
+
+#if UNITY_EDITOR
     [InitializeOnLoadMethod]
     static void RunOnStart()
     {
@@ -26,6 +36,7 @@ public partial class DomainReloadHelper : MonoBehaviour
         // to call the reload function over each item of that list
         AssemblyReloadEvents.beforeAssemblyReload += PreReload;
         PostReload();
+        EditorApplication.playModeStateChanged += OnEnterPlaymodeInEditor;
     }
 
     static void PreReload()
@@ -48,5 +59,51 @@ public partial class DomainReloadHelper : MonoBehaviour
         AfterReload?.Invoke(reloadHelper);
         Destroy(reloadHelper);
     }
+
+    static void OnEnterPlaymodeInEditor(PlayModeStateChange change)
+    {
+        switch (change)
+        {
+            case PlayModeStateChange.EnteredEditMode:
+                break;
+            case PlayModeStateChange.ExitingEditMode:
+                break;
+            case PlayModeStateChange.EnteredPlayMode:
+                break;
+            case PlayModeStateChange.ExitingPlayMode:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(change), change, null);
+        }
+
+        LastState = change switch
+        {
+            PlayModeStateChange.EnteredEditMode => LastPlayModeState.EnteredEditMode,
+            PlayModeStateChange.ExitingEditMode => LastPlayModeState.ExitingEditMode,
+            PlayModeStateChange.EnteredPlayMode => LastPlayModeState.EnteredPlayMode,
+            PlayModeStateChange.ExitingPlayMode => LastPlayModeState.ExitingPlayMode,
+            _ => throw new ArgumentOutOfRangeException(nameof(change), change, null)
+        };
+    }
 #endif
+
+    public enum LastPlayModeState
+    {
+        /// <summary>
+        ///   <para>Occurs during the next update of the Editor application if it is in edit mode and was previously in play mode.</para>
+        /// </summary>
+        EnteredEditMode,
+        /// <summary>
+        ///   <para>Occurs when exiting edit mode, before the Editor is in play mode.</para>
+        /// </summary>
+        ExitingEditMode,
+        /// <summary>
+        ///   <para>Occurs during the next update of the Editor application if it is in play mode and was previously in edit mode.</para>
+        /// </summary>
+        EnteredPlayMode,
+        /// <summary>
+        ///   <para>Occurs when exiting play mode, before the Editor is in edit mode.</para>
+        /// </summary>
+        ExitingPlayMode,
+    }
 }

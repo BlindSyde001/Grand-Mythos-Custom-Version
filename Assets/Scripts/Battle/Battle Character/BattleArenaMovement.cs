@@ -29,7 +29,7 @@ public class BattleArenaMovement : MonoBehaviour
     #endregion
 
     // UPDATES
-    private void Update()
+    void Update()
     {
         if (isRoaming)
         {

@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9187409409059822421
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9187409409059822419}
+  - component: {fileID: 9187409409059822420}
+  m_Layer: 0
+  m_Name: Soldier
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9187409409059822419
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9187409409059822421}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9187409409059822420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9187409409059822421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d15068e09dc949b4892147541d528416, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Team: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
+  BattlePrefab: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
+  Portrait: {fileID: 21300000, guid: 970eb6fdd42a108408775879b6bdc704, type: 3}
+  CurrentHP: 154
+  CurrentMP: 70
+  BaseStats:
+    HP: 22
+    MP: 10
+    Attack: 8
+    MagAttack: 8
+    Defense: 8
+    MagDefense: 8
+    Speed: 20
+  _effectiveStatsPreview:
+    HP: 154
+    MP: 70
+    Attack: 56
+    MagAttack: 56
+    Defense: 56
+    MagDefense: 56
+    Speed: 20
+  GrowthRate: 2
+  Experience: 982
+  StartingLevel: 5
+  AffinityFIRE: 0
+  AffinityICE: 0
+  AffinityLIGHTNING: 0
+  AffinityWATER: 0
+  IsBlinded: 0
+  IsSilenced: 0
+  IsFurored: 0
+  IsParalysed: 0
+  IsPhysDown: 0
+  IsMagDown: 0
+  ResistBLIND: 0
+  ResistSILENCE: 0
+  ResistFUROR: 0
+  ResistPARALYSIS: 0
+  ResistPHYSICAL: 0
+  ResistMAGICAL: 0
+  ActionsCharged: 0
+  ActionChargeMax: 4
+  BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  SkillTree: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
+  Skills:
+    _backingArray: []
+  Tactics:
+  - IsOn: 1
+    Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
+    Actions:
+      ActionsAssets:
+      - {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+  - IsOn: 1
+    Condition: {fileID: 11400000, guid: 97b02931ab499854281981eb72b1b5e1, type: 2}
+    Actions:
+      ActionsAssets:
+      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  Inventory:
+    rid: 1000
+  ExperiencePool: 0
+  CreditPool: 0
+  DropItems: []
+  _Weapon: {fileID: 11400000, guid: fc1e2080d6d82624eb7d1b69411d863b, type: 2}
+  myWeaponType: 0
+  _Armour: {fileID: 11400000, guid: 370d5bab6d025854ab86d6f8679d5c32, type: 2}
+  myArmourType: 0
+  _AccessoryOne: {fileID: 11400000, guid: 112d6aea410489a4896b0dc5d6b0ad3d, type: 2}
+  _AccessoryTwo: {fileID: 0}
+  equipHP: 0
+  equipMP: 0
+  equipAttack: 0
+  equipMagAttack: 0
+  equipDefense: 0
+  equipMagDefense: 0
+  equipSpeed: 0
+  Banner: {fileID: 21300000, guid: 3df74c71eb6c67c4cbd8c8a6ee65bbdd, type: 3}
+  _guid:
+    a: 4777245746610999588
+    b: 3856103926585565839
+  references:
+    version: 2
+    RefIds:
+    - rid: 1000
+      type: {class: InlineInventory, ns: , asm: Assembly-CSharp}
+      data:
+        Items:
+          _backingArray: []

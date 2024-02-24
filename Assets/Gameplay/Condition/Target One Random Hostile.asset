@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd38c7e9e4d54dd59f19248625f677a0, type: 3}
   m_Name: Target One Random Hostile
   m_EditorClassIdentifier: 
+  _guid:
+    a: 5010699587339553657
+    b: 2187371901525463426
   TargetFilter:
     rid: 7439448764490973195
   AdditionalCondition:
@@ -30,6 +33,7 @@ MonoBehaviour:
           rid: 7439448764490973211
     - rid: 7439448764490973211
       type: {class: TargetRandom, ns: Conditions, asm: Assembly-CSharp}
+      data: 
     - rid: 7439448764490973235
       type: {class: IsHostile, ns: Conditions, asm: Assembly-CSharp}
       data:

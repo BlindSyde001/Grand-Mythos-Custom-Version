@@ -108,7 +108,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Bool2Drawer : OdinValueDrawer<bool2>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -144,7 +144,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Bool3Drawer : OdinValueDrawer<bool3>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -183,7 +183,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Bool4Drawer : OdinValueDrawer<bool4>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -225,7 +225,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Float2Drawer : OdinValueDrawer<float2>, IDefinesGenericMenuItems
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -281,7 +281,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             genericMenu.AddItem(new GUIContent("Down", "Set the vector to (0, -1)"), vec == Vector2.down, () => SetVector(property, Vector2.down));
         }
 
-        private void SetVector(InspectorProperty property, Vector2 value)
+        void SetVector(InspectorProperty property, Vector2 value)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -292,7 +292,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             });
         }
 
-        private void NormalizeEntries(InspectorProperty property)
+        void NormalizeEntries(InspectorProperty property)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -306,7 +306,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Float3Drawer : OdinValueDrawer<float3>, IDefinesGenericMenuItems
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -365,7 +365,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             genericMenu.AddItem(new GUIContent("Back", "Set the vector property to (0, 0, -1)"), vec == Vector3.back, () => SetVector(property, Vector3.back));
         }
 
-        private void SetVector(InspectorProperty property, Vector3 value)
+        void SetVector(InspectorProperty property, Vector3 value)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -376,7 +376,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             });
         }
 
-        private void NormalizeEntries(InspectorProperty property)
+        void NormalizeEntries(InspectorProperty property)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -390,7 +390,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Float4Drawer : OdinValueDrawer<float4>, IDefinesGenericMenuItems
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -450,7 +450,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             genericMenu.AddItem(new GUIContent("Back", "Set the vector property to (0, 0, -1, 0)"), (Vector3)vec == Vector3.back, () => SetVector(property, Vector3.back));
         }
 
-        private void SetVector(InspectorProperty property, Vector4 value)
+        void SetVector(InspectorProperty property, Vector4 value)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -461,7 +461,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             });
         }
 
-        private void NormalizeEntries(InspectorProperty property)
+        void NormalizeEntries(InspectorProperty property)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -476,7 +476,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Double2Drawer : OdinValueDrawer<double2>, IDefinesGenericMenuItems
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -532,7 +532,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             genericMenu.AddItem(new GUIContent("Down", "Set the vector to (0, -1)"), vec == Vector2.down, () => SetVector(property, Vector2.down));
         }
 
-        private void SetVector(InspectorProperty property, Vector2 value)
+        void SetVector(InspectorProperty property, Vector2 value)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -543,7 +543,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             });
         }
 
-        private void NormalizeEntries(InspectorProperty property)
+        void NormalizeEntries(InspectorProperty property)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -557,7 +557,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Double3Drawer : OdinValueDrawer<double3>, IDefinesGenericMenuItems
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -616,7 +616,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             genericMenu.AddItem(new GUIContent("Back", "Set the vector property to (0, 0, -1)"), vec == Vector3.back, () => SetVector(property, Vector3.back));
         }
 
-        private void SetVector(InspectorProperty property, Vector3 value)
+        void SetVector(InspectorProperty property, Vector3 value)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -627,7 +627,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             });
         }
 
-        private void NormalizeEntries(InspectorProperty property)
+        void NormalizeEntries(InspectorProperty property)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -641,7 +641,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Double4Drawer : OdinValueDrawer<double4>, IDefinesGenericMenuItems
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -701,7 +701,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             genericMenu.AddItem(new GUIContent("Back", "Set the vector property to (0, 0, -1, 0)"), (Vector3)vec == Vector3.back, () => SetVector(property, Vector3.back));
         }
 
-        private void SetVector(InspectorProperty property, Vector4 value)
+        void SetVector(InspectorProperty property, Vector4 value)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -712,7 +712,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
             });
         }
 
-        private void NormalizeEntries(InspectorProperty property)
+        void NormalizeEntries(InspectorProperty property)
         {
             property.Tree.DelayActionUntilRepaint(() =>
             {
@@ -726,7 +726,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Int2Drawer : OdinValueDrawer<int2>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -751,7 +751,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Int3Drawer : OdinValueDrawer<int3>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -777,7 +777,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class Int4Drawer : OdinValueDrawer<int4>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -804,7 +804,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class UInt2Drawer : OdinValueDrawer<uint2>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -829,7 +829,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class UInt3Drawer : OdinValueDrawer<uint3>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {
@@ -855,7 +855,7 @@ namespace Sirenix.OdinInspector.Modules.UnityMathematics.Editor
 
     public class UInt4Drawer : OdinValueDrawer<uint4>
     {
-        private bool isMatrixChild;
+        bool isMatrixChild;
 
         protected override void Initialize()
         {

@@ -41,15 +41,15 @@ public class BattleStateMachine : MonoBehaviour
     void Start()
     {
         var gameManager = GameManager._instance;
-        for (int i = 0; i < gameManager._ReservesLineup.Count; i++)
-            gameManager._ReservesLineup[i].gameObject.SetActive(false);
+        for (int i = 0; i < gameManager.ReservesLineup.Count; i++)
+            gameManager.ReservesLineup[i].gameObject.SetActive(false);
 
-        for (int i = 0; i < gameManager._PartyLineup.Count; i++)
+        for (int i = 0; i < gameManager.PartyLineup.Count; i++)
         {
-            var hero = gameManager._PartyLineup[i];
+            var hero = gameManager.PartyLineup[i];
 
             // Add Model into Battle
-            var model = Instantiate(hero._CharacterModel,
+            var model = Instantiate(hero.BattlePrefab,
                 _HeroSpawns[i].position,
                 _HeroSpawns[i].rotation,
                 GameObject.Find("Hero Model Data").transform);
@@ -67,12 +67,12 @@ public class BattleStateMachine : MonoBehaviour
             hero.ActionsCharged = Random.Range(0, hero.ActionChargeMax);
         }
 
-        for (int i = 0; i < gameManager._EnemyLineup.Count; i++)
+        for (int i = 0; i < gameManager.EnemyLineup.Count; i++)
         {
-            var enemy = gameManager._EnemyLineup[i];
+            var enemy = gameManager.EnemyLineup[i];
 
             // Add Model into Battle
-            var model = Instantiate(enemy._CharacterModel,
+            var model = Instantiate(enemy.BattlePrefab,
                 _EnemySpawns[i].position,
                 _EnemySpawns[i].rotation,
                 enemy.transform);
@@ -174,7 +174,7 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
 
-    public List<HeroExtension> PartyLineup => GameManager._instance._PartyLineup;
+    public List<HeroExtension> PartyLineup => GameManager._instance.PartyLineup;
 
     public void SetOrderFor(CharacterTemplate character, Tactics specificTactic) => _orders[character] = specificTactic;
 
@@ -287,9 +287,9 @@ public class BattleStateMachine : MonoBehaviour
     internal static void ClearData()
     {
         #warning clean this stuff up
-        foreach(var hostile in GameManager._instance._EnemyLineup)
+        foreach(var hostile in GameManager._instance.EnemyLineup)
             Destroy(hostile.gameObject);
-        GameManager._instance._EnemyLineup.Clear();
+        GameManager._instance.EnemyLineup.Clear();
     }
     #endregion
 }

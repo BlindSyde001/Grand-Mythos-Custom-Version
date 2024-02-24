@@ -24,7 +24,6 @@ public class BattleResolution : MonoBehaviour
 
     float duration = 3f;
     public GameObject ItemRewardPanel;
-    internal List<ItemCapsule> ItemsDropped = new();
     public List<TextMeshProUGUI> ItemRewardsText;
 
     [Header("Audio and Video")]
@@ -42,12 +41,12 @@ public class BattleResolution : MonoBehaviour
     {
         if (activateUpdate)
         {
-            for (int i = 0; i < GameManager._instance._PartyLineup.Count; i++)         // Setting UI Numbers
+            for (int i = 0; i < GameManager._instance.PartyLineup.Count; i++)         // Setting UI Numbers
             {
-                HeroPanels[i].displayLevel.text = gameManager._PartyLineup[i].Level.ToString();
-                HeroPanels[i].displayEXPBar.fillAmount = (float)(gameManager._PartyLineup[i].Experience - gameManager._PartyLineup[i].PrevExperienceThreshold)/
-                                                                (gameManager._PartyLineup[i].ExperienceThreshold - gameManager._PartyLineup[i].PrevExperienceThreshold);
-                HeroPanels[i].displayEXPToNextLevel.text = (gameManager._PartyLineup[i].ExperienceThreshold - gameManager._PartyLineup[i].Experience).ToString();
+                HeroPanels[i].displayLevel.text = gameManager.PartyLineup[i].Level.ToString();
+                HeroPanels[i].displayEXPBar.fillAmount = (float)(gameManager.PartyLineup[i].Experience - gameManager.PartyLineup[i].PrevExperienceThreshold)/
+                                                                (gameManager.PartyLineup[i].ExperienceThreshold - gameManager.PartyLineup[i].PrevExperienceThreshold);
+                HeroPanels[i].displayEXPToNextLevel.text = (gameManager.PartyLineup[i].ExperienceThreshold - gameManager.PartyLineup[i].Experience).ToString();
             }
         }
     }
@@ -76,14 +75,14 @@ public class BattleResolution : MonoBehaviour
         RewardBackground.DOFillAmount(1, speed);                                   // Cool Anim Effect
         HeroGridBackground.DOFillAmount(1, speed);                                 // Cool Anim effect
         yield return new WaitForSeconds(speed);
-        for (int i = 0; i < GameManager._instance._PartyLineup.Count; i++)         // Setting UI Numbers
+        for (int i = 0; i < GameManager._instance.PartyLineup.Count; i++)         // Setting UI Numbers
         {
             HeroPanels[i].gameObject.SetActive(true);
-            HeroPanels[i].displayBanner.sprite = gameManager._PartyLineup[i].charBanner;
-            HeroPanels[i].displayName.text = gameManager._PartyLineup[i].gameObject.name;
-            HeroPanels[i].displayLevel.text = gameManager._PartyLineup[i].Level.ToString();
-            HeroPanels[i].displayEXPBar.fillAmount = (float)gameManager._PartyLineup[i].ExperienceToNextLevel / gameManager._PartyLineup[i].ExperienceThreshold;
-            HeroPanels[i].displayEXPToNextLevel.text = (gameManager._PartyLineup[i].ExperienceThreshold - gameManager._PartyLineup[i].Experience).ToString();
+            HeroPanels[i].displayBanner.sprite = gameManager.PartyLineup[i].Banner;
+            HeroPanels[i].displayName.text = gameManager.PartyLineup[i].gameObject.name;
+            HeroPanels[i].displayLevel.text = gameManager.PartyLineup[i].Level.ToString();
+            HeroPanels[i].displayEXPBar.fillAmount = (float)gameManager.PartyLineup[i].ExperienceToNextLevel / gameManager.PartyLineup[i].ExperienceThreshold;
+            HeroPanels[i].displayEXPToNextLevel.text = (gameManager.PartyLineup[i].ExperienceThreshold - gameManager.PartyLineup[i].Experience).ToString();
         }
         ExperienceRewards.gameObject.SetActive(true);
         CurrencyRewards.gameObject.SetActive(true);
@@ -97,8 +96,8 @@ public class BattleResolution : MonoBehaviour
         {
             if (unit.Team.Allies.Contains(battle.PlayerTeam) == false)
             {
-                sharedExp += unit.experiencePool;
-                creditsEarned += unit.creditPool;
+                sharedExp += unit.ExperiencePool;
+                creditsEarned += unit.CreditPool;
             }
         }
 
@@ -120,7 +119,7 @@ public class BattleResolution : MonoBehaviour
             StartCoroutine(ReceiveExperienceRewards(hero, individualExperience, duration));
 
         activateUpdate = true;
-        InventoryManager._instance.creditsInBag += creditsEarned;
+        InventoryManager.Instance.Credits += creditsEarned;
         
         yield return new WaitForSeconds(duration * 2);
 
@@ -129,32 +128,33 @@ public class BattleResolution : MonoBehaviour
 
         ItemRewardPanel.SetActive(true);
 
+        var itemsDropped = new List<(BaseItem item, uint count)>();
         // Grab all dropped items
         foreach (CharacterTemplate unit in battle.Units)
         {
             if (unit is HeroExtension)
                 continue;
 
-            for (int j = 0; j < unit.DropItems.Count; j++)
+            foreach (var drop in unit.DropItems)
             {
-                if (Random.Range(0, 100) < unit.DropRate[j])
-                    ItemsDropped.Add(unit.DropItems[j]);
+                if (Random.Range(0, 100) < drop.DropRatePercent)
+                    itemsDropped.Add((drop.Item, drop.Count));
             }
         }
 
-        int max = ItemsDropped.Count;
+        int max = itemsDropped.Count;
         if (max > ItemRewardsText.Count)
         {
-            Debug.LogError($"Not enough reward text for the amount of items provided ({ItemsDropped.Count}/{ItemRewardsText.Count})");
+            Debug.LogError($"Not enough reward text for the amount of items provided ({itemsDropped.Count}/{ItemRewardsText.Count})");
             max = ItemRewardsText.Count;
         }
 
         // Write em in the UI
         for (int i = 0; i < max; i++)
-            ItemRewardsText[i].text = $"{ItemsDropped[i].ItemAmount} x {ItemsDropped[i].thisItem.name}";
+            ItemRewardsText[i].text = $"{itemsDropped[i].count} x {itemsDropped[i].item.name}";
 
-        foreach (ItemCapsule item in ItemsDropped)
-            InventoryManager._instance.AddToInventory(item);
+        foreach (var drop in itemsDropped)
+            InventoryManager.Instance.AddToInventory(drop.item, drop.count);
 
         yield return new WaitForSeconds(duration);
 

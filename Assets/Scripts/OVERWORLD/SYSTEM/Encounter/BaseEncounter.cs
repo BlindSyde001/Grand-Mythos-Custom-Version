@@ -20,7 +20,7 @@ public abstract class BaseEncounter : IEncounterDefinition
         var battleTransition = new GameObject(nameof(EncounterState));
         UnityEngine.Object.DontDestroyOnLoad(battleTransition);
         var encounterState = battleTransition.AddComponent<EncounterState>();
-        foreach (var reserve in GameManager._instance._ReservesLineup)
+        foreach (var reserve in GameManager._instance.ReservesLineup)
             reserve.gameObject.SetActive(false);
         encounterState.StartCoroutine(OverworldToBattleTransition(Scene, FormationToSpawn()));
     }
@@ -37,7 +37,6 @@ public abstract class BaseEncounter : IEncounterDefinition
 
 #warning Both game manager and event switch scene should be rewritten, right now it's a bit too constrictive
             var gameManager = UnityEngine.Object.FindObjectOfType<GameManager>();
-            gameManager.LastKnownScene = SceneManager.GetActiveScene().name;
 
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
@@ -66,7 +65,7 @@ public abstract class BaseEncounter : IEncounterDefinition
 #warning this has to go, very restrictive too
                 var enemy = UnityEngine.Object.Instantiate(opponents[i], gameManager.transform);
                 enemy.name = $"{opponents[i].gameObject.name} Data {i}";
-                gameManager._EnemyLineup.Add(enemy);
+                gameManager.EnemyLineup.Add(enemy);
             }
 
             while (loadOperation.isDone == false)

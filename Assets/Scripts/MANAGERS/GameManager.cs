@@ -1,12 +1,17 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.Serialization;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1>
 {
+    public static readonly guid Guid = new("bb05002e-f0d5-4936-a986-c47a045e58d8");
+
     public static GameManager _instance;
-    private void Awake()
+
+    void Awake()
     {
         if (_instance == null)
         {
@@ -14,97 +19,59 @@ public class GameManager : MonoBehaviour
         }
         else if (_instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
+            return;
         }
-        this.transform.parent = null;
-        DontDestroyOnLoad(this.gameObject);
+        transform.parent = null;
+        SavingSystem.TryRestore<GameManager, SaveV1>(this);
+        for (int i = 0; i < PartyLineup.Count; i++)
+        {
+            PartyLineup[i] = Instantiate(PartyLineup[i], transform);
+            PartyLineup[i].name = PartyLineup[i].name[..^"(Clone)".Length]; // Remove the postfix unity inserts when instantiating
+        }
     }
 
-    #region OVERWORLD DATA
-    [BoxGroup("SCENE DATA")]
-    [SerializeField]
-    internal int DoorwayIndex;
-    [BoxGroup("SCENE DATA")]
-    [SerializeField]
-    internal string LastKnownScene;
-    [BoxGroup("SCENE DATA")]
-    [SerializeField]
-    internal Vector3 LastKnownPosition;
-    [BoxGroup("SCENE DATA")]
-    [SerializeField]
-    internal Quaternion LastKnownRotation;
-    #endregion
-    #region BATTLE DATA
-    [BoxGroup("PARTY DATA")]
-    [SerializeField]
-    internal List<HeroExtension> _AllPartyMembers; // All in Party
-    [BoxGroup("PARTY DATA")]
-    [SerializeField]
-    internal List<HeroExtension> _PartyLineup;  // Who I've selected to be fighting
-    [BoxGroup("PARTY DATA")]
-    [SerializeField]
-    internal List<HeroExtension> _ReservesLineup;  // Who I have available in the Party
+    void OnDestroy()
+    {
+        SavingSystem.StoreAndUnregister<GameManager, SaveV1>(this);
+    }
 
-    [SerializeField]
-    internal List<CharacterTemplate> _EnemyLineup;
-    #endregion
-    #region DATABASE LIBRARY
-    [TitleGroup("LIBRARY COLLECTION")]
-    [HorizontalGroup("LIBRARY COLLECTION/Split")]
-    [VerticalGroup("LIBRARY COLLECTION/Split/Left")]
-    [BoxGroup("LIBRARY COLLECTION/Split/Left/WEAPONS")]
-    public List<Weapon> _GunsDatabase;
+    [FormerlySerializedAs("_PartyLineup"), BoxGroup("PARTY DATA")]
+    public List<HeroExtension> PartyLineup;  // Who I've selected to be fighting
+    [FormerlySerializedAs("_ReservesLineup"), BoxGroup("PARTY DATA")]
+    public List<HeroExtension> ReservesLineup;  // Who I have available in the Party
 
-    [TitleGroup("LIBRARY COLLECTION")]
-    [VerticalGroup("LIBRARY COLLECTION/Split/Left")]
-    [BoxGroup("LIBRARY COLLECTION/Split/Left/WEAPONS")]
-    public List<Weapon> _WarhammersDatabase;
+    public List<CharacterTemplate> EnemyLineup;
 
-    [TitleGroup("LIBRARY COLLECTION")]
-    [VerticalGroup("LIBRARY COLLECTION/Split/Left")]
-    [BoxGroup("LIBRARY COLLECTION/Split/Left/WEAPONS")]
-    public List<Weapon> _PowerGlovesDatabase;
+    guid ISaved.UniqueConstID => Guid;
 
-    [TitleGroup("LIBRARY COLLECTION")]
-    [VerticalGroup("LIBRARY COLLECTION/Split/Left")]
-    [BoxGroup("LIBRARY COLLECTION/Split/Left/WEAPONS")]
-    public List<Weapon> _GrimoiresDatabase;
+    [Serializable] public struct SaveV1 : ISaveHandler<GameManager>
+    {
+        public guid[] Party, Reserve;
 
-    [TitleGroup("LIBRARY COLLECTION")]
-    [HorizontalGroup("LIBRARY COLLECTION/Split")]
-    [VerticalGroup("LIBRARY COLLECTION/Split/Right")]
-    [BoxGroup("LIBRARY COLLECTION/Split/Right/ARMOUR")]
-    public List<Armour> _LeatherDatabase;
+        public uint Version => 1;
 
-    [TitleGroup("LIBRARY COLLECTION")]
-    [VerticalGroup("LIBRARY COLLECTION/Split/Right")]
-    [BoxGroup("LIBRARY COLLECTION/Split/Right/ARMOUR")]
-    public List<Armour> _MailDatabase;
+        public void Transfer(GameManager source, SavingSystem.Transfer transfer)
+        {
+            #warning we should have a database of all potential party members, right now we can't restore party members that are not part of the _AllPartyMembers collection
+            #warning we have other usage of _AllPartyMembers as well, check that this doesn't fuck anything up either
+            if (transfer == SavingSystem.Transfer.PullFromSource)
+            {
+                Party = source.PartyLineup.Select(x => x.Guid).ToArray();
+                Reserve = source.ReservesLineup.Select(x => x.Guid).ToArray();
+            }
+            else
+            {
+                source.PartyLineup = new();
+                foreach (guid guid in Party)
+                    if (PlayableCharacters.TryGet(guid, out var hero))
+                        source.PartyLineup.Add(hero);
 
-    [TitleGroup("LIBRARY COLLECTION")]
-    [VerticalGroup("LIBRARY COLLECTION/Split/Right")]
-    [BoxGroup("LIBRARY COLLECTION/Split/Right/ARMOUR")]
-    public List<Armour> _ChasisDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
-    [VerticalGroup("LIBRARY COLLECTION/Split/Right")]
-    [BoxGroup("LIBRARY COLLECTION/Split/Right/ARMOUR")]
-    public List<Armour> _RobesDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ACCESSORIES")]
-    public List<Accessory> _AccessoryDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ITEMS")]
-    public List<Consumable> _ConsumablesDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ITEMS")]
-    public List<KeyItem> _KeyItemsDatabase;
-
-    [TitleGroup("LIBRARY COLLECTION")]
-    [BoxGroup("LIBRARY COLLECTION/ITEMS")]
-    public List<Loot> _LootDatabase;
-    #endregion
+                source.ReservesLineup = new();
+                foreach (guid guid in Reserve)
+                    if (PlayableCharacters.TryGet(guid, out var hero))
+                        source.ReservesLineup.Add(hero);
+            }
+        }
+    }
 }

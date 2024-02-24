@@ -8,25 +8,25 @@ namespace Interactables
     public class GiveItem : IInteraction
     {
         [Required]
-        public ItemCapsule Item;
+        public CharacterTemplate.Drop Item;
 
         public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerControlsNode player)
         {
-            InventoryManager._instance.AddToInventory(Item);
+            InventoryManager.Instance.AddToInventory(Item.Item, Item.Count);
             yield break;
         }
 
         public bool IsValid(out string error)
         {
-            if (Item == null || Item.thisItem == null)
+            if (Item.Item == null)
             {
                 error = $"{nameof(Item)} is null";
                 return false;
             }
 
-            if (Item.ItemAmount == 0)
+            if (Item.Count == 0)
             {
-                error = $"{nameof(Item.ItemAmount)} is 0";
+                error = $"{nameof(Item.Count)} is 0";
                 return false;
             }
 

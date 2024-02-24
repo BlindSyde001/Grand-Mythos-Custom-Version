@@ -37,12 +37,11 @@ public class MenuInputs : MonoBehaviour
     internal bool coroutineRunning = false;
 
     internal bool menuFlowIsRunning = false;
-
-    private ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) lineupChange;
+    ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) lineupChange;
 
 
     // UPDATES
-    private void Start()
+    void Start()
     {
         InputManager = InputManager._instance;
         GameManager = GameManager._instance;
@@ -124,12 +123,12 @@ public class MenuInputs : MonoBehaviour
 
     public void ChangePartyLineup(int selectedToChange)
     {
-        ChangePartyLineup((GameManager._PartyLineup, selectedToChange-1));
+        ChangePartyLineup((GameManager.PartyLineup, selectedToChange-1));
     }
 
     public void ChangePartyLineupFromReserve(int selectedToChange)
     {
-        ChangePartyLineup((GameManager._ReservesLineup, selectedToChange-1));
+        ChangePartyLineup((GameManager.ReservesLineup, selectedToChange-1));
     }
 
     void ChangePartyLineup((List<HeroExtension> _PartyLineup, int selectedToChange) data)
@@ -156,7 +155,7 @@ public class MenuInputs : MonoBehaviour
         }
     }
 
-    private void QuitApplication()
+    void QuitApplication()
     {
         Application.Quit();
     }

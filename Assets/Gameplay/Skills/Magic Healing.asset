@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00d19563990c46f190b108ccb4d28df2, type: 3}
   m_Name: Magic Healing
   m_EditorClassIdentifier: 
-  Cost: 2
+  _guid:
+    a: 5441392780872156517
+    b: 13748056633952493967
+  ATBCost: 1
   Effects:
   - rid: 7439448773025857549
   - rid: 7439448773025857550
@@ -57,6 +60,7 @@ MonoBehaviour:
           rid: 7439448773025857555
     - rid: 7439448773025857554
       type: {class: IsSelf, ns: Conditions, asm: Assembly-CSharp}
+      data: 
     - rid: 7439448773025857555
       type: {class: AttributeFilter, ns: Conditions, asm: Assembly-CSharp}
       data:
