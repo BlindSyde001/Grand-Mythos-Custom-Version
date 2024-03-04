@@ -33,7 +33,7 @@ public class SpawnPoint : MonoBehaviour
             LastSpawnUsed = this;
             Instantiate(Reference.PlayerCharacter.Prefab, transform.position, transform.rotation);
         }
-        else if (OverworldPlayerControlsNode.Instances.Count == 0)
+        else if (OverworldPlayerController.Instances.Count == 0)
             StartCoroutine(DelayedSpawn());
     }
 
@@ -41,7 +41,7 @@ public class SpawnPoint : MonoBehaviour
     {
         yield return null; // Wait at least two frames to make sure that everything that meant to spawn the player had the time to do so
         yield return null;
-        if (OverworldPlayerControlsNode.Instances.Count != 0)
+        if (OverworldPlayerController.Instances.Count != 0)
             yield break;
 
         LastSpawnUsed = this;

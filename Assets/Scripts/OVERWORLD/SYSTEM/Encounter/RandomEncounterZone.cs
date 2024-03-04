@@ -41,10 +41,10 @@ public class RandomEncounterZone : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer != OverworldPlayerControlsNode.CharacterLayer)
+        if (other.gameObject.layer != OverworldPlayerController.CharacterLayer)
             return;
 
-        if (other.GetComponentInParent<OverworldPlayerControlsNode>() is not OverworldPlayerControlsNode controller)
+        if (other.GetComponentInParent<OverworldPlayerController>() is not OverworldPlayerController controller)
             return;
 
         double walkDelta;

@@ -10,7 +10,7 @@ namespace Interactables
     {
         [Required, SerializeReference] public IEncounterDefinition Encounter;
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerControlsNode player)
+        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
         {
             Encounter.Start(source.transform, player);
             yield break;

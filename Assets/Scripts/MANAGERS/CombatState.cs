@@ -1,0 +1,1 @@
+public enum CombatState { Start, Active, Wait, End }

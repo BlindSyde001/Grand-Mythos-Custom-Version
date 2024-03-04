@@ -44,12 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4641ffa80864dee44b0783a967b1c81c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CSA: {fileID: 11400000, guid: d5249857a74b2cd48a4cc4b42685d6d4, type: 2}
   Team: {fileID: 11400000, guid: 998822fe4b9cbd14e99fabd4b5e31caa, type: 2}
-  charPortrait: {fileID: 0}
-  _CharacterModel: {fileID: 5499571375476555240, guid: 1eb592d996651674d93b63d2df0729e2, type: 3}
-  _CurrentHP: 1000
-  _CurrentMP: 10
+  BattlePrefab: {fileID: 5499571375476555240, guid: 1eb592d996651674d93b63d2df0729e2, type: 3}
+  Portrait: {fileID: 0}
+  CurrentHP: 0
+  CurrentMP: 0
   BaseStats:
     HP: 1000
     MP: 10
@@ -68,27 +67,25 @@ MonoBehaviour:
     Speed: 20
   GrowthRate: 0
   Experience: 0
-  StartingLevel: 1
-  _AffinityFIRE: 0
-  _AffinityICE: 0
-  _AffinityLIGHTNING: 0
-  _AffinityWATER: 0
-  _ResistBLIND: 0
-  _ResistSILENCE: 0
-  _ResistFUROR: 0
-  _ResistPARALYSIS: 0
-  _ResistPHYSICAL: 0
-  _ResistMAGICAL: 0
-  _IsBlinded: 0
-  _IsSilenced: 0
-  _IsFurored: 0
-  _IsParalysed: 0
-  _IsPhysDown: 0
-  _IsMagDown: 0
-  ActionChargePercent: 0
+  Level: 1
+  AffinityFIRE: 0
+  AffinityICE: 0
+  AffinityLIGHTNING: 0
+  AffinityWATER: 0
+  IsBlinded: 0
+  IsSilenced: 0
+  IsFurored: 0
+  IsParalysed: 0
+  IsPhysDown: 0
+  IsMagDown: 0
+  ResistBLIND: 0
+  ResistSILENCE: 0
+  ResistFUROR: 0
+  ResistPARALYSIS: 0
+  ResistPHYSICAL: 0
+  ResistMAGICAL: 0
+  ActionsCharged: 0
   ActionChargeMax: 4
-  Inventory:
-    rid: 7439448764490973231
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   SkillTree: {fileID: 0}
   Skills:
@@ -107,16 +104,17 @@ MonoBehaviour:
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-  experiencePool: 250
-  creditPool: 150
+  Inventory:
+    rid: 7439448764490973231
+  ExperiencePool: 250
+  CreditPool: 150
   DropItems:
-  - thisItem: {fileID: 11400000, guid: ad3b3163724789a4db2f719ebebe509b, type: 2}
-    ItemAmount: 1
-  - thisItem: {fileID: 11400000, guid: de1c8f5a28252d2499e8d4ba617ab355, type: 2}
-    ItemAmount: 1
-  DropRate:
-  - 65
-  - 30
+  - Item: {fileID: 11400000, guid: ad3b3163724789a4db2f719ebebe509b, type: 2}
+    Count: 1
+    DropRatePercent: 65
+  - Item: {fileID: 11400000, guid: de1c8f5a28252d2499e8d4ba617ab355, type: 2}
+    Count: 1
+    DropRatePercent: 30
   references:
     version: 2
     RefIds:

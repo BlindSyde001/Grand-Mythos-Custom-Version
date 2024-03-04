@@ -33,10 +33,10 @@ public class CharacterTemplate : MonoBehaviour
     [Required]
     public Team Team;
 
-    [HorizontalGroup("ASSETS"), FormerlySerializedAs("_CharacterModel"), SerializeField, PreviewField(100)]
+    [HorizontalGroup("ASSETS"), ValidateInput(nameof(HasButton), "Must have a BattleHeroModelController"), SerializeField, PreviewField(100)]
     public GameObject BattlePrefab;
 
-    [HorizontalGroup("ASSETS"), FormerlySerializedAs("charPortrait"), SerializeField, PreviewField(100)]
+    [HorizontalGroup("ASSETS"), SerializeField, PreviewField(100)]
     public Sprite Portrait;
 
     [BoxGroup("STATS"), HorizontalGroup("STATS/POINTS"), GUIColor(0f, 1f, 0.3f)]
@@ -133,6 +133,11 @@ public class CharacterTemplate : MonoBehaviour
     {
         RegenHealthAndMana();
         _effectiveStatsPreview = EffectiveStats;
+    }
+
+    bool HasButton(GameObject go, ref string errorMessage)
+    {
+        return go != null &&  go.GetComponent<BattleCharacterController>();
     }
 
     void UpdateExperienceFromLevel()

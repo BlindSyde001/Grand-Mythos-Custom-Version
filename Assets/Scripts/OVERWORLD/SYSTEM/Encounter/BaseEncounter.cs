@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 [Serializable]
 public abstract class BaseEncounter : IEncounterDefinition
@@ -11,14 +13,14 @@ public abstract class BaseEncounter : IEncounterDefinition
 
     public SceneReference Scene;
 
-    public void Start(Transform hintSource, OverworldPlayerControlsNode player)
+    public void Start(Transform hintSource, OverworldPlayerController player)
     {
         if (startingEncounter)
             return;
 
         startingEncounter = true;
         var battleTransition = new GameObject(nameof(EncounterState));
-        UnityEngine.Object.DontDestroyOnLoad(battleTransition);
+        Object.DontDestroyOnLoad(battleTransition);
         var encounterState = battleTransition.AddComponent<EncounterState>();
         foreach (var reserve in GameManager._instance.ReservesLineup)
             reserve.gameObject.SetActive(false);
@@ -36,7 +38,6 @@ public abstract class BaseEncounter : IEncounterDefinition
             loadOperation.allowSceneActivation = false;
 
 #warning Both game manager and event switch scene should be rewritten, right now it's a bit too constrictive
-            var gameManager = UnityEngine.Object.FindObjectOfType<GameManager>();
 
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
@@ -60,16 +61,43 @@ public abstract class BaseEncounter : IEncounterDefinition
 
             loadOperation.allowSceneActivation = true;
 
+            var hostileController = new List<BattleCharacterController>();
             for (int i = 0; i < opponents.Length; i++)
             {
-#warning this has to go, very restrictive too
-                var enemy = UnityEngine.Object.Instantiate(opponents[i], gameManager.transform);
-                enemy.name = $"{opponents[i].gameObject.name} Data {i}";
-                gameManager.EnemyLineup.Add(enemy);
+                var template = Object.Instantiate(opponents[i]);
+                template.name = $"{opponents[i].gameObject.name} Data {i}";
+
+                // Add Model into Battle
+                var model = Object.Instantiate(template.BattlePrefab, template.transform);
+
+                model.name = $"{template.gameObject.name} Model {i}";
+
+                // Attach Relevant References
+                var controller = model.GetComponent<BattleCharacterController>();
+                controller.Template = template;
+                template.ActionsCharged = UnityEngine.Random.Range(0, template.ActionChargeMax);
+                hostileController.Add(controller);
             }
 
             while (loadOperation.isDone == false)
                 yield return null;
+
+            (Vector3 pos, Quaternion rot)[] spawns;
+            if (Object.FindObjectOfType<BattleStateMachine>() is { } bsm && bsm != null)
+            {
+                spawns = bsm.EnemySpawns.Select(x => (x.position, x.rotation)).ToArray();
+            }
+            else
+            {
+                spawns = new (Vector3, Quaternion)[] { (default, Quaternion.identity) };
+                Debug.LogWarning($"Could not find {nameof(BattleStateMachine)} when trying to set encounter");
+            }
+
+            for (int i = 0; i < hostileController.Count; i++)
+            {
+                hostileController[i].Template.transform.parent = null;
+                hostileController[i].transform.SetPositionAndRotation(spawns[i].pos, spawns[i].rot);
+            }
 
             Scene runtimeScene = default;
             for (int i = 0; i < SceneManager.sceneCount; i++)

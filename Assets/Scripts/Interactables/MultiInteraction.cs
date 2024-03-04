@@ -17,7 +17,7 @@ namespace Interactables
             Simultaneously
         }
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerControlsNode player)
+        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
         {
             switch (Execution)
             {

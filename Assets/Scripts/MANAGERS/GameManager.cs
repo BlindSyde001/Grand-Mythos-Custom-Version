@@ -41,8 +41,6 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
     [FormerlySerializedAs("_ReservesLineup"), BoxGroup("PARTY DATA")]
     public List<HeroExtension> ReservesLineup;  // Who I have available in the Party
 
-    public List<CharacterTemplate> EnemyLineup;
-
     guid ISaved.UniqueConstID => Guid;
 
     [Serializable] public struct SaveV1 : ISaveHandler<GameManager>
@@ -53,8 +51,6 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
 
         public void Transfer(GameManager source, SavingSystem.Transfer transfer)
         {
-            #warning we should have a database of all potential party members, right now we can't restore party members that are not part of the _AllPartyMembers collection
-            #warning we have other usage of _AllPartyMembers as well, check that this doesn't fuck anything up either
             if (transfer == SavingSystem.Transfer.PullFromSource)
             {
                 Party = source.PartyLineup.Select(x => x.Guid).ToArray();

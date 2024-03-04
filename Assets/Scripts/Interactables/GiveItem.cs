@@ -10,7 +10,7 @@ namespace Interactables
         [Required]
         public CharacterTemplate.Drop Item;
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerControlsNode player)
+        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
         {
             InventoryManager.Instance.AddToInventory(Item.Item, Item.Count);
             yield break;

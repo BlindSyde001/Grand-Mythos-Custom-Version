@@ -1,13 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class BattleHeroModelController : BattleCharacterController
 {
-    // VARIABLES
-    [SerializeField]
-    internal HeroExtension myHero;
-
     string currentAnimState;
     internal bool isPerformingActions;
 
@@ -30,8 +22,8 @@ public class BattleHeroModelController : BattleCharacterController
     {
         switch(combatState)
         {
-            case CombatState.START:
-                if (myHero.CurrentHP > 0)
+            case CombatState.Start:
+                if (Template.CurrentHP > 0)
                 {
                     ChangeAnimationState(Battle_EnterFight);
                 }
@@ -41,35 +33,35 @@ public class BattleHeroModelController : BattleCharacterController
                 }
                 break;
 
-            case CombatState.ACTIVE:
-                if (myHero.CurrentHP > 0)
+            case CombatState.Active:
+                if (Template.CurrentHP > 0)
                 {
                     ChangeAnimationState(Battle_Stance);
-                    myMovementController.isRoaming = true;
+                    MovementController.isRoaming = true;
                 }
                 else
                 {
-                    myMovementController.isRoaming = false;
+                    MovementController.isRoaming = false;
                 }
                 break;
 
-            case CombatState.WAIT:
-                if (myHero.CurrentHP > 0)
+            case CombatState.Wait:
+                if (Template.CurrentHP > 0)
                 {
                     ChangeAnimationState(Battle_Stance);
-                    myMovementController.isRoaming = false;
+                    MovementController.isRoaming = false;
                 }
                 break;
 
-            case CombatState.END:
-                myMovementController.isRoaming = false;
+            case CombatState.End:
+                MovementController.isRoaming = false;
                 break;
         }
     }
 
     void ChangeAnimationState(string newAnimState)
     {
-        animator.Play(newAnimState);
+        Animator.Play(newAnimState);
         currentAnimState = newAnimState;
     }
 }

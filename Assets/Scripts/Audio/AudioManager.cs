@@ -28,27 +28,17 @@ public class AudioManager : MonoBehaviour
         sfxSource = gameObject.AddComponent<AudioSource>();
     }
 
-    void OnEnable()
-    {
-        EventManager.OnGameStateChange += SwitchMusicTrackEvent;
-    }
-
-    void OnDisable()
-    {
-        EventManager.OnGameStateChange -= SwitchMusicTrackEvent;
-    }
-
     //METHODS
     public void SwitchMusicTrackEvent(GameState gs)
     {
         switch(gs)
         {
-            case GameState.OVERWORLD:
+            case GameState.Overworld:
                 //PlayMusicWithFade(overworldTheme);
                 PlayMusicWithDelay(overworldTheme);
                 break;
 
-            case GameState.BATTLE:
+            case GameState.Battle:
                 PlayMusicWithFade(battleTheme);
                 break;
         }

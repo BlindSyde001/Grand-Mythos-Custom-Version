@@ -2,6 +2,6 @@
 
 public interface IEncounterDefinition
 {
-    void Start(Transform hintSource, OverworldPlayerControlsNode player);
+    void Start(Transform hintSource, OverworldPlayerController player);
     bool IsValid(out string error);
 }

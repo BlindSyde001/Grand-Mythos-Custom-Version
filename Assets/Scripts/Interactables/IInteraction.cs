@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IInteraction
 {
-    IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerControlsNode player);
+    IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player);
     bool IsValid(out string error);
 }
 

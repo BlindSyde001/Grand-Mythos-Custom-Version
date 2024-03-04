@@ -9992,9 +9992,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d895233b4d9023a498f0489e19644b36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerInput: {fileID: 8296089134129672946}
-  menuInputs: {fileID: 2430156990192235906}
+  PlayerInput: {fileID: 8296089134129672946}
+  MenuInputs: {fileID: 2430156990192235906}
   MenuBackground: {fileID: 334541687958460887}
+  _stateStack: []
 --- !u!114 &2430156990192235906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27555,7 +27556,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6622752966772525112}
   - component: {fileID: 1129216868019125664}
-  - component: {fileID: 3038795978207248482}
   - component: {fileID: 31797031260090698}
   m_Layer: 0
   m_Name: Transfer Data
@@ -27597,20 +27597,6 @@ MonoBehaviour:
   - {fileID: 9187409409059822420, guid: 92b687fb083635a4c9c7da17b7111d7d, type: 3}
   - {fileID: 9187409409059822420, guid: b840bcb0ddc9d4c4bb365b9943f8b4ea, type: 3}
   ReservesLineup: []
-  EnemyLineup: []
---- !u!114 &3038795978207248482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7340071129024463947}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb4b7faa30177664db76fa2a83c275f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputManager: {fileID: 2588615030357715259}
 --- !u!114 &31797031260090698
 MonoBehaviour:
   m_ObjectHideFlags: 0

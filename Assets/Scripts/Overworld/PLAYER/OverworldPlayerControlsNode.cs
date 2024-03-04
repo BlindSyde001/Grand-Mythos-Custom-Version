@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Experimental.AI;
 
-public class OverworldPlayerControlsNode : ReloadableBehaviour
+public class OverworldPlayerController : ReloadableBehaviour
 {
     /// <summary> Index of the character layer </summary>
     public const int CharacterLayer = 3;
@@ -18,7 +18,7 @@ public class OverworldPlayerControlsNode : ReloadableBehaviour
     const int OffMeshLinkStart = 0;
     const int OffMeshLinkEnd = 2;
 
-    public static HashSet<OverworldPlayerControlsNode> Instances = new();
+    public static HashSet<OverworldPlayerController> Instances = new();
     static Collider[] _sphereCastUtility = new Collider[16];
 
 
@@ -51,6 +51,7 @@ public class OverworldPlayerControlsNode : ReloadableBehaviour
 
     protected override void OnEnabled(bool afterDomainReload)
     {
+        InputManager.Instance.PushGameState(GameState.Overworld, this);
         Instances.Add(this);
 
         var position = Controller.transform.position;
@@ -66,6 +67,12 @@ public class OverworldPlayerControlsNode : ReloadableBehaviour
         playerControls.Enable();
     }
 
+    protected override void OnDisabled(bool beforeDomainReload)
+    {
+        playerControls.Disable();
+        InputManager.Instance.PopGameState(this);
+    }
+
     public bool TryPlayInteraction(IInteractionSource source, IInteraction interaction)
     {
         if ((Disabler & ControlDisabler.Interacting) != 0)
@@ -79,12 +86,7 @@ public class OverworldPlayerControlsNode : ReloadableBehaviour
     void OnDrawGizmosSelected()
     {
         if (gameObject.layer != CharacterLayer)
-            GizmosHelper.Label(transform.position, $"This {nameof(OverworldPlayerControlsNode)} is not on the expected layer, expected layer #{CharacterLayer}, got layer #{gameObject.layer}", Color.red);
-    }
-
-    protected override void OnDisabled(bool beforeDomainReload)
-    {
-        playerControls.Disable();
+            GizmosHelper.Label(transform.position, $"This {nameof(OverworldPlayerController)} is not on the expected layer, expected layer #{CharacterLayer}, got layer #{gameObject.layer}", Color.red);
     }
 
     void OnDestroy()

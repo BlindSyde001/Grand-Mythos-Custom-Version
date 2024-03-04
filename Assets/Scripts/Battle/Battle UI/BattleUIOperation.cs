@@ -540,7 +540,7 @@ public class BattleUIOperation : MonoBehaviour
         BattleManagement.SetOrderFor(UnitSelected, tactics);
         _tempTactics = new();
         ResetNavigation();
-        BattleManagement.blocked &= ~BlockBattleFlags.PreparingOrders;
+        BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
         Attack.Select();
     }
 
@@ -548,7 +548,7 @@ public class BattleUIOperation : MonoBehaviour
     {
         _tempTactics = new();
         ResetNavigation();
-        BattleManagement.blocked &= ~BlockBattleFlags.PreparingOrders;
+        BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
         Attack.Select();
     }
 
@@ -591,7 +591,7 @@ public class BattleUIOperation : MonoBehaviour
 
         IEnumerator BattleUICoroutine(IEnumerator inner)
         {
-            BattleManagement.blocked |= BlockBattleFlags.PreparingOrders;
+            BattleManagement.Blocked |= BlockBattleFlags.PreparingOrders;
             try
             {
                 Attack.gameObject.SetActive(false);

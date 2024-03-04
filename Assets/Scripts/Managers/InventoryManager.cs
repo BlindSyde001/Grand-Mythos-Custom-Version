@@ -86,8 +86,8 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         else if (Instance != this)
         {
             Destroy(this.gameObject);
+            return;
         }
-        DontDestroyOnLoad(this.gameObject);
         SavingSystem.TryRestore<InventoryManager, SaveV1>(this);
     }
 

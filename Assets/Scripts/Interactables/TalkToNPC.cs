@@ -15,7 +15,7 @@ namespace Interactables
         public string DialogContent = "This is a very basic implementation for NPC dialog";
         [Required] public Transform DialogAnchor;
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerControlsNode player)
+        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
         {
             for (float time = 0; time < 2f; time += Time.deltaTime)
             {

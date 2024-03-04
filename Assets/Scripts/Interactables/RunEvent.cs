@@ -9,7 +9,7 @@ namespace Interactables
     {
         public UnityEvent Event;
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerControlsNode player)
+        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
         {
             Event?.Invoke();
             yield break;
