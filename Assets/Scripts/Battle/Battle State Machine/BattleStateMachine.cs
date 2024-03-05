@@ -55,7 +55,7 @@ public class BattleStateMachine : MonoBehaviour
             _instance = null;
     }
 
-    void Start()
+    IEnumerator Start()
     {
         var gameManager = GameManager._instance;
         foreach (var reserve in gameManager.ReservesLineup)
@@ -79,21 +79,78 @@ public class BattleStateMachine : MonoBehaviour
             hero.ActionsCharged = Random.Range(0, hero.ActionChargeMax);
         }
 
-        SwitchCombatState(CombatState.Start);
-        StartCoroutine(BattleIntermission(5, CombatState.Start));
-    }
-
-    void OnEnable()
-    {
         foreach (var target in FindObjectsOfType<CharacterTemplate>())
             Units.Add(target);
+
+        SendStateChangeNotification(CombatState.Start);
+        yield return new WaitForSeconds(5);
+        SendStateChangeNotification(CombatState.Active);
+
+        do
+        {
+            if (IsBattleFinished(out bool win))
+            {
+                _rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
+                SendStateChangeNotification(CombatState.End);
+                enabled = false;
+                yield return new WaitForSeconds(1f);
+                foreach (var yields in _battleResolution.ResolveBattle(win, this))
+                    yield return yields;
+                yield break;
+            }
+
+            if (Blocked == 0)
+            {
+                _unitsCopy.Clear();
+                _unitsCopy.AddRange(Units);
+                foreach (var unit in Units)
+                {
+                    if (unit.CurrentHP == 0 || TacticsDisabled.Contains(unit))
+                        continue;
+
+                    // This unit has its ATB full or the manual order can be executed given the current amount of charge
+                    if (unit.ActionsCharged >= unit.ActionChargeMax || _orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecuteWithAction(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
+                    {
+                        foreach (var yield in CatchException(ProcessUnit(unit)))
+                            yield return yield;
+                    }
+                }
+
+                foreach (var unit in Units)
+                {
+                    if (unit.CurrentHP != 0)
+                        unit.ActionsCharged += unit.ActionRechargeSpeed * Time.deltaTime / 10f;
+                    // DO NOT CLAMP HERE, DO IT AFTER ORDERS HAVE BEEN SCHEDULED
+                }
+            }
+
+            yield return null; // Wait for next frame
+        } while (true);
     }
 
-    void Update()
+    IEnumerable CatchException(IEnumerable source)
     {
-        if (Blocked != 0)
-            return;
+        for (var enumerable = source.GetEnumerator(); ; )
+        {
+            object yield;
+            try
+            {
+                if (enumerable.MoveNext() == false)
+                    break;
+                yield = enumerable.Current;
+            }
+            catch(Exception e)
+            {
+                Debug.LogException(e);
+                break;
+            }
 
+            yield return yield;
+        }
+    }
+
+    bool IsBattleFinished(out bool win)
+    {
         int alliesLeft = 0;
         int hostilesLeft = 0;
         foreach (var target in Units)
@@ -106,48 +163,12 @@ public class BattleStateMachine : MonoBehaviour
                 hostilesLeft++;
         }
 
-        if (hostilesLeft == 0)
-        {
-            _rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
-            SwitchCombatState(CombatState.End);
-            enabled = false;
-            StartCoroutine(VictoryTransition());
-        }
-        else if (alliesLeft == 0)
-        {
-            _rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
-            SwitchCombatState(CombatState.End);
-            enabled = false;
-            StartCoroutine(DefeatTransition());
-        }
-
-        _unitsCopy.Clear();
-        _unitsCopy.AddRange(Units);
-        foreach (var unit in Units)
-        {
-            if (unit.CurrentHP == 0 || TacticsDisabled.Contains(unit))
-                continue;
-
-            // This unit has its ATB full or the manual order can be executed given the current amount of charge
-            if (unit.ActionsCharged >= unit.ActionChargeMax || _orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecuteWithAction(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
-            {
-                Blocked |= BlockBattleFlags.UnitAct;
-                StartCoroutine(ProcessUnit(unit));
-                return; // Explicitly return to prevent others from acting at the same time
-            }
-        }
-
-        foreach (var unit in Units)
-        {
-            if (unit.CurrentHP != 0)
-                unit.ActionsCharged += unit.ActionRechargeSpeed * Time.deltaTime / 10f;
-            // DO NOT CLAMP HERE, DO IT AFTER ORDERS HAVE BEEN SCHEDULED
-        }
+        win = hostilesLeft == 0 && alliesLeft > 0;
+        return hostilesLeft == 0 || alliesLeft == 0;
     }
 
-    IEnumerator ProcessUnit(CharacterTemplate unit)
+    IEnumerable ProcessUnit(CharacterTemplate unit)
     {
-        Blocked |= BlockBattleFlags.UnitAct;
         #if UNITY_EDITOR
         // Halting execution to reload assemblies while this enumerator is running
         // may put the state of the combat into an unrecoverable state, make sure that doesn't happen
@@ -211,7 +232,6 @@ public class BattleStateMachine : MonoBehaviour
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.UnlockReloadAssemblies();
 #endif
-            Blocked &= ~BlockBattleFlags.UnitAct;
         }
     }
 
@@ -244,54 +264,42 @@ public class BattleStateMachine : MonoBehaviour
     public void SetOrderFor(CharacterTemplate character, Tactics specificTactic) => _orders[character] = specificTactic;
 
     // METHODS
-    void SwitchCombatState(CombatState newCombatState)
+    void SendStateChangeNotification(CombatState newCombatState)
     {
-        switch(newCombatState)
+        try
         {
-            case CombatState.Start:
-                _combatState = CombatState.Start;
-                OnNewStateSwitched?.Invoke(newCombatState);
-                break;
+            switch(newCombatState)
+            {
+                case CombatState.Start:
+                    _combatState = CombatState.Start;
+                    OnNewStateSwitched?.Invoke(newCombatState);
+                    break;
 
-            case CombatState.Active:
-                _combatState = CombatState.Active;
-                OnNewStateSwitched?.Invoke(newCombatState);
-                break;
+                case CombatState.Active:
+                    _combatState = CombatState.Active;
+                    OnNewStateSwitched?.Invoke(newCombatState);
+                    break;
 
-            case CombatState.Wait:
-                _combatState = CombatState.Wait;
-                OnNewStateSwitched?.Invoke(newCombatState);
-                break;
+                case CombatState.Wait:
+                    _combatState = CombatState.Wait;
+                    OnNewStateSwitched?.Invoke(newCombatState);
+                    break;
 
-            case CombatState.End:
-                _combatState = CombatState.End;
-                OnNewStateSwitched?.Invoke(newCombatState);
-                break;
+                case CombatState.End:
+                    _combatState = CombatState.End;
+                    OnNewStateSwitched?.Invoke(newCombatState);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(newCombatState), newCombatState, null);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
         }
     }
 
-    IEnumerator BattleIntermission(float x, CombatState combatState)
-    {
-        SwitchCombatState(combatState);
-        yield return new WaitForSeconds(x);
-        SwitchCombatState(CombatState.Active);
-    }
-
     #region End of Battle
-    IEnumerator VictoryTransition()
-    {
-        // Victory poses, exp gaining, items, transition back to overworld
-        yield return new WaitForSeconds(1f);
-        foreach (var yields in _battleResolution.ResolveBattle(true, this))
-            yield return yields;
-    }
-    IEnumerator DefeatTransition()
-    {
-        // Lost, Open up UI options to load saved game or return to title
-        yield return new WaitForSeconds(1f);
-        foreach (var yields in _battleResolution.ResolveBattle(false, this))
-            yield return yields;
-    }
     internal static void ClearData()
     {
         #warning clean this stuff up
@@ -309,6 +317,5 @@ public class BattleStateMachine : MonoBehaviour
 [Flags]
 public enum BlockBattleFlags
 {
-    UnitAct = 0b0001,
-    PreparingOrders = 0b0010,
+    PreparingOrders = 0b0001,
 }

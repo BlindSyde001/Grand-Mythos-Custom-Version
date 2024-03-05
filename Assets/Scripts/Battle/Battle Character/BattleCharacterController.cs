@@ -1,13 +1,14 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class BattleCharacterController : MonoBehaviour
 {
     public CharacterTemplate Template;
 
-    [SerializeField]
+    [SerializeField, Required]
     protected Animator Animator;
-    [SerializeField]
+    [SerializeField, Required]
     protected BattleArenaMovement MovementController;
 
     const string Battle_EnterFight = "Enter Fight";
@@ -39,8 +40,8 @@ public class BattleCharacterController : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        Animator = GetComponent<Animator>();
-        MovementController = GetComponent<BattleArenaMovement>();
+        this.AutoAssign(ref Animator);
+        this.AutoAssign(ref MovementController);
     }
 
     void NewCombatState(CombatState combatState)
