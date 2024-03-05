@@ -96,8 +96,8 @@ public class MenuInputs : MonoBehaviour
         coroutineRunning = true;
         MenuSwitchboard(startMenuActions);
         InputManager.MenuBackground.GetComponent<Image>().DOFade(1, InputManager.MenuInputs.speed);
-        yield return new WaitForSeconds(speed);
         InputManager.Instance.PushGameState(GameState.Menu, this);
+        yield return new WaitForSeconds(speed);
         coroutineRunning = false;
         menuFlowIsRunning = false;
     }
@@ -105,13 +105,13 @@ public class MenuInputs : MonoBehaviour
     {
         if (!coroutineRunning)
         {
+            InputManager.Instance.PopGameState(this);
             if (currentMenuOpen == startMenuActions)
             {
                 InputManager.MenuBackground.GetComponent<Image>().DOFade(0, InputManager.MenuInputs.speed);
                 CloseSwitchBoard(currentMenuOpen, true);
                 yield return new WaitForSeconds(speed);
                 currentMenuOpen = null;
-                InputManager.Instance.PopGameState(this);
             }
             else
             {

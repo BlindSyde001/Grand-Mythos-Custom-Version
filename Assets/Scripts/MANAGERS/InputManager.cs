@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
 
 public class InputManager : MonoBehaviour
@@ -12,13 +11,13 @@ public class InputManager : MonoBehaviour
 
     [SerializeField]
     public PlayerInput PlayerInput;
-    [FormerlySerializedAs("menuInputs"),SerializeField]
+    [SerializeField]
     public MenuInputs MenuInputs;
     [SerializeField]
     public GameObject MenuBackground;
 
     public GameState CurrentState { get; private set; }
-    public List<GameStateRequests> _stateStack = new();
+    public List<GameStateRequests> StateStack = new();
 
     // UPDATES
     void Awake()
@@ -31,6 +30,7 @@ public class InputManager : MonoBehaviour
         else if (Instance != this)
         {
             Destroy(this.gameObject);
+            return;
         }
 
         this.transform.parent = null;
@@ -41,19 +41,17 @@ public class InputManager : MonoBehaviour
     #region INPUT COMMANDS
     public void StartMenuOpen(InputAction.CallbackContext context)
     {
-        if (!context.performed || MenuInputs.menuFlowIsRunning)
+        if (!context.performed)
             return;
 
-        MenuInputs.menuFlowIsRunning = true;
         StartCoroutine(MenuInputs.OpenFirstMenu());
     }
 
     public void StartMenuClose(InputAction.CallbackContext context)
     {
-        if (!context.performed || MenuInputs.menuFlowIsRunning)
+        if (!context.performed)
             return;
 
-        MenuInputs.menuFlowIsRunning = true;
         StartCoroutine(MenuInputs.CloseAllMenus());
     }
 
@@ -66,7 +64,7 @@ public class InputManager : MonoBehaviour
     /// </remarks>
     public void PushGameState(GameState newState, Object key)
     {
-        _stateStack.Add(new(){ State = newState, Key = key });
+        StateStack.Add(new(){ State = newState, Key = key });
         SetGameState(newState);
     }
 
@@ -75,23 +73,23 @@ public class InputManager : MonoBehaviour
     /// </summary>
     public void PopGameState(Object key)
     {
-        for (int i = _stateStack.Count - 1; i >= 0; i--)
+        for (int i = StateStack.Count - 1; i >= 0; i--)
         {
-            if (_stateStack[i].Key == null)
-                _stateStack.RemoveAt(i);
+            if (StateStack[i].Key == null)
+                StateStack.RemoveAt(i);
         }
 
-        for (int i = _stateStack.Count - 1; i >= 0; i--)
+        for (int i = StateStack.Count - 1; i >= 0; i--)
         {
-            if (_stateStack[i].Key == key)
+            if (StateStack[i].Key == key)
             {
-                _stateStack.RemoveAt(i);
+                StateStack.RemoveAt(i);
                 break;
             }
         }
 
-        if (_stateStack.Count > 0 && _stateStack[^1].State != CurrentState)
-            SetGameState(_stateStack[^1].State);
+        if (StateStack.Count > 0 && StateStack[^1].State != CurrentState)
+            SetGameState(StateStack[^1].State);
         else
             SetGameState(GameState.Overworld);
     }
@@ -103,11 +101,15 @@ public class InputManager : MonoBehaviour
         switch (newState)
         {
             case GameState.Overworld:
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 foreach (var instance in OverworldPlayerController.Instances)
                     instance.enabled = true;
                 break;
 
             case GameState.Cutscene:
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 foreach (var instance in OverworldPlayerController.Instances)
                     instance.enabled = false;
                 break;
@@ -116,6 +118,8 @@ public class InputManager : MonoBehaviour
             case GameState.Title:
             case GameState.Battle:
             case GameState.Menu:
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
                 break;
         }
 
@@ -137,4 +141,15 @@ public class InputManager : MonoBehaviour
         public GameState State;
         public Object Key;
     }
+
+    static InputManager()
+    {
+        DomainReloadHelper.BeforeReload += helper => helper.InputManagerInstance = Instance;
+        DomainReloadHelper.AfterReload += helper => Instance = helper.InputManagerInstance;
+    }
+}
+
+public partial class DomainReloadHelper
+{
+    public InputManager InputManagerInstance;
 }

@@ -1,10 +1,12 @@
 ﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [Serializable]
 public class OrbitCamera : ICameraControl
 {
+    [Required]
     public InputActionReference Input;
     public float Distance = 3f;
     public float MinimumAngle = -90f;
@@ -15,9 +17,7 @@ public class OrbitCamera : ICameraControl
 
     public void Update(Camera camera, CameraFocus focus)
     {
-        #warning lock mouse depending on the input stuff ?
         var input = Input.action.ReadValue<Vector2>();
-        Input.action.Enable();
         _euler += new Vector3(input.x, -input.y, 0);
         _euler.y = Mathf.Clamp(_euler.y, MinimumAngle, MaximumAngle);
 

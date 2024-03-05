@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using Cinemachine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class BattleStateMachine : MonoBehaviour
@@ -37,7 +36,6 @@ public class BattleStateMachine : MonoBehaviour
     // UPDATES
     void Awake()
     {
-        _rotateCam = FindObjectOfType<CinemachineFreeLook>();
         if (_instance == null)
         {
             _instance = this;
@@ -47,12 +45,15 @@ public class BattleStateMachine : MonoBehaviour
             Destroy(this);
             return;
         }
+        _rotateCam = FindObjectOfType<CinemachineFreeLook>();
+        InputManager.Instance.PushGameState(GameState.Battle, this);
     }
 
     void OnDestroy()
     {
         if (_instance == this)
             _instance = null;
+        InputManager.Instance.PopGameState(this);
     }
 
     IEnumerator Start()
