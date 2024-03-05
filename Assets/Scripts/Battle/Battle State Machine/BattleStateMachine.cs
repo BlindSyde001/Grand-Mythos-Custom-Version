@@ -109,7 +109,7 @@ public class BattleStateMachine : MonoBehaviour
                         continue;
 
                     // This unit has its ATB full or the manual order can be executed given the current amount of charge
-                    if (unit.ActionsCharged >= unit.ActionChargeMax || _orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecuteWithAction(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
+                    if (unit.ActionsCharged >= unit.ActionChargeMax || _orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
                     {
                         foreach (var yield in CatchException(ProcessUnit(unit)))
                             yield return yield;
@@ -176,10 +176,9 @@ public class BattleStateMachine : MonoBehaviour
         #endif
         try
         {
-            bool foundTactics = false;
             Tactics chosenTactic;
             TargetCollection selection = default;
-            if (_orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecuteWithAction(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
+            if (_orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
             {
                 // We're taking care of this explicit order
             }
@@ -187,7 +186,7 @@ public class BattleStateMachine : MonoBehaviour
             {
                 foreach (var tactic in unit.Tactics)
                 {
-                    if (tactic.IsOn && tactic.Condition.CanExecuteWithAction(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
+                    if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
                     {
                         chosenTactic = tactic;
                         break;
@@ -198,12 +197,32 @@ public class BattleStateMachine : MonoBehaviour
 
             if (chosenTactic != null)
             {
-                foreach (var action in chosenTactic.Actions)
+                var combinedSelection = selection;
+                for (int i = 0; i < chosenTactic.Actions.Length; i++)
                 {
+                    var action = chosenTactic.Actions[i];
+
                     if (unit.ActionsCharged < action.ATBCost)
                         break;
 
-                    foundTactics = true;
+                    if (i != 0)
+                    {
+                        // Check that our selection is still valid, may not be after running the previous action
+                        var actionLeft = chosenTactic.Actions.AsSpan()[i..];
+                        if (chosenTactic.Condition.CanExecute(actionLeft, selection, unit.Context, out _, true) == false)
+                        {
+                            // If not, check if we have something else to target
+                            if (chosenTactic.Condition.CanExecute(actionLeft, new TargetCollection(_unitsCopy), unit.Context, out var newSelection, true))
+                            {
+                                // Continue with that selection instead
+                                selection = newSelection;
+                                combinedSelection |= newSelection;
+                            }
+                            else
+                                break;
+                        }
+                    }
+
                     unit.ActionsCharged -= action.ATBCost;
 
                     foreach (var yield in action.Perform(selection, unit.Context))
@@ -213,19 +232,19 @@ public class BattleStateMachine : MonoBehaviour
                         break;
                 }
 
-                chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
-                chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
+                chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(combinedSelection, unit.Context);
+                chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(combinedSelection, unit.Context);
                 foreach (var action in chosenTactic.Actions)
                 {
-                    action.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
-                    action.Precondition?.NotifyUsedCondition(selection, unit.Context);
+                    action.TargetFilter?.NotifyUsedCondition(combinedSelection, unit.Context);
+                    action.Precondition?.NotifyUsedCondition(combinedSelection, unit.Context);
                 }
 
                 unit.Context.Round++;
             }
 
-            if (foundTactics == false)
-                unit.ActionsCharged -= 1f;
+            if (unit.ActionsCharged > unit.ActionChargeMax)
+                unit.ActionsCharged = unit.ActionChargeMax;
         }
         finally
         {

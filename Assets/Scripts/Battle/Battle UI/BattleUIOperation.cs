@@ -126,7 +126,7 @@ public class BattleUIOperation : MonoBehaviour
             _unitsCopy.AddRange(BattleManagement.Units);
             foreach (var tactic in UnitSelected.Tactics)
             {
-                if (tactic.IsOn && tactic.Condition.CanExecuteWithAction(tactic.Actions, new TargetCollection(_unitsCopy), UnitSelected.Context, out _, accountForCost:false))
+                if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(_unitsCopy), UnitSelected.Context, out _, accountForCost:false))
                 {
                     tacticsPreviewed = tactic;
                     break;

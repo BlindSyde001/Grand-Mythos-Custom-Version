@@ -35,7 +35,7 @@ public class ActionCondition : IdentifiableScriptableObject
         return true;
     }
 
-    public bool CanExecuteWithAction(IActionCollection actions, TargetCollection allTargets, EvaluationContext context, out TargetCollection selection, bool accountForCost)
+    public bool CanExecute(ReadOnlySpan<IAction> actions, TargetCollection allTargets, EvaluationContext context, out TargetCollection selection, bool accountForCost)
     {
         selection = default;
 

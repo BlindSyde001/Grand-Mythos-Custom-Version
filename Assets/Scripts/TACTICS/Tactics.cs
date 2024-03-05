@@ -64,14 +64,16 @@ public class IActionCollection : ISerializationCallbackReceiver, IEnumerable<IAc
     public uint CostTotal()
     {
         uint cost = 0;
-        if (BackingArray == null)
-            return 0;
 
         foreach (var action in BackingArray)
             cost += action?.ATBCost ?? 0;
 
         return cost;
     }
+
+    public ReadOnlySpan<IAction> AsSpan() => BackingArray;
+
+    public static implicit operator ReadOnlySpan<IAction>(IActionCollection collection) => collection.BackingArray;
 
     public Enumerator<IAction> GetEnumerator() => new(BackingArray);
     IEnumerator<IAction> IEnumerable<IAction>.GetEnumerator() => new Enumerator<IAction>(BackingArray);
@@ -105,5 +107,16 @@ public class IActionCollection : ISerializationCallbackReceiver, IEnumerable<IAc
         }
 
         public void Dispose() {}
+    }
+}
+
+public static class ActionExtension
+{
+    public static uint CostTotal(this ReadOnlySpan<IAction> span)
+    {
+        uint cost = 0;
+        foreach (var action in span)
+            cost += action?.ATBCost ?? 0;
+        return cost;
     }
 }
