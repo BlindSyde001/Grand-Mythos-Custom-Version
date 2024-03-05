@@ -9,15 +9,15 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
 {
     public static readonly guid Guid = new("bb05002e-f0d5-4936-a986-c47a045e58d8");
 
-    public static GameManager _instance;
+    public static GameManager Instance { get; private set; }
 
     void Awake()
     {
-        if (_instance == null)
+        if (Instance == null)
         {
-            _instance = this;
+            Instance = this;
         }
-        else if (_instance != this)
+        else if (Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -70,4 +70,15 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
             }
         }
     }
+
+    static GameManager()
+    {
+        DomainReloadHelper.BeforeReload += helper => helper.GMInstance = Instance;
+        DomainReloadHelper.AfterReload += helper => Instance = helper.GMInstance;
+    }
+}
+
+public partial class DomainReloadHelper
+{
+    public GameManager GMInstance;
 }

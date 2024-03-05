@@ -1,18 +1,22 @@
 ﻿using System.Collections;
-using UnityEngine;
 
-public abstract class MenuContainer : MonoBehaviour
+public abstract class MenuContainer : ReloadableBehaviour
 {
     protected MenuInputs MenuInputs { get; private set; }
-    protected GameManager GameManager { get; private set; }
-    protected InventoryManager InventoryManager { get; private set; }
+    protected GameManager GameManager => GameManager.Instance;
+    protected InventoryManager InventoryManager => InventoryManager.Instance;
 
-    protected virtual void OnEnable()
+    void Awake()
+    {
+        gameObject.SetActive(false);
+    }
+
+    protected override void OnEnabled(bool afterDomainReload)
     {
         MenuInputs = FindObjectOfType<MenuInputs>();
-        GameManager = GameManager._instance;
-        InventoryManager = InventoryManager.Instance;
     }
+
+    protected override void OnDisabled(bool afterDomainReload) {}
 
     public abstract IEnumerable Open(MenuInputs menuInputs);
     public abstract IEnumerable Close(MenuInputs menuInputs);

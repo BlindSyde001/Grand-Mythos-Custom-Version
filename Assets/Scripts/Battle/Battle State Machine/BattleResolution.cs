@@ -34,14 +34,14 @@ public class BattleResolution : MonoBehaviour
     // UPDATES
     void Start()
     {
-        gameManager = GameManager._instance;
+        gameManager = GameManager.Instance;
     }
 
     void Update()
     {
         if (activateUpdate)
         {
-            for (int i = 0; i < GameManager._instance.PartyLineup.Count; i++)         // Setting UI Numbers
+            for (int i = 0; i < GameManager.Instance.PartyLineup.Count; i++)         // Setting UI Numbers
             {
                 HeroPanels[i].displayLevel.text = gameManager.PartyLineup[i].Level.ToString();
                 HeroPanels[i].displayEXPBar.fillAmount = (float)(gameManager.PartyLineup[i].Experience - gameManager.PartyLineup[i].PrevExperienceThreshold)/
@@ -75,7 +75,7 @@ public class BattleResolution : MonoBehaviour
         RewardBackground.DOFillAmount(1, speed);                                   // Cool Anim Effect
         HeroGridBackground.DOFillAmount(1, speed);                                 // Cool Anim effect
         yield return new WaitForSeconds(speed);
-        for (int i = 0; i < GameManager._instance.PartyLineup.Count; i++)         // Setting UI Numbers
+        for (int i = 0; i < GameManager.Instance.PartyLineup.Count; i++)         // Setting UI Numbers
         {
             HeroPanels[i].gameObject.SetActive(true);
             HeroPanels[i].displayBanner.sprite = gameManager.PartyLineup[i].Banner;

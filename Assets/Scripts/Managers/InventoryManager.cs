@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, ISaved<InventoryManager, InventoryManager.SaveV1>
 {
     // VARIABLES
-    public static InventoryManager Instance;
+    public static InventoryManager Instance { get; private set; }
 
     Sort _lastSort;
     /// <summary>
@@ -378,4 +378,15 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     public guid UniqueConstID => Guid;
 
     public static readonly guid Guid  = new guid("51d6e0d4-8916-47a6-b18e-6d16ec62a723");
+
+    static InventoryManager()
+    {
+        DomainReloadHelper.BeforeReload += helper => helper.InventoryInstance = Instance;
+        DomainReloadHelper.AfterReload += helper => Instance = helper.InventoryInstance;
+    }
+}
+
+public partial class DomainReloadHelper
+{
+    public InventoryManager InventoryInstance;
 }

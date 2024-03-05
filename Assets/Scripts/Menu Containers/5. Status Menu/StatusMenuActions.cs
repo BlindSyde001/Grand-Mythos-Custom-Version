@@ -18,38 +18,30 @@ public class StatusMenuActions : MenuContainer
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
-        {
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(true);
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-600, -300, 0), menuInputs.speed);
-            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(20, -300, 0), menuInputs.speed);
-            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(640, -300, 0), menuInputs.speed);
-            gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-600, -45, 0), menuInputs.speed);
-            SetExperience(GameManager.PartyLineup[0]);
-            SetAttributes(GameManager.PartyLineup[0]);
-            SetElemental(GameManager.PartyLineup[0]);
-            SetAffliction(GameManager.PartyLineup[0]);
-            SetHeroSelection();
-        }
+        gameObject.SetActive(true);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-600, -300, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(20, -300, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(640, -300, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-600, -45, 0), menuInputs.Speed);
+        SetExperience(GameManager.PartyLineup[0]);
+        SetAttributes(GameManager.PartyLineup[0]);
+        SetElemental(GameManager.PartyLineup[0]);
+        SetAffliction(GameManager.PartyLineup[0]);
+        SetHeroSelection();
+        yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
-        {
-            menuInputs.coroutineRunning = true;
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-600, -800, 0), menuInputs.speed);
-            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(20, -800, 0), menuInputs.speed);
-            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(640, -800, 0), menuInputs.speed);
-            gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-600, -645, 0), menuInputs.speed);
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(false);
-            menuInputs.coroutineRunning = false;
-        }
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-600, -800, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(20, -800, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(640, -800, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-600, -645, 0), menuInputs.Speed);
+        yield return new WaitForSeconds(menuInputs.Speed);
+        gameObject.SetActive(false);
     }
 
     internal void SetHeroSelection()

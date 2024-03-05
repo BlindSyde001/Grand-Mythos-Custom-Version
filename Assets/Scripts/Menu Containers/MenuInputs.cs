@@ -10,115 +10,82 @@ public class MenuInputs : MonoBehaviour
     public InputManager InputManager { get; private set; }
     public GameManager GameManager { get; private set; }
 
-    #region Menu Item References
     [SerializeField]
     internal StartMenuActions startMenuActions;
-    [SerializeField]
-    internal ItemMenuActions itemMenuActions;
-    [SerializeField]
-    internal AbilitiesMenuActions abilitiesMenuActions;
-    [SerializeField]
-    internal EquipmentMenuActions equipmentMenuActions;
-    [SerializeField]
-    internal StatusMenuActions statusMenuActions;
-    [SerializeField]
-    internal TacticsMenuActions tacticsMenuActions;
-    [SerializeField]
-    internal JournalMenuActions journalMenuActions;
-    [SerializeField]
-    internal SaveMenuActions saveMenuActions;
-    [SerializeField]
-    internal SettingsMenuActions settingsMenuActions;
-    #endregion
 
-    [SerializeField]
-    internal MenuContainer currentMenuOpen;
-    internal float speed = 0.5f;
-    internal bool coroutineRunning = false;
+    public MenuContainer CurrentMenuOpen;
+    public float Speed = 0.5f;
 
-    internal bool menuFlowIsRunning = false;
-    ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) lineupChange;
+    ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) _lineupChange;
+    bool _busySwitching;
 
 
     // UPDATES
     void Start()
     {
         InputManager = InputManager.Instance;
-        GameManager = GameManager._instance;
+        GameManager = GameManager.Instance;
+        CurrentMenuOpen = null;
     }
 
     // METHODS
-    public void MenuSwitchboard(MenuContainer newMenuToOpen)
+    public void MenuSwitchboard(MenuContainer newMenuToOpen) => StartCoroutine(SwitchTo(newMenuToOpen));
+
+    public void CloseSwitchBoard(MenuContainer menuToClose) => StartCoroutine(SwitchTo(startMenuActions));
+
+    public void PreviousMenu()
     {
-        if (currentMenuOpen == newMenuToOpen)
-        {
-            return;
-        }
-        if (currentMenuOpen != null)
-            CloseSwitchBoard(currentMenuOpen);
-        StartCoroutine(newMenuToOpen.Open(this).GetEnumerator());
-        currentMenuOpen = newMenuToOpen;
-    }
-
-    public void CloseSwitchBoard(MenuContainer menuToClose) => CloseSwitchBoard(menuToClose, false);
-    public void CloseSwitchBoard(MenuContainer menuToClose, bool closeAllOverride)
-    {
-        if (menuToClose is StartMenuActions)
-        {
-            lineupChange = default;
-        }
-
-        StartCoroutine(CloseWithOverride(menuToClose, closeAllOverride));
-
-        IEnumerator CloseWithOverride(MenuContainer container, bool closeAllOverride)
-        {
-            foreach (var va in container.Close(this))
-            {
-                yield return va;
-            }
-            if (!closeAllOverride && startMenuActions != container)
-            {
-                foreach (var val in startMenuActions.Open(this))
-                {
-                    yield return val;
-                }
-                yield return new WaitForSeconds(speed);
-                currentMenuOpen = startMenuActions;
-            }
-        }
+        if (CurrentMenuOpen is StartMenuActions)
+            StartCoroutine(CloseAllMenus());
+        else if (CurrentMenuOpen)
+            StartCoroutine(SwitchTo(startMenuActions));
     }
 
     public IEnumerator OpenFirstMenu()
     {
-        if (coroutineRunning)
-            yield break;
-
-        coroutineRunning = true;
         MenuSwitchboard(startMenuActions);
-        InputManager.MenuBackground.GetComponent<Image>().DOFade(1, InputManager.MenuInputs.speed);
+        InputManager.MenuBackground.GetComponent<Image>().DOFade(1, Speed);
         InputManager.Instance.PushGameState(GameState.Menu, this);
-        yield return new WaitForSeconds(speed);
-        coroutineRunning = false;
-        menuFlowIsRunning = false;
+        yield return new WaitForSeconds(Speed);
     }
+
     public IEnumerator CloseAllMenus()
     {
-        if (!coroutineRunning)
+        InputManager.Instance.PopGameState(this);
+        InputManager.MenuBackground.GetComponent<Image>().DOFade(0, Speed);
+        for (var e = SwitchTo(null); e.MoveNext(); )
+            yield return e.Current;
+    }
+
+    IEnumerator SwitchTo(MenuContainer to)
+    {
+        if (_busySwitching)
+            yield break;
+
+        if (CurrentMenuOpen == to)
+            yield break;
+
+        _busySwitching = true;
+        var from = CurrentMenuOpen;
+        CurrentMenuOpen = to;
+
+        if (from is StartMenuActions)
+            _lineupChange = default;
+
+#warning would be nice to manually parse this enum to accelerate it whenever we have a command for a new switch comming in that way we don't block any new commands
+        if (from != null)
         {
-            InputManager.Instance.PopGameState(this);
-            if (currentMenuOpen == startMenuActions)
-            {
-                InputManager.MenuBackground.GetComponent<Image>().DOFade(0, InputManager.MenuInputs.speed);
-                CloseSwitchBoard(currentMenuOpen, true);
-                yield return new WaitForSeconds(speed);
-                currentMenuOpen = null;
-            }
-            else
-            {
-                CloseSwitchBoard(currentMenuOpen, false);
-            }
+            foreach (var yield in from.Close(this))
+                yield return yield;
         }
-        menuFlowIsRunning = false;
+
+        if (to != null)
+        {
+            foreach (var yield in to.Open(this))
+                yield return yield;
+        }
+
+        _busySwitching = false;
     }
 
     public void ChangePartyLineup(int selectedToChange)
@@ -133,17 +100,17 @@ public class MenuInputs : MonoBehaviour
 
     void ChangePartyLineup((List<HeroExtension> _PartyLineup, int selectedToChange) data)
     {
-        if (lineupChange.sourceA.collection == null)
+        if (_lineupChange.sourceA.collection == null)
         {
-            lineupChange.sourceA = data;
+            _lineupChange.sourceA = data;
         }
         else
         {
-            lineupChange.sourceB = data;
+            _lineupChange.sourceB = data;
 
 
-            var (sourceA, sourceB) = lineupChange;
-            lineupChange = default;
+            var (sourceA, sourceB) = _lineupChange;
+            _lineupChange = default;
 
             var elementA = sourceA.collection[sourceA.index];
             var elementB = sourceB.collection[sourceB.index];

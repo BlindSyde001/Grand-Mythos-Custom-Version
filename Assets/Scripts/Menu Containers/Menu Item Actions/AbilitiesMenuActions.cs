@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using TMPro;
 
 public class AbilitiesMenuActions : MenuContainer
 {
@@ -15,39 +14,31 @@ public class AbilitiesMenuActions : MenuContainer
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
+        gameObject.SetActive(true);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).GetComponent<Image>().DOFillAmount(1, menuInputs.Speed);
+        foreach(AbilityButtonContainer a in abilityButtons)
         {
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(true);
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).GetComponent<Image>().DOFillAmount(1, menuInputs.speed);
-            foreach(AbilityButtonContainer a in abilityButtons)
-            {
-                a.thisButton.GetComponent<Image>().DOFade(1, menuInputs.speed);
-                a.buttonName.DOFade(1, menuInputs.speed);
-            }
-            SetHeroSelection();
-            SetAbilities(GameManager.PartyLineup[0]);
+            a.thisButton.GetComponent<Image>().DOFade(1, menuInputs.Speed);
+            a.buttonName.DOFade(1, menuInputs.Speed);
         }
+        SetHeroSelection();
+        SetAbilities(GameManager.PartyLineup[0]);
+        yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).GetComponent<Image>().DOFillAmount(0, menuInputs.Speed);
+        foreach (AbilityButtonContainer a in abilityButtons)
         {
-            menuInputs.coroutineRunning = true;
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).GetComponent<Image>().DOFillAmount(0, menuInputs.speed);
-            foreach (AbilityButtonContainer a in abilityButtons)
-            {
-                a.thisButton.GetComponent<Image>().DOFade(0, .5f * menuInputs.speed);
-                a.buttonName.DOFade(0, .5f * menuInputs.speed);
-            }
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(false);
-            menuInputs.coroutineRunning = false;
+            a.thisButton.GetComponent<Image>().DOFade(0, .5f * menuInputs.Speed);
+            a.buttonName.DOFade(0, .5f * menuInputs.Speed);
         }
+        yield return new WaitForSeconds(menuInputs.Speed);
+        gameObject.SetActive(false);
     }
 
     internal void SetHeroSelection()

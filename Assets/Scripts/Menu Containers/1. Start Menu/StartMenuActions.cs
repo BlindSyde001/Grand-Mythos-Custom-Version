@@ -25,25 +25,22 @@ public class StartMenuActions : MenuContainer
             a.gameObject.SetActive(false);
         }
         gameObject.SetActive(true);
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-740, 150, 0), menuInputs.speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(200, 30, 0), menuInputs.speed);
-        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(200, gameObject.transform.GetChild(2).localPosition.y, 0), menuInputs.speed);
-        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, 0, 0), menuInputs.speed);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-740, 150, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(200, 30, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(200, gameObject.transform.GetChild(2).localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, 0, 0), menuInputs.Speed);
         DisplayPartyHeroes();
         DisplayMisc();
-        yield break;
+        yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
-        {
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 150, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(1700, 30, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, gameObject.transform.GetChild(2).localPosition.y, 0), menuInputs.speed);
-            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, -150, 0), menuInputs.speed);
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(false);
-        }
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 150, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(1700, 30, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, gameObject.transform.GetChild(2).localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, -150, 0), menuInputs.Speed);
+        yield return new WaitForSeconds(menuInputs.Speed);
+        gameObject.SetActive(false);
     }
     internal void DisplayPartyHeroes()
     {

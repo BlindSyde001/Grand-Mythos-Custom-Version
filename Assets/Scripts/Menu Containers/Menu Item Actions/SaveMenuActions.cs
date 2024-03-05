@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
-using Sirenix.OdinInspector;
 
 public class SaveMenuActions : MenuContainer
 {
@@ -32,27 +31,19 @@ public class SaveMenuActions : MenuContainer
 
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
-        {
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(true);
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-800, gameObject.transform.GetChild(1).transform.localPosition.y, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(190, 0, 0), menuInputs.speed);
-            OpenLoadFiles();
-        }
+        gameObject.SetActive(true);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-800, gameObject.transform.GetChild(1).transform.localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(190, 0, 0), menuInputs.Speed);
+        OpenLoadFiles();
+        yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
-        {
-            menuInputs.coroutineRunning = true;
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1200, gameObject.transform.GetChild(1).transform.localPosition.y, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1750, 0, 0), menuInputs.speed);
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(false);
-            menuInputs.coroutineRunning = false;
-        }
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1200, gameObject.transform.GetChild(1).transform.localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1750, 0, 0), menuInputs.Speed);
+        yield return new WaitForSeconds(menuInputs.Speed);
+        gameObject.SetActive(false);
     }
 }

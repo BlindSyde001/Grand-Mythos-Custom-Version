@@ -7,7 +7,6 @@ using DG.Tweening;
 public class TacticsMenuActions : MenuContainer
 {
     HeroExtension selectedHero;
-    bool listCoroutineRunning;
     List<IAction> ActionsList = new();
     public GameObject segmentsWarning;
 
@@ -31,58 +30,40 @@ public class TacticsMenuActions : MenuContainer
     //METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
-        {
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(true);
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(230, -100, 0), menuInputs.speed);
-            SetHeroSelection();
-            SetTacticsList(GameManager.PartyLineup[0]);
-        }
+        gameObject.SetActive(true);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(230, -100, 0), menuInputs.Speed);
+        SetHeroSelection();
+        SetTacticsList(GameManager.PartyLineup[0]);
+        yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        if (!menuInputs.coroutineRunning)
-        {
-            menuInputs.coroutineRunning = true;
-            gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1350, 480, 0), menuInputs.speed);
-            gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.speed);
-            gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, -100, 0), menuInputs.speed);
-            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), menuInputs.speed);
-            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.speed);
-            yield return new WaitForSeconds(menuInputs.speed);
-            gameObject.SetActive(false);
-            menuInputs.coroutineRunning = false;
-        }
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1350, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, -100, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.Speed);
+        yield return new WaitForSeconds(menuInputs.Speed);
+        gameObject.SetActive(false);
     }
 
     IEnumerator ComponentListOpen()
     {
-        if (!listCoroutineRunning)
-        {
-            listCoroutineRunning = true;
-            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-740, 328, 0), MenuInputs.speed);
-            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-710, -100, 0), MenuInputs.speed);
-            yield return new WaitForSeconds(MenuInputs.speed);
-            listCoroutineRunning = false;
-        }
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-740, 328, 0), MenuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-710, -100, 0), MenuInputs.Speed);
+        yield return new WaitForSeconds(MenuInputs.Speed);
     }
 
     IEnumerator ComponentListClose()
     {
-        if(!listCoroutineRunning)
-        {
-            listCoroutineRunning = true;
-            gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), MenuInputs.speed);
-            gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), MenuInputs.speed);
-            tacticToChange = null;
-            tacticCndToChange = null;
-            currentContainer = null;
-            yield return new WaitForSeconds(MenuInputs.speed);
-            listCoroutineRunning = false;
-        }
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), MenuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), MenuInputs.Speed);
+        tacticToChange = null;
+        tacticCndToChange = null;
+        currentContainer = null;
+        yield return new WaitForSeconds(MenuInputs.Speed);
     }
 
 
@@ -171,7 +152,7 @@ public class TacticsMenuActions : MenuContainer
                 else
                 {
                     t.addActionBtns[i].gameObject.SetActive(false);
-                }    
+                }
             }
         }
     }
@@ -388,23 +369,20 @@ public class TacticsMenuActions : MenuContainer
     {
         // CLICK BUTTON OF CND U WANT TO CHANGE
         // Designate this Cnd Space to be swapped with a new Cnd, or if double clicked, reset
-        if (!listCoroutineRunning)
+        if (tacticCndToChange != tactic)
         {
-            if (tacticCndToChange != tactic)
-            {
-                tacticCndToChange = tactic;
-                currentContainer = thisContainer;
-                tacticToChange = null;
-                StartCoroutine(ComponentListOpen());
-                SetPages(true);
-                SetCndList(0);
-            }
-            else
-            {
-                currentContainer = null;
-                tacticCndToChange = null;
-                StartCoroutine(ComponentListClose());
-            }
+            tacticCndToChange = tactic;
+            currentContainer = thisContainer;
+            tacticToChange = null;
+            StartCoroutine(ComponentListOpen());
+            SetPages(true);
+            SetCndList(0);
+        }
+        else
+        {
+            currentContainer = null;
+            tacticCndToChange = null;
+            StartCoroutine(ComponentListClose());
         }
     }
     public void SelectNewListCnd(ActionCondition cnd)
@@ -427,25 +405,22 @@ public class TacticsMenuActions : MenuContainer
     {
         // CLICK BUTTON OF ACTION U WANT TO CHANGE
         // Designate this Action Space to be swapped with a new Action, or if double clicked, reset
-        if (!listCoroutineRunning)
+        if (tacticToChange != tactic)
         {
-            if (tacticToChange != tactic)
-            {
-                tacticToChange = tactic;
-                tacticActionOrderToChange = aOrder;
-                currentContainer = thisContainer;
-                tacticCndToChange = null;
-                StartCoroutine(ComponentListOpen());
-                SetPages(false);
-                SetActionList(0);
-            }
-            else
-            {
-                tacticToChange = null;
-                tacticActionOrderToChange = 4;
-                currentContainer = null;
-                StartCoroutine(ComponentListClose());
-            }
+            tacticToChange = tactic;
+            tacticActionOrderToChange = aOrder;
+            currentContainer = thisContainer;
+            tacticCndToChange = null;
+            StartCoroutine(ComponentListOpen());
+            SetPages(false);
+            SetActionList(0);
+        }
+        else
+        {
+            tacticToChange = null;
+            tacticActionOrderToChange = 4;
+            currentContainer = null;
+            StartCoroutine(ComponentListClose());
         }
     }
     public void SelectNewListAction(IAction action)

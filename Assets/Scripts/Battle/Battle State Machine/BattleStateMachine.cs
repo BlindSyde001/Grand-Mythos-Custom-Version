@@ -31,7 +31,7 @@ public class BattleStateMachine : MonoBehaviour
     CombatState _combatState;
     CinemachineFreeLook _rotateCam;
 
-    public List<HeroExtension> PartyLineup => GameManager._instance.PartyLineup;
+    public List<HeroExtension> PartyLineup => GameManager.Instance.PartyLineup;
 
     // UPDATES
     void Awake()
@@ -58,7 +58,7 @@ public class BattleStateMachine : MonoBehaviour
 
     IEnumerator Start()
     {
-        var gameManager = GameManager._instance;
+        var gameManager = GameManager.Instance;
         foreach (var reserve in gameManager.ReservesLineup)
             reserve.gameObject.SetActive(false);
 
