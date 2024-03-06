@@ -1,0 +1,96 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Sirenix.OdinInspector;
+using UnityEngine;
+
+[Serializable]
+public class IActionAnimationCollection : ISerializationCallbackReceiver
+{
+    [NonSerialized]
+    readonly Dictionary<IAction, IActionAnimation> _collection = new();
+
+    [SerializeField]
+    [ListDrawerSettings(ShowFoldout = false)]
+    [MaybeNull, InlineProperty]
+    BackingKeyValue[] _backingArray;
+
+    public void OnBeforeSerialize(){}
+
+    public void OnAfterDeserialize()
+    {
+        if (_backingArray == null)
+            return;
+
+        _collection.Clear();
+        foreach (var value in _backingArray)
+        {
+            if (value.Action == null)
+                continue;
+
+            if (_collection.TryAdd((IAction)value.Action, value.Animation) == false)
+                Debug.LogWarning($"Could not bind '{value.Animation}' to action '{(IAction)value.Action}' - that action is already bound to '{_collection[(IAction)value.Action]}'");
+        }
+    }
+
+    public bool TryGet(IAction action, out IActionAnimation animation) => _collection.TryGetValue(action, out animation);
+
+    public bool Validate(CharacterTemplate template, ref string message)
+    {
+        if (_backingArray == null)
+            return true;
+
+        var actions = new Dictionary<IAction, bool>();
+        foreach (var tactic in template.Tactics)
+            foreach (var action in tactic.Actions)
+                actions.TryAdd(action, false);
+        if (template.SkillTree != null)
+        {
+            foreach (var unlock in template.SkillTree.Skills)
+                actions.TryAdd(unlock.Skill, true);
+        }
+
+        foreach (var keyValue in _backingArray)
+        {
+            if (keyValue.Action is not IAction action || keyValue.Animation is null)
+                continue;
+
+            if (keyValue.Animation.Validate(action, template, ref message) == false)
+                return false;
+
+            actions.Remove(action);
+        }
+
+        if (actions.Count > 0)
+        {
+            message = $"No animations setup for action {string.Join(", ", actions.Select(x => x.Value ? $"{x.Key.Name} from skilltree" : $"{x.Key.Name}"))}";
+            return false;
+        }
+
+        return true;
+    }
+
+    [Serializable]
+    public struct BackingKeyValue
+    {
+        [ConstrainedType(typeof(IAction)), ValidateInput(nameof(IsIAction), "Must be an IAction, skill or consumable")]
+        [HideLabel]
+        public ScriptableObject Action;
+
+        [SerializeReference, InlineProperty]
+        [Required, HideLabel]
+        public IActionAnimation Animation;
+
+        bool IsIAction(ScriptableObject obj, ref string error)
+        {
+            if (obj is null)
+            {
+                error = "Must not be null";
+                return false;
+            }
+
+            return obj is IAction;
+        }
+    }
+}

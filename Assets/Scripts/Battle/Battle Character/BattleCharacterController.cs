@@ -6,8 +6,8 @@ public class BattleCharacterController : MonoBehaviour
 {
     public CharacterTemplate Template;
 
-    [SerializeField, Required]
-    protected Animator Animator;
+    [Required]
+    public Animator Animator;
     [SerializeField, Required]
     protected BattleArenaMovement MovementController;
 
@@ -30,12 +30,14 @@ public class BattleCharacterController : MonoBehaviour
     {
         if (BattleStateMachine.TryGetInstance(out var bts))
             bts.Include(Template);
+        Template.Context.Controller = this;
     }
 
     void OnDestroy()
     {
         if (BattleStateMachine.TryGetInstance(out var bts))
             bts.Exclude(Template);
+        Template.Context.Controller = null;
     }
 
     void OnDrawGizmosSelected()

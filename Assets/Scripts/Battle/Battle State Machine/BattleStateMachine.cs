@@ -78,6 +78,7 @@ public class BattleStateMachine : MonoBehaviour
             controller.Template = hero;
 
             hero.ActionsCharged = Random.Range(0, hero.ActionChargeMax);
+            hero.Context.Controller = controller;
         }
 
         foreach (var target in FindObjectsOfType<CharacterTemplate>())
@@ -225,6 +226,16 @@ public class BattleStateMachine : MonoBehaviour
                     }
 
                     unit.ActionsCharged -= action.ATBCost;
+
+                    if (unit.ActionAnimations.TryGet(action, out var animation))
+                    {
+                        foreach (var yield in animation.Play(action, unit.Context.Controller, selection))
+                            yield return yield;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"No animations setup for action '{action}' on unit {unit}", unit);
+                    }
 
                     foreach (var yield in action.Perform(selection, unit.Context))
                         yield return yield;

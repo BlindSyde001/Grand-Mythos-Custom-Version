@@ -11,7 +11,7 @@ public class DefaultSelection : MonoBehaviour
 
     void Update()
     {
-        if (EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.activeInHierarchy == false)
+        if (EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.activeInHierarchy == false)
             Element.Select();
     }
 }

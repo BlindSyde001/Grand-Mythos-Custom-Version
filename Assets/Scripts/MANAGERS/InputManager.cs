@@ -65,6 +65,10 @@ public class InputManager : MonoBehaviour
     public void PushGameState(GameState newState, Object key)
     {
         StateStack.Add(new(){ State = newState, Key = key });
+
+        if (PlayerInput == null) // When unloading the game input gets destroyed but this function will still be called
+            return;
+
         SetGameState(newState);
     }
 
@@ -88,7 +92,7 @@ public class InputManager : MonoBehaviour
             }
         }
 
-        if (PlayerInput.enabled == false)
+        if (PlayerInput == null) // When unloading the game input gets destroyed but this function will still be called
             return;
 
         if (StateStack.Count > 0 && StateStack[^1].State != CurrentState)

@@ -29,6 +29,11 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
             PartyLineup[i] = Instantiate(PartyLineup[i], transform);
             PartyLineup[i].name = PartyLineup[i].name[..^"(Clone)".Length]; // Remove the postfix unity inserts when instantiating
         }
+        for (int i = 0; i < ReservesLineup.Count; i++)
+        {
+            ReservesLineup[i] = Instantiate(ReservesLineup[i], transform);
+            ReservesLineup[i].name = ReservesLineup[i].name[..^"(Clone)".Length]; // Remove the postfix unity inserts when instantiating
+        }
     }
 
     void OnDestroy()

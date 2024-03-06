@@ -67,7 +67,7 @@ MonoBehaviour:
     Speed: 20
   GrowthRate: 2
   Experience: 982
-  StartingLevel: 5
+  Level: 5
   AffinityFIRE: 0
   AffinityICE: 0
   AffinityLIGHTNING: 0
@@ -104,8 +104,19 @@ MonoBehaviour:
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  ActionAnimations:
+    _backingArray:
+    - Action: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+      Animation:
+        rid: 7380285029310791826
+    - Action: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+      Animation:
+        rid: 7380285029310791827
+    - Action: {fileID: 11400000, guid: 565824b87e5b38b4f81e0b21ba8eaceb, type: 2}
+      Animation:
+        rid: 7380285029310791828
   Inventory:
-    rid: 1000
+    rid: 7380285029310791784
   ExperiencePool: 0
   CreditPool: 0
   DropItems: []
@@ -129,8 +140,21 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 1000
-      type: {class: InlineInventory, ns: , asm: Assembly-CSharp}
+    - rid: 7380285029310791784
+      type: {class: PlayerInventory, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7380285029310791826
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
       data:
-        Items:
-          _backingArray: []
+        StateName: Attack
+        Layer: 0
+    - rid: 7380285029310791827
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
+      data:
+        StateName: Reload
+        Layer: 0
+    - rid: 7380285029310791828
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
+      data:
+        StateName: Stance
+        Layer: 0

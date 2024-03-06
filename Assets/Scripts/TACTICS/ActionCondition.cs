@@ -117,9 +117,11 @@ public class ActionCondition : IdentifiableScriptableObject
 [Serializable]
 public class EvaluationContext
 {
-#warning set during combat
     /// <summary> The unit this tactics is bound to </summary>
     public CharacterTemplate Source;
+
+    public BattleCharacterController Controller;
+
     /// <summary>
     /// Reset only between evaluating full tactics,
     /// values are kept when going through the different evaluations;

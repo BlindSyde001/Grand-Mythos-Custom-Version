@@ -22,7 +22,7 @@ public class IActionCollection : ISerializationCallbackReceiver, IEnumerable<IAc
     [ValidateInput(nameof(IsIAction), "Must be an IAction, skill or consumable")]
     [ConstrainedType(typeof(IAction))]
     [LabelText(@"@""Actions ("" + this.CostTotal() + "" ATB)""")]
-    [ListDrawerSettings(ShowFoldout = false, CustomAddFunction = "CustomAddFunction")]
+    [ListDrawerSettings(ShowFoldout = false, CustomAddFunction = nameof(CustomAddFunction))]
     ScriptableObject[] ActionsAssets;
 
     public IAction this[int index]

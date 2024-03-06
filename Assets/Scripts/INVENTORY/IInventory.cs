@@ -66,3 +66,23 @@ public class ProxyForInventoryComponent : IInventory
             yield return (item, count);
     }
 }
+
+[Serializable]
+public class PlayerInventory : IInventory
+{
+    public bool HasItem(BaseItem item, out uint count)
+    {
+        return InventoryManager.Instance.FindItem(item, out count);
+    }
+
+    public void RemoveItem(BaseItem item, uint count)
+    {
+        InventoryManager.Instance.Remove(item, count);
+    }
+
+    public IEnumerable<(BaseItem item, uint count)> Items()
+    {
+        foreach (var (item, count) in InventoryManager.Instance.Enumerate<BaseItem>())
+            yield return (item, count);
+    }
+}

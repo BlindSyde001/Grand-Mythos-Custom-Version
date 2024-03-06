@@ -104,6 +104,14 @@ MonoBehaviour:
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  ActionAnimations:
+    _backingArray:
+    - Action: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+      Animation:
+        rid: 7380285029310791837
+    - Action: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+      Animation:
+        rid: 7380285029310791838
   Inventory:
     rid: 7439448764490973231
   ExperiencePool: 250
@@ -118,6 +126,16 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 7380285029310791837
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
+      data:
+        StateName: Attack
+        Layer: 0
+    - rid: 7380285029310791838
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
+      data:
+        StateName: Reload
+        Layer: 0
     - rid: 7439448764490973231
       type: {class: InlineInventory, ns: , asm: Assembly-CSharp}
       data:

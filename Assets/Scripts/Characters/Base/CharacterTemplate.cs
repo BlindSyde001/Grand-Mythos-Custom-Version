@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
@@ -80,14 +81,18 @@ public class CharacterTemplate : MonoBehaviour
     [Required, BoxGroup("SKILLS")]
     public Skill BasicAttack;
 
-    [BoxGroup("SKILLS")]
+    [BoxGroup("SKILLS"), MaybeNull]
     public SkillTree SkillTree;
 
     [BoxGroup("SKILLS")]
     public SerializableHashSet<Skill> Skills;
 
-    [Required, BoxGroup("Tactics")]
+    [Required, BoxGroup("TACTICS"), ListDrawerSettings(ShowFoldout = false)]
     public Tactics[] Tactics = Array.Empty<Tactics>();
+
+    [BoxGroup("ANIMATIONS")]
+    [ValidateInput(nameof(ValidateActionAnimation)), InlineProperty, HideLabel]
+    public IActionAnimationCollection ActionAnimations = new();
 
     [Required, SerializeReference, BoxGroup("INVENTORY")]
     public IInventory Inventory = new InlineInventory();
@@ -95,13 +100,13 @@ public class CharacterTemplate : MonoBehaviour
     /// <summary>
     /// How much experience points this unit gives on death
     /// </summary>
-    [FormerlySerializedAs("experiencePool"),BoxGroup("DROP")]
+    [BoxGroup("DROP")]
     public int ExperiencePool;
 
     /// <summary>
     /// How many Credits this unit gives on death
     /// </summary>
-    [FormerlySerializedAs("creditPool"),BoxGroup("DROP")]
+    [BoxGroup("DROP")]
     public int CreditPool;
 
     /// <summary>
@@ -109,8 +114,6 @@ public class CharacterTemplate : MonoBehaviour
     /// </summary>
     [BoxGroup("DROP")]
     public List<Drop> DropItems;
-
-
 
     [NonSerialized]
     public EvaluationContext Context = new();
@@ -138,6 +141,11 @@ public class CharacterTemplate : MonoBehaviour
     bool HasButton(GameObject go, ref string errorMessage)
     {
         return go != null &&  go.GetComponent<BattleCharacterController>();
+    }
+
+    bool ValidateActionAnimation(IActionAnimationCollection actionAnimation, ref string errorMessage)
+    {
+        return actionAnimation.Validate(this, ref errorMessage);
     }
 
     void UpdateExperienceFromLevel()
