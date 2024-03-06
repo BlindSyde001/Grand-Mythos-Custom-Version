@@ -88,6 +88,9 @@ public class InputManager : MonoBehaviour
             }
         }
 
+        if (PlayerInput.enabled == false)
+            return;
+
         if (StateStack.Count > 0 && StateStack[^1].State != CurrentState)
             SetGameState(StateStack[^1].State);
         else

@@ -44,7 +44,6 @@ public class StartMenuActions : MenuContainer
     }
     internal void DisplayPartyHeroes()
     {
-        OnEnable(); // Ensure managers are up to date
         foreach (PartyContainer a in displayList)
         {
             a.gameObject.SetActive(false);

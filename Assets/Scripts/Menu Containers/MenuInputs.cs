@@ -43,16 +43,14 @@ public class MenuInputs : MonoBehaviour
 
     public IEnumerator OpenFirstMenu()
     {
-        MenuSwitchboard(startMenuActions);
-        InputManager.MenuBackground.GetComponent<Image>().DOFade(1, Speed);
         InputManager.Instance.PushGameState(GameState.Menu, this);
-        yield return new WaitForSeconds(Speed);
+        InputManager.MenuBackground.GetComponent<Image>().DOFade(1, Speed);
+        for (var e = SwitchTo(startMenuActions); e.MoveNext(); )
+            yield return e.Current;
     }
 
     public IEnumerator CloseAllMenus()
     {
-        InputManager.Instance.PopGameState(this);
-        InputManager.MenuBackground.GetComponent<Image>().DOFade(0, Speed);
         for (var e = SwitchTo(null); e.MoveNext(); )
             yield return e.Current;
     }
@@ -72,6 +70,17 @@ public class MenuInputs : MonoBehaviour
         if (from is StartMenuActions)
             _lineupChange = default;
 
+        if (from == null)
+        {
+            InputManager.Instance.PushGameState(GameState.Menu, this);
+            InputManager.MenuBackground.GetComponent<Image>().DOFade(1, Speed);
+        }
+        if (to == null)
+        {
+            InputManager.Instance.PopGameState(this);
+            InputManager.MenuBackground.GetComponent<Image>().DOFade(0, Speed);
+        }
+
 #warning would be nice to manually parse this enum to accelerate it whenever we have a command for a new switch comming in that way we don't block any new commands
         if (from != null)
         {
@@ -83,7 +92,11 @@ public class MenuInputs : MonoBehaviour
         {
             foreach (var yield in to.Open(this))
                 yield return yield;
+
+            if (to.GetComponentInChildren<Button>() is { } button)
+                button.Select();
         }
+
 
         _busySwitching = false;
     }
