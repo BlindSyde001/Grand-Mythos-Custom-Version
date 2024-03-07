@@ -241,15 +241,14 @@ public class BattleStateMachine : MonoBehaviour
 
                     Processing = (unit, chosenTactic, i);
 
-                    if (unit.ActionAnimations.TryGet(action, out var animation))
+                    if (unit.ActionAnimations.TryGet(action, out var animation) == false)
                     {
-                        foreach (var yield in animation.Play(action, unit.Context.Controller, selection))
-                            yield return yield;
+                        animation = unit.FallbackAnimation;
+                        Debug.LogWarning($"No animations setup for action '{action}' on unit {unit}. Using fallback animation.", unit);
                     }
-                    else
-                    {
-                        Debug.LogWarning($"No animations setup for action '{action}' on unit {unit}", unit);
-                    }
+
+                    foreach (var yield in animation.Play(action, unit.Context.Controller, selection))
+                        yield return yield;
 
                     foreach (var yield in action.Perform(selection, unit.Context))
                         yield return yield;

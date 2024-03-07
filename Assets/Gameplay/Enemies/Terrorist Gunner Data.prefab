@@ -112,6 +112,8 @@ MonoBehaviour:
     - Action: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
       Animation:
         rid: 7380285029310791838
+  FallbackAnimation:
+    rid: 7380285059924230154
   Inventory:
     rid: 7439448764490973231
   ExperiencePool: 250
@@ -132,6 +134,11 @@ MonoBehaviour:
         StateName: Attack
         Layer: 0
     - rid: 7380285029310791838
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
+      data:
+        StateName: Reload
+        Layer: 0
+    - rid: 7380285059924230154
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
       data:
         StateName: Reload

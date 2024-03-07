@@ -78,7 +78,7 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("ATB")]
     public uint ActionChargeMax = 4;
 
-    [Required, BoxGroup("SKILLS")]
+    [BoxGroup("SKILLS"), Required]
     public Skill BasicAttack;
 
     [BoxGroup("SKILLS"), MaybeNull]
@@ -87,12 +87,15 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("SKILLS")]
     public SerializableHashSet<Skill> Skills;
 
-    [Required, BoxGroup("TACTICS"), ListDrawerSettings(ShowFoldout = false)]
+    [BoxGroup("TACTICS"), Required, ListDrawerSettings(ShowFoldout = false)]
     public Tactics[] Tactics = Array.Empty<Tactics>();
 
     [BoxGroup("ANIMATIONS")]
     [ValidateInput(nameof(ValidateActionAnimation)), InlineProperty, HideLabel]
     public IActionAnimationCollection ActionAnimations = new();
+
+    [BoxGroup("ANIMATIONS"), SerializeReference, ValidateInput(nameof(ValidateFallbackAnimation))]
+    public IActionAnimation FallbackAnimation;
 
     [Required, SerializeReference, BoxGroup("INVENTORY")]
     public IInventory Inventory = new InlineInventory();
@@ -146,6 +149,17 @@ public class CharacterTemplate : MonoBehaviour
     bool ValidateActionAnimation(IActionAnimationCollection actionAnimation, ref string errorMessage)
     {
         return actionAnimation.Validate(this, ref errorMessage);
+    }
+
+    bool ValidateFallbackAnimation(IActionAnimation actionAnimation, ref string errorMessage)
+    {
+        if (actionAnimation == null)
+        {
+            errorMessage = "Value is null";
+            return false;
+        }
+
+        return actionAnimation.Validate(null, this, ref errorMessage);
     }
 
     void UpdateExperienceFromLevel()
