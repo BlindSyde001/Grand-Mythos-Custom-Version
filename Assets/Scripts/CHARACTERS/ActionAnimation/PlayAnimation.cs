@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -18,6 +20,9 @@ namespace ActionAnimation
             int count = 0;
             foreach (var target in targets)
             {
+                if (target == controller.Template)
+                    continue;
+
                 count++;
                 averagePos += target.Context.Controller.transform.position;
             }
@@ -25,18 +30,9 @@ namespace ActionAnimation
             if (count != 0)
             {
                 averagePos /= count;
-
-                var start = controller.transform.rotation;
-                var dir = averagePos - controller.transform.position;
-                dir.y = 0;
-                var end = Quaternion.LookRotation(Vector3.Normalize(dir), Vector3.up);
-                for (float f = 0f; f < 1f; f += Time.deltaTime)
-                {
-                    controller.transform.rotation = Quaternion.Slerp(start, end, f);
-                    yield return null;
-                }
-
-                controller.transform.rotation = end;
+                averagePos.y = 0;
+                controller.transform.DOLookAt(averagePos, 0.25f);
+                yield return new WaitForSeconds(0.25f);
             }
 
             controller.Animator.Play(StateName, Layer);
@@ -59,7 +55,7 @@ namespace ActionAnimation
             return info.length * (1f - info.normalizedTime) / info.speed / info.speedMultiplier;
         }
 
-        public bool Validate(IAction action, CharacterTemplate template, ref string message)
+        public bool Validate([MaybeNull]IAction action, CharacterTemplate template, ref string message)
         {
             if (template.BattlePrefab == null)
             {
