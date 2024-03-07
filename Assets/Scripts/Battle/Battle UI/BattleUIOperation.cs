@@ -51,10 +51,7 @@ public class BattleUIOperation : MonoBehaviour
 
     [Header("Actions display")]
     [Required]
-    public RectTransform ActionContainer;
-    [Required]
-    [ValidateInput(nameof(HasTextComponent), "Must have a text component (TMP or Unity)")]
-    public RectTransform ActionTemplate;
+    public UIActionPreview ActionPreviewTemplate;
 
     public SerializableHashSet<CharacterTemplate> ProcessedUnits = new();
 
@@ -64,9 +61,11 @@ public class BattleUIOperation : MonoBehaviour
     Color _initialTacticsColor, _disabledTacticsColor;
 
     List<CharacterTemplate> _unitsCopy = new();
-    Tactics _tempTactics = new();
-    List<IAction> _currentActionHints = new();
-    List<RectTransform> _currentActionHintsUI = new();
+    Tactics _order = new();
+
+    (IAction action, UIActionPreview ui)[] _existingPreviews = Array.Empty<(IAction, UIActionPreview)>();
+#warning not done
+    PreviewType _previewType;
 
     bool HasButton(RectTransform val, ref string errorMessage)
     {
@@ -85,7 +84,6 @@ public class BattleUIOperation : MonoBehaviour
 
     void OnEnable()
     {
-        ActionTemplate.gameObject.SetActive(false);
         ResetNavigation();
         if (_listenerBound == false)
         {
@@ -98,7 +96,7 @@ public class BattleUIOperation : MonoBehaviour
             Items.onClick.AddListener(() => TryOrderWizard(PresentItemUI().GetEnumerator()));
             Tactics.onClick.AddListener(TacticsPressed);
 
-            Schedule.onClick.AddListener(() => ScheduleOrder(_tempTactics));
+            Schedule.onClick.AddListener(() => ScheduleOrder(_order));
             Discard.onClick.AddListener(CancelFullOrder);
         }
 
@@ -106,6 +104,7 @@ public class BattleUIOperation : MonoBehaviour
         _playerControls.Enable();
         _playerControls.BattleMap.HeroSwitch.performed += SwitchToNextHero;
         UnitSelected = BattleManagement.PartyLineup[0];
+        ActionPreviewTemplate.gameObject.SetActive(false);
     }
 
     void OnDisable()
@@ -120,10 +119,24 @@ public class BattleUIOperation : MonoBehaviour
         Skills.interactable = UnitSelected.Skills.Count > 0;
         Items.interactable = UnitSelected.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
 
-        Tactics tacticsPreviewed = _tempTactics;
-        if (_tempTactics.Actions.Length == 0) // Show preview of tactics chosen by the unit if no orders are provided
+        if (UnitSelected == BattleManagement.Processing?.unit)
+        {
+            var processingData = BattleManagement.Processing!.Value;
+            var span = processingData.chosenTactic.Actions.AsSpan()[processingData.actionI..];
+            UpdatePreview(span, PreviewType.Execution);
+        }
+        else if (_order.Actions.Length != 0) // Order being composed by the player right now
+        {
+            UpdatePreview(_order.Actions, PreviewType.Order);
+        }
+        else if (BattleManagement.Orders.TryGetValue(UnitSelected, out var order)) // Order scheduled
+        {
+            UpdatePreview(order.Actions, PreviewType.Order);
+        }
+        else // No orders, find the first tactics that can run
         {
             _unitsCopy.AddRange(BattleManagement.Units);
+            Tactics tacticsPreviewed = null;
             foreach (var tactic in UnitSelected.Tactics)
             {
                 if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(_unitsCopy), UnitSelected.Context, out _, accountForCost:false))
@@ -133,31 +146,8 @@ public class BattleUIOperation : MonoBehaviour
                 }
             }
             _unitsCopy.Clear();
-        }
-
-        if (tacticsPreviewed != null && _currentActionHints.SequenceEqual(tacticsPreviewed.Actions.BackingArray) == false)
-        {
-            bool overriden = _tempTactics.Actions.Length != 0;
-            _currentActionHints.Clear();
-            _currentActionHints.AddRange(tacticsPreviewed.Actions.BackingArray);
-
-            foreach (var rectTransform in _currentActionHintsUI)
-                Destroy(rectTransform.gameObject);
-            _currentActionHintsUI.Clear();
-            foreach (var action in _currentActionHints)
-            {
-                var actionUI = Instantiate(ActionTemplate, ActionContainer, false);
-                actionUI.gameObject.SetActive(true);
-                actionUI.sizeDelta = new Vector2(actionUI.sizeDelta.x * action.ATBCost, actionUI.sizeDelta.y);
-                if (actionUI.GetComponentInChildren<Text>() is Text text && text != null)
-                    text.text = action.Name;
-                if (actionUI.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
-                    tmp_text.text = action.Name;
-                if (overriden == false && actionUI.GetComponentInChildren<Image>() is Image image)
-                    image.color *= 0.5f;
-
-                _currentActionHintsUI.Add(actionUI);
-            }
+            ReadOnlySpan<IAction> actions = tacticsPreviewed != null ? tacticsPreviewed.Actions.AsSpan() : default;
+            UpdatePreview(actions, PreviewType.Tactics);
         }
 
         foreach (var unit in BattleManagement.Units)
@@ -215,12 +205,12 @@ public class BattleUIOperation : MonoBehaviour
 
     IEnumerable PresentAttackUI()
     {
-        if (_tempTactics.Actions.Length == 0 || _tempTactics.Actions.BackingArray[^1] != null)
-            Array.Resize(ref _tempTactics.Actions.BackingArray, _tempTactics.Actions.BackingArray.Length + 1);
+        if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
+            Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
 
-        _tempTactics.Actions.BackingArray[^1] = UnitSelected.BasicAttack;
+        _order.Actions.BackingArray[^1] = UnitSelected.BasicAttack;
 
-        if (_tempTactics.Condition == null)
+        if (_order.Condition == null)
         {
             foreach (var yields in PresentTargetSelectionUI())
                 yield return yields;
@@ -249,7 +239,7 @@ public class BattleUIOperation : MonoBehaviour
                 var button = uiElem.GetComponent<Button>();
                 button.onClick.AddListener(() => selectedSkill = skill);
 
-                if (_tempTactics.Actions.CostTotal() + skill.ATBCost > UnitSelected.ActionChargeMax)
+                if (_order.Actions.CostTotal() + skill.ATBCost > UnitSelected.ActionChargeMax)
                 {
                     button.interactable = false;
                 }
@@ -273,12 +263,12 @@ public class BattleUIOperation : MonoBehaviour
                 Destroy(o.gameObject);
         }
 
-        if (_tempTactics.Actions.Length == 0 || _tempTactics.Actions.BackingArray[^1] != null)
-            Array.Resize(ref _tempTactics.Actions.BackingArray, _tempTactics.Actions.BackingArray.Length + 1);
+        if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
+            Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
 
-        _tempTactics.Actions.BackingArray[^1] = selectedSkill;
+        _order.Actions.BackingArray[^1] = selectedSkill;
 
-        if (_tempTactics.Condition == null)
+        if (_order.Condition == null)
         {
             foreach (var yields in PresentTargetSelectionUI())
                 yield return yields;
@@ -310,7 +300,7 @@ public class BattleUIOperation : MonoBehaviour
                 var button = uiElem.GetComponent<Button>();
                 button.onClick.AddListener(() => selectedSkill = consumable);
 
-                if (_tempTactics.Actions.CostTotal() + consumable.ATBCost > UnitSelected.ActionChargeMax)
+                if (_order.Actions.CostTotal() + consumable.ATBCost > UnitSelected.ActionChargeMax)
                 {
                     button.interactable = false;
                 }
@@ -334,12 +324,12 @@ public class BattleUIOperation : MonoBehaviour
                 Destroy(o.gameObject);
         }
 
-        if (_tempTactics.Actions.Length == 0 || _tempTactics.Actions.BackingArray[^1] != null)
-            Array.Resize(ref _tempTactics.Actions.BackingArray, _tempTactics.Actions.BackingArray.Length + 1);
+        if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
+            Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
 
-        _tempTactics.Actions.BackingArray[^1] = selectedSkill;
+        _order.Actions.BackingArray[^1] = selectedSkill;
 
-        if (_tempTactics.Condition == null)
+        if (_order.Condition == null)
         {
             foreach (var yields in PresentTargetSelectionUI())
                 yield return yields;
@@ -372,7 +362,7 @@ public class BattleUIOperation : MonoBehaviour
             foreach (var unit in BattleManagement.Units)
                 selection.Add(unit);
 
-            Filter(_tempTactics.Actions, UnitSelected.Context, selection, out selection);
+            Filter(_order.Actions, UnitSelected.Context, selection, out selection);
         }
 
         AcceptSelection.gameObject.SetActive(true);
@@ -417,7 +407,7 @@ public class BattleUIOperation : MonoBehaviour
                     else
                         selection.Remove(unitForThisToggle);
 
-                    Filter(_tempTactics.Actions, UnitSelected.Context, selection, out var newSelection);
+                    Filter(_order.Actions, UnitSelected.Context, selection, out var newSelection);
 
                     if (selection.Count == newSelection.Count)
                         return;
@@ -432,7 +422,7 @@ public class BattleUIOperation : MonoBehaviour
                         else // This unit was filtered out
                         {
                             // Try again with just this unit selected
-                            Filter(_tempTactics.Actions, UnitSelected.Context, new(){ unitForThisToggle }, out var newSelectionWithOnlyIt);
+                            Filter(_order.Actions, UnitSelected.Context, new(){ unitForThisToggle }, out var newSelectionWithOnlyIt);
                             if (newSelectionWithOnlyIt.Count == 1)
                                 ReplaceSelection(selection, newSelectionWithOnlyIt, toggles, ignoreListenerEvent);
                             // Else, don't add it, this unit is likely not compatible with this action
@@ -456,8 +446,8 @@ public class BattleUIOperation : MonoBehaviour
                 yield return null;
             }
 
-            _tempTactics.Condition = ScriptableObject.CreateInstance<ActionCondition>();
-            _tempTactics.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection };
+            _order.Condition = ScriptableObject.CreateInstance<ActionCondition>();
+            _order.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection };
         }
         finally
         {
@@ -537,8 +527,8 @@ public class BattleUIOperation : MonoBehaviour
 
     void ScheduleOrder(Tactics tactics)
     {
-        BattleManagement.SetOrderFor(UnitSelected, tactics);
-        _tempTactics = new();
+        BattleManagement.Orders[UnitSelected] = tactics;
+        _order = new();
         ResetNavigation();
         BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
         Attack.Select();
@@ -546,7 +536,7 @@ public class BattleUIOperation : MonoBehaviour
 
     void CancelFullOrder()
     {
-        _tempTactics = new();
+        _order = new();
         ResetNavigation();
         BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
         Attack.Select();
@@ -573,7 +563,7 @@ public class BattleUIOperation : MonoBehaviour
         SelectionContainer.gameObject.SetActive(false);
         AcceptSelection.gameObject.SetActive(false);
 
-        if (_tempTactics.Actions.Length > 0 && _tempTactics.Condition != null)
+        if (_order.Actions.Length > 0 && _order.Condition != null)
         {
             Schedule.gameObject.SetActive(true);
             Discard.gameObject.SetActive(true);
@@ -609,10 +599,108 @@ public class BattleUIOperation : MonoBehaviour
                 ResetNavigation();
                 Schedule.Select();
 
-                if (_tempTactics.Actions.CostTotal() >= 4 && _tempTactics.Condition != null)
-                    ScheduleOrder(_tempTactics);
+                if (_order.Actions.CostTotal() >= 4 && _order.Condition != null)
+                    ScheduleOrder(_order);
             }
         }
+    }
+
+
+    public void UpdatePreview(ReadOnlySpan<IAction> actions, PreviewType type)
+    {
+        var current = _existingPreviews.AsSpan();
+        int minLength = Math.Min(current.Length, actions.Length);
+        int leftMatches = 0;
+        int rightMatches = 0;
+        for (int i = 0; i < minLength; i++)
+        {
+            if (current[i].action == actions[i])
+                leftMatches++;
+            else
+                break;
+        }
+
+        for (int i = 1; i <= minLength; i++)
+        {
+            if (current[^i].action == actions[^i])
+                rightMatches++;
+            else
+                break;
+        }
+
+        System.Range matchRange = rightMatches > leftMatches ? ^rightMatches.. : ..leftMatches;
+        System.Range nonmatchRange = rightMatches > leftMatches ? ..^rightMatches : leftMatches..;
+
+        var toKeep = current[matchRange];
+        var toDiscard = current[nonmatchRange];
+        var toAdd = actions[nonmatchRange];
+
+        if (toDiscard.Length == 0 && toAdd.Length == 0)
+            return;
+
+        foreach (var (action, ui) in toDiscard)
+            ui.Discarded?.Invoke();
+
+        if (rightMatches > leftMatches)
+        {
+            for (int i = 0; i < toKeep.Length; i++)
+            {
+                var (action, ui) = toKeep[i];
+                int newPosition = toAdd.Length + i;
+                ui.Moved?.Invoke();
+            }
+        }
+
+        _existingPreviews = new (IAction action, UIActionPreview ui)[toKeep.Length + toAdd.Length];
+        var newAsSpan = _existingPreviews.AsSpan();
+        toKeep.CopyTo(newAsSpan[matchRange]);
+        var newAsSpanAddRange = newAsSpan[nonmatchRange];
+        for (int i = 0; i < toAdd.Length; i++)
+        {
+            var newElement = Instantiate(ActionPreviewTemplate.gameObject, ActionPreviewTemplate.transform.parent);
+            newElement.SetActive(true);
+            var ui = newElement.GetComponent<UIActionPreview>();
+            var rect = (RectTransform)ui.transform;
+            var size = rect.sizeDelta;
+            size.x *= toAdd[i].ATBCost;
+            rect.sizeDelta = size;
+            ui.Created?.Invoke(toAdd[i].Name);
+            CallPreviewTypeMethod(type, ui);
+            newAsSpanAddRange[i] = (toAdd[i], ui);
+        }
+
+        if (toAdd.Length != 0)
+        {
+            for (int i = 0; i < _existingPreviews.Length; i++)
+                _existingPreviews[i].ui.transform.SetSiblingIndex(i);
+        }
+
+        if (_previewType != type)
+        {
+            _previewType = type;
+            for (int i = 0; i < _existingPreviews.Length; i++)
+                CallPreviewTypeMethod(type, _existingPreviews[i].ui);
+        }
+
+        static void CallPreviewTypeMethod(PreviewType type, UIActionPreview ui)
+        {
+            var invoker = type switch
+            {
+                PreviewType.Tactics => ui.IsTactics,
+                PreviewType.Order => ui.IsOrder,
+                PreviewType.Execution => ui.IsExecution,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+            invoker?.Invoke();
+        }
+    }
+
+
+    public enum PreviewType
+    {
+        Tactics,
+        Order,
+        Execution
     }
 
     class SpecificTargetsCondition : SimplifiedCondition

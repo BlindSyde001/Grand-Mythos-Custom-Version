@@ -17,19 +17,25 @@ public class BattleStateMachine : MonoBehaviour
     [NonSerialized]
     public BlockBattleFlags Blocked;
 
-    List<CharacterTemplate> _unitsCopy = new();
-    Dictionary<CharacterTemplate, Tactics> _orders = new();
+    readonly List<CharacterTemplate> _unitsCopy = new();
     [SerializeField] BattleResolution _battleResolution;
 
     // VARIABLES
     public List<Transform> HeroSpawns;    // Where do they initially spawn?
     public List<Transform> EnemySpawns;
 
+    /// <summary>
+    /// The player-defined orders scheduled to run whenever the unit has the ability to do so
+    /// </summary>
+    public readonly Dictionary<CharacterTemplate, Tactics> Orders = new();
+
     public delegate void SwitchToNewState(CombatState state);
     public static event SwitchToNewState OnNewStateSwitched;
 
     CombatState _combatState;
     CinemachineFreeLook _rotateCam;
+
+    public (CharacterTemplate unit, Tactics chosenTactic, int actionI)? Processing { get; private set; }
 
     public List<HeroExtension> PartyLineup => GameManager.Instance.PartyLineup;
 
@@ -111,7 +117,7 @@ public class BattleStateMachine : MonoBehaviour
                         continue;
 
                     // This unit has its ATB full or the manual order can be executed given the current amount of charge
-                    if (unit.ActionsCharged >= unit.ActionChargeMax || _orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
+                    if (unit.ActionsCharged >= unit.ActionChargeMax || Orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
                     {
                         foreach (var yield in CatchException(ProcessUnit(unit)))
                             yield return yield;
@@ -132,22 +138,30 @@ public class BattleStateMachine : MonoBehaviour
 
     IEnumerable CatchException(IEnumerable source)
     {
-        for (var enumerable = source.GetEnumerator(); ; )
+        IEnumerator enumerator = null;
+        try
         {
-            object yield;
-            try
+            for (enumerator = source.GetEnumerator(); ; )
             {
-                if (enumerable.MoveNext() == false)
+                object yield;
+                try
+                {
+                    if (enumerator.MoveNext() == false)
+                        break;
+                    yield = enumerator.Current;
+                }
+                catch(Exception e)
+                {
+                    Debug.LogException(e);
                     break;
-                yield = enumerable.Current;
-            }
-            catch(Exception e)
-            {
-                Debug.LogException(e);
-                break;
-            }
+                }
 
-            yield return yield;
+                yield return yield;
+            }
+        }
+        finally
+        {
+            (enumerator as IDisposable)?.Dispose();
         }
     }
 
@@ -180,7 +194,7 @@ public class BattleStateMachine : MonoBehaviour
         {
             Tactics chosenTactic;
             TargetCollection selection = default;
-            if (_orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
+            if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
             {
                 // We're taking care of this explicit order
             }
@@ -195,7 +209,7 @@ public class BattleStateMachine : MonoBehaviour
                     }
                 }
             }
-            _orders.Remove(unit);
+            Orders.Remove(unit);
 
             if (chosenTactic != null)
             {
@@ -225,7 +239,7 @@ public class BattleStateMachine : MonoBehaviour
                         }
                     }
 
-                    unit.ActionsCharged -= action.ATBCost;
+                    Processing = (unit, chosenTactic, i);
 
                     if (unit.ActionAnimations.TryGet(action, out var animation))
                     {
@@ -239,6 +253,8 @@ public class BattleStateMachine : MonoBehaviour
 
                     foreach (var yield in action.Perform(selection, unit.Context))
                         yield return yield;
+
+                    unit.ActionsCharged -= action.ATBCost;
 
                     if (Units.Contains(unit) == false)
                         break;
@@ -263,6 +279,7 @@ public class BattleStateMachine : MonoBehaviour
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.UnlockReloadAssemblies();
 #endif
+            Processing = null;
         }
     }
 
@@ -291,8 +308,6 @@ public class BattleStateMachine : MonoBehaviour
             return;
         Units.Remove(unit);
     }
-
-    public void SetOrderFor(CharacterTemplate character, Tactics specificTactic) => _orders[character] = specificTactic;
 
     // METHODS
     void SendStateChangeNotification(CombatState newCombatState)
