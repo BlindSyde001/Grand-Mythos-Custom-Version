@@ -12,6 +12,8 @@ public class MenuInputs : MonoBehaviour
 
     [SerializeField]
     internal StartMenuActions startMenuActions;
+    [SerializeField]
+    public Image MenuBackground;
 
     public MenuContainer CurrentMenuOpen;
     public float Speed = 0.5f;
@@ -26,6 +28,7 @@ public class MenuInputs : MonoBehaviour
         InputManager = InputManager.Instance;
         GameManager = GameManager.Instance;
         CurrentMenuOpen = null;
+        startMenuActions.gameObject.SetActive(false);
     }
 
     // METHODS
@@ -44,7 +47,6 @@ public class MenuInputs : MonoBehaviour
     public IEnumerator OpenFirstMenu()
     {
         InputManager.Instance.PushGameState(GameState.Menu, this);
-        InputManager.MenuBackground.GetComponent<Image>().DOFade(1, Speed);
         for (var e = SwitchTo(startMenuActions); e.MoveNext(); )
             yield return e.Current;
     }
@@ -73,12 +75,12 @@ public class MenuInputs : MonoBehaviour
         if (from == null)
         {
             InputManager.Instance.PushGameState(GameState.Menu, this);
-            InputManager.MenuBackground.GetComponent<Image>().DOFade(1, Speed);
+            MenuBackground.DOFade(1, Speed);
         }
         if (to == null)
         {
             InputManager.Instance.PopGameState(this);
-            InputManager.MenuBackground.GetComponent<Image>().DOFade(0, Speed);
+            MenuBackground.DOFade(0, Speed);
         }
 
 #warning would be nice to manually parse this enum to accelerate it whenever we have a command for a new switch comming in that way we don't block any new commands

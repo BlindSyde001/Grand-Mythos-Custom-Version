@@ -891,11 +891,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerTeam: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
-  Units:
-    _backingArray: []
-  TacticsDisabled:
-    _backingArray: []
-  _battleResolution: {fileID: 155364970}
+  BattleResolution: {fileID: 155364970}
   HeroSpawns:
   - {fileID: 1829077270}
   - {fileID: 197250747}
@@ -906,6 +902,10 @@ MonoBehaviour:
   - {fileID: 1162564725}
   - {fileID: 2046222802}
   - {fileID: 942591561}
+  Units:
+    _backingArray: []
+  TacticsDisabled:
+    _backingArray: []
 --- !u!114 &155364970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10502,7 +10502,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2093379010}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.09127542, y: -0.14049803, z: 0.013009013, w: 0.98577887}
+  m_LocalRotation: {x: 0.09127542, y: -0.14049797, z: 0.013009016, w: 0.98577887}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -10976,10 +10976,10 @@ RectTransform:
   - {fileID: 930687612}
   m_Father: {fileID: 1887660907}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -15}
-  m_SizeDelta: {x: 300, y: 30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2124153071
 MonoBehaviour:

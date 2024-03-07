@@ -9,12 +9,8 @@ public class InputManager : MonoBehaviour
     // VARIABLES
     public static InputManager Instance { get; private set; }
 
-    [SerializeField]
     public PlayerInput PlayerInput;
-    [SerializeField]
     public MenuInputs MenuInputs;
-    [SerializeField]
-    public GameObject MenuBackground;
 
     public GameState CurrentState { get; private set; }
     public List<GameStateRequests> StateStack = new();
