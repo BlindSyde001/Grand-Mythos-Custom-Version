@@ -41,14 +41,20 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
         if (_backingArray == null)
             return true;
 
-        var actions = new Dictionary<IAction, bool>();
+        var actions = new Dictionary<IAction, string>();
         foreach (var tactic in template.Tactics)
             foreach (var action in tactic.Actions)
-                actions.TryAdd(action, false);
+                actions.TryAdd(action, "Tactics");
+
         if (template.SkillTree != null)
-        {
             foreach (var unlock in template.SkillTree.Skills)
-                actions.TryAdd(unlock.Skill, true);
+                actions.TryAdd(unlock.Skill, "SkillTree");
+
+        if (template.Inventory is not PlayerInventory)
+        {
+            foreach ((BaseItem item, uint count) in template.Inventory.Items())
+                if (item is Consumable consumable)
+                    actions.TryAdd(consumable, "Inventory");
         }
 
         foreach (var keyValue in _backingArray)
@@ -64,7 +70,7 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
 
         if (actions.Count > 0)
         {
-            message = $"No animations setup for action {string.Join(", ", actions.Select(x => x.Value ? $"{x.Key.Name} from skilltree" : $"{x.Key.Name}"))}";
+            message = $"No animations setup for action {string.Join(", ", actions.Select(x => $"{x.Key.Name} from {x.Value}"))}";
             return false;
         }
 
