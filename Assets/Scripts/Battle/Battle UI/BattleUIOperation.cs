@@ -57,7 +57,7 @@ public class BattleUIOperation : MonoBehaviour
     public SerializableHashSet<BattleCharacterController> ProcessedUnits = new();
 
     PlayerControls _playerControls;
-    Coroutine _runningUIOperation;
+    (Coroutine coroutine, IDisposable disposable)? _runningUIOperation;
     bool _listenerBound;
     Color _initialTacticsColor, _disabledTacticsColor;
 
@@ -66,7 +66,6 @@ public class BattleUIOperation : MonoBehaviour
     Tactics _order = new();
 
     (IAction action, UIActionPreview ui)[] _existingPreviews = Array.Empty<(IAction, UIActionPreview)>();
-#warning not done
     PreviewType _previewType;
 
     bool HasButton(RectTransform val, ref string errorMessage)
@@ -77,11 +76,6 @@ public class BattleUIOperation : MonoBehaviour
     bool HasToggle(RectTransform val, ref string errorMessage)
     {
         return val != null && val.GetComponentInChildren<Toggle>();
-    }
-
-    bool HasTextComponent(RectTransform val, ref string errorMessage)
-    {
-        return val != null && (val.GetComponentInChildren<Text>() || val.GetComponentInChildren<TMP_Text>());
     }
 
     void OnEnable()
@@ -115,17 +109,10 @@ public class BattleUIOperation : MonoBehaviour
         _playerControls.BattleMap.HeroSwitch.performed -= SwitchToNextHero;
     }
 
-    void UpdateTargets()
-    {
-
-    }
-
     void Update()
     {
         if (UnitSelected == null && BattleManagement.PartyLineup.Count != 0)
-        {
             UnitSelected = BattleManagement.PartyLineup[0];
-        }
 
         if (UnitSelected == null)
             return;
@@ -233,24 +220,18 @@ public class BattleUIOperation : MonoBehaviour
 
     IEnumerable PresentSkillsUI()
     {
+        AGAIN:
         SelectionContainer.gameObject.SetActive(true);
 
         Skill selectedSkill = null;
+        bool cancel = false;
         var objects = new List<RectTransform>();
         try
         {
             bool first = true;
             foreach (var skill in UnitSelected.Profile.Skills)
             {
-                var uiElem = Instantiate(SkillTemplate, SelectionContainer, false);
-                uiElem.gameObject.SetActive(true);
-                objects.Add(uiElem);
-                if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
-                    text.text = skill.name;
-                if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
-                    tmp_text.text = skill.name;
-
-                var button = uiElem.GetComponent<Button>();
+                var button = CreateButton(skill.name, SkillTemplate, SelectionContainer, objects);
                 button.onClick.AddListener(() => selectedSkill = skill);
 
                 if (_order.Actions.CostTotal() + skill.ATBCost > UnitSelected.Profile.ActionChargeMax)
@@ -264,12 +245,18 @@ public class BattleUIOperation : MonoBehaviour
                 }
             }
 
-            while (selectedSkill == null)
+            var back = CreateButton("<<-", SkillTemplate, SelectionContainer, objects);
+            back.onClick.AddListener(() => cancel = true);
+
+            while (selectedSkill == null && cancel == false)
             {
                 if (Input.GetKey(KeyCode.Escape))
                     yield break;
                 yield return null;
             }
+
+            if (cancel)
+                yield break;
         }
         finally
         {
@@ -287,13 +274,18 @@ public class BattleUIOperation : MonoBehaviour
             foreach (var yields in PresentTargetSelectionUI())
                 yield return yields;
         }
+
+        if (_order.Condition != null && _order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax && _order.Condition != null)
+            goto AGAIN;
     }
 
     IEnumerable PresentItemUI()
     {
+        AGAIN:
         SelectionContainer.gameObject.SetActive(true);
 
-        Consumable selectedSkill = null;
+        Consumable selectedConsumable = null;
+        var cancel = false;
         var objects = new List<RectTransform>();
         try
         {
@@ -303,16 +295,8 @@ public class BattleUIOperation : MonoBehaviour
                 if (item is not Consumable consumable)
                     continue;
 
-                var uiElem = Instantiate(SkillTemplate, SelectionContainer, false);
-                uiElem.gameObject.SetActive(true);
-                objects.Add(uiElem);
-                if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
-                    text.text = consumable.name;
-                if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
-                    tmp_text.text = consumable.name;
-
-                var button = uiElem.GetComponent<Button>();
-                button.onClick.AddListener(() => selectedSkill = consumable);
+                var button = CreateButton(($"{consumable.name} (x{count})"), SkillTemplate, SelectionContainer, objects);
+                button.onClick.AddListener(() => selectedConsumable = consumable);
 
                 if (_order.Actions.CostTotal() + consumable.ATBCost > UnitSelected.Profile.ActionChargeMax)
                 {
@@ -325,12 +309,18 @@ public class BattleUIOperation : MonoBehaviour
                 }
             }
 
-            while (selectedSkill == null)
+            var back = CreateButton("<<-", SkillTemplate, SelectionContainer, objects);
+            back.onClick.AddListener(() => cancel = true);
+
+            while (selectedConsumable == null && cancel == false)
             {
                 if (Input.GetKey(KeyCode.Escape))
                     yield break;
                 yield return null;
             }
+
+            if (cancel)
+                yield break;
         }
         finally
         {
@@ -341,13 +331,30 @@ public class BattleUIOperation : MonoBehaviour
         if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
             Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
 
-        _order.Actions.BackingArray[^1] = selectedSkill;
+        _order.Actions.BackingArray[^1] = selectedConsumable;
 
         if (_order.Condition == null)
         {
             foreach (var yields in PresentTargetSelectionUI())
                 yield return yields;
         }
+
+        if (_order.Condition != null && _order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax && _order.Condition != null)
+            goto AGAIN;
+    }
+
+    static Button CreateButton(string name, RectTransform SkillTemplate, RectTransform SelectionContainer, ICollection<RectTransform> objects)
+    {
+        var uiElem = Instantiate(SkillTemplate, SelectionContainer, false);
+        uiElem.gameObject.SetActive(true);
+        objects.Add(uiElem);
+        if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
+            text.text = name;
+        if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
+            tmp_text.text = name;
+
+        var button = uiElem.GetComponent<Button>();
+        return button;
     }
 
     void TacticsPressed()
@@ -636,9 +643,10 @@ public class BattleUIOperation : MonoBehaviour
 
     void ResetNavigation()
     {
-        if (_runningUIOperation != null)
+        if (_runningUIOperation is {} val)
         {
-            StopCoroutine(_runningUIOperation);
+            StopCoroutine(val.coroutine);
+            val.disposable.Dispose();
             _runningUIOperation = null;
         }
 
@@ -667,11 +675,12 @@ public class BattleUIOperation : MonoBehaviour
         if (_runningUIOperation != null)
             return false;
 
-        _runningUIOperation = StartCoroutine(BattleUICoroutine());
+        var enumerable = BattleUICoroutine().GetEnumerator();
+        _runningUIOperation = (StartCoroutine(enumerable), (IDisposable)enumerable);
 
         return true;
 
-        IEnumerator BattleUICoroutine()
+        IEnumerable BattleUICoroutine()
         {
             BattleManagement.Blocked |= BlockBattleFlags.PreparingOrders;
             try
@@ -691,6 +700,8 @@ public class BattleUIOperation : MonoBehaviour
                 ResetNavigation();
                 Schedule.Select();
 
+                if (_order.Actions.Length == 0) // Order was cancelled, remove blocker
+                    BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
                 if (_order.Actions.CostTotal() >= 4 && _order.Condition != null)
                     ScheduleOrder(_order);
             }
