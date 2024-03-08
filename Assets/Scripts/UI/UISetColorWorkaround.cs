@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class UISetColorWorkaround : MonoBehaviour
 {
     [Required]
-    public Image Image;
+    public Graphic Image;
 
     public void SetRGBFromHex(string hex)
     {

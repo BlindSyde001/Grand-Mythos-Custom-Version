@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 
-public class UIActionPreview : MonoBehaviour
+public class UIActionPreview : UIHelper
 {
     [FormerlySerializedAs("Show"), InfoBox("Runs whenever a new preview component is created")]
     public UnityEvent<string> Created;
@@ -19,19 +19,4 @@ public class UIActionPreview : MonoBehaviour
     public UnityEvent IsOrder;
     [InfoBox("If the unit is running this action")]
     public UnityEvent IsExecution;
-
-    public void PlayAnimation(Animation comp) => comp.Play(PlayMode.StopAll);
-
-    public void DestroyAfterAnimation(Animation comp)
-    {
-        StartCoroutine(DestroyAfterAnimation());
-
-        IEnumerator DestroyAfterAnimation()
-        {
-            while (comp.isPlaying)
-                yield return null;
-
-            Destroy(gameObject);
-        }
-    }
 }

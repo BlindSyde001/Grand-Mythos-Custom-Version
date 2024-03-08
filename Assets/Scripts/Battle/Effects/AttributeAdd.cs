@@ -8,6 +8,9 @@ namespace Effects
     [Serializable]
     public class AttributeAdd : IEffect
     {
+        public delegate void Delegate(BattleCharacterController target, Attribute attribute, int delta);
+        public static event Delegate OnApplied;
+
         [HorizontalGroup, HideLabel, SuffixLabel("+=")]
         public Attribute Attribute = Attribute.Health;
         [HorizontalGroup, HideLabel]
@@ -37,7 +40,9 @@ namespace Effects
                 };
 
                 int value = target.Profile.GetAttribute(Attribute);
-                target.Profile.SetAttribute(Attribute, Mathf.RoundToInt(value + amount));
+                int newValue = Mathf.RoundToInt(value + amount);
+                target.Profile.SetAttribute(Attribute, newValue);
+                OnApplied?.Invoke(target, Attribute, newValue - value);
             }
 
             yield break;

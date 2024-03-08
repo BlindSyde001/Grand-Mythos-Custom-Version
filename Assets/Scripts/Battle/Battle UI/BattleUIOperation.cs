@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Conditions;
+using Effects;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -47,12 +48,11 @@ public class BattleUIOperation : MonoBehaviour
     [ValidateInput(nameof(HasToggle), "Must have a toggle")]
     public RectTransform TargetTemplate;
 
-    [Header("Actions display")]
-    [Required]
-    public UIActionPreview ActionPreviewTemplate;
+    [Header("Previews")]
+    [Required] public UIActionPreview ActionPreviewTemplate;
+    [Required] public GameObject TargetCursorTemplate;
 
-    [Required]
-    public GameObject TargetCursorTemplate;
+    [Required] public DamageText DamageTextTemplate;
 
     public SerializableHashSet<BattleCharacterController> ProcessedUnits = new();
 
@@ -63,6 +63,7 @@ public class BattleUIOperation : MonoBehaviour
 
     List<GameObject> _targetCursors = new();
     List<BattleCharacterController> _unitsCopy = new();
+    Queue<(float availableAfter, DamageText component)> _damageTextCache = new();
     Tactics _order = new();
 
     (IAction action, UIActionPreview ui)[] _existingPreviews = Array.Empty<(IAction, UIActionPreview)>();
@@ -100,13 +101,43 @@ public class BattleUIOperation : MonoBehaviour
         _playerControls.Enable();
         _playerControls.BattleMap.HeroSwitch.performed += SwitchToNextHero;
         ActionPreviewTemplate.gameObject.SetActive(false);
+        AttributeAdd.OnApplied += DamageHandler;
     }
 
     void OnDisable()
     {
-        ResetNavigation();
         _playerControls.Disable();
         _playerControls.BattleMap.HeroSwitch.performed -= SwitchToNextHero;
+        AttributeAdd.OnApplied -= DamageHandler;
+    }
+
+    void DamageHandler(BattleCharacterController target, Attribute attribute, int delta)
+    {
+        if (attribute != Attribute.Health)
+            return;
+
+        DamageText damageText;
+        if (_damageTextCache.TryPeek(out var data) && Time.time >= data.availableAfter)
+            damageText = _damageTextCache.Dequeue().component;
+        else
+            damageText = Instantiate(DamageTextTemplate.gameObject).GetComponent<DamageText>();
+
+        var center = Vector3.zero;
+        var hits = 0;
+        foreach (var renderer in target.PooledGetInChildren<Renderer>())
+        {
+            hits++;
+            center += renderer.bounds.center;
+        }
+
+        if (hits == 0)
+            center = target.transform.position;
+        else
+            center /= hits;
+
+        damageText.transform.position = center;
+        (delta > 0 ? damageText.OnHeal : damageText.OnDamage)?.Invoke(Math.Abs(delta).ToString());
+        _damageTextCache.Enqueue((Time.time + damageText.Lifetime, damageText));
     }
 
     void Update()

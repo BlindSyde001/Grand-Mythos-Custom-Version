@@ -25,42 +25,20 @@ public class BattleStateMachine : MonoBehaviour
     public List<Transform> HeroSpawns;    // Where do they initially spawn?
     public List<Transform> EnemySpawns;
 
-    public SerializableHashSet<BattleCharacterController> Units = new();
-    public SerializableHashSet<BattleCharacterController> TacticsDisabled = new();
+    [ReadOnly] public List<BattleCharacterController> PartyLineup = new();
+    [ReadOnly] public SerializableHashSet<BattleCharacterController> Units = new();
+    [ReadOnly] public SerializableHashSet<BattleCharacterController> TacticsDisabled = new();
 
     /// <summary>
     /// The player-defined orders scheduled to run whenever the unit has the ability to do so
     /// </summary>
     public readonly Dictionary<BattleCharacterController, Tactics> Orders = new();
 
+    readonly List<BattleCharacterController> _unitsCopy = new();
     CombatState _combatState;
     CinemachineFreeLook _rotateCam;
-    readonly List<BattleCharacterController> _unitsCopy = new();
-    readonly List<BattleCharacterController> _party = new();
 
     public (BattleCharacterController unit, Tactics chosenTactic, int actionI)? Processing { get; private set; }
-
-    public List<BattleCharacterController> PartyLineup
-    {
-        get
-        {
-            #warning clean this up, best would be to ensure it is updated properly if the lineup ever changes
-            _party.Clear();
-            foreach (var heroExtension in GameManager.Instance.PartyLineup)
-            {
-                foreach (var controller in Units)
-                {
-                    if (controller.Profile == heroExtension)
-                    {
-                        _party.Add(controller);
-                        break;
-                    }
-                }
-            }
-
-            return _party;
-        }
-    }
 
     // UPDATES
     void Awake()
@@ -131,7 +109,6 @@ public class BattleStateMachine : MonoBehaviour
 
             if (Blocked == 0)
             {
-                _unitsCopy.Clear();
                 _unitsCopy.AddRange(Units);
                 foreach (var unit in Units)
                 {
@@ -145,6 +122,7 @@ public class BattleStateMachine : MonoBehaviour
                             yield return yield;
                     }
                 }
+                _unitsCopy.Clear();
 
                 foreach (var unit in Units)
                 {
@@ -321,6 +299,20 @@ public class BattleStateMachine : MonoBehaviour
         if (unit == null)
             throw new NullReferenceException(nameof(unit));
         Units.Add(unit);
+
+#warning clean this up
+        PartyLineup.Clear();
+        foreach (var heroExtension in GameManager.Instance.PartyLineup)
+        {
+            foreach (var controller in Units)
+            {
+                if (controller.Profile == heroExtension)
+                {
+                    PartyLineup.Add(controller);
+                    break;
+                }
+            }
+        }
     }
 
     public void Exclude(BattleCharacterController unit)
@@ -328,6 +320,20 @@ public class BattleStateMachine : MonoBehaviour
         if (unit == null)
             return;
         Units.Remove(unit);
+
+#warning clean this up
+        PartyLineup.Clear();
+        foreach (var heroExtension in GameManager.Instance.PartyLineup)
+        {
+            foreach (var controller in Units)
+            {
+                if (controller.Profile == heroExtension)
+                {
+                    PartyLineup.Add(controller);
+                    break;
+                }
+            }
+        }
     }
 
     // METHODS
