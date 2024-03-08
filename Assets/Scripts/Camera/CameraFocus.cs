@@ -45,7 +45,7 @@ public class CameraFocus : ReloadableBehaviour
     void OnDrawGizmos()
     {
         GizmosHelper.Label(transform.position, nameof(CameraFocus));
-        Control.OnDrawGizmos(this);
+        Control?.OnDrawGizmos(this);
     }
 
     void OnValidate()
