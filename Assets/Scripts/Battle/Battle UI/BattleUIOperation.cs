@@ -392,65 +392,87 @@ public class BattleUIOperation : MonoBehaviour
 
             _order.Condition = ScriptableObject.CreateInstance<ActionCondition>();
             _order.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection };
-            var toggles = new Dictionary<BattleCharacterController, Toggle>();
-            var ignoreListenerEvent = new HashSet<BattleCharacterController>();
             bool first = true;
-            foreach (var unitForThisToggle in BattleManagement.Units)
+
+            if (FindTargetGroups(_order.Actions, UnitSelected.Context, BattleManagement.Units, out var groups)) // Have [Hostiles] [Allies] instead of [Hostile1] [Hostile2] [Hostile3]...
             {
-                var uiElem = Instantiate(TargetTemplate, SelectionContainer, false);
-                uiElem.gameObject.SetActive(true);
-                objects.Add(uiElem);
-                if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
-                    text.text = unitForThisToggle.name;
-                if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
-                    tmp_text.text = unitForThisToggle.name;
+                selection.Clear();
+                foreach (var unit in groups[0].units)
+                    selection.Add(unit);
 
-                var toggle = uiElem.GetComponent<Toggle>();
-                toggle.isOn = selection.Contains(unitForThisToggle);
-                toggle.onValueChanged.AddListener(UpdateSelection);
-                toggles.Add(unitForThisToggle, toggle);
-
-                if (first)
-                    toggle.Select();
-                first = false;
-
-                void UpdateSelection(bool addUnitIn)
+                var toggles = new List<Toggle>();
+                foreach ((string name, List<BattleCharacterController> units) in groups)
                 {
-                    if (ignoreListenerEvent.Remove(unitForThisToggle))
-                        return;
+                    var toggle = CreateToggle(name, toggles.Count == 0, ref first);
+                    toggle.onValueChanged.AddListener(ToggleGroup);
+                    toggles.Add(toggle);
 
-                    if (addUnitIn)
-                        selection.Add(unitForThisToggle);
-                    else
-                        selection.Remove(unitForThisToggle);
-
-                    Filter(_order.Actions, UnitSelected.Context, selection, out var newSelection);
-
-                    if (selection.Count == newSelection.Count)
-                        return;
-
-                    // Some of the units were filtered out:
-                    if (addUnitIn) // Tried to add this unit ?
+                    void ToggleGroup(bool isOn)
                     {
-                        if (newSelection.Contains(unitForThisToggle)) // The unit bound to this toggle was added in, some other unit was removed
+                        if (isOn == false)
+                            return;
+
+                        foreach (var otherToggle in toggles)
                         {
-                            ReplaceSelection(selection, newSelection, toggles, ignoreListenerEvent);
+                            if (otherToggle == toggle)
+                                continue;
+                            otherToggle.isOn = false;
                         }
-                        else // This unit was filtered out
-                        {
-                            // Try again with just this unit selected
-                            Filter(_order.Actions, UnitSelected.Context, new() { unitForThisToggle }, out var newSelectionWithOnlyIt);
-                            if (newSelectionWithOnlyIt.Count == 1)
-                                ReplaceSelection(selection, newSelectionWithOnlyIt, toggles, ignoreListenerEvent);
-                            // Else, don't add it, this unit is likely not compatible with this action
-                        }
+
+                        selection.Clear();
+                        foreach (var unit in units)
+                            selection.Add(unit);
                     }
-                    else // Tried to remove this unit ? But it removed more units than that one
+                }
+            }
+            else // Fallback to generic handler if no groups could be found
+            {
+                var ignoreListenerEvent = new HashSet<BattleCharacterController>();
+                var toggles = new Dictionary<BattleCharacterController, Toggle>();
+                foreach (var unitForThisToggle in BattleManagement.Units)
+                {
+                    var toggle = CreateToggle(unitForThisToggle.name, selection.Contains(unitForThisToggle), ref first);
+                    toggle.onValueChanged.AddListener(UpdateSelection);
+                    toggles.Add(unitForThisToggle, toggle);
+
+                    void UpdateSelection(bool addUnitIn)
                     {
-                        // Roll the deselection back
-                        selection.Add(unitForThisToggle);
-                        ignoreListenerEvent.Add(unitForThisToggle);
-                        toggle.isOn = true;
+                        if (ignoreListenerEvent.Remove(unitForThisToggle))
+                            return;
+
+                        if (addUnitIn)
+                            selection.Add(unitForThisToggle);
+                        else
+                            selection.Remove(unitForThisToggle);
+
+                        Filter(_order.Actions, UnitSelected.Context, selection, out var newSelection);
+
+                        if (selection.Count == newSelection.Count)
+                            return;
+
+                        // Some of the units were filtered out:
+                        if (addUnitIn) // Tried to add this unit ?
+                        {
+                            if (newSelection.Contains(unitForThisToggle)) // The unit bound to this toggle was added in, some other unit was removed
+                            {
+                                ReplaceSelection(selection, newSelection, toggles, ignoreListenerEvent);
+                            }
+                            else // This unit was filtered out
+                            {
+                                // Try again with just this unit selected
+                                Filter(_order.Actions, UnitSelected.Context, new() { unitForThisToggle }, out var newSelectionWithOnlyIt);
+                                if (newSelectionWithOnlyIt.Count == 1)
+                                    ReplaceSelection(selection, newSelectionWithOnlyIt, toggles, ignoreListenerEvent);
+                                // Else, don't add it, this unit is likely not compatible with this action
+                            }
+                        }
+                        else // Tried to remove this unit ? But it removed more units than that one
+                        {
+                            // Roll the deselection back
+                            selection.Add(unitForThisToggle);
+                            ignoreListenerEvent.Add(unitForThisToggle);
+                            toggle.isOn = true;
+                        }
                     }
                 }
             }
@@ -475,6 +497,25 @@ public class BattleUIOperation : MonoBehaviour
 
             AcceptSelection.onClick.RemoveListener(listener);
             AcceptSelection.gameObject.SetActive(false);
+        }
+
+        Toggle CreateToggle(string label, bool defaultState, ref bool first)
+        {
+            var uiElem = Instantiate(TargetTemplate, SelectionContainer, false);
+            uiElem.gameObject.SetActive(true);
+            objects.Add(uiElem);
+            if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
+                text.text = label;
+            if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
+                tmp_text.text = label;
+
+            var toggle = uiElem.GetComponent<Toggle>();
+            toggle.isOn = defaultState;
+
+            if (first)
+                toggle.Select();
+            first = false;
+            return toggle;
         }
 
 
@@ -515,6 +556,38 @@ public class BattleUIOperation : MonoBehaviour
                         output.Add(target);
                 }
             }
+        }
+
+        static bool FindTargetGroups(IActionCollection actions, EvaluationContext context, HashSet<BattleCharacterController> units, out List<(string name, List<BattleCharacterController> units)> groups)
+        {
+            groups = new()
+            {
+                ("Hostiles", units.Where(x => x.IsHostileTo(context.Controller)).ToList()),
+                ("Allies", units.Where(x => x.IsHostileTo(context.Controller) == false).ToList())
+            };
+            for (int i = groups.Count - 1; i >= 0; i--)
+            {
+                var newTargets = new TargetCollection(groups[i].units);
+                foreach (var action in actions)
+                    action.TargetFilter?.Filter(ref newTargets, context);
+
+                var count = newTargets.CountSlow();
+                if (count == 0)
+                {
+                    groups.RemoveAt(i);
+                }
+                else if (count == 1)
+                {
+                    var target = newTargets.First();
+                    groups[i] = (target.name, new(){ target });
+                }
+                else
+                {
+                    groups[i] = (groups[i].name, newTargets.ToList());
+                }
+            }
+
+            return groups.Count > 0;
         }
     }
 
