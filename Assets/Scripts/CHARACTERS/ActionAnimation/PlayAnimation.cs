@@ -14,17 +14,17 @@ namespace ActionAnimation
         public string StateName;
         public int Layer;
 
-        public IEnumerable Play(IAction action, BattleCharacterController controller, TargetCollection targets)
+        public IEnumerable Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets)
         {
             Vector3 averagePos = default;
             int count = 0;
             foreach (var target in targets)
             {
-                if (target == controller.Template)
+                if (target == controller)
                     continue;
 
                 count++;
-                averagePos += target.Context.Controller.transform.position;
+                averagePos += target.transform.position;
             }
 
             if (count != 0)

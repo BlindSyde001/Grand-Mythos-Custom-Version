@@ -8,7 +8,7 @@ public abstract class Condition
 {
     public static bool Track;
     public static CharacterTemplate Source;
-    public static Dictionary<Condition, CharacterTemplate[]> DebugData = new();
+    public static Dictionary<Condition, BattleCharacterController[]> DebugData = new();
     public static uint CurrentRound;
 
     /// <summary> Describes this condition in a human-readable format </summary>
@@ -26,7 +26,7 @@ public abstract class Condition
         if (Track == false)
             return;
 
-        if (Source != context.Source)
+        if (Source != context.Controller.Profile)
             return;
 
         if (context.Round != CurrentRound)

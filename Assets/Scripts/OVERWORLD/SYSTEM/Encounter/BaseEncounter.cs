@@ -30,6 +30,7 @@ public abstract class BaseEncounter : IEncounterDefinition
     static IEnumerator OverworldToBattleTransition(SceneReference Scene, CharacterTemplate[] opponents)
     {
         List<GameObject> gameObjectsToReEnable = new List<GameObject>();
+        var hostileController = new List<BattleCharacterController>();
 
         bool ranToCompletion = false;
         try
@@ -61,7 +62,6 @@ public abstract class BaseEncounter : IEncounterDefinition
 
             loadOperation.allowSceneActivation = true;
 
-            var hostileController = new List<BattleCharacterController>();
             for (int i = 0; i < opponents.Length; i++)
             {
                 var template = Object.Instantiate(opponents[i]);
@@ -74,7 +74,7 @@ public abstract class BaseEncounter : IEncounterDefinition
 
                 // Attach Relevant References
                 var controller = model.GetComponent<BattleCharacterController>();
-                controller.Template = template;
+                controller.Profile = template;
                 template.ActionsCharged = UnityEngine.Random.Range(0, template.ActionChargeMax);
                 hostileController.Add(controller);
             }
@@ -93,19 +93,21 @@ public abstract class BaseEncounter : IEncounterDefinition
                 Debug.LogWarning($"Could not find {nameof(BattleStateMachine)} when trying to set encounter");
             }
 
-            for (int i = 0; i < hostileController.Count; i++)
-            {
-                hostileController[i].Template.transform.parent = null;
-                hostileController[i].transform.SetPositionAndRotation(spawns[i].pos, spawns[i].rot);
-            }
-
             Scene runtimeScene = default;
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
                 if (SceneManager.GetSceneAt(i).path == Scene.Path)
                     runtimeScene = SceneManager.GetSceneAt(i);
             }
+
             Debug.Assert(runtimeScene.IsValid());
+
+            for (int i = 0; i < hostileController.Count; i++)
+            {
+                SceneManager.MoveGameObjectToScene(hostileController[i].Profile.gameObject, runtimeScene);
+                hostileController[i].transform.SetPositionAndRotation(spawns[i].pos, spawns[i].rot);
+            }
+
             Scene previouslyActiveScene = SceneManager.GetActiveScene();
             SceneManager.SetActiveScene(runtimeScene);
             var unloader = new GameObject(nameof(BackToOverworldOnDestroy)).AddComponent<BackToOverworldOnDestroy>();
@@ -120,6 +122,10 @@ public abstract class BaseEncounter : IEncounterDefinition
             {
                 foreach (var gameObject in gameObjectsToReEnable)
                     gameObject.SetActive(true);
+                foreach (var controller in hostileController)
+                    Object.Destroy(controller.Profile);
+                foreach (var controller in hostileController)
+                    Object.Destroy(controller);
             }
 
             startingEncounter = false;

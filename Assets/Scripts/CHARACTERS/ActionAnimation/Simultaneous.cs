@@ -12,7 +12,7 @@ namespace ActionAnimation
         [SerializeReference]
         public IActionAnimation[] Animations = Array.Empty<IActionAnimation>();
 
-        public IEnumerable Play(IAction action, BattleCharacterController controller, TargetCollection targets)
+        public IEnumerable Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets)
         {
             if (BattleStateMachine.TryGetInstance(out var bts) == false)
                 yield break;
@@ -29,7 +29,7 @@ namespace ActionAnimation
                 yield return null;
         }
 
-        IEnumerable PlayWrapper(IActionAnimation animation, IAction action, BattleCharacterController controller, TargetCollection targets, int[] running)
+        IEnumerable PlayWrapper(IActionAnimation animation, IAction action, BattleCharacterController controller, BattleCharacterController[] targets, int[] running)
         {
             foreach (var yield in animation.Play(action, controller, targets))
                 yield return yield;

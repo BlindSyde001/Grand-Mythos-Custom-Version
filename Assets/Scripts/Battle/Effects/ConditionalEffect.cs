@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -14,10 +15,11 @@ namespace Effects
         [SerializeReference]
         public IEffect[] Effects = Array.Empty<IEffect>();
 
-        public IEnumerable Apply(TargetCollection targets, EvaluationContext context)
+        public IEnumerable Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
-            var newTargets = targets;
-            Condition.Filter(ref newTargets, context);
+            var collection = new TargetCollection(targets.ToList());
+            Condition.Filter(ref collection, context);
+            targets = collection.ToArray();
             foreach (var effect in Effects)
             {
                 foreach (var yield in effect.Apply(targets, context))

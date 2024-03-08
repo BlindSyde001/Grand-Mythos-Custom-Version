@@ -14,12 +14,12 @@ namespace Effects
         public int Value = 100;
         public int Variance = 0;
 
-        public IEnumerable Apply(TargetCollection targets, EvaluationContext context)
+        public IEnumerable Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
             foreach (var target in targets)
             {
                 int val = Value + UnityEngine.Random.Range(-Variance, Variance+1);
-                target.SetAttribute(Attribute, val);
+                target.Profile.SetAttribute(Attribute, val);
             }
 
             yield break;

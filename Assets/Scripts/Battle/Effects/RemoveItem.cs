@@ -13,10 +13,10 @@ namespace Effects
         [HorizontalGroup, HideLabel]
         public uint Amount = 1;
 
-        public IEnumerable Apply(TargetCollection targets, EvaluationContext context)
+        public IEnumerable Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
             foreach (var target in targets)
-                target.Inventory.RemoveItem(Item, Amount);
+                target.Profile.Inventory.RemoveItem(Item, Amount);
             yield break;
         }
 

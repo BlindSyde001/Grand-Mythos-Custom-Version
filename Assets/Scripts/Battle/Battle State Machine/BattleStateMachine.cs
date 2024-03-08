@@ -4,40 +4,63 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using Cinemachine;
+using Sirenix.OdinInspector;
 using Random = UnityEngine.Random;
 
 public class BattleStateMachine : MonoBehaviour
 {
+    public delegate void SwitchToNewState(CombatState state);
+    public static event SwitchToNewState OnNewStateSwitched;
     static BattleStateMachine _instance;
-
-    public Team PlayerTeam;
-    public SerializableHashSet<CharacterTemplate> Units = new();
-    public SerializableHashSet<CharacterTemplate> TacticsDisabled = new();
 
     [NonSerialized]
     public BlockBattleFlags Blocked;
 
-    readonly List<CharacterTemplate> _unitsCopy = new();
-    [SerializeField] BattleResolution _battleResolution;
+    public Team PlayerTeam;
+
+    [Required]
+    public BattleResolution BattleResolution;
 
     // VARIABLES
     public List<Transform> HeroSpawns;    // Where do they initially spawn?
     public List<Transform> EnemySpawns;
 
+    public SerializableHashSet<BattleCharacterController> Units = new();
+    public SerializableHashSet<BattleCharacterController> TacticsDisabled = new();
+
     /// <summary>
     /// The player-defined orders scheduled to run whenever the unit has the ability to do so
     /// </summary>
-    public readonly Dictionary<CharacterTemplate, Tactics> Orders = new();
-
-    public delegate void SwitchToNewState(CombatState state);
-    public static event SwitchToNewState OnNewStateSwitched;
+    public readonly Dictionary<BattleCharacterController, Tactics> Orders = new();
 
     CombatState _combatState;
     CinemachineFreeLook _rotateCam;
+    readonly List<BattleCharacterController> _unitsCopy = new();
+    readonly List<BattleCharacterController> _party = new();
 
-    public (CharacterTemplate unit, Tactics chosenTactic, int actionI)? Processing { get; private set; }
+    public (BattleCharacterController unit, Tactics chosenTactic, int actionI)? Processing { get; private set; }
 
-    public List<HeroExtension> PartyLineup => GameManager.Instance.PartyLineup;
+    public List<BattleCharacterController> PartyLineup
+    {
+        get
+        {
+            #warning clean this up, best would be to ensure it is updated properly if the lineup ever changes
+            _party.Clear();
+            foreach (var heroExtension in GameManager.Instance.PartyLineup)
+            {
+                foreach (var controller in Units)
+                {
+                    if (controller.Profile == heroExtension)
+                    {
+                        _party.Add(controller);
+                        break;
+                    }
+                }
+            }
+
+            return _party;
+        }
+    }
 
     // UPDATES
     void Awake()
@@ -81,13 +104,12 @@ public class BattleStateMachine : MonoBehaviour
             model.name = $"{hero.gameObject.name} Model";
 
             var controller = model.GetComponent<BattleHeroModelController>();
-            controller.Template = hero;
+            controller.Profile = hero;
 
             hero.ActionsCharged = Random.Range(0, hero.ActionChargeMax);
-            hero.Context.Controller = controller;
         }
 
-        foreach (var target in FindObjectsOfType<CharacterTemplate>())
+        foreach (var target in FindObjectsOfType<BattleCharacterController>())
             Units.Add(target);
 
         SendStateChangeNotification(CombatState.Start);
@@ -102,7 +124,7 @@ public class BattleStateMachine : MonoBehaviour
                 SendStateChangeNotification(CombatState.End);
                 enabled = false;
                 yield return new WaitForSeconds(1f);
-                foreach (var yields in _battleResolution.ResolveBattle(win, this))
+                foreach (var yields in BattleResolution.ResolveBattle(win, this))
                     yield return yields;
                 yield break;
             }
@@ -113,11 +135,11 @@ public class BattleStateMachine : MonoBehaviour
                 _unitsCopy.AddRange(Units);
                 foreach (var unit in Units)
                 {
-                    if (unit.CurrentHP == 0 || TacticsDisabled.Contains(unit))
+                    if (unit.Profile.CurrentHP == 0 || TacticsDisabled.Contains(unit))
                         continue;
 
                     // This unit has its ATB full or the manual order can be executed given the current amount of charge
-                    if (unit.ActionsCharged >= unit.ActionChargeMax || Orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
+                    if (unit.Profile.ActionsCharged >= unit.Profile.ActionChargeMax || Orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
                     {
                         foreach (var yield in CatchException(ProcessUnit(unit)))
                             yield return yield;
@@ -126,8 +148,8 @@ public class BattleStateMachine : MonoBehaviour
 
                 foreach (var unit in Units)
                 {
-                    if (unit.CurrentHP != 0)
-                        unit.ActionsCharged += unit.ActionRechargeSpeed * Time.deltaTime / 10f;
+                    if (unit.Profile.CurrentHP != 0)
+                        unit.Profile.ActionsCharged += unit.Profile.ActionRechargeSpeed * Time.deltaTime / 10f;
                     // DO NOT CLAMP HERE, DO IT AFTER ORDERS HAVE BEEN SCHEDULED
                 }
             }
@@ -171,9 +193,9 @@ public class BattleStateMachine : MonoBehaviour
         int hostilesLeft = 0;
         foreach (var target in Units)
         {
-            if (target.CurrentHP == 0)
+            if (target.Profile.CurrentHP == 0)
                 continue;
-            if (PlayerTeam.Allies.Contains(target.Team))
+            if (PlayerTeam.Allies.Contains(target.Profile.Team))
                 alliesLeft++;
             else
                 hostilesLeft++;
@@ -183,7 +205,7 @@ public class BattleStateMachine : MonoBehaviour
         return hostilesLeft == 0 || alliesLeft == 0;
     }
 
-    IEnumerable ProcessUnit(CharacterTemplate unit)
+    IEnumerable ProcessUnit(BattleCharacterController unit)
     {
         #if UNITY_EDITOR
         // Halting execution to reload assemblies while this enumerator is running
@@ -200,7 +222,7 @@ public class BattleStateMachine : MonoBehaviour
             }
             else
             {
-                foreach (var tactic in unit.Tactics)
+                foreach (var tactic in unit.Profile.Tactics)
                 {
                     if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
                     {
@@ -218,7 +240,7 @@ public class BattleStateMachine : MonoBehaviour
                 {
                     var action = chosenTactic.Actions[i];
 
-                    if (unit.ActionsCharged < action.ATBCost)
+                    if (unit.Profile.ActionsCharged < action.ATBCost)
                         break;
 
                     if (i != 0)
@@ -241,19 +263,19 @@ public class BattleStateMachine : MonoBehaviour
 
                     Processing = (unit, chosenTactic, i);
 
-                    if (unit.ActionAnimations.TryGet(action, out var animation) == false)
+                    if (unit.Profile.ActionAnimations.TryGet(action, out var animation) == false)
                     {
-                        animation = unit.FallbackAnimation;
+                        animation = unit.Profile.FallbackAnimation;
                         Debug.LogWarning($"No animations setup for action '{action}' on unit {unit}. Using fallback animation.", unit);
                     }
 
-                    foreach (var yield in animation.Play(action, unit.Context.Controller, selection))
+                    foreach (var yield in animation.Play(action, unit, selection.ToArray()))
                         yield return yield;
 
-                    foreach (var yield in action.Perform(selection, unit.Context))
+                    foreach (var yield in action.Perform(selection.ToArray(), unit.Context))
                         yield return yield;
 
-                    unit.ActionsCharged -= action.ATBCost;
+                    unit.Profile.ActionsCharged -= action.ATBCost;
 
                     if (Units.Contains(unit) == false)
                         break;
@@ -270,8 +292,8 @@ public class BattleStateMachine : MonoBehaviour
                 unit.Context.Round++;
             }
 
-            if (unit.ActionsCharged > unit.ActionChargeMax)
-                unit.ActionsCharged = unit.ActionChargeMax;
+            if (unit.Profile.ActionsCharged > unit.Profile.ActionChargeMax)
+                unit.Profile.ActionsCharged = unit.Profile.ActionChargeMax;
         }
         finally
         {
@@ -294,14 +316,14 @@ public class BattleStateMachine : MonoBehaviour
         return false;
     }
 
-    public void Include(CharacterTemplate unit)
+    public void Include(BattleCharacterController unit)
     {
         if (unit == null)
             throw new NullReferenceException(nameof(unit));
         Units.Add(unit);
     }
 
-    public void Exclude(CharacterTemplate unit)
+    public void Exclude(BattleCharacterController unit)
     {
         if (unit == null)
             return;
@@ -350,8 +372,8 @@ public class BattleStateMachine : MonoBehaviour
         #warning clean this stuff up
         foreach (var hostile in FindObjectsOfType<BattleCharacterController>())
         {
-            if (hostile.Template != null && hostile.Template is not HeroExtension)
-                Destroy(hostile.Template);
+            if (hostile.Profile != null && hostile.Profile is not HeroExtension)
+                Destroy(hostile.Profile);
             Destroy(hostile.gameObject);
         }
     }

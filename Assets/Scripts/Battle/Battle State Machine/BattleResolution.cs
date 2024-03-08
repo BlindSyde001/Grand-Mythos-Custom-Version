@@ -94,10 +94,10 @@ public class BattleResolution : MonoBehaviour
         int creditsEarned = 0;
         foreach (var unit in battle.Units)
         {
-            if (unit.Team.Allies.Contains(battle.PlayerTeam) == false)
+            if (unit.Profile.Team.Allies.Contains(battle.PlayerTeam) == false)
             {
-                sharedExp += unit.ExperiencePool;
-                creditsEarned += unit.CreditPool;
+                sharedExp += unit.Profile.ExperiencePool;
+                creditsEarned += unit.Profile.CreditPool;
             }
         }
 
@@ -105,7 +105,7 @@ public class BattleResolution : MonoBehaviour
         foreach (var unit in battle.Units)
         {
 #warning would be nice to remove the cast/test here
-            if (unit.CurrentHP > 0 && unit.Team == battle.PlayerTeam && unit is HeroExtension hero)
+            if (unit.Profile.CurrentHP > 0 && unit.Profile.Team == battle.PlayerTeam && unit.Profile is HeroExtension hero)
                 heroesAlive.Add(hero);
         }
 
@@ -130,12 +130,12 @@ public class BattleResolution : MonoBehaviour
 
         var itemsDropped = new List<(BaseItem item, uint count)>();
         // Grab all dropped items
-        foreach (CharacterTemplate unit in battle.Units)
+        foreach (var unit in battle.Units)
         {
-            if (unit is HeroExtension)
+            if (unit.Profile is HeroExtension)
                 continue;
 
-            foreach (var drop in unit.DropItems)
+            foreach (var drop in unit.Profile.DropItems)
             {
                 if (Random.Range(0, 100) < drop.DropRatePercent)
                     itemsDropped.Add((drop.Item, drop.Count));
@@ -178,7 +178,7 @@ public class BattleResolution : MonoBehaviour
     static void ReturnToOverworld(BattleStateMachine battle)
     {
         foreach (var hero in battle.PartyLineup)
-            hero.CurrentHP = hero.CurrentHP == 0 ? 1 : hero.CurrentHP;
+            hero.Profile.CurrentHP = hero.Profile.CurrentHP == 0 ? 1 : hero.Profile.CurrentHP;
         BattleStateMachine.ClearData();
 
         if (battle.gameObject.scene == SceneManager.GetActiveScene())

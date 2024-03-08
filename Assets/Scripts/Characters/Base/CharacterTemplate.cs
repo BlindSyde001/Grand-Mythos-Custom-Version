@@ -118,9 +118,6 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("DROP")]
     public List<Drop> DropItems;
 
-    [NonSerialized]
-    public EvaluationContext Context = new();
-
     /// <summary>
     /// Stats after all mods, like level, equipment and status effects, have been applied
     /// </summary>
@@ -204,11 +201,6 @@ public class CharacterTemplate : MonoBehaviour
         _ => throw new ArgumentOutOfRangeException(nameof(growthRate), growthRate, null)
     };
 
-    public CharacterTemplate()
-    {
-        Context.Source = this;
-    }
-
     protected virtual void Awake()
     {
         RegenHealthAndMana();
@@ -218,11 +210,6 @@ public class CharacterTemplate : MonoBehaviour
     {
         CurrentHP = EffectiveStats.HP;
         CurrentMP = EffectiveStats.MP;
-    }
-
-    public bool IsHostileTo(CharacterTemplate character)
-    {
-        return Team.Allies.Contains(character.Team) == false;
     }
 
     public int GetAttribute(Attribute attribute) => attribute switch

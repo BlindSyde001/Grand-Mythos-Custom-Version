@@ -12,9 +12,9 @@ namespace Conditions
         [HorizontalGroup, HideLabel]
         public uint AtLeastThisAmount = 1;
 
-        protected override bool Filter(CharacterTemplate target, EvaluationContext context)
+        protected override bool Filter(BattleCharacterController target, EvaluationContext context)
         {
-            return target.Inventory.HasItem(Item, out uint count) && count <= AtLeastThisAmount;
+            return target.Profile.Inventory.HasItem(Item, out uint count) && count <= AtLeastThisAmount;
         }
 
         public override bool IsValid(out string error)

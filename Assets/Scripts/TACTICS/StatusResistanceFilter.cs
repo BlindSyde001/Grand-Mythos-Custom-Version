@@ -10,9 +10,9 @@ namespace Conditions
         [HorizontalGroup, HideLabel] public ComparisonType Comparison;
         [HorizontalGroup, HideLabel] public int Value;
 
-        protected override bool Filter(CharacterTemplate target, EvaluationContext context)
+        protected override bool Filter(BattleCharacterController target, EvaluationContext context)
         {
-            int stat = target.GetStatusResistance(ResistanceTo);
+            int stat = target.Profile.GetStatusResistance(ResistanceTo);
             return Comparison switch
             {
                 ComparisonType.LesserThan => stat < Value,

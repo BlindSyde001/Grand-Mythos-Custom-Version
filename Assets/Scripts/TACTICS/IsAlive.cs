@@ -12,9 +12,9 @@
 
         public override void NotifyUsedCondition(in TargetCollection target, EvaluationContext context){ }
 
-        protected override bool Filter(CharacterTemplate target, EvaluationContext context)
+        protected override bool Filter(BattleCharacterController target, EvaluationContext context)
         {
-            return target.CurrentHP > 0;
+            return target.Profile.CurrentHP > 0;
         }
     }
 }

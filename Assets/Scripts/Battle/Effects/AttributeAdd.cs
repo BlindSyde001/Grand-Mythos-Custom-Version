@@ -22,7 +22,7 @@ namespace Effects
         [HorizontalGroup("Crit")]
         public float CritMultiplier = 2.5f;
 
-        public IEnumerable Apply(TargetCollection targets, EvaluationContext context)
+        public IEnumerable Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
             foreach (var target in targets)
             {
@@ -31,13 +31,13 @@ namespace Effects
                 amount = Scaling switch
                 {
                     ScalingType.Flat => amount,
-                    ScalingType.Physical => amount * context.Source.EffectiveStats.Attack,
-                    ScalingType.Magical => amount * context.Source.EffectiveStats.MagAttack,
+                    ScalingType.Physical => amount * context.Profile.EffectiveStats.Attack,
+                    ScalingType.Magical => amount * context.Profile.EffectiveStats.MagAttack,
                     _ => throw new ArgumentOutOfRangeException(Scaling.ToString())
                 };
 
-                int value = target.GetAttribute(Attribute);
-                target.SetAttribute(Attribute, Mathf.RoundToInt(value + amount));
+                int value = target.Profile.GetAttribute(Attribute);
+                target.Profile.SetAttribute(Attribute, Mathf.RoundToInt(value + amount));
             }
 
             yield break;

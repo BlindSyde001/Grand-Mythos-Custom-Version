@@ -23,7 +23,7 @@ public class BattleHeroModelController : BattleCharacterController
         switch(combatState)
         {
             case CombatState.Start:
-                if (Template.CurrentHP > 0)
+                if (Profile.CurrentHP > 0)
                 {
                     ChangeAnimationState(Battle_EnterFight);
                 }
@@ -34,7 +34,7 @@ public class BattleHeroModelController : BattleCharacterController
                 break;
 
             case CombatState.Active:
-                if (Template.CurrentHP > 0)
+                if (Profile.CurrentHP > 0)
                 {
                     ChangeAnimationState(Battle_Stance);
                     MovementController.isRoaming = true;
@@ -46,7 +46,7 @@ public class BattleHeroModelController : BattleCharacterController
                 break;
 
             case CombatState.Wait:
-                if (Template.CurrentHP > 0)
+                if (Profile.CurrentHP > 0)
                 {
                     ChangeAnimationState(Battle_Stance);
                     MovementController.isRoaming = false;

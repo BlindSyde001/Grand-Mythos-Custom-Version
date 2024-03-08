@@ -7,7 +7,7 @@ namespace Conditions
     {
         public Status Status;
 
-        protected override bool Filter(CharacterTemplate target, EvaluationContext context) => target.HasStatus(Status);
+        protected override bool Filter(BattleCharacterController target, EvaluationContext context) => target.Profile.HasStatus(Status);
 
         public override bool IsValid(out string error)
         {

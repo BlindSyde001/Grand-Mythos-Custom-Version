@@ -39,7 +39,7 @@ public class Skill : IdentifiableScriptableObject, IAction
     Condition IAction.TargetFilter => TargetConstraint;
     Condition IAction.Precondition => PreconditionToUse;
 
-    public IEnumerable Perform(TargetCollection targets, EvaluationContext context)
+    public IEnumerable Perform(BattleCharacterController[] targets, EvaluationContext context)
     {
         foreach (var effect in Effects)
         {

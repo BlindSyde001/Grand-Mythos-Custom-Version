@@ -5,7 +5,7 @@ namespace Conditions
     [Serializable]
     public class IsSelf : SimplifiedCondition
     {
-        protected override bool Filter(CharacterTemplate target, EvaluationContext context) => context.Source == target;
+        protected override bool Filter(BattleCharacterController target, EvaluationContext context) => context.Controller == target;
 
         public override bool IsValid(out string error)
         {

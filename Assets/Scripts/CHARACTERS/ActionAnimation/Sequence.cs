@@ -12,7 +12,7 @@ namespace ActionAnimation
         [SerializeReference]
         public IActionAnimation[] Animations = Array.Empty<IActionAnimation>();
 
-        public IEnumerable Play(IAction action, BattleCharacterController controller, TargetCollection targets)
+        public IEnumerable Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets)
         {
             foreach (var animation in Animations)
             {

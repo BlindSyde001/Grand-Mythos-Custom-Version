@@ -41,7 +41,7 @@ public class ActionCondition : IdentifiableScriptableObject
 
         context.ExecutionFlags.Clear();
 
-        if (accountForCost && actions.CostTotal() > context.Source.ActionsCharged)
+        if (accountForCost && actions.CostTotal() > context.Controller.Profile.ActionsCharged)
             return false;
 
         foreach (var action in actions)
@@ -51,7 +51,7 @@ public class ActionCondition : IdentifiableScriptableObject
                 var allTargetsCopy = allTargets;
                 try
                 {
-                    action.Precondition.Filter(ref allTargetsCopy, context);
+                    action.Precondition.Filter(ref allTargetsCopy, context.Controller.Context);
                 }
                 catch(Exception e) when (action is UnityEngine.Object o)
                 {
@@ -117,10 +117,11 @@ public class ActionCondition : IdentifiableScriptableObject
 [Serializable]
 public class EvaluationContext
 {
-    /// <summary> The unit this tactics is bound to </summary>
-    public CharacterTemplate Source;
+    [SerializeField]
+    BattleCharacterController _controller;
 
-    public BattleCharacterController Controller;
+    public BattleCharacterController Controller => _controller;
+    public CharacterTemplate Profile => Controller.Profile;
 
     /// <summary>
     /// Reset only between evaluating full tactics,
@@ -133,10 +134,15 @@ public class EvaluationContext
     public SerializableDictionary<object, object> BattleFlags = new();
 
     /// <summary>
-    /// Incremented every time <see cref="Source"/> has finished playing all its scheduled tactics
+    /// Incremented every time <see cref="Controller"/> has finished playing all its scheduled tactics
     /// </summary>
     public uint Round;
 
 #warning bind combat seed
     public uint CombatSeed;
+
+    public EvaluationContext(BattleCharacterController controller)
+    {
+        _controller = controller;
+    }
 }

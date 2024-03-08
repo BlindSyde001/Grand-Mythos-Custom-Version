@@ -10,9 +10,9 @@ namespace Conditions
         [HorizontalGroup, HideLabel, SuffixLabel("<=")] public Attribute TargetAttribute;
         [HorizontalGroup, HideLabel] public int Maximum;
 
-        protected override bool Filter(CharacterTemplate target, EvaluationContext context)
+        protected override bool Filter(BattleCharacterController target, EvaluationContext context)
         {
-            int stat = target.GetAttribute(TargetAttribute);
+            int stat = target.Profile.GetAttribute(TargetAttribute);
             return Minimum <= stat && stat <= Maximum;
         }
 

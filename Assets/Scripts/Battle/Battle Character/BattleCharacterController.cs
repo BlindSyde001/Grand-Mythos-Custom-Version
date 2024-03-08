@@ -4,16 +4,29 @@ using UnityEngine;
 
 public class BattleCharacterController : MonoBehaviour
 {
-    public CharacterTemplate Template;
+    public CharacterTemplate Profile;
 
     [Required]
     public Animator Animator;
     [SerializeField, Required]
     protected BattleArenaMovement MovementController;
 
+    [NonSerialized]
+    public EvaluationContext Context;
+
     const string Battle_EnterFight = "Enter Fight";
     const string Battle_Stance = "Stance";
     const string Battle_Die = "Die";
+
+    public bool IsHostileTo(BattleCharacterController character)
+    {
+        return Profile.Team.Allies.Contains(character.Profile.Team) == false;
+    }
+
+    public BattleCharacterController()
+    {
+        Context = new(this);
+    }
 
     // UPDATES
     void OnEnable()
@@ -29,15 +42,13 @@ public class BattleCharacterController : MonoBehaviour
     void Start()
     {
         if (BattleStateMachine.TryGetInstance(out var bts))
-            bts.Include(Template);
-        Template.Context.Controller = this;
+            bts.Include(this);
     }
 
     void OnDestroy()
     {
         if (BattleStateMachine.TryGetInstance(out var bts))
-            bts.Exclude(Template);
-        Template.Context.Controller = null;
+            bts.Exclude(this);
     }
 
     void OnDrawGizmosSelected()
@@ -48,7 +59,7 @@ public class BattleCharacterController : MonoBehaviour
 
     void NewCombatState(CombatState combatState)
     {
-        if (Template.CurrentHP <= 0)
+        if (Profile.CurrentHP <= 0)
         {
             ChangeAnimationState(Battle_Die);
             return;

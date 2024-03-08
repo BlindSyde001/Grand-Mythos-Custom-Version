@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct TargetCollection : IEnumerable<CharacterTemplate>
+public struct TargetCollection : IEnumerable<BattleCharacterController>
 {
-    List<CharacterTemplate> _targets;
+    List<BattleCharacterController> _targets;
     ulong _included;
 
     public bool IsEmpty => _included == 0;
 
-    public TargetCollection(List<CharacterTemplate> targets)
+    public TargetCollection(List<BattleCharacterController> targets)
     {
         Debug.Assert(targets.Count <= sizeof(ulong));
         // Support for more than 64 targets is feasible, just not something I think we need to focus on right now
@@ -20,7 +20,7 @@ public struct TargetCollection : IEnumerable<CharacterTemplate>
         _targets = targets;
     }
 
-    public readonly bool TryGetNext(ref int i, out CharacterTemplate target)
+    public readonly bool TryGetNext(ref int i, out BattleCharacterController target)
     {
         i += 1;
         for (; i < _targets.Count; i++)
@@ -58,9 +58,9 @@ public struct TargetCollection : IEnumerable<CharacterTemplate>
         return total;
     }
 
-    public readonly CharacterTemplate[] ToArray()
+    public readonly BattleCharacterController[] ToArray()
     {
-        CharacterTemplate[] array = new CharacterTemplate[CountSlow()];
+        BattleCharacterController[] array = new BattleCharacterController[CountSlow()];
         for (int i = -1, c = 0; TryGetNext(ref i, out var target); c++)
             array[c] = target;
 
@@ -69,7 +69,7 @@ public struct TargetCollection : IEnumerable<CharacterTemplate>
 
     public static TargetCollection operator &(in TargetCollection a, in TargetCollection b)
     {
-        Debug.Assert(ReferenceEquals(a._targets, b._targets));
+        Debug.Assert(a._targets == b._targets);
         TargetCollection output;
         output._targets = a._targets;
         output._included = a._included & b._included;
@@ -78,7 +78,7 @@ public struct TargetCollection : IEnumerable<CharacterTemplate>
 
     public static TargetCollection operator |(in TargetCollection a, in TargetCollection b)
     {
-        Debug.Assert(ReferenceEquals(a._targets, b._targets));
+        Debug.Assert(a._targets == b._targets);
         TargetCollection output;
         output._targets = a._targets;
         output._included = a._included | b._included;
@@ -86,20 +86,20 @@ public struct TargetCollection : IEnumerable<CharacterTemplate>
     }
 
     public Enum GetEnumerator() => new Enum(_targets, _included);
-    IEnumerator<CharacterTemplate> IEnumerable<CharacterTemplate>.GetEnumerator() => GetEnumerator();
+    IEnumerator<BattleCharacterController> IEnumerable<BattleCharacterController>.GetEnumerator() => GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public struct Enum : IEnumerator<CharacterTemplate>
+    public struct Enum : IEnumerator<BattleCharacterController>
     {
-        List<CharacterTemplate> _targets;
+        List<BattleCharacterController> _targets;
         ulong _included;
         int _i;
 
-        public CharacterTemplate Current { get; private set; }
+        public BattleCharacterController Current { get; private set; }
 
         object IEnumerator.Current => Current;
 
-        public Enum(List<CharacterTemplate> targets, ulong included)
+        public Enum(List<BattleCharacterController> targets, ulong included)
         {
             _targets = targets;
             _included = included;
