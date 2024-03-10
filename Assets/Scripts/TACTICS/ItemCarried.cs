@@ -14,7 +14,7 @@ namespace Conditions
 
         protected override bool Filter(BattleCharacterController target, EvaluationContext context)
         {
-            return target.Profile.Inventory.HasItem(Item, out uint count) && count <= AtLeastThisAmount;
+            return target.Profile.Inventory.HasItem(Item, out uint count) && count >= AtLeastThisAmount;
         }
 
         public override bool IsValid(out string error)

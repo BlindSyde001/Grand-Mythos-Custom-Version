@@ -2811,7 +2811,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 500344383}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.10914384, y: -0.14023885, z: 0.01555571, w: 0.98396075}
+  m_LocalRotation: {x: 0.10914385, y: -0.14023882, z: 0.015555713, w: 0.98396075}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4761,7 +4761,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 868068727}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.09881451, y: 0.44073957, z: -0.048888143, w: 0.8908391}
+  m_LocalRotation: {x: 0.09881453, y: 0.44073963, z: -0.048888158, w: 0.8908391}
   m_LocalPosition: {x: -15.103438, y: 5, z: -11.527624}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5201,6 +5201,7 @@ GameObject:
   - component: {fileID: 954836203}
   - component: {fileID: 954836202}
   - component: {fileID: 954836201}
+  - component: {fileID: 954836204}
   m_Layer: 5
   m_Name: Attack Button
   m_TagString: Untagged
@@ -5310,6 +5311,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 954836199}
   m_CullTransparentMesh: 1
+--- !u!114 &954836204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954836199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6db9cd9d7204d908fb6c35f384187b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Element: {fileID: 954836201}
 --- !u!1 &988746033
 GameObject:
   m_ObjectHideFlags: 0
@@ -6290,6 +6304,7 @@ GameObject:
   - component: {fileID: 1178595358}
   - component: {fileID: 1178595360}
   - component: {fileID: 1178595359}
+  - component: {fileID: 1178595361}
   m_Layer: 5
   m_Name: Lose Panel
   m_TagString: Untagged
@@ -6357,6 +6372,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1178595357}
   m_CullTransparentMesh: 1
+--- !u!114 &1178595361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178595357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6db9cd9d7204d908fb6c35f384187b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Element: {fileID: 480455697}
 --- !u!1 &1180244068
 GameObject:
   m_ObjectHideFlags: 0

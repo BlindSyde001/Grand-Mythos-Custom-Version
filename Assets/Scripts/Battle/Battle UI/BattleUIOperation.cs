@@ -467,7 +467,7 @@ public class BattleUIOperation : MonoBehaviour
             {
                 var ignoreListenerEvent = new HashSet<BattleCharacterController>();
                 var toggles = new Dictionary<BattleCharacterController, Toggle>();
-                foreach (var unitForThisToggle in BattleManagement.Units)
+                foreach (var unitForThisToggle in BattleManagement.Units.OrderByDescending(x => x.IsHostileTo(UnitSelected)))
                 {
                     var toggle = CreateToggle(unitForThisToggle.name, selection.Contains(unitForThisToggle), ref first);
                     toggle.onValueChanged.AddListener(UpdateSelection);
@@ -610,7 +610,7 @@ public class BattleUIOperation : MonoBehaviour
                     action.TargetFilter?.Filter(ref newTargets, context);
 
                 var count = newTargets.CountSlow();
-                if (count == 0)
+                if (count == 0 || count == 1 && groups[i].units.Count != 1)
                 {
                     groups.RemoveAt(i);
                 }
