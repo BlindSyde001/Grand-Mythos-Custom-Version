@@ -6,8 +6,7 @@ public class FixedCamera : ICameraControl
 {
     public void Update(Camera camera, CameraFocus focus)
     {
-        camera.transform.position = focus.transform.position;
-        camera.transform.rotation = focus.transform.rotation;
+        camera.transform.SetPositionAndRotation(focus.transform.position, focus.transform.rotation);
     }
 
     public void OnValidate(CameraFocus focus)

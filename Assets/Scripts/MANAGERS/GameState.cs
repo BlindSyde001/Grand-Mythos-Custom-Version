@@ -1,1 +1,1 @@
-﻿public enum GameState { Battle, Overworld, Title, Cutscene, Menu }
+﻿public enum GameState { Battle, Overworld, Cutscene, Menu }

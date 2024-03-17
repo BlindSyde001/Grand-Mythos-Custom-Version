@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -10,6 +11,10 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
     public static readonly guid Guid = new("bb05002e-f0d5-4936-a986-c47a045e58d8");
 
     public static GameManager Instance { get; private set; }
+
+    public TimeSpan DurationTotal => _stopwatch.Elapsed + _lastPlaytime;
+    TimeSpan _lastPlaytime;
+    Stopwatch _stopwatch = Stopwatch.StartNew();
 
     void Awake()
     {
@@ -36,20 +41,17 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         }
     }
 
-    void OnDestroy()
-    {
-        SavingSystem.StoreAndUnregister<GameManager, SaveV1>(this);
-    }
-
-    [FormerlySerializedAs("_PartyLineup"), BoxGroup("PARTY DATA")]
+    [BoxGroup("PARTY DATA")]
     public List<HeroExtension> PartyLineup;  // Who I've selected to be fighting
-    [FormerlySerializedAs("_ReservesLineup"), BoxGroup("PARTY DATA")]
+    [BoxGroup("PARTY DATA")]
     public List<HeroExtension> ReservesLineup;  // Who I have available in the Party
 
     guid ISaved.UniqueConstID => Guid;
 
     [Serializable] public struct SaveV1 : ISaveHandler<GameManager>
     {
+        public TimeSpan TimeSpan => TimeSpan.FromTicks(Ticks);
+        public long Ticks;
         public guid[] Party, Reserve;
 
         public uint Version => 1;
@@ -60,6 +62,7 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
             {
                 Party = source.PartyLineup.Select(x => x.Guid).ToArray();
                 Reserve = source.ReservesLineup.Select(x => x.Guid).ToArray();
+                Ticks = source.DurationTotal.Ticks;
             }
             else
             {
@@ -72,6 +75,9 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
                 foreach (guid guid in Reserve)
                     if (PlayableCharacters.TryGet(guid, out var hero))
                         source.ReservesLineup.Add(hero);
+
+                source._lastPlaytime = TimeSpan.FromTicks(Ticks);
+                source._stopwatch.Restart();
             }
         }
     }

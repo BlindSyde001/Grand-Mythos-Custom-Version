@@ -13,6 +13,7 @@ public class BattleStateMachine : MonoBehaviour
     public static event SwitchToNewState OnNewStateSwitched;
     static BattleStateMachine _instance;
 
+    public bool TurnBased;
     [NonSerialized]
     public BlockBattleFlags Blocked;
 
@@ -26,7 +27,7 @@ public class BattleStateMachine : MonoBehaviour
     public List<Transform> EnemySpawns;
 
     [ReadOnly] public List<BattleCharacterController> PartyLineup = new();
-    [ReadOnly] public SerializableHashSet<BattleCharacterController> Units = new();
+    [ReadOnly] public List<BattleCharacterController> Units = new();
     [ReadOnly] public SerializableHashSet<BattleCharacterController> TacticsDisabled = new();
 
     /// <summary>
@@ -34,11 +35,11 @@ public class BattleStateMachine : MonoBehaviour
     /// </summary>
     public readonly Dictionary<BattleCharacterController, Tactics> Orders = new();
 
-    readonly List<BattleCharacterController> _unitsCopy = new();
+    public readonly Dictionary<BattleCharacterController, (Tactics chosenTactic, int actionI)> Processing = new();
+
     CombatState _combatState;
     CinemachineFreeLook _rotateCam;
-
-    public (BattleCharacterController unit, Tactics chosenTactic, int actionI)? Processing { get; private set; }
+    HashSet<BattleCharacterController> _busy = new();
 
     // UPDATES
     void Awake()
@@ -88,7 +89,8 @@ public class BattleStateMachine : MonoBehaviour
         }
 
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
-            Units.Add(target);
+            if (Units.Contains(target) == false)
+                Units.Add(target);
 
         SendStateChangeNotification(CombatState.Start);
         yield return new WaitForSeconds(5);
@@ -107,41 +109,50 @@ public class BattleStateMachine : MonoBehaviour
                 yield break;
             }
 
-            if (Blocked == 0)
+            if (Blocked != 0)
             {
-                _unitsCopy.AddRange(Units);
-                foreach (var unit in Units)
-                {
-                    if (unit.Profile.CurrentHP == 0 || TacticsDisabled.Contains(unit))
-                        continue;
+                yield return null; // Wait for next frame
+                continue;
+            }
 
-                    // This unit has its ATB full or the manual order can be executed given the current amount of charge
-                    if (unit.Profile.ActionsCharged >= unit.Profile.ActionChargeMax || Orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out _, accountForCost:true))
+            foreach (var unit in Units)
+            {
+                if (unit.Profile.CurrentHP == 0 || TacticsDisabled.Contains(unit) || _busy.Contains(unit))
+                    continue;
+
+                // This unit has its ATB full or the manual order can be executed given the current amount of charge
+                if (unit.Profile.ActionsCharged >= unit.Profile.ActionChargeMax || Orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(Units), unit.Context, out _, accountForCost: true))
+                {
+                    _busy.Add(unit);
+                    if (TurnBased)
                     {
-                        foreach (var yield in CatchException(ProcessUnit(unit)))
-                            yield return yield;
+                        for (var enumerator = CatchException(ProcessUnit(unit)); enumerator.MoveNext(); )
+                            yield return enumerator.Current;
+                    }
+                    else
+                    {
+                        StartCoroutine(CatchException(ProcessUnit(unit)));
                     }
                 }
-                _unitsCopy.Clear();
+            }
 
-                foreach (var unit in Units)
-                {
-                    if (unit.Profile.CurrentHP != 0)
-                        unit.Profile.ActionsCharged += unit.Profile.ActionRechargeSpeed * Time.deltaTime / 10f;
-                    // DO NOT CLAMP HERE, DO IT AFTER ORDERS HAVE BEEN SCHEDULED
-                }
+            foreach (var unit in Units)
+            {
+                if (unit.Profile.CurrentHP != 0 && _busy.Contains(unit) == false)
+                    unit.Profile.ActionsCharged += unit.Profile.ActionRechargeSpeed * Time.deltaTime / 10f;
+                // DO NOT CLAMP HERE, DO IT AFTER ORDERS HAVE BEEN SCHEDULED
             }
 
             yield return null; // Wait for next frame
         } while (true);
     }
 
-    IEnumerable CatchException(IEnumerable source)
+    IEnumerator CatchException(IEnumerable enumerable)
     {
         IEnumerator enumerator = null;
         try
         {
-            for (enumerator = source.GetEnumerator(); ; )
+            for (enumerator = enumerable.GetEnumerator(); ; )
             {
                 object yield;
                 try
@@ -164,6 +175,7 @@ public class BattleStateMachine : MonoBehaviour
             (enumerator as IDisposable)?.Dispose();
         }
     }
+
 
     bool IsBattleFinished(out bool win)
     {
@@ -194,7 +206,8 @@ public class BattleStateMachine : MonoBehaviour
         {
             Tactics chosenTactic;
             TargetCollection selection = default;
-            if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
+            using var __ = Units.TemporaryCopy(out var unitsCopy);
+            if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(unitsCopy), unit.Context, out selection, true))
             {
                 // We're taking care of this explicit order
             }
@@ -202,7 +215,7 @@ public class BattleStateMachine : MonoBehaviour
             {
                 foreach (var tactic in unit.Profile.Tactics)
                 {
-                    if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(_unitsCopy), unit.Context, out selection, true))
+                    if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(unitsCopy), unit.Context, out selection, true))
                     {
                         chosenTactic = tactic;
                         break;
@@ -228,7 +241,7 @@ public class BattleStateMachine : MonoBehaviour
                         if (chosenTactic.Condition.CanExecute(actionLeft, selection, unit.Context, out _, true) == false)
                         {
                             // If not, check if we have something else to target
-                            if (chosenTactic.Condition.CanExecute(actionLeft, new TargetCollection(_unitsCopy), unit.Context, out var newSelection, true))
+                            if (chosenTactic.Condition.CanExecute(actionLeft, new TargetCollection(unitsCopy), unit.Context, out var newSelection, true))
                             {
                                 // Continue with that selection instead
                                 selection = newSelection;
@@ -239,7 +252,7 @@ public class BattleStateMachine : MonoBehaviour
                         }
                     }
 
-                    Processing = (unit, chosenTactic, i);
+                    Processing[unit] = (chosenTactic, i);
 
                     if (unit.Profile.ActionAnimations.TryGet(action, out var animation) == false)
                     {
@@ -278,7 +291,8 @@ public class BattleStateMachine : MonoBehaviour
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.UnlockReloadAssemblies();
 #endif
-            Processing = null;
+            Processing.Remove(unit);
+            _busy.Remove(unit);
         }
     }
 
@@ -298,7 +312,9 @@ public class BattleStateMachine : MonoBehaviour
     {
         if (unit == null)
             throw new NullReferenceException(nameof(unit));
-        Units.Add(unit);
+
+        if (Units.Contains(unit) == false)
+            Units.Add(unit);
 
 #warning clean this up
         PartyLineup.Clear();

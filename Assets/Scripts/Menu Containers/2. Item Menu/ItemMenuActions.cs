@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -7,7 +6,7 @@ using TMPro;
 
 public class ItemMenuActions : MenuContainer
 {
-    public List<GameObject> ItemButtons;
+    public UIElementList<ItemButtonContainer> ItemUI = new();
 
     public TextMeshProUGUI itemDescriptionName;
     public TextMeshProUGUI itemDescriptionText;
@@ -24,7 +23,7 @@ public class ItemMenuActions : MenuContainer
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-470, 200, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-470, -250, 0),  menuInputs.Speed);
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(480, 450, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(480, -50, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(480, gameObject.transform.GetChild(4).localPosition.y, 0), menuInputs.Speed);
         gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-400, 480, 0), menuInputs.Speed);
         ShowConsumables();
         yield return new WaitForSeconds(menuInputs.Speed);
@@ -35,7 +34,7 @@ public class ItemMenuActions : MenuContainer
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1450, 200, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-1450, -250, 0),  menuInputs.Speed);
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(1450, 450, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(1450, -50, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(1450, gameObject.transform.GetChild(4).localPosition.y, 0), menuInputs.Speed);
         gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-400, 600, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
         gameObject.SetActive(false);
@@ -53,27 +52,18 @@ public class ItemMenuActions : MenuContainer
         itemDescriptionName.text = "";
         itemDescriptionText.text = "";
         itemDescriptionStats.text = "";
-        foreach(GameObject a in ItemButtons)
-        {
-            var btn = a.GetComponent<ItemButtonContainer>();
-            btn.itemName.text = "";
-            btn.itemAmount.text = "";
-            btn.itemDescription = "";
-            a.GetComponent<Button>().onClick.RemoveAllListeners();
-        }
+        ItemUI.Clear();
 
-        int i = 0;
         foreach (var (item, count) in InventoryManager.Enumerate<T>())
         {
-            ItemButtons[i].SetActive(true);
-            var btn = ItemButtons[i].GetComponent<ItemButtonContainer>();
+            ItemUI.Allocate(out var element);
+            var btn = element;
 
-            btn.itemName.text = item.name;
-            btn.itemAmount.text = count.ToString();
+            btn.ItemName.text = item.name;
+            btn.ItemAmount.text = count.ToString();
             btn.itemDescription = item.Description;
 
-            btn.GetComponent<Button>().onClick.AddListener(() => DisplayItemDescription(btn));
-            i++;
+            btn.Button.onClick.AddListener(() => DisplayItemDescription(btn));
         }
         selectedList = 0;
         SortButton.onClick.RemoveAllListeners();
@@ -83,7 +73,7 @@ public class ItemMenuActions : MenuContainer
 
     internal void DisplayItemDescription(ItemButtonContainer data)
     {
-        itemDescriptionName.text = data.itemName.text;
+        itemDescriptionName.text = data.ItemName.text;
         itemDescriptionText.text = data.itemDescription;
     }
 

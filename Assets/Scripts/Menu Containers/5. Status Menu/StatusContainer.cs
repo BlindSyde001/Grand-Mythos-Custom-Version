@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+[AddComponentMenu(" GrandMythos/UIBinding/StatusContainer")]
 public class StatusContainer : MonoBehaviour
 {
     public TextMeshProUGUI HP;

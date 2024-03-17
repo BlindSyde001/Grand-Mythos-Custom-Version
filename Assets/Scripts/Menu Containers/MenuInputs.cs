@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Sirenix.OdinInspector;
+using UnityEngine.InputSystem;
 
 public class MenuInputs : MonoBehaviour
 {
     // VARIABLES
     public InputManager InputManager { get; private set; }
     public GameManager GameManager { get; private set; }
+
+    [Required]
+    public InputActionReference Open, Close;
 
     [SerializeField]
     internal StartMenuActions startMenuActions;
@@ -29,6 +34,14 @@ public class MenuInputs : MonoBehaviour
         GameManager = GameManager.Instance;
         CurrentMenuOpen = null;
         startMenuActions.gameObject.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (Open.action.WasPressedThisFrame())
+            StartCoroutine(OpenFirstMenu());
+        if (Close.action.WasPressedThisFrame())
+            StartCoroutine(CloseAllMenus());
     }
 
     // METHODS
@@ -113,7 +126,7 @@ public class MenuInputs : MonoBehaviour
         ChangePartyLineup((GameManager.ReservesLineup, selectedToChange-1));
     }
 
-    void ChangePartyLineup((List<HeroExtension> _PartyLineup, int selectedToChange) data)
+    void ChangePartyLineup((List<HeroExtension> partyLineup, int selectedToChange) data)
     {
         if (_lineupChange.sourceA.collection == null)
         {

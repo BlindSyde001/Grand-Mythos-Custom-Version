@@ -1,19 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.Serialization;
 
 public class StatusMenuActions : MenuContainer
 {
-    public TextMeshProUGUI totalExp;
-    public TextMeshProUGUI nextLevelExp;
+    [FormerlySerializedAs("totalExp")] public TextMeshProUGUI TotalExp;
+    [FormerlySerializedAs("nextLevelExp")] public TextMeshProUGUI NextLevelExp;
 
-    [SerializeField] StatusContainer statusContainer;
+    [FormerlySerializedAs("statusContainer"),SerializeField] StatusContainer StatusContainer;
 
-    public List<Button> heroSelections;
-    HeroExtension selectedHero;
+    public UIElementList<Button> HeroSelections;
+    HeroExtension _selectedHero;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
@@ -46,53 +46,48 @@ public class StatusMenuActions : MenuContainer
 
     internal void SetHeroSelection()
     {
-        foreach (Button a in heroSelections)
+        HeroSelections.Clear();
+        foreach (var hero in GameManager.PartyLineup)
         {
-            a.gameObject.SetActive(false);
-            a.onClick.RemoveAllListeners();
-        }
-        for (int i = 0; i < GameManager.PartyLineup.Count; i++)
-        {
-            int j = i;
-            heroSelections[i].gameObject.SetActive(true);
-            heroSelections[i].GetComponent<Image>().sprite = GameManager.PartyLineup[j].Portrait;
-            heroSelections[i].onClick.AddListener(delegate { SetExperience(GameManager.PartyLineup[j]); });
-            heroSelections[i].onClick.AddListener(delegate { SetAttributes(GameManager.PartyLineup[j]); });
-            heroSelections[i].onClick.AddListener(delegate { SetElemental(GameManager.PartyLineup[j]); });
-            heroSelections[i].onClick.AddListener(delegate { SetAffliction(GameManager.PartyLineup[j]); });
+            HeroSelections.Allocate(out var element);
+            element.GetComponent<Image>().sprite = hero.Portrait;
+            element.onClick.AddListener(delegate { SetExperience(hero); });
+            element.onClick.AddListener(delegate { SetAttributes(hero); });
+            element.onClick.AddListener(delegate { SetElemental(hero); });
+            element.onClick.AddListener(delegate { SetAffliction(hero); });
         }
     }
 
     public void SetExperience(HeroExtension hero)
     {
-        totalExp.text = hero.Experience.ToString();
-        nextLevelExp.text = hero.ExperienceToNextLevel.ToString();
+        TotalExp.text = hero.Experience.ToString();
+        NextLevelExp.text = hero.ExperienceToNextLevel.ToString();
     }
     public void SetAttributes(HeroExtension hero)
     {
-        statusContainer.HP.text = hero.EffectiveStats.HP.ToString();
-        statusContainer.MP.text = hero.EffectiveStats.MP.ToString();
-        statusContainer.Atk.text = hero.EffectiveStats.Attack.ToString();
-        statusContainer.MAtk.text = hero.EffectiveStats.MagAttack.ToString();
-        statusContainer.Def.text = hero.EffectiveStats.Defense.ToString();
-        statusContainer.MDef.text = hero.EffectiveStats.MagDefense.ToString();
-        statusContainer.Spd.text = hero.EffectiveStats.Speed.ToString();
+        StatusContainer.HP.text = hero.EffectiveStats.HP.ToString();
+        StatusContainer.MP.text = hero.EffectiveStats.MP.ToString();
+        StatusContainer.Atk.text = hero.EffectiveStats.Attack.ToString();
+        StatusContainer.MAtk.text = hero.EffectiveStats.MagAttack.ToString();
+        StatusContainer.Def.text = hero.EffectiveStats.Defense.ToString();
+        StatusContainer.MDef.text = hero.EffectiveStats.MagDefense.ToString();
+        StatusContainer.Spd.text = hero.EffectiveStats.Speed.ToString();
 
     }
     public void SetElemental(HeroExtension hero)
     {
-        statusContainer.fireRes.text = hero.AffinityFIRE.ToString();
-        statusContainer.iceRes.text = hero.AffinityICE.ToString();
-        statusContainer.waterRes.text = hero.AffinityWATER.ToString();
-        statusContainer.lightRes.text = hero.AffinityLIGHTNING.ToString();
+        StatusContainer.fireRes.text = hero.AffinityFIRE.ToString();
+        StatusContainer.iceRes.text = hero.AffinityICE.ToString();
+        StatusContainer.waterRes.text = hero.AffinityWATER.ToString();
+        StatusContainer.lightRes.text = hero.AffinityLIGHTNING.ToString();
     }
     public void SetAffliction(HeroExtension hero)
     {
-        statusContainer.blindRes.text = hero.ResistBLIND.ToString();
-        statusContainer.silRes.text = hero.ResistSILENCE.ToString();
-        statusContainer.furRes.text = hero.ResistFUROR.ToString();
-        statusContainer.parRes.text = hero.ResistPARALYSIS.ToString();
-        statusContainer.physRes.text = hero.ResistPHYSICAL.ToString();
-        statusContainer.magRes.text = hero.ResistMAGICAL.ToString();
+        StatusContainer.blindRes.text = hero.ResistBLIND.ToString();
+        StatusContainer.silRes.text = hero.ResistSILENCE.ToString();
+        StatusContainer.furRes.text = hero.ResistFUROR.ToString();
+        StatusContainer.parRes.text = hero.ResistPARALYSIS.ToString();
+        StatusContainer.physRes.text = hero.ResistPHYSICAL.ToString();
+        StatusContainer.magRes.text = hero.ResistMAGICAL.ToString();
     }
 }

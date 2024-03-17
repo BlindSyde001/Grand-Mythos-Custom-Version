@@ -5936,7 +5936,7 @@ Transform:
   m_GameObject: {fileID: 559401436}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.74, y: 0.05, z: 2.05}
+  m_LocalPosition: {x: 3.8, y: 0.05, z: 3.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22644,6 +22644,82 @@ Transform:
   - {fileID: 1612590195}
   m_Father: {fileID: 538124904}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1992597440
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1992597443}
+  - component: {fileID: 1992597444}
+  - component: {fileID: 1992597441}
+  m_Layer: 0
+  m_Name: Move Out
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1992597441
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992597440}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1992597443
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992597440}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.655, y: 1.234, z: 1.818}
+  m_LocalScale: {x: 1, y: 2.847087, z: 2.2670856}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1992597444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992597440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 893b1cd4f4c646adaf59f8f2f4d43bee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text: Go out
+  Interaction:
+    rid: 7380285192293580943
+  references:
+    version: 2
+    RefIds:
+    - rid: 7380285192293580943
+      type: {class: TeleportToSpawn, ns: , asm: Assembly-CSharp}
+      data:
+        Target: {fileID: 11400000, guid: f4cef03b1d16e9943aa26fdc17b5b915, type: 2}
 --- !u!1 &1996330941
 GameObject:
   m_ObjectHideFlags: 0
@@ -27478,3 +27554,4 @@ SceneRoots:
   - {fileID: 1005582018}
   - {fileID: 559401438}
   - {fileID: 1879192469}
+  - {fileID: 1992597443}

@@ -53,6 +53,19 @@ public static class QueryPool
         return enu;
     }
 
+    public static IDisposable BorrowList<T>(out List<T> list)
+    {
+        RecycledEnum<T>.Borrow(out var enu, out list);
+        return enu;
+    }
+
+    public static IDisposable TemporaryCopy<T>(this ICollection<T> sourceToCopy, out List<T> list)
+    {
+        RecycledEnum<T>.Borrow(out var enu, out list);
+        list.AddRange(sourceToCopy);
+        return enu;
+    }
+
     public class RecycledEnum<T> : IEnumerable<T>, IEnumerator<T>
     {
         readonly List<T> _buffer = new();
@@ -67,6 +80,7 @@ public static class QueryPool
         {
             _disposed = true;
             _pool.Push(this);
+            _buffer.Clear();
         }
 
         public bool MoveNext()

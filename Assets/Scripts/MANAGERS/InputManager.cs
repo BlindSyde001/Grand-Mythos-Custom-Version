@@ -10,7 +10,6 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance { get; private set; }
 
     public PlayerInput PlayerInput;
-    public MenuInputs MenuInputs;
 
     public GameState CurrentState { get; private set; }
     public List<GameStateRequests> StateStack = new();
@@ -18,7 +17,6 @@ public class InputManager : MonoBehaviour
     // UPDATES
     void Awake()
     {
-        SetGameState(GameState.Title);
         if (Instance == null)
         {
             Instance = this;
@@ -29,27 +27,13 @@ public class InputManager : MonoBehaviour
             return;
         }
 
+        SetGameState(GameState.Menu);
         this.transform.parent = null;
         DontDestroyOnLoad(this.gameObject);
     }
 
     // METHODS
     #region INPUT COMMANDS
-    public void StartMenuOpen(InputAction.CallbackContext context)
-    {
-        if (!context.performed)
-            return;
-
-        StartCoroutine(MenuInputs.OpenFirstMenu());
-    }
-
-    public void StartMenuClose(InputAction.CallbackContext context)
-    {
-        if (!context.performed)
-            return;
-
-        StartCoroutine(MenuInputs.CloseAllMenus());
-    }
 
 
     /// <summary>
@@ -106,19 +90,18 @@ public class InputManager : MonoBehaviour
             case GameState.Overworld:
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
-                foreach (var instance in OverworldPlayerController.Instances)
-                    instance.enabled = true;
+                /*foreach (var instance in OverworldPlayerController.Instances)
+                    instance.enabled = true;*/
                 break;
 
             case GameState.Cutscene:
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
-                foreach (var instance in OverworldPlayerController.Instances)
-                    instance.enabled = false;
+                /*foreach (var instance in OverworldPlayerController.Instances)
+                    instance.enabled = false;*/
                 break;
 
             default:
-            case GameState.Title:
             case GameState.Battle:
             case GameState.Menu:
                 Cursor.visible = true;
@@ -128,7 +111,6 @@ public class InputManager : MonoBehaviour
 
         PlayerInput.SwitchCurrentActionMap(newState switch
         {
-            GameState.Title => "Title Map",
             GameState.Overworld => "Overworld Map",
             GameState.Battle => "Battle Map",
             GameState.Cutscene => "Cutscene Map",

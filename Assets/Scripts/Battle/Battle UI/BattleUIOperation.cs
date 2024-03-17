@@ -62,7 +62,6 @@ public class BattleUIOperation : MonoBehaviour
     Color _initialTacticsColor, _disabledTacticsColor;
 
     List<GameObject> _targetCursors = new();
-    List<BattleCharacterController> _unitsCopy = new();
     Queue<(float availableAfter, DamageText component)> _damageTextCache = new();
     Tactics _order = new();
 
@@ -151,11 +150,10 @@ public class BattleUIOperation : MonoBehaviour
         Skills.interactable = UnitSelected.Profile.Skills.Count > 0;
         Items.interactable = UnitSelected.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
 
-        if (UnitSelected == BattleManagement.Processing?.unit)
+        if (BattleManagement.Processing.TryGetValue(UnitSelected, out var progress))
         {
-            var processingData = BattleManagement.Processing!.Value;
-            var span = processingData.chosenTactic.Actions.AsSpan()[processingData.actionI..];
-            UpdatePreview(processingData.chosenTactic, span, PreviewType.Execution);
+            var span = progress.chosenTactic.Actions.AsSpan()[progress.actionI..];
+            UpdatePreview(progress.chosenTactic, span, PreviewType.Execution);
         }
         else if (_order.Actions.Length != 0) // Order being composed by the player right now
         {
@@ -167,17 +165,18 @@ public class BattleUIOperation : MonoBehaviour
         }
         else // No orders, find the first tactics that can run
         {
-            _unitsCopy.AddRange(BattleManagement.Units);
             Tactics tacticsPreviewed = null;
-            foreach (var tactic in UnitSelected.Profile.Tactics)
+            using (BattleManagement.Units.TemporaryCopy(out var unitsCopy))
             {
-                if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(_unitsCopy), UnitSelected.Context, out _, accountForCost:false))
+                foreach (var tactic in UnitSelected.Profile.Tactics)
                 {
-                    tacticsPreviewed = tactic;
-                    break;
+                    if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(unitsCopy), UnitSelected.Context, out _, accountForCost:false))
+                    {
+                        tacticsPreviewed = tactic;
+                        break;
+                    }
                 }
             }
-            _unitsCopy.Clear();
             ReadOnlySpan<IAction> actions = tacticsPreviewed != null ? tacticsPreviewed.Actions.AsSpan() : default;
             UpdatePreview(tacticsPreviewed, actions, PreviewType.Tactics);
         }
@@ -596,7 +595,7 @@ public class BattleUIOperation : MonoBehaviour
             }
         }
 
-        static bool FindTargetGroups(IActionCollection actions, EvaluationContext context, HashSet<BattleCharacterController> units, out List<(string name, List<BattleCharacterController> units)> groups)
+        static bool FindTargetGroups(IActionCollection actions, EvaluationContext context, List<BattleCharacterController> units, out List<(string name, List<BattleCharacterController> units)> groups)
         {
             groups = new()
             {
@@ -742,7 +741,7 @@ public class BattleUIOperation : MonoBehaviour
 
     public void UpdatePreview([MaybeNull] Tactics tactics, ReadOnlySpan<IAction> actionsSubset, PreviewType type)
     {
-        _unitsCopy.AddRange(BattleManagement.Units);
+        using var _temp = BattleManagement.Units.TemporaryCopy(out var _unitsCopy);
         if (tactics != null && tactics.Condition != null && tactics.Condition.CanExecute(tactics.Actions, new TargetCollection(_unitsCopy), UnitSelected.Context, out var selection, accountForCost:false))
         {
             int i = 0;
@@ -766,7 +765,6 @@ public class BattleUIOperation : MonoBehaviour
             foreach (var cursor in _targetCursors)
                 cursor.SetActive(false);
         }
-        _unitsCopy.Clear();
 
         var current = _existingPreviews.AsSpan();
         int minLength = Math.Min(current.Length, actionsSubset.Length);

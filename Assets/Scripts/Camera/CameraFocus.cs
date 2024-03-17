@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ public class CameraFocus : ReloadableBehaviour
             Queue.Remove(this);
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (CurrentFocus != this && Queue[^1] == this && _coroutine == null)
         {

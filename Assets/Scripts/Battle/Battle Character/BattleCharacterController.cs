@@ -2,6 +2,7 @@ using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+[AddComponentMenu(" GrandMythos/BattleCharacterController")]
 public class BattleCharacterController : MonoBehaviour
 {
     public CharacterTemplate Profile;

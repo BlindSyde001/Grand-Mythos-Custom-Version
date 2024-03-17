@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+[AddComponentMenu(" GrandMythos/UIBinding/EquipStatsContainer")]
 public class EquipStatsContainer : MonoBehaviour
 {
     public TextMeshProUGUI TotalHPText;

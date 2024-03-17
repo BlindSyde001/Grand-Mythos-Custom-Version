@@ -1,18 +1,16 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
 public class StartMenuActions : MenuContainer
 {
-    [SerializeField] List<PartyContainer> displayList;
-    [SerializeField] List<ReserveContainer> reserveDisplayList;
-    [SerializeField] MiscContainer miscList;
-    [SerializeField] InGameClock inGameClock;
+    public UIElementList<PartyContainer> PartyUI = new();
+    public UIElementList<ReserveContainer> ReserveUI = new();
+    public MiscContainer miscList;
 
     void LateUpdate()
     {
-        miscList.miscTime.text = inGameClock.DurationTotal.ToString(@"hh\:mm\:ss");
+        miscList.miscTime.text = GameManager.Instance.DurationTotal.ToString(@"hh\:mm\:ss");
     }
 
     // METHODS
@@ -44,33 +42,24 @@ public class StartMenuActions : MenuContainer
     }
     internal void DisplayPartyHeroes()
     {
-        foreach (PartyContainer a in displayList)
+        PartyUI.Clear();
+        foreach (var hero in GameManager.PartyLineup)
         {
-            a.gameObject.SetActive(false);
-        }
-        for (int i = 0; i < GameManager.PartyLineup.Count; i++)
-        {
-            var hero = GameManager.PartyLineup[i];
-            displayList[i].gameObject.SetActive(true);
-            displayList[i].displayName.text = hero.gameObject.name;
-            displayList[i].displayBanner.sprite = hero.Banner;
-            displayList[i].displayLevel.text = hero.Level.ToString();
+            PartyUI.Allocate(out var element);
+            element.displayName.text = hero.gameObject.name;
+            element.displayBanner.sprite = hero.Banner;
+            element.displayLevel.text = hero.Level.ToString();
 
-            displayList[i].displayEXPBar.fillAmount = (float)(hero.Experience - hero.PrevExperienceThreshold) /
-                                                             (hero.ExperienceThreshold - hero.PrevExperienceThreshold);
+            element.displayEXPBar.fillAmount = (float)(hero.Experience - hero.PrevExperienceThreshold) /
+                                               (hero.ExperienceThreshold - hero.PrevExperienceThreshold);
 
-            displayList[i].displayHP.text = $"{hero.CurrentHP} / {hero.EffectiveStats.HP}";
+            element.displayHP.text = $"{hero.CurrentHP} / {hero.EffectiveStats.HP}";
         }
 
-        foreach (ReserveContainer a in reserveDisplayList)
+        ReserveUI.Clear();
+        foreach (var hero in GameManager.ReservesLineup)
         {
-            a.gameObject.SetActive(false);
-        }
-        for (int i = 0; i < GameManager.ReservesLineup.Count; i++)
-        {
-            var hero = GameManager.ReservesLineup[i];
-            var display = reserveDisplayList[i];
-            display.gameObject.SetActive(true);
+            ReserveUI.Allocate(out var display);
             display.displayBanner.sprite = hero.Banner;
         }
     }

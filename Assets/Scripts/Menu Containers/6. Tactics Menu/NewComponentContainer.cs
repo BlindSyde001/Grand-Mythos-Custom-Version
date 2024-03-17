@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 
+[AddComponentMenu(" GrandMythos/UIBinding/NewComponentContainer")]
 public class NewComponentContainer : MonoBehaviour
 {
     public Button cmpButton;

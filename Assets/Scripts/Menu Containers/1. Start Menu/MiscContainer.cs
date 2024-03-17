@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[AddComponentMenu(" GrandMythos/UIBinding/MiscContainer")]
 public class MiscContainer : MonoBehaviour
 {
     public TextMeshProUGUI miscArea;

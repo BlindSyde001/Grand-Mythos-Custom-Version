@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[AddComponentMenu(" GrandMythos/UIBinding/PartyContainer")]
 public class PartyContainer : MonoBehaviour
 {
     public TextMeshProUGUI displayName;

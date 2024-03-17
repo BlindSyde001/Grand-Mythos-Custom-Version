@@ -29,9 +29,8 @@ public class OrbitCamera : ICameraControl
         if (Physics.SphereCast(center, 0.25f, direction, out var hitInfo, Distance, ObstructionMask))
             distance = hitInfo.distance;
 
-        camera.transform.position = center + direction * distance;
-        focus.transform.rotation = rotation;
-        camera.transform.rotation = rotation;
+        camera.transform.SetPositionAndRotation(center + direction * distance, rotation);
+        //focus.transform.rotation = rotation;
     }
 
     public void OnValidate(CameraFocus focus)

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[AddComponentMenu(" GrandMythos/UIBinding/TacticsModuleContainer")]
 public class TacticsModuleContainer : MonoBehaviour
 {
     public TextMeshProUGUI onToggle;

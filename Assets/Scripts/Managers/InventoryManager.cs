@@ -91,11 +91,6 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         SavingSystem.TryRestore<InventoryManager, SaveV1>(this);
     }
 
-    void OnDestroy()
-    {
-        SavingSystem.StoreAndUnregister<InventoryManager, SaveV1>(this);
-    }
-
     // UPDATES
     void OnEnable()
     {

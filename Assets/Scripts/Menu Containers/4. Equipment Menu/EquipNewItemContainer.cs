@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[AddComponentMenu(" GrandMythos/UIBinding/EquipNewItemContainer")]
 public class EquipNewItemContainer : MonoBehaviour
 {
     public TextMeshProUGUI EquipName;

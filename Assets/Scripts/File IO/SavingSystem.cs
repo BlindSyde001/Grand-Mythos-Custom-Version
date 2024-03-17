@@ -245,19 +245,16 @@ public static class SavingSystem
 
     public delegate void OnButtonPressed(string saveName);
 
-    public static void FeedFileUI(List<SaveFileButton> buttons, OnButtonPressed OnButtonPressed)
+    public static void FeedFileUI(UIElementList<SaveFileButton> buttons, OnButtonPressed OnButtonPressed)
     {
         // Interpret the Data on the read files
-        int uiElementIndex = 0;
-        foreach (var button in buttons)
-            button.gameObject.SetActive(false);
-
+        buttons.Clear();
         foreach (var filePath in GetExistingSaveFilePaths())
         {
-            var ui = buttons[uiElementIndex++];
+            buttons.Allocate(out var ui);
 
             #warning best to have the button already filled in that SaveFileButton class
-            var button = ui.GetComponent<Button>();
+            var button = ui.Button;
             button.onClick.RemoveAllListeners();
             button.gameObject.SetActive(true);
 
@@ -280,7 +277,7 @@ public static class SavingSystem
                     }
                 }
 
-                if (peeker.TryPeek<InGameClock, InGameClock.SaveV1>(InGameClock.Guid, out var clockData))
+                if (peeker.TryPeek<GameManager, GameManager.SaveV1>(GameManager.Guid, out var clockData))
                     ui.timePlayed.text = clockData.TimeSpan.ToString(@"hh\:mm\:ss");
 
                 if (peeker.TryPeek<InventoryManager, InventoryManager.SaveV1>(InventoryManager.Guid, out var inventoryData))

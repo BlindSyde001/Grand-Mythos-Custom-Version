@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 
+[AddComponentMenu(" GrandMythos/UI/OnCancel")]
 public class OnCancel : MonoBehaviour
 {
     [InfoBox("Will run this action whenever the user press the cancel button. When multiple exist in the scene, the one that was enabled most recently will be processed, and if it is then disabled, the previous to that one, etc.")]

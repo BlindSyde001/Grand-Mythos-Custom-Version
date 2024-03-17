@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[AddComponentMenu(" GrandMythos/UI/UISetColorWorkaround")]
 public class UISetColorWorkaround : MonoBehaviour
 {
     [Required]

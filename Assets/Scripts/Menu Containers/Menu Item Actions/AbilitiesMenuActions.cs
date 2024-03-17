@@ -1,13 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
 public class AbilitiesMenuActions : MenuContainer
 {
-    public List<Button> heroSelections;
-    public List<AbilityButtonContainer> abilityButtons;
+    public UIElementList<Button> HeroSelectionUI = new();
+    public UIElementList<AbilityButtonContainer> AbilityUI = new();
     public AbilityDescriptionContainer abilityDescriptionContainer;
     HeroExtension selectedHero;
 
@@ -18,9 +17,9 @@ public class AbilitiesMenuActions : MenuContainer
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).GetComponent<Image>().DOFillAmount(1, menuInputs.Speed);
-        foreach(AbilityButtonContainer a in abilityButtons)
+        foreach(AbilityButtonContainer a in AbilityUI)
         {
-            a.thisButton.GetComponent<Image>().DOFade(1, menuInputs.Speed);
+            a.thisButton.targetGraphic.DOFade(1, menuInputs.Speed);
             a.buttonName.DOFade(1, menuInputs.Speed);
         }
         SetHeroSelection();
@@ -32,9 +31,9 @@ public class AbilitiesMenuActions : MenuContainer
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).GetComponent<Image>().DOFillAmount(0, menuInputs.Speed);
-        foreach (AbilityButtonContainer a in abilityButtons)
+        foreach (AbilityButtonContainer a in AbilityUI)
         {
-            a.thisButton.GetComponent<Image>().DOFade(0, .5f * menuInputs.Speed);
+            a.thisButton.targetGraphic.DOFade(0, .5f * menuInputs.Speed);
             a.buttonName.DOFade(0, .5f * menuInputs.Speed);
         }
         yield return new WaitForSeconds(menuInputs.Speed);
@@ -45,17 +44,12 @@ public class AbilitiesMenuActions : MenuContainer
     {
         abilityDescriptionContainer.abilityNameTitle.text = "";
         abilityDescriptionContainer.abilityDescription.text = "";
-        foreach (Button a in heroSelections)
+        HeroSelectionUI.Clear();
+        foreach (var hero in GameManager.PartyLineup)
         {
-            a.gameObject.SetActive(false);
-            a.onClick.RemoveAllListeners();
-        }
-        for (int i = 0; i < GameManager.PartyLineup.Count; i++)
-        {
-            int j = i;
-            heroSelections[i].gameObject.SetActive(true);
-            heroSelections[i].GetComponent<Image>().sprite = GameManager.PartyLineup[j].Portrait;
-            heroSelections[i].onClick.AddListener(delegate { SetAbilities(GameManager.PartyLineup[j]); });
+            HeroSelectionUI.Allocate(out var button);
+            button.GetComponent<Image>().sprite = hero.Portrait;
+            button.onClick.AddListener(delegate { SetAbilities(hero); });
         }
     }
     public void SetAbilities(HeroExtension hero)
@@ -64,9 +58,6 @@ public class AbilitiesMenuActions : MenuContainer
 
         abilityDescriptionContainer.abilityNameTitle.text = "";
         abilityDescriptionContainer.abilityDescription.text = "";
-        foreach (AbilityButtonContainer a in abilityButtons)
-        {
-            a.gameObject.SetActive(false);
-        }
+        AbilityUI.Clear();
     }
 }

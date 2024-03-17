@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[AddComponentMenu(" GrandMythos/UI/DefaultSelection")]
 public class DefaultSelection : MonoBehaviour
 {
     [InfoBox("Will select this element if there ever is a point where the selection is not set or is on an inactive object")]

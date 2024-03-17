@@ -10,7 +10,7 @@ public class SpawnPoint : MonoBehaviour
     public static SpawnPoint LastSpawnUsed;
     public static SpawnPointReference ScheduledSpawnOnPoint;
 
-    [InlineEditor]
+    [InlineEditor, Required]
     public SpawnPointReference Reference;
 
     void Awake()

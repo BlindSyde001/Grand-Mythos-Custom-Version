@@ -31,7 +31,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8965269928534099089}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -145,9 +144,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8965269928534099089}
   - component: {fileID: 8965269928534099086}
+  - component: {fileID: 2211475052575340785}
   - component: {fileID: 8965269928534099087}
   - component: {fileID: 8965269928534099088}
-  - component: {fileID: 2211475052575340785}
   m_Layer: 5
   m_Name: Abilities - Button Module
   m_TagString: Untagged
@@ -169,7 +168,6 @@ RectTransform:
   m_Children:
   - {fileID: 8965269927066000226}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -184,6 +182,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8965269928534099090}
   m_CullTransparentMesh: 1
+--- !u!114 &2211475052575340785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8965269928534099090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede9135076bf66442af3d7904394c8cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisButton: {fileID: 8965269928534099088}
+  buttonName: {fileID: 8965269927066000225}
 --- !u!114 &8965269928534099087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,17 +270,3 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2211475052575340785
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8965269928534099090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ede9135076bf66442af3d7904394c8cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  thisButton: {fileID: 8965269928534099088}
-  buttonName: {fileID: 8965269927066000225}
