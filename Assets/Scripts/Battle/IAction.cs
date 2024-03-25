@@ -1,11 +1,11 @@
 ﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 public interface IAction
 {
-    uint ATBCost { get; }
-    [MaybeNull] Condition TargetFilter { get; }
-    [MaybeNull] Condition Precondition { get; }
+    uint ActionCost { get; }
+    [CanBeNull] Condition TargetFilter { get; }
+    [CanBeNull] Condition Precondition { get; }
     IEnumerable Perform(BattleCharacterController[] targets, EvaluationContext context);
     string Name { get; }
 }

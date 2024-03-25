@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
@@ -61,7 +61,7 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("SKILLS"), Required]
     public Skill BasicAttack;
 
-    [BoxGroup("SKILLS"), MaybeNull]
+    [BoxGroup("SKILLS"), CanBeNull]
     public SkillTree SkillTree;
 
     [BoxGroup("SKILLS")]

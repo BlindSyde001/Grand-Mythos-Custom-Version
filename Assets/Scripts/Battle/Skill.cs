@@ -35,7 +35,7 @@ public class Skill : IdentifiableScriptableObject, IAction
     [SerializeReference]
     public Condition PreconditionToUse;
 
-    uint IAction.ATBCost => ATBCost;
+    uint IAction.ActionCost => ATBCost;
     Condition IAction.TargetFilter => TargetConstraint;
     Condition IAction.Precondition => PreconditionToUse;
 

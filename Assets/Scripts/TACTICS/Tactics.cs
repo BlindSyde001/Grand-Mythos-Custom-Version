@@ -66,7 +66,7 @@ public class IActionCollection : ISerializationCallbackReceiver, IEnumerable<IAc
         uint cost = 0;
 
         foreach (var action in BackingArray)
-            cost += action?.ATBCost ?? 0;
+            cost += action?.ActionCost ?? 0;
 
         return cost;
     }
@@ -116,7 +116,7 @@ public static class ActionExtension
     {
         uint cost = 0;
         foreach (var action in span)
-            cost += action?.ATBCost ?? 0;
+            cost += action?.ActionCost ?? 0;
         return cost;
     }
 }

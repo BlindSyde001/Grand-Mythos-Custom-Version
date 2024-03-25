@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,14 +11,14 @@ public class ActionCondition : IdentifiableScriptableObject
     [ValidateInput(nameof(ValidateCondition), "")]
     [HideLabel]
     [SerializeReference]
-    [MaybeNull]
+    [CanBeNull]
     public Condition TargetFilter;
 
     [BoxGroup(nameof(AdditionalCondition), LabelText = @"@""AdditionalCondition:   "" + this.AdditionalCondition?.UIDisplayText")]
     [InfoBox("Condition that must be true in general")]
     [HideLabel]
     [SerializeReference]
-    [MaybeNull]
+    [CanBeNull]
     public Condition AdditionalCondition;
 
     bool ValidateCondition(Condition _, ref string errorMessage)

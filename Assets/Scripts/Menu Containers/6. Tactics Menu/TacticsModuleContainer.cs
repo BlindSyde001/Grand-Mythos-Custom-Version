@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +22,4 @@ public class TacticsModuleContainer : MonoBehaviour
     public List<TextMeshProUGUI> doublesText;
     public List<TextMeshProUGUI> triplesText;
     public TextMeshProUGUI quadruplesText;
-
-    public uint actionAllowance = 0;
 }

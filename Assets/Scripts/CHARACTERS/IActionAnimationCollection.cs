@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
 
     [SerializeField]
     [ListDrawerSettings(ShowFoldout = false)]
-    [MaybeNull, InlineProperty]
+    [CanBeNull, InlineProperty]
     BackingKeyValue[] _backingArray;
 
     public void OnBeforeSerialize(){}

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Conditions;
 using Effects;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -17,7 +17,7 @@ public class BattleUIOperation : MonoBehaviour
     public BattleStateMachine BattleManagement;
 
     [Header("Selected Character")]
-    [MaybeNull] public BattleCharacterController UnitSelected; // This is who is being referenced in the Command Panel
+    [CanBeNull] public BattleCharacterController UnitSelected; // This is who is being referenced in the Command Panel
     public HeroPrefabUIData SelectedUI;
 
     [Header("UI Info")]
@@ -739,7 +739,7 @@ public class BattleUIOperation : MonoBehaviour
     }
 
 
-    public void UpdatePreview([MaybeNull] Tactics tactics, ReadOnlySpan<IAction> actionsSubset, PreviewType type)
+    public void UpdatePreview([CanBeNull] Tactics tactics, ReadOnlySpan<IAction> actionsSubset, PreviewType type)
     {
         using var _temp = BattleManagement.Units.TemporaryCopy(out var _unitsCopy);
         if (tactics != null && tactics.Condition != null && tactics.Condition.CanExecute(tactics.Actions, new TargetCollection(_unitsCopy), UnitSelected.Context, out var selection, accountForCost:false))
@@ -820,7 +820,7 @@ public class BattleUIOperation : MonoBehaviour
             var ui = newElement.GetComponent<UIActionPreview>();
             var rect = (RectTransform)ui.transform;
             var size = rect.sizeDelta;
-            size.x *= toAdd[i].ATBCost;
+            size.x *= toAdd[i].ActionCost;
             rect.sizeDelta = size;
             ui.Created?.Invoke(toAdd[i].Name);
             CallPreviewTypeMethod(type, ui);

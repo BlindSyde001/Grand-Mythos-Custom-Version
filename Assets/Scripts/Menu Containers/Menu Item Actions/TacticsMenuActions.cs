@@ -1,29 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using UnityEngine.Serialization;
+using TMPro;
 
 public class TacticsMenuActions : MenuContainer
 {
-    [FormerlySerializedAs("segmentsWarning")] public GameObject SegmentsWarning;
+    public GameObject SegmentsWarning;
 
     public UIElementList<Button> HeroSelections = new();
     public List<Button> PageList;
-    [FormerlySerializedAs("tacticsModules")] public List<TacticsModuleContainer> TacticsModules;
-    [FormerlySerializedAs("newComponentList")] public List<NewComponentContainer> NewComponentList;
+    public List<TacticsModuleContainer> TacticsModules;
+    public List<NewComponentContainer> NewComponentList;
 
-    Tactics _tacticCndToChange;
-    ActionCondition _cndToBecome;
-    Tactics _tacticToChange;
-    int _tacticActionOrderToChange = 4;
-    IAction _actionToBecome;
-    int _tacticActionListOrder;
-    TacticsModuleContainer _currentContainer;
+    Button _dropdownSource;
 
     readonly List<IAction> _actionsList = new();
-    HeroExtension _selectedHero;
 
     //METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
@@ -58,9 +52,6 @@ public class TacticsMenuActions : MenuContainer
     {
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), MenuInputs.Speed);
         gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), MenuInputs.Speed);
-        _tacticToChange = null;
-        _tacticCndToChange = null;
-        _currentContainer = null;
         yield return new WaitForSeconds(MenuInputs.Speed);
     }
 
@@ -78,41 +69,127 @@ public class TacticsMenuActions : MenuContainer
     }
     public void SetTacticsList(HeroExtension hero)
     {
-        _selectedHero = hero;
         StartCoroutine(ComponentListClose());
         ResetActionSegments();
         // Configure all the TacticsList Buttons: On/Off, Select Cnd, Select Action
-        for (int i = 0; i < hero.Tactics.Length; i++)
+        for (int i = 0; i < TacticsModules.Count; i++)
         {
             int j = i;
-            TacticsModules[i].onToggle.text = hero.Tactics[i].IsOn ? "On" : "Off";
-            if (hero.Tactics[i].Condition != null)
-            {
-                TacticsModules[i].condition.text = hero.Tactics[i].Condition.name;
-            }
-            else
-            {
-                TacticsModules[i].condition.text = "";
-            }
+            var heroTactic = i < hero.Tactics.Length ? hero.Tactics[i] : null;
+            TacticsModules[i].onToggle.text = heroTactic == null ? "Off" : heroTactic.IsOn ? "On" : "Off";
+            TacticsModules[i].condition.text = heroTactic?.Condition != null ? heroTactic.Condition.name : "";
 
             // Go through all my Actions and turn on their respective Buttons (Based on Segment Cost)
-            for (int k = 0; k < hero.Tactics[i].Actions.Length; k++)
+            uint costTotal = 0;
+            for (int actionIndex = 0; actionIndex < heroTactic?.Actions.Length; actionIndex++)
             {
-                if (hero.Tactics[i].Actions[k] != null)
-                {
-                    SetActionsBasedOnSegmentCost(hero.Tactics[i].Actions[k].ATBCost, i, k);
-                }
-                else
-                {
-                    SetActionsBasedOnSegmentCost(0, i, k);
-                }
+                SetActionsBasedOnSegmentCost(hero, heroTactic.Actions[actionIndex] != null ? heroTactic.Actions[actionIndex].ActionCost : 0, i, actionIndex, costTotal, OnSetAction);
+                costTotal += heroTactic.Actions[actionIndex] != null ? heroTactic.Actions[actionIndex].ActionCost : 0;
             }
 
-            TacticsModules[i].onToggleBtn.onClick.RemoveAllListeners();
-            TacticsModules[i].conditionBtn.onClick.RemoveAllListeners();
+            foreach(Button btn in TacticsModules[i].addActionBtns)
+                btn.gameObject.SetActive(false);
 
-            TacticsModules[i].onToggleBtn.onClick.AddListener(delegate { ToggleTactics(TacticsModules[j], hero.Tactics[j]); });
-            TacticsModules[i].conditionBtn.onClick.AddListener(delegate { SelectTacticCnd(TacticsModules[j], hero.Tactics[j]); });
+            if (costTotal < 4)
+            {
+                var btn = TacticsModules[i].addActionBtns[(int)costTotal];
+                btn.gameObject.SetActive(true);
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() =>
+                {
+                    if (j >= hero.Tactics.Length)
+                    {
+                        var newTactics = new Tactics[j+1];
+                        hero.Tactics.CopyTo(newTactics, 0);
+                        hero.Tactics = newTactics;
+                    }
+
+                    hero.Tactics[j] ??= new(){ IsOn = false };
+                    int slot = hero.Tactics[j].Actions.Length;
+                    ShowActionDropdown(hero, action => OnSetAction(action, slot), btn);
+                });
+            }
+
+            TacticsModules[i].onToggleBtn.interactable = heroTactic != null;
+            TacticsModules[i].onToggleBtn.onClick.RemoveAllListeners();
+            TacticsModules[i].onToggleBtn.onClick.AddListener(OnToggleTacticPressed);
+
+            TacticsModules[i].conditionBtn.onClick.RemoveAllListeners();
+            TacticsModules[i].conditionBtn.onClick.AddListener(() => ShowConditionDropdown(TacticsModules[j], OnSetCondition, TacticsModules[j].conditionBtn));
+
+            void OnSetAction(IAction newAction, int actionIndex)
+            {
+                if (newAction is null)
+                    throw new NullReferenceException(nameof(newAction));
+
+                if (j >= hero.Tactics.Length)
+                {
+                    var newTactics = new Tactics[j + 1];
+                    hero.Tactics.CopyTo(newTactics, 0);
+                    hero.Tactics = newTactics;
+                }
+                hero.Tactics[j] ??= new() { IsOn = false };
+
+                var tactic = hero.Tactics[j];
+                if (actionIndex >= tactic.Actions.Length) // Make sure we have space for this new action
+                {
+                    IActionCollection newCollection = new()
+                    {
+                        BackingArray = new IAction[actionIndex+1]
+                    };
+                    tactic.Actions.BackingArray.CopyTo(newCollection.BackingArray, 0);
+                    tactic.Actions = newCollection;
+                }
+
+                tactic.Actions[actionIndex] = newAction; // Insert this new action
+
+                // Remove any actions which would go over our max amount of charge
+                var newActions = new List<IAction>();
+                uint totalCost = 0;
+                foreach (var action in tactic.Actions)
+                {
+                    if (totalCost + action.ActionCost > hero.ActionChargeMax)
+                        break;
+                    newActions.Add(action);
+                }
+
+                tactic.Actions = new(){ BackingArray = newActions.ToArray() };
+                if (tactic.Condition is null || tactic.Actions.Length == 0)
+                    tactic.IsOn = false;
+            }
+
+            void OnToggleTacticPressed()
+            {
+                if (j >= hero.Tactics.Length)
+                    return;
+
+                var thisContainer = TacticsModules[j];
+                var tactic = hero.Tactics[j];
+                if(tactic?.Condition == null || tactic.Actions.Length == 0)
+                {
+                    if (tactic is not null)
+                        tactic.IsOn = false;
+                    thisContainer.onToggle.text = "Off";
+                    return;
+                }
+                tactic.IsOn = !tactic.IsOn;
+                thisContainer.onToggle.text = tactic.IsOn ? "On" : "Off";
+            }
+
+            void OnSetCondition(ActionCondition newCondition)
+            {
+                if (j >= hero.Tactics.Length)
+                {
+                    var newTactics = new Tactics[j + 1];
+                    hero.Tactics.CopyTo(newTactics, 0);
+                    hero.Tactics = newTactics;
+                }
+
+                hero.Tactics[j] ??= new() { IsOn = false };
+                hero.Tactics[j].Condition = newCondition;
+                if (hero.Tactics[j].Condition is null || hero.Tactics[j].Actions.Length == 0)
+                    hero.Tactics[j].IsOn = false;
+            }
         }
     }
     #region Action Segment Methods
@@ -121,97 +198,63 @@ public class TacticsMenuActions : MenuContainer
     {
         foreach(TacticsModuleContainer t in TacticsModules)
         {
-            t.actionAllowance = 0;
             foreach(Button a in t.singleActionBtns)
-            {
                 a.gameObject.SetActive(false);
-            }
             foreach (Button a in t.doubleActionBtns)
-            {
                 a.gameObject.SetActive(false);
-            }
             foreach (Button a in t.tripleActionBtns)
-            {
                 a.gameObject.SetActive(false);
-            }
             t.quadActionBtn.gameObject.SetActive(false);
 
             for(int i = 0; i < t.addActionBtns.Count; i++)
             {
-                if(i == 0)
-                {
-                    t.addActionBtns[i].gameObject.SetActive(true);
-                }
-                else
-                {
-                    t.addActionBtns[i].gameObject.SetActive(false);
-                }
+                t.addActionBtns[i].gameObject.SetActive(i == 0);
             }
         }
     }
 
-    void SetActionsBasedOnSegmentCost(uint cost, int tOrder, int aOrder)
+    void SetActionsBasedOnSegmentCost(HeroExtension selectedHero, uint actionCost, int tactic, int action, uint previousActionCostTotal, Action<IAction, int> OnNewAction)
     {
-        int allowance = (int)TacticsModules[tOrder].actionAllowance;
-        if (allowance + cost > 4)
+        if (previousActionCostTotal + actionCost > 4)
         {
             Debug.Log("Not enough Segments!");
-            ReOrderActions(tOrder, aOrder);
+            ReOrderActions(selectedHero, tactic);
             return;
         }
-        switch (cost)
-        {           // Turn on Button >> Set the Name >> Allocate the Segment Allowance
-            case 1:
-                TacticsModules[tOrder].singleActionBtns[allowance].gameObject.SetActive(true);
-                TacticsModules[tOrder].singlesText[allowance].text = _selectedHero.Tactics[tOrder].Actions[aOrder].Name;
-                TacticsModules[tOrder].actionAllowance += _selectedHero.Tactics[tOrder].Actions[aOrder].ATBCost;
 
-                TacticsModules[tOrder].singleActionBtns[allowance].onClick.RemoveAllListeners();
-                TacticsModules[tOrder].singleActionBtns[allowance].onClick.AddListener(delegate { SelectTacticAction(TacticsModules[tOrder], _selectedHero.Tactics[tOrder], aOrder); });
+        Button actionSelection;
+        TextMeshProUGUI textProvider;
+        switch (actionCost)
+        {
+            case 1:
+                actionSelection = TacticsModules[tactic].singleActionBtns[(int)previousActionCostTotal];
+                textProvider = TacticsModules[tactic].singlesText[(int)previousActionCostTotal];
                 break;
 
             case 2:
-                TacticsModules[tOrder].doubleActionBtns[allowance].gameObject.SetActive(true);
-                TacticsModules[tOrder].doublesText[allowance].text = _selectedHero.Tactics[tOrder].Actions[aOrder].Name;
-                TacticsModules[tOrder].actionAllowance += _selectedHero.Tactics[tOrder].Actions[aOrder].ATBCost;
-
-                TacticsModules[tOrder].doubleActionBtns[allowance].onClick.RemoveAllListeners();
-                TacticsModules[tOrder].doubleActionBtns[allowance].onClick.AddListener(delegate { SelectTacticAction(TacticsModules[tOrder], _selectedHero.Tactics[tOrder], aOrder); });
+                actionSelection = TacticsModules[tactic].doubleActionBtns[(int)previousActionCostTotal];
+                textProvider = TacticsModules[tactic].doublesText[(int)previousActionCostTotal];
                 break;
 
             case 3:
-                TacticsModules[tOrder].tripleActionBtns[allowance].gameObject.SetActive(true);
-                TacticsModules[tOrder].triplesText[allowance].text = _selectedHero.Tactics[tOrder].Actions[aOrder].Name;
-                TacticsModules[tOrder].actionAllowance += _selectedHero.Tactics[tOrder].Actions[aOrder].ATBCost;
-
-                TacticsModules[tOrder].tripleActionBtns[allowance].onClick.RemoveAllListeners();
-                TacticsModules[tOrder].tripleActionBtns[allowance].onClick.AddListener(delegate { SelectTacticAction(TacticsModules[tOrder], _selectedHero.Tactics[tOrder], aOrder); });
+                actionSelection = TacticsModules[tactic].tripleActionBtns[(int)previousActionCostTotal];
+                textProvider = TacticsModules[tactic].triplesText[(int)previousActionCostTotal];
                 break;
 
             case 4:
-                TacticsModules[tOrder].quadActionBtn.gameObject.SetActive(true);
-                TacticsModules[tOrder].quadruplesText.text = _selectedHero.Tactics[tOrder].Actions[aOrder].Name;
-                TacticsModules[tOrder].actionAllowance += _selectedHero.Tactics[tOrder].Actions[aOrder].ATBCost;
-
-                TacticsModules[tOrder].quadActionBtn.onClick.RemoveAllListeners();
-                TacticsModules[tOrder].quadActionBtn.onClick.AddListener(delegate { SelectTacticAction(TacticsModules[tOrder], _selectedHero.Tactics[tOrder], aOrder); });
+                actionSelection = TacticsModules[tactic].quadActionBtn;
+                textProvider = TacticsModules[tactic].quadruplesText;
                 break;
+
+            default:
+                throw new NotImplementedException();
         }
-        foreach(Button btn in TacticsModules[tOrder].addActionBtns)
-        {
-            btn.gameObject.SetActive(false);
-        }
-        if (TacticsModules[tOrder].actionAllowance == 4)
-        {
-            return;
-        }
-        else if(TacticsModules[tOrder].actionAllowance < 4)
-        {
-            var btn = TacticsModules[tOrder].addActionBtns[(int)TacticsModules[tOrder].actionAllowance];
-            btn.gameObject.SetActive(true);
-            btn.onClick.RemoveAllListeners();
-            btn.onClick.AddListener(delegate { SelectTacticAction(TacticsModules[tOrder], _selectedHero.Tactics[tOrder], FindEmptyActionSlot(tOrder)); });
-        }
+
+        textProvider.text = selectedHero.Tactics[tactic].Actions[action].Name;
+
+        actionSelection.gameObject.SetActive(true);
+        actionSelection.onClick.RemoveAllListeners();
+        actionSelection.onClick.AddListener(() => ShowActionDropdown(selectedHero, actionObject => OnNewAction(actionObject, action), actionSelection));
     }
 
     IEnumerator SendWarning()
@@ -221,217 +264,154 @@ public class TacticsMenuActions : MenuContainer
         SegmentsWarning.SetActive(false);
     }
 
-    void ReOrderActions(int tOrder, int aOrder)
+    void ReOrderActions(HeroExtension selectedHero, int tOrder)
     {
         uint eAllowance = 0;
-        for (int i = 0; i < _selectedHero.Tactics[tOrder].Actions.Length; i++)
+        for (int i = 0; i < selectedHero.Tactics[tOrder].Actions.Length; i++)
         {
-            if (_selectedHero.Tactics[tOrder].Actions[i] != null)
+            if (selectedHero.Tactics[tOrder].Actions[i] != null)
             {
-                if (eAllowance + _selectedHero.Tactics[tOrder].Actions[i].ATBCost > 4)
+                if (eAllowance + selectedHero.Tactics[tOrder].Actions[i].ActionCost > 4)
                 {
                     StartCoroutine(SendWarning());
-                    _selectedHero.Tactics[tOrder].Actions[i] = null;
+                    selectedHero.Tactics[tOrder].Actions[i] = null;
                 }
                 else
                 {
-                    eAllowance += _selectedHero.Tactics[tOrder].Actions[i].ATBCost;
+                    eAllowance += selectedHero.Tactics[tOrder].Actions[i].ActionCost;
                 }
             }
         }
-    }
-
-    int FindEmptyActionSlot(int tOrder)
-    {
-        for(int i = 0; i < _selectedHero.Tactics[tOrder].Actions.Length; i++)
-        {
-            if(_selectedHero.Tactics[tOrder].Actions[i] == null)
-            {
-                return i;
-            }
-        }
-        return 0;
     }
     #endregion
     #region Open Page of Conditions/Actions
-    public void SetPages(bool isCnd)
+    public void SetPagesOnClickAction(Action<int> OnClick)
     {
-        for(int i = 0; i < PageList.Count; i++)
+        for (int i = 0; i < PageList.Count; i++)
         {
             int j = i;
             PageList[i].onClick.RemoveAllListeners();
-            PageList[i].onClick.AddListener(isCnd? delegate { SetCndList(j); } : delegate { SetActionList(j); });
+            PageList[i].onClick.AddListener(() => OnClick(j));
         }
     }
-    public void SetCndList(int pageNo)
-    {   // Change Cnds represented on the CndList to match the Page Number
-        for(int i = 0; i < NewComponentList.Count; i++) // iterate through the Buttons
-        {
-            NewComponentList[i].cmpName.text = "";
-            if(InventoryManager.ConditionsAcquired.Count > (pageNo * 10) + i) // Check if there's a cnd in that Slot
-            {
-                if(InventoryManager.ConditionsAcquired.Contains(InventoryManager.ConditionsAcquired[(pageNo * 10) + i])) // Check if you unlocked that Cnd
-                { 
-                    NewComponentList[i].selectedCnd = InventoryManager.ConditionsAcquired[(pageNo * 10) + i];
-                    NewComponentList[i].cmpName.text = NewComponentList[i].selectedCnd.name;
 
-                    int j = i;
-                    NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
-                    NewComponentList[i].cmpButton.onClick.AddListener(delegate {SelectNewListCnd(NewComponentList[j].selectedCnd); });
-                }
-            }
-        }
-    }
-    public void SetActionList(int pageNo)
+    /// <summary>
+    /// Change Cnds represented on the CndList to match the Page Number
+    /// </summary>
+    public void PopulateConditionList(TacticsModuleContainer currentContainer, int pageNo, Action<ActionCondition> OnConditionSelected)
     {
-        _actionsList.Clear();
-        _actionsList.Add(_selectedHero.BasicAttack);
-        foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
-        {
-            _actionsList.Add(item);
-        }
-        foreach(var a in _selectedHero.Skills)
-        {
-            _actionsList.Add(a);
-        }
+        foreach (var component in NewComponentList)
+            component.cmpButton.onClick.RemoveAllListeners();
 
         for (int i = 0; i < NewComponentList.Count; i++) // iterate through the Buttons
         {
             NewComponentList[i].cmpName.text = "";
-            if (_actionsList.Count > (pageNo * 10) + i) // Set new Page up
+            if (InventoryManager.ConditionsAcquired.Count <= (pageNo * 10) + i) // Check if there's a cnd in that Slot
+                continue;
+
+            if (!InventoryManager.ConditionsAcquired.Contains(InventoryManager.ConditionsAcquired[(pageNo * 10) + i])) // Check if you unlocked that Cnd
+                continue;
+
+            NewComponentList[i].selectedCnd = InventoryManager.ConditionsAcquired[(pageNo * 10) + i];
+            NewComponentList[i].cmpName.text = NewComponentList[i].selectedCnd.name;
+
+            int j = i;
+            NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
+            NewComponentList[i].cmpButton.onClick.AddListener(() =>
             {
-                if (_actionsList[(pageNo * 10) + i] is Skill skill
-                    && (_selectedHero.Skills.Contains(skill) || _selectedHero.BasicAttack == skill))
+                var newCondition = NewComponentList[j].selectedCnd;
+                OnConditionSelected(newCondition);
+                currentContainer.condition.text = newCondition.name;
+                StartCoroutine(ComponentListClose());
+            });
+        }
+    }
+
+    public void PopulateActionList(HeroExtension selectedHero, int pageNo, Action<IAction> OnNewAction)
+    {
+        _actionsList.Clear();
+        _actionsList.Add(selectedHero.BasicAttack);
+        foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
+            _actionsList.Add(item);
+        foreach(var a in selectedHero.Skills)
+            _actionsList.Add(a);
+
+        foreach (var component in NewComponentList)
+            component.cmpButton.onClick.RemoveAllListeners();
+
+        for (int i = 0; i < NewComponentList.Count; i++) // iterate through the Buttons
+        {
+            NewComponentList[i].cmpName.text = "";
+            if (_actionsList.Count <= (pageNo * 10) + i) // Set new Page up
+                continue;
+
+            if (_actionsList[(pageNo * 10) + i] is Skill skill
+                && (selectedHero.Skills.Contains(skill) || selectedHero.BasicAttack == skill))
+            {
+                NewComponentList[i].selectedAction = _actionsList[(pageNo * 10) + i];
+                NewComponentList[i].cmpName.text = NewComponentList[i].selectedAction.Name;
+
+                int j = i;
+                NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
+                NewComponentList[i].cmpButton.onClick.AddListener(() => SelectNewListAction(selectedHero, NewComponentList[j].selectedAction, OnNewAction));
+            }
+            else
+            {
+                foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
                 {
+                    if (item.name != _actionsList[(pageNo * 10) + i].Name)
+                        continue;
+
                     NewComponentList[i].selectedAction = _actionsList[(pageNo * 10) + i];
                     NewComponentList[i].cmpName.text = NewComponentList[i].selectedAction.Name;
 
                     int j = i;
                     NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
-                    NewComponentList[i].cmpButton.onClick.AddListener(delegate { SelectNewListAction(NewComponentList[j].selectedAction); });
-                }
-                else
-                {
-                    foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
-                    {
-                        if (item.name == _actionsList[(pageNo * 10) + i].Name)
-                        {
-                            NewComponentList[i].selectedAction = _actionsList[(pageNo * 10) + i];
-                            NewComponentList[i].cmpName.text = NewComponentList[i].selectedAction.Name;
-
-                            int j = i;
-                            NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
-                            NewComponentList[i].cmpButton.onClick.AddListener(delegate { SelectNewListAction(NewComponentList[j].selectedAction); });
-                        }
-                    }
+                    NewComponentList[i].cmpButton.onClick.AddListener(() => SelectNewListAction(selectedHero, NewComponentList[j].selectedAction, OnNewAction));
                 }
             }
         }
     }
     #endregion
 
-    public void ToggleTactics(TacticsModuleContainer thisContainer, Tactics tactic)
-    {
-        if(tactic.Condition == null || !CheckActionsStatus(tactic))
-        {
-            tactic.IsOn = false;
-            thisContainer.onToggle.text = "Off";
-            return;
-        }
-        tactic.IsOn = !tactic.IsOn;
-        thisContainer.onToggle.text = tactic.IsOn ? "On" : "Off";
-    }
-
-    bool CheckActionsStatus(Tactics tactic)
-    {
-        foreach(IAction action in tactic.Actions)
-        {
-            if(action != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        return false;
-    }
     #region Swapping Conditions
-    public void SelectTacticCnd(TacticsModuleContainer thisContainer, Tactics tactic)
+    public void ShowConditionDropdown(TacticsModuleContainer currentContainer, Action<ActionCondition> OnConditionSelected, Button dropdownSource)
     {
-        // CLICK BUTTON OF CND U WANT TO CHANGE
-        // Designate this Cnd Space to be swapped with a new Cnd, or if double clicked, reset
-        if (_tacticCndToChange != tactic)
+        if (_dropdownSource != dropdownSource)
         {
-            _tacticCndToChange = tactic;
-            _currentContainer = thisContainer;
-            _tacticToChange = null;
             StartCoroutine(ComponentListOpen());
-            SetPages(true);
-            SetCndList(0);
+            SetPagesOnClickAction(j => PopulateConditionList(currentContainer, j, OnConditionSelected));
+            PopulateConditionList(currentContainer, 0, OnConditionSelected);
         }
-        else
+        else // Close if the user pressed on the same source
         {
-            _currentContainer = null;
-            _tacticCndToChange = null;
             StartCoroutine(ComponentListClose());
         }
     }
-    public void SelectNewListCnd(ActionCondition cnd)
-    {
-        _cndToBecome = cnd;
-        SwapCnds();
-        _currentContainer = null;
-        _tacticCndToChange = null;
-        StartCoroutine(ComponentListClose());
-    }
 
-    void SwapCnds()
-    {
-        _tacticCndToChange.Condition = _cndToBecome;
-        _currentContainer.condition.text = _tacticCndToChange.Condition.name;
-    }
     #endregion
     #region Swapping Actions
-    public void SelectTacticAction(TacticsModuleContainer thisContainer, Tactics tactic, int aOrder)
+    public void ShowActionDropdown(HeroExtension selectedHero, Action<IAction> OnClick, Button dropdownSource)
     {
-        // CLICK BUTTON OF ACTION U WANT TO CHANGE
-        // Designate this Action Space to be swapped with a new Action, or if double clicked, reset
-        if (_tacticToChange != tactic)
+        if (_dropdownSource != dropdownSource)
         {
-            _tacticToChange = tactic;
-            _tacticActionOrderToChange = aOrder;
-            _currentContainer = thisContainer;
-            _tacticCndToChange = null;
             StartCoroutine(ComponentListOpen());
-            SetPages(false);
-            SetActionList(0);
+            SetPagesOnClickAction(j => PopulateActionList(selectedHero, j, OnClick));
+            PopulateActionList(selectedHero, 0, OnClick);
         }
-        else
+        else // Close if the user pressed on the same source
         {
-            _tacticToChange = null;
-            _tacticActionOrderToChange = 4;
-            _currentContainer = null;
             StartCoroutine(ComponentListClose());
         }
     }
-    public void SelectNewListAction(IAction action)
-    {
-        _actionToBecome = action;
-        SwapActions();
-        _currentContainer = null;
-        _tacticToChange = null;
-        StartCoroutine(ComponentListClose());
-    }
 
-    void SwapActions()
+    public void SelectNewListAction(HeroExtension selectedHero, IAction action, Action<IAction> OnNewAction)
     {
-        // Swap Action Function
-        _tacticToChange.Actions[_tacticActionOrderToChange] = _actionToBecome;
+        OnNewAction(action);
 
         // Swap Action UI
-        SetTacticsList(_selectedHero);
+        SetTacticsList(selectedHero);
+        StartCoroutine(ComponentListClose());
     }
     #endregion
 }

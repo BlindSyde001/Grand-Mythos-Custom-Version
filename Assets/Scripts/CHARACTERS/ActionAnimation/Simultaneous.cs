@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -36,7 +36,7 @@ namespace ActionAnimation
             running[0]--;
         }
 
-        public bool Validate([MaybeNull]IAction action, CharacterTemplate template, ref string message)
+        public bool Validate([CanBeNull]IAction action, CharacterTemplate template, ref string message)
         {
             foreach (var actionAnimation in Animations)
             {

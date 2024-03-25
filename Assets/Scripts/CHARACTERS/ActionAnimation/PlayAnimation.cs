@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using DG.Tweening;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -55,7 +55,7 @@ namespace ActionAnimation
             return info.length * (1f - info.normalizedTime) / info.speed / info.speedMultiplier;
         }
 
-        public bool Validate([MaybeNull]IAction action, CharacterTemplate template, ref string message)
+        public bool Validate([CanBeNull]IAction action, CharacterTemplate template, ref string message)
         {
             if (template.BattlePrefab == null)
             {

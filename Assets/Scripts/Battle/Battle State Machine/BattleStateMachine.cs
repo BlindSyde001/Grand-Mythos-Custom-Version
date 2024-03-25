@@ -231,7 +231,7 @@ public class BattleStateMachine : MonoBehaviour
                 {
                     var action = chosenTactic.Actions[i];
 
-                    if (unit.Profile.ActionsCharged < action.ATBCost)
+                    if (unit.Profile.ActionsCharged < action.ActionCost)
                         break;
 
                     if (i != 0)
@@ -266,7 +266,7 @@ public class BattleStateMachine : MonoBehaviour
                     foreach (var yield in action.Perform(selection.ToArray(), unit.Context))
                         yield return yield;
 
-                    unit.Profile.ActionsCharged -= action.ATBCost;
+                    unit.Profile.ActionsCharged -= action.ActionCost;
 
                     if (Units.Contains(unit) == false)
                         break;
