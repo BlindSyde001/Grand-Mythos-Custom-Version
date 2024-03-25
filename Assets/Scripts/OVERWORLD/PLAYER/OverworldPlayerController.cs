@@ -350,7 +350,6 @@ public class OverworldPlayerController : ReloadableBehaviour
             {
                 yield return null;
                 f += Time.deltaTime / distance * JumpUnitPerSecond;
-                Debug.Log("Jump");
                 Controller.Move(Vector3.Lerp(origin, destination, f) - Controller.transform.position);
             }
         }
