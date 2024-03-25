@@ -203,7 +203,7 @@ public class BattleUIOperation : MonoBehaviour
                 enemyUI.name = $"{unit.gameObject.name} UI";
 
                 EnemyPrefabUIData data = enemyUI.GetComponent<EnemyPrefabUIData>();
-                data.identity.text = unit.name;
+                data.identity.text = unit.Profile.Name;
                 data.healthBar.fillAmount = unit.Profile.EffectiveStats.HP;
 
                 enemyUIData.Add(data);
@@ -468,7 +468,7 @@ public class BattleUIOperation : MonoBehaviour
                 var toggles = new Dictionary<BattleCharacterController, Toggle>();
                 foreach (var unitForThisToggle in BattleManagement.Units.OrderByDescending(x => x.IsHostileTo(UnitSelected)))
                 {
-                    var toggle = CreateToggle(unitForThisToggle.name, selection.Contains(unitForThisToggle), ref first);
+                    var toggle = CreateToggle(unitForThisToggle.Profile.Name, selection.Contains(unitForThisToggle), ref first);
                     toggle.onValueChanged.AddListener(UpdateSelection);
                     toggles.Add(unitForThisToggle, toggle);
 

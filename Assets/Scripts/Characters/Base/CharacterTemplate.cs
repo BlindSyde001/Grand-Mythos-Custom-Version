@@ -8,6 +8,9 @@ using UnityEngine.Serialization;
 [AddComponentMenu(" GrandMythos/CharacterTemplate")]
 public class CharacterTemplate : MonoBehaviour
 {
+    [ValidateInput(nameof(ValidateName))]
+    public string Name;
+
     [Required]
     public Team Team;
 
@@ -134,6 +137,17 @@ public class CharacterTemplate : MonoBehaviour
         }
 
         return actionAnimation.Validate(null, this, ref errorMessage);
+    }
+
+    bool ValidateName(string name, ref string errorMessage)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            errorMessage = "Name is empty";
+            return false;
+        }
+
+        return true;
     }
 
     void UpdateExperienceFromLevel()
