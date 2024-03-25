@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -7,10 +6,11 @@ using TMPro;
 [AddComponentMenu(" GrandMythos/UIBinding/PartyContainer")]
 public class PartyContainer : MonoBehaviour
 {
-    public TextMeshProUGUI displayName;
-    public Image displayBanner;
-    public TextMeshProUGUI displayLevel;
-    public Image displayEXPBar;
-    public TextMeshProUGUI displayHP;
-    public TextMeshProUGUI displayEXPToNextLevel;
+    [Required] public TextMeshProUGUI displayName;
+    [Required] public Image displayBanner;
+    [Required] public TextMeshProUGUI displayLevel;
+    [Required] public Image displayEXPBar;
+    [Required] public TextMeshProUGUI displayHP;
+    [Required] public TextMeshProUGUI displayEXPToNextLevel;
+    [Required] public Button ChangeOrderButton;
 }

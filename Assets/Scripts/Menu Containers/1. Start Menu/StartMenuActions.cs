@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
@@ -7,6 +8,8 @@ public class StartMenuActions : MenuContainer
     public UIElementList<PartyContainer> PartyUI = new();
     public UIElementList<ReserveContainer> ReserveUI = new();
     public MiscContainer miscList;
+
+    ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) _lineupChange;
 
     void LateUpdate()
     {
@@ -33,6 +36,7 @@ public class StartMenuActions : MenuContainer
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
+        _lineupChange = default;
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 150, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(1700, 30, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, gameObject.transform.GetChild(2).localPosition.y, 0), menuInputs.Speed);
@@ -43,8 +47,9 @@ public class StartMenuActions : MenuContainer
     internal void DisplayPartyHeroes()
     {
         PartyUI.Clear();
-        foreach (var hero in GameManager.PartyLineup)
+        for (int i = 0; i < GameManager.PartyLineup.Count; i++)
         {
+            var hero = GameManager.PartyLineup[i];
             PartyUI.Allocate(out var element);
             element.displayName.text = hero.gameObject.name;
             element.displayBanner.sprite = hero.Banner;
@@ -54,13 +59,19 @@ public class StartMenuActions : MenuContainer
                                                (hero.ExperienceThreshold - hero.PrevExperienceThreshold);
 
             element.displayHP.text = $"{hero.CurrentHP} / {hero.EffectiveStats.HP}";
+            int j = i;
+            element.ChangeOrderButton.onClick.RemoveAllListeners();
+            element.ChangeOrderButton.onClick.AddListener(() => ChangePartyLineup(j));
         }
 
         ReserveUI.Clear();
-        foreach (var hero in GameManager.ReservesLineup)
+        for (int i = 0; i < GameManager.ReservesLineup.Count; i++)
         {
+            var hero = GameManager.ReservesLineup[i];
             ReserveUI.Allocate(out var display);
             display.displayBanner.sprite = hero.Banner;
+            int j = i;
+            display.ChangeOrderButton.onClick.AddListener(() => ChangePartyLineupFromReserve(j));
         }
     }
     internal void DisplayMisc()
@@ -68,5 +79,39 @@ public class StartMenuActions : MenuContainer
         miscList.miscArea.text = this.gameObject.scene.name;
         miscList.miscZone.text = SpawnPoint.LastSpawnUsed != null ? SpawnPoint.LastSpawnUsed.Reference.SpawnName : "Unknown";
         miscList.miscCurrency.text = InventoryManager.Credits.ToString();
+    }
+
+    void ChangePartyLineup(int selectedToChange)
+    {
+        ChangePartyLineup((GameManager.PartyLineup, selectedToChange));
+    }
+
+    void ChangePartyLineupFromReserve(int selectedToChange)
+    {
+        ChangePartyLineup((GameManager.ReservesLineup, selectedToChange));
+    }
+
+    void ChangePartyLineup((List<HeroExtension> partyLineup, int selectedToChange) data)
+    {
+        if (_lineupChange.sourceA.collection == null)
+        {
+            _lineupChange.sourceA = data;
+        }
+        else
+        {
+            _lineupChange.sourceB = data;
+
+
+            var (sourceA, sourceB) = _lineupChange;
+            _lineupChange = default;
+
+            var elementA = sourceA.collection[sourceA.index];
+            var elementB = sourceB.collection[sourceB.index];
+
+            sourceA.collection[sourceA.index] = elementB;
+            sourceB.collection[sourceB.index] = elementA;
+
+            DisplayPartyHeroes();
+        }
     }
 }

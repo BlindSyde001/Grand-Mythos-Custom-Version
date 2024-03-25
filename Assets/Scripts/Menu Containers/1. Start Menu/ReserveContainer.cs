@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using Sirenix.OdinInspector;
+using UnityEngine;
 using UnityEngine.UI;
 
 [AddComponentMenu(" GrandMythos/UIBinding/ReserveContainer")]
 public class ReserveContainer : MonoBehaviour
 {
-    public Image displayBanner;
+    [Required] public Image displayBanner;
+    [Required] public Button ChangeOrderButton;
 }

@@ -23,7 +23,6 @@ public class MenuInputs : MonoBehaviour
     public MenuContainer CurrentMenuOpen;
     public float Speed = 0.5f;
 
-    ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) _lineupChange;
     bool _busySwitching;
 
 
@@ -90,9 +89,6 @@ public class MenuInputs : MonoBehaviour
             var from = CurrentMenuOpen;
             CurrentMenuOpen = to;
 
-            if (from is StartMenuActions)
-                _lineupChange = default;
-
             if (from == null)
             {
                 InputManager.Instance.PushGameState(GameState.Menu, this);
@@ -123,40 +119,6 @@ public class MenuInputs : MonoBehaviour
         finally
         {
             _busySwitching = false;
-        }
-    }
-
-    public void ChangePartyLineup(int selectedToChange)
-    {
-        ChangePartyLineup((GameManager.PartyLineup, selectedToChange-1));
-    }
-
-    public void ChangePartyLineupFromReserve(int selectedToChange)
-    {
-        ChangePartyLineup((GameManager.ReservesLineup, selectedToChange-1));
-    }
-
-    void ChangePartyLineup((List<HeroExtension> partyLineup, int selectedToChange) data)
-    {
-        if (_lineupChange.sourceA.collection == null)
-        {
-            _lineupChange.sourceA = data;
-        }
-        else
-        {
-            _lineupChange.sourceB = data;
-
-
-            var (sourceA, sourceB) = _lineupChange;
-            _lineupChange = default;
-
-            var elementA = sourceA.collection[sourceA.index];
-            var elementB = sourceB.collection[sourceB.index];
-
-            sourceA.collection[sourceA.index] = elementB;
-            sourceB.collection[sourceB.index] = elementA;
-
-            startMenuActions.DisplayPartyHeroes();
         }
     }
 

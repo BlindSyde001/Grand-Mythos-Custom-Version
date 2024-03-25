@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
+using JetBrains.Annotations;
 using TMPro;
 
 public class ItemMenuActions : MenuContainer
@@ -12,8 +12,7 @@ public class ItemMenuActions : MenuContainer
     public TextMeshProUGUI itemDescriptionText;
     public TextMeshProUGUI itemDescriptionStats;
 
-    [SerializeField] int selectedList;
-    [SerializeField] Button SortButton;
+    [CanBeNull] IFilter _filter;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
@@ -63,12 +62,11 @@ public class ItemMenuActions : MenuContainer
             btn.ItemAmount.text = count.ToString();
             btn.itemDescription = item.Description;
 
+            btn.Button.onClick.RemoveAllListeners();
             btn.Button.onClick.AddListener(() => DisplayItemDescription(btn));
         }
-        selectedList = 0;
-        SortButton.onClick.RemoveAllListeners();
-        SortButton.onClick.AddListener(CallSortInventory);
-        SortButton.onClick.AddListener(ShowConsumables);
+
+        _filter = new FilterOf<T>();
     }
 
     internal void DisplayItemDescription(ItemButtonContainer data)
@@ -77,8 +75,22 @@ public class ItemMenuActions : MenuContainer
         itemDescriptionText.text = data.itemDescription;
     }
 
-    public void CallSortInventory()
+    public void SortByName()
     {
         InventoryManager.SortBy(InventoryManager.Sort.Name);
+        if (_filter is not null)
+            _filter.Show(this);
+        else
+            ShowConsumables();
+    }
+
+    class FilterOf<T> : IFilter where T : BaseItem
+    {
+        public void Show(ItemMenuActions actions) => actions.Show<T>();
+    }
+
+    interface IFilter
+    {
+        public void Show(ItemMenuActions actions);
     }
 }
