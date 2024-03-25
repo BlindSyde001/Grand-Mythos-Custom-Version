@@ -48,7 +48,8 @@ public class UIElementList<T> : IEnumerable<T> where T : MonoBehaviour
         foreach (T behaviour in _existing)
             behaviour.gameObject.SetActive(false);
 
-        _pool.AddRange(_existing);
+        for (int i = _existing.Count - 1; i >= 0; i--) // Reverse for loop to keep the order intact since we're taking from the end when allocating
+            _pool.Add(_existing[i]);
         _existing.Clear();
     }
 
