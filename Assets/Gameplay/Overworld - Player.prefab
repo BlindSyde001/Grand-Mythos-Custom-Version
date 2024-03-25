@@ -18142,6 +18142,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   SwapTransportQueryRadius: 5
+  Interact: {fileID: 5129110763962096283, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
+  Move: {fileID: -6229269787344104424, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
 --- !u!143 &4688717694253108986
 CharacterController:
   m_ObjectHideFlags: 0
@@ -25832,35 +25834,11 @@ MonoBehaviour:
     m_ActionId: 1152e6e8-5dbf-4671-aa51-ceaabcb1c5be
     m_ActionName: Overworld Character/Interact[/Keyboard/e]
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5656684444883724523}
-        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
-        m_MethodName: StartMenuOpen
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: 9b5ed792-86ec-4433-9a11-73c0dbc3aac7
     m_ActionName: Overworld Character/OpenMenu[/Keyboard/tab]
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2430156990192235906}
-        m_TargetAssemblyTypeName: MenuInputs, Assembly-CSharp
-        m_MethodName: PreviousMenu
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: b8522af9-72c9-4bea-8add-ccec21a6d4dc
     m_ActionName: Menu/CloseMenu[/Keyboard/tab]
   - m_PersistentCalls:
@@ -25872,19 +25850,7 @@ MonoBehaviour:
     m_ActionId: dfc744b8-eea8-45fe-ade8-00098529060a
     m_ActionName: Cutscene Map/New action
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2430156990192235906}
-        m_TargetAssemblyTypeName: MenuInputs, Assembly-CSharp
-        m_MethodName: PreviousMenu
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: 402fb325-9e75-49d2-ac96-cfcbdb832d75
     m_ActionName: Menu Map/CloseCurrentMenuCategory[/Keyboard/escape]
   - m_PersistentCalls:

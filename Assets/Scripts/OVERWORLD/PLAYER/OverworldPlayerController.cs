@@ -7,6 +7,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Experimental.AI;
+using UnityEngine.InputSystem;
 
 public class OverworldPlayerController : ReloadableBehaviour
 {
@@ -41,8 +42,7 @@ public class OverworldPlayerController : ReloadableBehaviour
     };
 
     public float SwapTransportQueryRadius = 5f;
-
-    PlayerControls _playerControls;
+    [Required] public InputActionReference Interact, Move;
 
     bool _noNavmesh;
     Vector3 _lastPointOnNavMesh;
@@ -86,14 +86,10 @@ public class OverworldPlayerController : ReloadableBehaviour
             _noNavmesh = true;
             Debug.LogError("No navmesh found, make sure the navmesh for this scene has been built");
         }
-
-        _playerControls = new PlayerControls();
-        _playerControls.Enable();
     }
 
     protected override void OnDisabled(bool beforeDomainReload)
     {
-        _playerControls.Disable();
         InputManager.Instance.PopGameState(this);
     }
 
@@ -137,25 +133,15 @@ public class OverworldPlayerController : ReloadableBehaviour
                 continue;
             }
 
-            if (_playerControls.OverworldMap.Interact.WasPressedThisFrame() && TryPlayInteraction(interactable, interactable.Interaction))
+            if (Interact.action.WasPressedThisFrame() && TryPlayInteraction(interactable, interactable.Interaction))
                 return;
         }
 
-        if (_playerControls.OverworldMap.OpenMenu.IsPressed())
-            return;
-
         Vector3 movementVector;
-        if (_playerControls.OverworldMap.Move.IsPressed())
-        {
-            var inputMovement = _playerControls.OverworldMap.Move.ReadValue<Vector2>();
-            movementVector.x = inputMovement.x;
-            movementVector.y = 0;
-            movementVector.z = inputMovement.y;
-        }
-        else
-        {
-            movementVector = default;
-        }
+        var inputMovement = Move.action.ReadValue<Vector2>();
+        movementVector.x = inputMovement.x;
+        movementVector.y = 0;
+        movementVector.z = inputMovement.y;
 
         Vector3 facingDirection = Vector3.Cross(Camera.main.transform.right, Vector3.up).normalized;
         var inputSpace = Quaternion.LookRotation(facingDirection);
@@ -171,12 +157,12 @@ public class OverworldPlayerController : ReloadableBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, TurnRate * Time.deltaTime);
         }
 
-        Move(movementVector);
+        MoveOffset(movementVector);
         JumpLinkQuery();
         ChangeOfTransportQuery();
     }
 
-    void Move(Vector3 movementVector)
+    void MoveOffset(Vector3 movementVector)
     {
         var previousPosition = Controller.transform.position;
         try
@@ -321,7 +307,7 @@ public class OverworldPlayerController : ReloadableBehaviour
 
         Prompt.TryShowPromptThisFrame(closestStart, "Jump");
 
-        if (_playerControls.OverworldMap.Interact.WasPressedThisFrame() == false)
+        if (Interact.action.WasPressedThisFrame() == false)
             return;
 
         StartCoroutine(Jump(closestEnd));
@@ -341,7 +327,7 @@ public class OverworldPlayerController : ReloadableBehaviour
 
             Prompt.TryShowPromptThisFrame(hit.position, transport.PromptLabel);
 
-            if (_playerControls.OverworldMap.Interact.WasPressedThisFrame())
+            if (Interact.action.WasPressedThisFrame())
             {
                 MeansOfTransports[_activeTransport].OnDeactivate.Invoke();
                 _activeTransport = i;
