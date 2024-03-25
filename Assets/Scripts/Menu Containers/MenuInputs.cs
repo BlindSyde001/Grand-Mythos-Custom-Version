@@ -38,39 +38,45 @@ public class MenuInputs : MonoBehaviour
 
     void Update()
     {
-        if (Open.action.WasPressedThisFrame())
-            StartCoroutine(OpenFirstMenu());
-        if (Close.action.WasPressedThisFrame())
-            StartCoroutine(CloseAllMenus());
+        if (_busySwitching == false) // Prevents creating a long queue of open-close when spamming the button
+        {
+            if (Open.action.WasPressedThisFrame())
+                StartCoroutine(QueueSwitchTo(startMenuActions));
+
+            if (Close.action.WasPressedThisFrame())
+                StartCoroutine(QueueSwitchTo(null));
+        }
     }
 
     // METHODS
-    public void MenuSwitchboard(MenuContainer newMenuToOpen) => StartCoroutine(SwitchTo(newMenuToOpen));
+    public void MenuSwitchboard(MenuContainer newMenuToOpen) => StartCoroutine(QueueSwitchTo(newMenuToOpen));
 
-    public void CloseSwitchBoard(MenuContainer menuToClose) => StartCoroutine(SwitchTo(startMenuActions));
+    public void CloseSwitchBoard(MenuContainer menuToClose) => StartCoroutine(QueueSwitchTo(startMenuActions));
 
     public void PreviousMenu()
     {
         if (CurrentMenuOpen is StartMenuActions)
-            StartCoroutine(CloseAllMenus());
+            StartCoroutine(QueueSwitchTo(null));
         else if (CurrentMenuOpen)
-            StartCoroutine(SwitchTo(startMenuActions));
+            StartCoroutine(QueueSwitchTo(startMenuActions));
     }
 
-    public IEnumerator OpenFirstMenu()
+    /// <summary>
+    /// Will switch to this menu, if another menu is already being switched to, this will wait for that switch to complete before taking over
+    /// </summary>
+    IEnumerator QueueSwitchTo(MenuContainer menu)
     {
-        InputManager.Instance.PushGameState(GameState.Menu, this);
-        for (var e = SwitchTo(startMenuActions); e.MoveNext(); )
-            yield return e.Current;
+        while (_busySwitching)
+            yield return null;
+
+        foreach (object yieldType in TrySwitchTo(menu))
+            yield return yieldType;
     }
 
-    public IEnumerator CloseAllMenus()
-    {
-        for (var e = SwitchTo(null); e.MoveNext(); )
-            yield return e.Current;
-    }
-
-    IEnumerator SwitchTo(MenuContainer to)
+    /// <summary>
+    /// Tries to switch to this menu, if another switch is running, this will exit out early without switching
+    /// </summary>
+    IEnumerable TrySwitchTo(MenuContainer to)
     {
         if (_busySwitching)
             yield break;
@@ -78,42 +84,46 @@ public class MenuInputs : MonoBehaviour
         if (CurrentMenuOpen == to)
             yield break;
 
-        _busySwitching = true;
-        var from = CurrentMenuOpen;
-        CurrentMenuOpen = to;
-
-        if (from is StartMenuActions)
-            _lineupChange = default;
-
-        if (from == null)
+        try
         {
-            InputManager.Instance.PushGameState(GameState.Menu, this);
-            MenuBackground.DOFade(1, Speed);
+            _busySwitching = true;
+            var from = CurrentMenuOpen;
+            CurrentMenuOpen = to;
+
+            if (from is StartMenuActions)
+                _lineupChange = default;
+
+            if (from == null)
+            {
+                InputManager.Instance.PushGameState(GameState.Menu, this);
+                MenuBackground.DOFade(1, Speed);
+            }
+            if (to == null)
+            {
+                InputManager.Instance.PopGameState(this);
+                MenuBackground.DOFade(0, Speed);
+            }
+
+            #warning would be nice to manually parse this enum to accelerate it whenever we have a command for a new switch comming in that way we don't block any new commands
+            if (from != null)
+            {
+                foreach (var yield in from.Close(this))
+                    yield return yield;
+            }
+
+            if (to != null)
+            {
+                foreach (var yield in to.Open(this))
+                    yield return yield;
+
+                if (to.GetComponentInChildren<Button>() is { } button)
+                    button.Select();
+            }
         }
-        if (to == null)
+        finally
         {
-            InputManager.Instance.PopGameState(this);
-            MenuBackground.DOFade(0, Speed);
+            _busySwitching = false;
         }
-
-#warning would be nice to manually parse this enum to accelerate it whenever we have a command for a new switch comming in that way we don't block any new commands
-        if (from != null)
-        {
-            foreach (var yield in from.Close(this))
-                yield return yield;
-        }
-
-        if (to != null)
-        {
-            foreach (var yield in to.Open(this))
-                yield return yield;
-
-            if (to.GetComponentInChildren<Button>() is { } button)
-                button.Select();
-        }
-
-
-        _busySwitching = false;
     }
 
     public void ChangePartyLineup(int selectedToChange)
