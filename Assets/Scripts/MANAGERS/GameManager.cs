@@ -41,6 +41,11 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         }
     }
 
+    void OnDestroy()
+    {
+        SavingSystem.Unregister<GameManager, SaveV1>(this);
+    }
+
     [BoxGroup("PARTY DATA")]
     public List<HeroExtension> PartyLineup;  // Who I've selected to be fighting
     [BoxGroup("PARTY DATA")]
