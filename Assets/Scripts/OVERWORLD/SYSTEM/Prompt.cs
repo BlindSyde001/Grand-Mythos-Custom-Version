@@ -57,6 +57,7 @@ public class Prompt : MonoBehaviour
         if (_promptCache.Count == 0)
         {
             prompt = Instantiate(PromptTemplate, PromptTemplate.transform.parent);
+            prompt.transform.SetSiblingIndex(PromptTemplate.transform.GetSiblingIndex());
         }
         else
         {
