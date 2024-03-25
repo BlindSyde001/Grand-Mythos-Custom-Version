@@ -706,7 +706,12 @@ public class BattleUIOperation : MonoBehaviour
             return false;
 
         var enumerable = BattleUICoroutine().GetEnumerator();
-        _runningUIOperation = (StartCoroutine(enumerable), (IDisposable)enumerable);
+        _runningUIOperation = (null, (IDisposable)enumerable);
+        var coroutine = StartCoroutine(enumerable);
+        // The coroutine may complete in its entirety when calling StartCoroutine when it never yields,
+        // make sure that we keep it as finished if that's the case
+        if (_runningUIOperation != null)
+            _runningUIOperation = (coroutine, (IDisposable)enumerable);
 
         return true;
 
