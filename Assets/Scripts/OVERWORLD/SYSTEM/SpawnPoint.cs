@@ -46,7 +46,7 @@ public class SpawnPoint : MonoBehaviour
 
         LastSpawnUsed = this;
         Instantiate(Reference.PlayerCharacter.Prefab, transform.position, transform.rotation);
-        Debug.Log("Fallback spawn for player");
+        Debug.Log("Player controller hasn't been explicitly spawned by the story or through game load yet - user likely wanted to play from a specific scene instead of through the main menu, spawning a fallback controller for user ...");
     }
 
     [Button("Create Reference")]
