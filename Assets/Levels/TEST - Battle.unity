@@ -890,6 +890,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa24ba1c24a87f344b4dab225a2a25e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TurnBased: 0
   PlayerTeam: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
   BattleResolution: {fileID: 155364970}
   HeroSpawns:
@@ -1628,6 +1629,7 @@ GameObject:
   - component: {fileID: 297536092}
   - component: {fileID: 297536091}
   - component: {fileID: 297536090}
+  - component: {fileID: 297536094}
   m_Layer: 5
   m_Name: Battle UI
   m_TagString: Untagged
@@ -1720,6 +1722,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &297536094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297536089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afca889763694dd5ad12243bd0f9604b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &308643592
 GameObject:
   m_ObjectHideFlags: 0
@@ -3914,7 +3928,7 @@ GameObject:
   - component: {fileID: 755333409}
   - component: {fileID: 755333408}
   m_Layer: 5
-  m_Name: Discard Button
+  m_Name: Cancel Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5198,9 +5212,9 @@ GameObject:
   m_Component:
   - component: {fileID: 954836200}
   - component: {fileID: 954836203}
-  - component: {fileID: 954836202}
-  - component: {fileID: 954836201}
   - component: {fileID: 954836204}
+  - component: {fileID: 954836201}
+  - component: {fileID: 954836202}
   m_Layer: 5
   m_Name: Attack Button
   m_TagString: Untagged
@@ -10187,6 +10201,7 @@ GameObject:
   - component: {fileID: 2007485613}
   - component: {fileID: 2007485612}
   - component: {fileID: 2007485611}
+  - component: {fileID: 2007485614}
   m_Layer: 5
   m_Name: Items Button
   m_TagString: Untagged
@@ -10296,6 +10311,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2007485609}
   m_CullTransparentMesh: 1
+--- !u!114 &2007485614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007485609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afca889763694dd5ad12243bd0f9604b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2046222801
 GameObject:
   m_ObjectHideFlags: 0
@@ -10532,7 +10559,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2093379010}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.09127542, y: -0.14049803, z: 0.013009013, w: 0.98577887}
+  m_LocalRotation: {x: 0.09127542, y: -0.14049797, z: 0.013009016, w: 0.98577887}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
