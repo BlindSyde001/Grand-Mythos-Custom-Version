@@ -14,6 +14,9 @@ public class Skill : IdentifiableScriptableObject, IAction
     const string PreconditionInfoText = "What MUST ABSOLUTELY be true to be able to use this action.\n" +
                                         "This is more for skills that should NEVER be used in a specific context. Eg: skills requiring mana to be used when self doesn't have enough mana";
 
+    [TextArea]
+    public string Description = "";
+
     [Space]
     public uint ATBCost = 1;
 
@@ -51,4 +54,5 @@ public class Skill : IdentifiableScriptableObject, IAction
     public string UIDisplayText => Effects.UIDisplayText();
 
     string IAction.Name => name;
+    string IAction.Description => string.IsNullOrWhiteSpace(Description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : Description;
 }

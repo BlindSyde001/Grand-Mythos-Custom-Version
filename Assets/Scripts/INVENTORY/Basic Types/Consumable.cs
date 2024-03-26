@@ -87,4 +87,5 @@ public class Consumable : BaseItem, IAction
     public string UIDisplayText => Effects.UIDisplayText();
 
     string IAction.Name => name;
+    string IAction.Description => string.IsNullOrWhiteSpace(Description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : Description;
 }

@@ -8,4 +8,5 @@ public interface IAction
     [CanBeNull] Condition Precondition { get; }
     IEnumerable Perform(BattleCharacterController[] targets, EvaluationContext context);
     string Name { get; }
+    string Description { get; }
 }
