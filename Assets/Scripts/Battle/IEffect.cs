@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 [InlineProperty]
 public interface IEffect
 {
-    IEnumerable Apply(BattleCharacterController[] targets, EvaluationContext context);
+    void Apply(BattleCharacterController[] targets, EvaluationContext context);
     /// <summary> Describes the effect in a human-readable format </summary>
     string UIDisplayText { get; }
 }

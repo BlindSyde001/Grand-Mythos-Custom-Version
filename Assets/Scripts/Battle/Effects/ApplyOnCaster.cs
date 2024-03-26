@@ -13,14 +13,11 @@ namespace Effects
         [SerializeReference]
         public IEffect[] Effects = Array.Empty<IEffect>();
 
-        public IEnumerable Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
             var casterTarget = new BattleCharacterController[]{ context.Controller };
             foreach (var effect in Effects)
-            {
-                foreach (var yield in effect.Apply(casterTarget, context))
-                    yield return yield;
-            }
+                effect.Apply(casterTarget, context);
         }
 
         public string UIDisplayText => $"Caster: {Effects.UIDisplayText()}";

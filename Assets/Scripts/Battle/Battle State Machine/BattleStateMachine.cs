@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using Cinemachine;
+using Conditions;
 using Sirenix.OdinInspector;
+using TMPro;
 using Random = UnityEngine.Random;
 
 public class BattleStateMachine : MonoBehaviour
@@ -23,8 +25,10 @@ public class BattleStateMachine : MonoBehaviour
     public BattleResolution BattleResolution;
 
     // VARIABLES
-    public List<Transform> HeroSpawns;    // Where do they initially spawn?
+    public List<Transform> HeroSpawns;
     public List<Transform> EnemySpawns;
+
+    public TMP_Text DebugNotificationText;
 
     [ReadOnly] public List<BattleCharacterController> PartyLineup = new();
     [ReadOnly] public List<BattleCharacterController> Units = new();
@@ -207,7 +211,8 @@ public class BattleStateMachine : MonoBehaviour
             Tactics chosenTactic;
             TargetCollection selection = default;
             using var __ = Units.TemporaryCopy(out var unitsCopy);
-            if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(unitsCopy), unit.Context, out selection, true))
+            var allUnits = new TargetCollection(unitsCopy);
+            if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, allUnits, unit.Context, out selection, true))
             {
                 // We're taking care of this explicit order
             }
@@ -215,7 +220,7 @@ public class BattleStateMachine : MonoBehaviour
             {
                 foreach (var tactic in unit.Profile.Tactics)
                 {
-                    if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(unitsCopy), unit.Context, out selection, true))
+                    if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, allUnits, unit.Context, out selection, true))
                     {
                         chosenTactic = tactic;
                         break;
@@ -237,19 +242,9 @@ public class BattleStateMachine : MonoBehaviour
                     if (i != 0)
                     {
                         // Check that our selection is still valid, may not be after running the previous action
-                        var actionLeft = chosenTactic.Actions.AsSpan()[i..];
-                        if (chosenTactic.Condition.CanExecute(actionLeft, selection, unit.Context, out _, true) == false)
-                        {
-                            // If not, check if we have something else to target
-                            if (chosenTactic.Condition.CanExecute(actionLeft, new TargetCollection(unitsCopy), unit.Context, out var newSelection, true))
-                            {
-                                // Continue with that selection instead
-                                selection = newSelection;
-                                combinedSelection |= newSelection;
-                            }
-                            else
-                                break;
-                        }
+                        if (false == chosenTactic.Condition.CanExecute(chosenTactic.Actions.AsSpan()[i..], allUnits, unit.Context, out selection, true))
+                            break;
+                        combinedSelection |= selection;
                     }
 
                     Processing[unit] = (chosenTactic, i);
@@ -263,8 +258,42 @@ public class BattleStateMachine : MonoBehaviour
                     foreach (var yield in animation.Play(action, unit, selection.ToArray()))
                         yield return yield;
 
-                    foreach (var yield in action.Perform(selection.ToArray(), unit.Context))
-                        yield return yield;
+                    // Check AGAIN that our selection is still valid, may not be after playing the animation
+                    if (chosenTactic.Condition.CanExecute(chosenTactic.Actions.AsSpan()[i..], allUnits, unit.Context, out var newSelection, true))
+                    {
+                        selection = newSelection;
+                        combinedSelection |= selection;
+                    }
+                    else
+                    {
+                        if (PlayerTeam != unit.Profile.Team)
+                            break;
+
+                        // Log to screen/user what went wrong here by re-evaluating with the tracker connected
+                        try
+                        {
+                            var failureTracker = new FailureTracker();
+                            unit.Context.Tracker = failureTracker;
+                            chosenTactic.Condition.CanExecute(chosenTactic.Actions.AsSpan()[i..], allUnits, unit.Context, out _, true);
+                            StartCoroutine(ShowFailureReason(failureTracker.FailureMessage));
+
+                            IEnumerator ShowFailureReason(string text)
+                            {
+                                DebugNotificationText.gameObject.SetActive(true);
+                                DebugNotificationText.text = text;
+                                yield return new WaitForSeconds(10f);
+                                DebugNotificationText.gameObject.SetActive(false);
+                            }
+                        }
+                        finally
+                        {
+                            unit.Context.Tracker = null;
+                        }
+
+                        break;
+                    }
+
+                    action.Perform(selection.ToArray(), unit.Context);
 
                     unit.Profile.ActionsCharged -= action.ActionCost;
 
@@ -400,6 +429,49 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
     #endregion
+
+    class FailureTracker : IConditionEvalTracker
+    {
+        int _stackDepth;
+        int _failureDepth = 0;
+        public string FailureMessage;
+
+        public void PostBeforeConditionEval(Condition condition, TargetCollection targetsBefore, EvaluationContext context)
+        {
+            _stackDepth++;
+        }
+
+        public void PostAfterConditionEval(Condition condition, TargetCollection targetsBefore, TargetCollection targetsAfter, EvaluationContext context)
+        {
+            // Only show the first failure that occured after a success
+            if (targetsAfter.CountSlow() == 0 && targetsBefore.CountSlow() != 0 && _stackDepth > _failureDepth)
+            {
+                _failureDepth = _stackDepth;
+                FailureMessage = $"Condition {condition.UIDisplayText} prevented {context.Profile.Name} to act";
+            }
+
+            _stackDepth--;
+        }
+
+        public void PostTooCostly(CharacterTemplate source, ReadOnlySpan<IAction> actions)
+        {
+            string names = null;
+            foreach (var action in actions)
+                names = names is not null ? $", {action.Name}" : action.Name;
+
+            FailureMessage = $"{source.Name} does not have enough charges to execute '{names}'";
+        }
+
+        public void PostActionPrecondition(CharacterTemplate source, IAction action, TargetCollection allTargets) { }
+
+        public void PostActionTargetFilter(CharacterTemplate source, IAction action, TargetCollection previousTargets) { }
+
+        public void PostTargetFilter(CharacterTemplate source, Condition targetFilter) { }
+
+        public void PostAdditionalCondition(CharacterTemplate source, Condition condition, TargetCollection previousTargets) { }
+
+        public void PostSuccess(CharacterTemplate source, TargetCollection previousTargets) { }
+    }
 }
 
 

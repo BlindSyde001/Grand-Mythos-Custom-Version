@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -25,7 +24,7 @@ namespace Effects
         [HorizontalGroup("Crit")]
         public float CritMultiplier = 2.5f;
 
-        public IEnumerable Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
             foreach (var target in targets)
             {
@@ -44,8 +43,6 @@ namespace Effects
                 target.Profile.SetAttribute(Attribute, newValue);
                 OnApplied?.Invoke(target, Attribute, newValue - value);
             }
-
-            yield break;
         }
 
         public string UIDisplayText => $"{Attribute} += {Amount} {Scaling}";

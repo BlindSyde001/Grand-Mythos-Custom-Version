@@ -6,7 +6,7 @@ public interface IAction
     uint ActionCost { get; }
     [CanBeNull] Condition TargetFilter { get; }
     [CanBeNull] Condition Precondition { get; }
-    IEnumerable Perform(BattleCharacterController[] targets, EvaluationContext context);
+    void Perform(BattleCharacterController[] targets, EvaluationContext context);
     string Name { get; }
     string Description { get; }
 }

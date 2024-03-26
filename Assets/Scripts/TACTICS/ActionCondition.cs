@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using Conditions;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -45,7 +47,10 @@ public class ActionCondition : IdentifiableScriptableObject
         context.ExecutionFlags.Clear();
 
         if (accountForCost && actions.CostTotal() > context.Controller.Profile.ActionsCharged)
+        {
+            context.Tracker?.PostTooCostly(context.Controller.Profile, actions);
             return false;
+        }
 
         foreach (var action in actions)
         {
@@ -60,8 +65,12 @@ public class ActionCondition : IdentifiableScriptableObject
                 {
                     Debug.LogException(e, o);
                 }
+
                 if (allTargetsCopy.IsEmpty)
+                {
+                    context.Tracker?.PostActionPrecondition(context.Controller.Profile, action, allTargets);
                     return false;
+                }
             }
         }
 
@@ -76,14 +85,19 @@ public class ActionCondition : IdentifiableScriptableObject
             {
                 Debug.LogException(e, this);
             }
+
             if (selectedTargets.IsEmpty)
+            {
+                context.Tracker?.PostTargetFilter(context.Controller.Profile, TargetFilter);
                 return false;
+            }
         }
 
         foreach (var action in actions)
         {
             if (action.TargetFilter != null)
             {
+                var previousTargets = selectedTargets;
                 try
                 {
                     action.TargetFilter.Filter(ref selectedTargets, context);
@@ -92,8 +106,12 @@ public class ActionCondition : IdentifiableScriptableObject
                 {
                     Debug.LogException(e, o);
                 }
+
                 if (selectedTargets.IsEmpty)
+                {
+                    context.Tracker?.PostActionTargetFilter(context.Controller.Profile, action, previousTargets);
                     return false;
+                }
             }
         }
 
@@ -109,10 +127,14 @@ public class ActionCondition : IdentifiableScriptableObject
                 Debug.LogException(e, this);
             }
             if (allTargetsCopy.IsEmpty)
+            {
+                context.Tracker?.PostAdditionalCondition(context.Controller.Profile, AdditionalCondition, allTargetsCopy);
                 return false;
+            }
         }
 
         selection = selectedTargets;
+        context.Tracker?.PostSuccess(context.Controller.Profile, selection);
         return true;
     }
 }
@@ -143,6 +165,7 @@ public class EvaluationContext
 
 #warning bind combat seed
     public uint CombatSeed;
+    [CanBeNull, NonSerialized] public IConditionEvalTracker Tracker;
 
     public EvaluationContext(BattleCharacterController controller)
     {

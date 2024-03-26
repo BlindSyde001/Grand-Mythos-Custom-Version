@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using Sirenix.OdinInspector;
 using Object = UnityEngine.Object;
 
@@ -13,11 +12,10 @@ namespace Effects
         [HorizontalGroup, HideLabel]
         public uint Amount = 1;
 
-        public IEnumerable Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
             foreach (var target in targets)
                 target.Profile.Inventory.RemoveItem(Item, Amount);
-            yield break;
         }
 
         public string UIDisplayText => $"Remove {((Object)Item)?.name} x {Amount}";

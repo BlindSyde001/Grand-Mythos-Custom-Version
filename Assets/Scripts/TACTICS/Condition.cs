@@ -6,34 +6,22 @@ using Conditions;
 [InlineProperty]
 public abstract class Condition
 {
-    public static bool Track;
-    public static CharacterTemplate Source;
-    public static Dictionary<Condition, BattleCharacterController[]> DebugData = new();
-    public static uint CurrentRound;
-
     /// <summary> Describes this condition in a human-readable format </summary>
     public abstract string UIDisplayText { get; }
 
     public void Filter(ref TargetCollection targets, EvaluationContext context)
     {
-        Tracking(targets, context);
-        FilterInner(ref targets, context);
-    }
-
-    [System.Diagnostics.Conditional("DEBUG")]
-    public void Tracking(in TargetCollection targets, EvaluationContext context)
-    {
-        if (Track == false)
-            return;
-
-        if (Source != context.Controller.Profile)
-            return;
-
-        if (context.Round != CurrentRound)
-            DebugData.Clear();
-        CurrentRound = context.Round;
-
-        DebugData.Add(this, targets.ToArray());
+        if (context.Tracker == null)
+        {
+            FilterInner(ref targets, context);
+        }
+        else
+        {
+            var targetsPreFiltering = targets;
+            context.Tracker.PostBeforeConditionEval(this, targetsPreFiltering, context);
+            FilterInner(ref targets, context);
+            context.Tracker.PostAfterConditionEval(this, targetsPreFiltering, targets, context);
+        }
     }
 
     /// <summary>
