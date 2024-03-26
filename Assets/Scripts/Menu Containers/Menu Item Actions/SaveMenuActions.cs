@@ -1,14 +1,12 @@
 using System.Collections;
 using UnityEngine;
-using TMPro;
 using DG.Tweening;
-using Sirenix.OdinInspector;
-using UnityEngine.Serialization;
+using UnityEngine.Events;
 
 public class SaveMenuActions : MenuContainer
 {
     public UIElementList<SaveFileButton> SaveFileButtons = new();
-    [FormerlySerializedAs("savedtext"), Required] public TextMeshProUGUI Savedtext;
+    public UnityEvent OnSave;
 
     // METHODS
     public void OpenLoadFiles()
@@ -16,19 +14,14 @@ public class SaveMenuActions : MenuContainer
         SavingSystem.FeedFileUI(SaveFileButtons, file =>
         {
             if (SavingSystem.TrySaveToDisk(file))
-                StartCoroutine(SavedGameGraphic());
+            {
+                OpenLoadFiles();
+                OnSave?.Invoke();
+            }
         });
     }
 
     public void SaveToNewFile() => SavingSystem.TrySaveToDisk();
-
-    IEnumerator SavedGameGraphic()
-    {
-        Savedtext.gameObject.SetActive(true);
-        yield return new WaitForSeconds(1.5f);
-        Savedtext.gameObject.SetActive(false);
-        OpenLoadFiles();
-    }
 
     public override IEnumerable Open(MenuInputs menuInputs)
     {
