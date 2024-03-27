@@ -43,7 +43,12 @@ public class MenuInputs : MonoBehaviour
                 StartCoroutine(QueueSwitchTo(startMenuActions));
 
             if (Close.action.WasPressedThisFrame())
-                StartCoroutine(QueueSwitchTo(null));
+            {
+                if (CurrentMenuOpen != startMenuActions) // Switch towards start menu if in another submenu
+                    StartCoroutine(QueueSwitchTo(startMenuActions));
+                else // Close if we're on the start menu
+                    StartCoroutine(QueueSwitchTo(null));
+            }
         }
     }
 
