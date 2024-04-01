@@ -389,9 +389,7 @@ public class BattleUIOperation : MonoBehaviour
 
     void TacticsPressed()
     {
-        if (BattleManagement.TacticsDisabled.Contains(UnitSelected))
-            BattleManagement.TacticsDisabled.Remove(UnitSelected);
-        else
+        if (BattleManagement.TacticsDisabled.Remove(UnitSelected) == false)
             BattleManagement.TacticsDisabled.Add(UnitSelected);
         UpdateTacticsButtonColor();
         Attack.Select();

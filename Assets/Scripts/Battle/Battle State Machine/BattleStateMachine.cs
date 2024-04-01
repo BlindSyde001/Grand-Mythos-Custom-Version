@@ -121,11 +121,15 @@ public class BattleStateMachine : MonoBehaviour
 
             foreach (var unit in Units)
             {
-                if (unit.Profile.CurrentHP == 0 || TacticsDisabled.Contains(unit) || _busy.Contains(unit))
+                if (unit.Profile.CurrentHP == 0 || _busy.Contains(unit))
                     continue;
 
+                bool processUnit = false;
+                processUnit |= unit.Profile.ActionsCharged >= unit.Profile.ActionChargeMax && TacticsDisabled.Contains(unit) == false;
+                processUnit |= Orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(Units), unit.Context, out _, accountForCost: true);
+
                 // This unit has its ATB full or the manual order can be executed given the current amount of charge
-                if (unit.Profile.ActionsCharged >= unit.Profile.ActionChargeMax || Orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(Units), unit.Context, out _, accountForCost: true))
+                if (processUnit)
                 {
                     _busy.Add(unit);
                     if (TurnBased)
@@ -215,6 +219,10 @@ public class BattleStateMachine : MonoBehaviour
             if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, allUnits, unit.Context, out selection, true))
             {
                 // We're taking care of this explicit order
+            }
+            else if (TacticsDisabled.Contains(unit))
+            {
+                yield break;
             }
             else
             {
