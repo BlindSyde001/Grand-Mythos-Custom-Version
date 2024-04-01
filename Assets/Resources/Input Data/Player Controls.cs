@@ -246,7 +246,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""29f14351-5c89-4740-9db6-4a7284cea085"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": ""ScaleVector2(x=0.2,y=0.2)"",
+                    ""processors"": ""ScaleVector2(x=200,y=200),TimeDeltaScaler2D"",
                     ""groups"": ""ANY"",
                     ""action"": ""Camera"",
                     ""isComposite"": false,
@@ -262,15 +262,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""CloseMenu"",
                     ""type"": ""Button"",
                     ""id"": ""b8522af9-72c9-4bea-8add-ccec21a6d4dc"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""CloseCurrentMenuCategory"",
-                    ""type"": ""Button"",
-                    ""id"": ""402fb325-9e75-49d2-ac96-cfcbdb832d75"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -387,28 +378,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""ANY"",
                     ""action"": ""CloseMenu"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""b7161edc-68e1-46bf-b810-fb8de460f20e"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""CloseCurrentMenuCategory"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4b0fd52a-7caf-4e6c-9cfc-c1a19a67971c"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""CloseCurrentMenuCategory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1452,7 +1421,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         // Menu Map
         m_MenuMap = asset.FindActionMap("Menu Map", throwIfNotFound: true);
         m_MenuMap_CloseMenu = m_MenuMap.FindAction("CloseMenu", throwIfNotFound: true);
-        m_MenuMap_CloseCurrentMenuCategory = m_MenuMap.FindAction("CloseCurrentMenuCategory", throwIfNotFound: true);
         m_MenuMap_Navigate = m_MenuMap.FindAction("Navigate", throwIfNotFound: true);
         m_MenuMap_Submit = m_MenuMap.FindAction("Submit", throwIfNotFound: true);
         m_MenuMap_Cancel = m_MenuMap.FindAction("Cancel", throwIfNotFound: true);
@@ -1611,7 +1579,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_MenuMap;
     private List<IMenuMapActions> m_MenuMapActionsCallbackInterfaces = new List<IMenuMapActions>();
     private readonly InputAction m_MenuMap_CloseMenu;
-    private readonly InputAction m_MenuMap_CloseCurrentMenuCategory;
     private readonly InputAction m_MenuMap_Navigate;
     private readonly InputAction m_MenuMap_Submit;
     private readonly InputAction m_MenuMap_Cancel;
@@ -1627,7 +1594,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         private @PlayerControls m_Wrapper;
         public MenuMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @CloseMenu => m_Wrapper.m_MenuMap_CloseMenu;
-        public InputAction @CloseCurrentMenuCategory => m_Wrapper.m_MenuMap_CloseCurrentMenuCategory;
         public InputAction @Navigate => m_Wrapper.m_MenuMap_Navigate;
         public InputAction @Submit => m_Wrapper.m_MenuMap_Submit;
         public InputAction @Cancel => m_Wrapper.m_MenuMap_Cancel;
@@ -1650,9 +1616,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @CloseMenu.started += instance.OnCloseMenu;
             @CloseMenu.performed += instance.OnCloseMenu;
             @CloseMenu.canceled += instance.OnCloseMenu;
-            @CloseCurrentMenuCategory.started += instance.OnCloseCurrentMenuCategory;
-            @CloseCurrentMenuCategory.performed += instance.OnCloseCurrentMenuCategory;
-            @CloseCurrentMenuCategory.canceled += instance.OnCloseCurrentMenuCategory;
             @Navigate.started += instance.OnNavigate;
             @Navigate.performed += instance.OnNavigate;
             @Navigate.canceled += instance.OnNavigate;
@@ -1690,9 +1653,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @CloseMenu.started -= instance.OnCloseMenu;
             @CloseMenu.performed -= instance.OnCloseMenu;
             @CloseMenu.canceled -= instance.OnCloseMenu;
-            @CloseCurrentMenuCategory.started -= instance.OnCloseCurrentMenuCategory;
-            @CloseCurrentMenuCategory.performed -= instance.OnCloseCurrentMenuCategory;
-            @CloseCurrentMenuCategory.canceled -= instance.OnCloseCurrentMenuCategory;
             @Navigate.started -= instance.OnNavigate;
             @Navigate.performed -= instance.OnNavigate;
             @Navigate.canceled -= instance.OnNavigate;
@@ -1931,7 +1891,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     public interface IMenuMapActions
     {
         void OnCloseMenu(InputAction.CallbackContext context);
-        void OnCloseCurrentMenuCategory(InputAction.CallbackContext context);
         void OnNavigate(InputAction.CallbackContext context);
         void OnSubmit(InputAction.CallbackContext context);
         void OnCancel(InputAction.CallbackContext context);

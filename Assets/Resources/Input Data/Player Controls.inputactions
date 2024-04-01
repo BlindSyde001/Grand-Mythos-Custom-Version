@@ -224,7 +224,7 @@
                     "id": "29f14351-5c89-4740-9db6-4a7284cea085",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "ScaleVector2(x=0.2,y=0.2)",
+                    "processors": "ScaleVector2(x=200,y=200),TimeDeltaScaler2D",
                     "groups": "ANY",
                     "action": "Camera",
                     "isComposite": false,
@@ -240,15 +240,6 @@
                     "name": "CloseMenu",
                     "type": "Button",
                     "id": "b8522af9-72c9-4bea-8add-ccec21a6d4dc",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "CloseCurrentMenuCategory",
-                    "type": "Button",
-                    "id": "402fb325-9e75-49d2-ac96-cfcbdb832d75",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -365,28 +356,6 @@
                     "processors": "",
                     "groups": "ANY",
                     "action": "CloseMenu",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b7161edc-68e1-46bf-b810-fb8de460f20e",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "ANY",
-                    "action": "CloseCurrentMenuCategory",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4b0fd52a-7caf-4e6c-9cfc-c1a19a67971c",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "ANY",
-                    "action": "CloseCurrentMenuCategory",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
