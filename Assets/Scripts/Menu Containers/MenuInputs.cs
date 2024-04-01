@@ -57,6 +57,13 @@ public class MenuInputs : MonoBehaviour
 
     public void CloseSwitchBoard(MenuContainer menuToClose) => StartCoroutine(QueueSwitchTo(startMenuActions));
 
+    public void TryCloseMenu()
+    {
+        if (_busySwitching)
+            return;
+        StartCoroutine(QueueSwitchTo(null));
+    }
+
     public void PreviousMenu()
     {
         if (CurrentMenuOpen is StartMenuActions)
@@ -116,9 +123,6 @@ public class MenuInputs : MonoBehaviour
             {
                 foreach (var yield in to.Open(this))
                     yield return yield;
-
-                if (to.GetComponentInChildren<Button>() is { } button)
-                    button.Select();
             }
         }
         finally

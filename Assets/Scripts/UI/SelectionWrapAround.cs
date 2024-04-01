@@ -16,7 +16,7 @@ public class SelectionWrapAround : MonoBehaviour
 
         var module = (InputSystemUIInputModule)EventSystem.current.currentInputModule;
         var current = EventSystem.current.currentSelectedGameObject;
-        if (module.move.action.WasPressedThisFrame() && _previous == current && current.GetComponentInParent<SelectionWrapAround>() == this)
+        if (module.move.action.WasPressedThisFrame() && _previous == current && current != null && current.GetComponentInParent<SelectionWrapAround>() == this)
         {
             // When the user pressed a navigation button and navigation wasn't able to find a new selectable in that direction, wrap around the other way;
             // e.g.: if the user pressed the up direction, select the down most item by going through all selectable below us until there isn't any left below

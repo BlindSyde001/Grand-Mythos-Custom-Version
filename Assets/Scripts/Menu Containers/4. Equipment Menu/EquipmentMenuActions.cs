@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using UnityEngine.Serialization;
 
 public class EquipmentMenuActions : MenuContainer
 {
-    [FormerlySerializedAs("equipStatsContainer")] public EquipStatsContainer EquipStatsContainer;
-    [FormerlySerializedAs("equipLoadoutContainers")] public List<EquipLoadoutContainer> EquipLoadoutContainers;
+    public EquipStatsContainer EquipStatsContainer;
+    public List<EquipLoadoutContainer> EquipLoadoutContainers;
 
-    [FormerlySerializedAs("equipNewItemContainers")] public List<EquipNewItemContainer> EquipNewItemContainers;
+    public UIElementList<EquipNewItemContainer> EquipNewItemContainers;
     public GameObject EquipNewItemList;
 
     public UIElementList<Button> HeroSelections;
@@ -23,15 +22,15 @@ public class EquipmentMenuActions : MenuContainer
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
+        SetHeroSelection();
+        SetStats(GameManager.PartyLineup[0]);
+        SetLoadout(GameManager.PartyLineup[0]);
+        UpdateCurrentEquippedGear();
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-580, -320, 0), menuInputs.Speed);
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, -320, 0), menuInputs.Speed);
-        SetStats(GameManager.PartyLineup[0]);
-        SetLoadout(GameManager.PartyLineup[0]);
-        UpdateCurrentEquippedGear();
-        SetHeroSelection();
         yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
@@ -120,55 +119,27 @@ public class EquipmentMenuActions : MenuContainer
             return;
         }
         EquipNewItemList.SetActive(true);
-        foreach(EquipNewItemContainer a in EquipNewItemContainers)
-        {
-            a.EquipName.text = "";
-            a.ThisEquipment = null;
-            a.ThisButton.onClick.RemoveAllListeners();
-            a.ThisButton.onClick.AddListener(() => { EquipNewItem(null, equipSlot); });
-        }
+        EquipNewItemContainers.Clear();
 
-        int i = 0;
+        bool setSelection = false;
         switch (equipSlot)
         {
             case ItemSlot.Weapon:
                 foreach(var (equipment, _) in InventoryManager.Enumerate<Weapon>())
-                {
                     if (equipment.weaponType == _selectedHero.myWeaponType)
-                    {
-                        EquipNewItemContainers[i].ThisButton.interactable = CheckOnEquippedGear(equipment);
-                        EquipNewItemContainers[i].EquipName.text = equipment.name;
-                        EquipNewItemContainers[i].ThisEquipment = equipment;
-                        EquipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(equipment, ItemSlot.Weapon); });
-                        i++;
-                    }
-                }
+                        ButtonSetup(this, equipment, ItemSlot.Weapon, ref setSelection);
                 break;
 
             case ItemSlot.Armor:
                 foreach(var (equipment, _) in InventoryManager.Enumerate<Armour>())
-                {
                     if (equipment.armourType == _selectedHero.myArmourType)
-                    {
-                        EquipNewItemContainers[i].ThisButton.interactable = CheckOnEquippedGear(equipment);
-                        EquipNewItemContainers[i].EquipName.text = equipment.name;
-                        EquipNewItemContainers[i].ThisEquipment = equipment;
-                        EquipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(equipment, ItemSlot.Armor); });
-                        i++;
-                    }
-                }
+                        ButtonSetup(this, equipment, ItemSlot.Armor, ref setSelection);
                 break;
 
             case ItemSlot.AccessoryTwo:
             case ItemSlot.AccessoryOne:
                 foreach(var (equipment, _) in InventoryManager.Enumerate<Accessory>())
-                {
-                    EquipNewItemContainers[i].ThisButton.interactable = CheckOnEquippedGear(equipment);
-                    EquipNewItemContainers[i].EquipName.text = equipment.name;
-                    EquipNewItemContainers[i].ThisEquipment = equipment;
-                    EquipNewItemContainers[i].ThisButton.onClick.AddListener(delegate { EquipNewItem(equipment, equipSlot); });
-                    i++;
-                }
+                    ButtonSetup(this, equipment, equipSlot, ref setSelection);
                 break;
 
             default:
@@ -176,6 +147,21 @@ public class EquipmentMenuActions : MenuContainer
         }
 
         _listToggle = buttonPressed;
+
+        static void ButtonSetup(EquipmentMenuActions @this, Equipment equipment, ItemSlot slot, ref bool setSelection)
+        {
+            @this.EquipNewItemContainers.Allocate(out var container);
+            container.ThisButton.interactable = @this.CheckOnEquippedGear(equipment);
+            container.EquipName.text = equipment.name;
+            container.ThisEquipment = equipment;
+            container.ThisButton.onClick.RemoveAllListeners();
+            container.ThisButton.onClick.AddListener(delegate { @this.EquipNewItem(equipment, slot); });
+            if (setSelection == false && container.ThisButton.interactable)
+            {
+                setSelection = true;
+                container.ThisButton.Select();
+            }
+        }
     }
 
     public void EquipNewItem(Equipment newEquip, ItemSlot slotHint)
@@ -223,6 +209,11 @@ public class EquipmentMenuActions : MenuContainer
         _selectedHero.EquipStats();
         SetStats(_selectedHero);
         SetLoadout(_selectedHero);
+        CloseSwapEquipmentWindow();
+    }
+
+    public void CloseSwapEquipmentWindow()
+    {
         EquipNewItemList.SetActive(false);
     }
 

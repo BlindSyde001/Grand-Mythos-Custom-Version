@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public abstract class MenuContainer : MonoBehaviour
+public abstract class MenuContainer : SelectionTracker
 {
     MenuInputs _menuInputs;
     protected MenuInputs MenuInputs => _menuInputs ??= FindObjectOfType<MenuInputs>();

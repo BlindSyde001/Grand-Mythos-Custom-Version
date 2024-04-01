@@ -114,4 +114,9 @@ public class StartMenuActions : MenuContainer
             DisplayPartyHeroes();
         }
     }
+
+    public void CancelPartyLineupChanges()
+    {
+        _lineupChange = default;
+    }
 }

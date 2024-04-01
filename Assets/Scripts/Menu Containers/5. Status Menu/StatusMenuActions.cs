@@ -18,6 +18,11 @@ public class StatusMenuActions : MenuContainer
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
+        SetExperience(GameManager.PartyLineup[0]);
+        SetAttributes(GameManager.PartyLineup[0]);
+        SetElemental(GameManager.PartyLineup[0]);
+        SetAffliction(GameManager.PartyLineup[0]);
+        SetHeroSelection();
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
@@ -25,11 +30,6 @@ public class StatusMenuActions : MenuContainer
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(20, -300, 0), menuInputs.Speed);
         gameObject.transform.GetChild(4).DOLocalMove(new Vector3(640, -300, 0), menuInputs.Speed);
         gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-600, -45, 0), menuInputs.Speed);
-        SetExperience(GameManager.PartyLineup[0]);
-        SetAttributes(GameManager.PartyLineup[0]);
-        SetElemental(GameManager.PartyLineup[0]);
-        SetAffliction(GameManager.PartyLineup[0]);
-        SetHeroSelection();
         yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)

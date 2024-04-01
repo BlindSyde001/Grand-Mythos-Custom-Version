@@ -22,12 +22,12 @@ public class TacticsMenuActions : MenuContainer
     //METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
+        SetHeroSelection();
+        SetTacticsList(GameManager.PartyLineup[0]);
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(230, -100, 0), menuInputs.Speed);
-        SetHeroSelection();
-        SetTacticsList(GameManager.PartyLineup[0]);
         yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
@@ -43,6 +43,8 @@ public class TacticsMenuActions : MenuContainer
 
     IEnumerator ComponentListOpen()
     {
+        gameObject.transform.GetChild(3).gameObject.SetActive(true);
+        gameObject.transform.GetChild(4).gameObject.SetActive(true);
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-740, 328, 0), MenuInputs.Speed);
         gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-710, -100, 0), MenuInputs.Speed);
         yield return new WaitForSeconds(MenuInputs.Speed);
@@ -53,6 +55,8 @@ public class TacticsMenuActions : MenuContainer
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), MenuInputs.Speed);
         gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), MenuInputs.Speed);
         yield return new WaitForSeconds(MenuInputs.Speed);
+        gameObject.transform.GetChild(3).gameObject.SetActive(false);
+        gameObject.transform.GetChild(4).gameObject.SetActive(false);
     }
 
 
@@ -69,7 +73,8 @@ public class TacticsMenuActions : MenuContainer
     }
     public void SetTacticsList(HeroExtension hero)
     {
-        StartCoroutine(ComponentListClose());
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(ComponentListClose());
         ResetActionSegments();
         // Configure all the TacticsList Buttons: On/Off, Select Cnd, Select Action
         for (int i = 0; i < TacticsModules.Count; i++)
@@ -303,6 +308,7 @@ public class TacticsMenuActions : MenuContainer
         foreach (var component in NewComponentList)
             component.cmpButton.onClick.RemoveAllListeners();
 
+        bool setSelection = false;
         for (int i = 0; i < NewComponentList.Count; i++) // iterate through the Buttons
         {
             NewComponentList[i].cmpName.text = "";
@@ -324,6 +330,11 @@ public class TacticsMenuActions : MenuContainer
                 currentContainer.condition.text = newCondition.name;
                 StartCoroutine(ComponentListClose());
             });
+            if (setSelection == false && NewComponentList[i].cmpButton.interactable)
+            {
+                setSelection = true;
+                NewComponentList[i].cmpButton.Select();
+            }
         }
     }
 
@@ -339,6 +350,7 @@ public class TacticsMenuActions : MenuContainer
         foreach (var component in NewComponentList)
             component.cmpButton.onClick.RemoveAllListeners();
 
+        bool setSelection = false;
         for (int i = 0; i < NewComponentList.Count; i++) // iterate through the Buttons
         {
             NewComponentList[i].cmpName.text = "";
@@ -354,6 +366,11 @@ public class TacticsMenuActions : MenuContainer
                 int j = i;
                 NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
                 NewComponentList[i].cmpButton.onClick.AddListener(() => SelectNewListAction(selectedHero, NewComponentList[j].selectedAction, OnNewAction));
+                if (setSelection == false && NewComponentList[i].cmpButton.interactable)
+                {
+                    setSelection = true;
+                    NewComponentList[i].cmpButton.Select();
+                }
             }
             else
             {
@@ -368,6 +385,11 @@ public class TacticsMenuActions : MenuContainer
                     int j = i;
                     NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
                     NewComponentList[i].cmpButton.onClick.AddListener(() => SelectNewListAction(selectedHero, NewComponentList[j].selectedAction, OnNewAction));
+                    if (setSelection == false && NewComponentList[i].cmpButton.interactable)
+                    {
+                        setSelection = true;
+                        NewComponentList[i].cmpButton.Select();
+                    }
                 }
             }
         }
@@ -413,5 +435,11 @@ public class TacticsMenuActions : MenuContainer
         SetTacticsList(selectedHero);
         StartCoroutine(ComponentListClose());
     }
+
+    public void CloseDropdown()
+    {
+        StartCoroutine(ComponentListClose());
+    }
+
     #endregion
 }

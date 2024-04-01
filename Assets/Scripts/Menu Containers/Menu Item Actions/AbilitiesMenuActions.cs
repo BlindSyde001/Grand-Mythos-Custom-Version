@@ -13,12 +13,12 @@ public class AbilitiesMenuActions : MenuContainer
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
+        SetHeroSelection();
+        SetAbilities(GameManager.PartyLineup[0]);
+
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
-
-        SetHeroSelection();
-        SetAbilities(GameManager.PartyLineup[0]);
 
         foreach (var image in gameObject.transform.GetComponentsInChildren<Graphic>())
         {
