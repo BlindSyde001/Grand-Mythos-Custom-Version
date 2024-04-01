@@ -2791,9 +2791,10 @@ GameObject:
   m_Component:
   - component: {fileID: 7249964032255706043}
   - component: {fileID: 7660691260966692866}
+  - component: {fileID: 7147895511678077803}
   - component: {fileID: 1375042724709520336}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Save Notification
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2828,6 +2829,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 819410016129889760}
   m_CullTransparentMesh: 1
+--- !u!114 &7147895511678077803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819410016129889760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7532c762a63247358de8250e65832780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1375042724709520336
 MonoBehaviour:
   m_ObjectHideFlags: 0

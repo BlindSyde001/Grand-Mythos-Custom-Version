@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MessageModal : MonoBehaviour
+public class MessageModal : ConstrainSelection
 {
     public TMPro.TMP_Text Header;
     public TMPro.TMP_InputField Message;

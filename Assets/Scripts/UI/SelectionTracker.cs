@@ -44,9 +44,7 @@ public class SelectionTracker : MonoBehaviour
         {
             if (_selectionHistory[i] != null
                 && _selectionHistory[i].GetComponent<Selectable>() is {} selectable
-                && selectable != null
-                && selectable.enabled
-                && selectable.interactable)
+                && IsValidForSelection(selectable))
             {
                 selectable.Select();
                 return;
@@ -55,11 +53,18 @@ public class SelectionTracker : MonoBehaviour
         }
 
         {
-            if (DefaultSelection != null && DefaultSelection.GetComponentInChildren<Selectable>() is {} selectable && selectable)
+            if (DefaultSelection != null && DefaultSelection.GetComponentInChildren<Selectable>() is {} selectable && IsValidForSelection(selectable))
                 selectable.Select();
             else
                 Debug.LogWarning($"Could not set {nameof(SelectLastActiveSelectable)} - no history or active selectable found under {DefaultSelection}");
         }
+    }
+
+    static bool IsValidForSelection(Selectable selectable)
+    {
+        if (selectable == null || selectable.enabled == false || selectable.interactable == false)
+            return false;
+        return selectable.gameObject.activeInHierarchy;
     }
 
     public void SelectPreviousActiveSelectable()

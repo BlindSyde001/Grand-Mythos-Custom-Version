@@ -13,11 +13,11 @@ public class OnCancel : MonoBehaviour
     public UnityEvent? Action;
 
     static int _lastProcess;
-    static readonly List<OnCancel> Cancels = new();
+    static readonly List<OnCancel> _instances = new();
 
     void Update()
     {
-        if (Cancels[^1] == this)
+        if (_instances[^1] == this)
             HandleCancel();
     }
 
@@ -37,25 +37,25 @@ public class OnCancel : MonoBehaviour
         if (cancelAsParent != null)
             cancelAsParent.Action?.Invoke();
         else
-            Cancels[^1].Action?.Invoke();
+            _instances[^1].Action?.Invoke();
         _lastProcess = Time.frameCount;
     }
 
     void OnEnable()
     {
-        if (Cancels.Contains(this) == false) // This may happen on domain reload ... I think ? I haven't confirmed
-            Cancels.Add(this);
+        if (_instances.Contains(this) == false) // This may happen on domain reload ... I think ? I haven't confirmed
+            _instances.Add(this);
     }
 
-    void OnDisable() => Cancels.Remove(this);
+    void OnDisable() => _instances.Remove(this);
 
     static OnCancel()
     {
-        DomainReloadHelper.BeforeReload += helper => helper.Cancels = Cancels;
+        DomainReloadHelper.BeforeReload += helper => helper.Cancels = _instances;
         DomainReloadHelper.AfterReload += helper =>
         {
-            Cancels.Clear();
-            Cancels.AddRange(helper.Cancels);
+            _instances.Clear();
+            _instances.AddRange(helper.Cancels);
         };
     }
 }

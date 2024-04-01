@@ -340,7 +340,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 27.6
+  m_fontSize: 14.7
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -463,10 +463,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4852812487101795941}
+  - component: {fileID: 6814823328926704865}
   - component: {fileID: 1867188415448341371}
   - component: {fileID: 1288873790389661917}
   - component: {fileID: 7057041657225077946}
-  - component: {fileID: 6814823328926704865}
   m_Layer: 5
   m_Name: MessageModal
   m_TagString: Untagged
@@ -498,6 +498,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &6814823328926704865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097683935992362881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74ed792118114f21b0d14dcb657826e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Header: {fileID: 3047186462966153072}
+  Message: {fileID: 5149037061671941338}
+  Button: {fileID: 7379941529016247693}
 --- !u!223 &1867188415448341371
 Canvas:
   m_ObjectHideFlags: 0
@@ -561,21 +576,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 127
---- !u!114 &6814823328926704865
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2097683935992362881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74ed792118114f21b0d14dcb657826e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Header: {fileID: 3047186462966153072}
-  Message: {fileID: 5149037061671941338}
-  Button: {fileID: 7379941529016247693}
 --- !u!1 &2157685485348158861
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,7 +1052,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.55
+  m_fontSize: 9.45
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
