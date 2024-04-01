@@ -2334,11 +2334,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5499571375476056520}
+  - component: {fileID: 8219100651902672282}
   - component: {fileID: 5499571376176062029}
   - component: {fileID: 5499571375476056525}
   - component: {fileID: 5499571375476056527}
   - component: {fileID: 2416261146524199157}
-  - component: {fileID: 8219100651902672282}
   m_Layer: 0
   m_Name: Battle - Enemy Model
   m_TagString: Untagged
@@ -2369,6 +2369,21 @@ Transform:
   - {fileID: 3549187995347014319}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8219100651902672282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5499571375476555240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67d8996bf8bc39d48ac5f980389ebccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Profile: {fileID: 0}
+  Animator: {fileID: 5499571376176062029}
+  MovementController: {fileID: 2416261146524199157}
 --- !u!95 &5499571376176062029
 Animator:
   serializedVersion: 5
@@ -2453,20 +2468,6 @@ MonoBehaviour:
   agent: {fileID: 0}
   myTarget: {fileID: 0}
   isRoaming: 0
---- !u!114 &8219100651902672282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5499571375476555240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67d8996bf8bc39d48ac5f980389ebccb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 5499571376176062029}
-  MovementController: {fileID: 2416261146524199157}
 --- !u!1 &5499571375476555242
 GameObject:
   m_ObjectHideFlags: 0
