@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class BattleResolution : MonoBehaviour
@@ -31,6 +32,9 @@ public class BattleResolution : MonoBehaviour
 
     public GameObject LosePanel;
 
+    public UnityEvent OnWin;
+    public UnityEvent OnLose;
+
     // UPDATES
     void Start()
     {
@@ -54,6 +58,10 @@ public class BattleResolution : MonoBehaviour
     // METHODS
     public IEnumerable ResolveBattle(bool victory, BattleStateMachine battleStateMachine)
     {
+        if (victory)
+            OnWin?.Invoke();
+        else
+            OnLose?.Invoke();
         var enumerator = VideoAnimator.PlayVideoClip(VideoAnimator.videoClips[victory ? 0 : 1]);
         while (enumerator.MoveNext())
             yield return enumerator.Current;

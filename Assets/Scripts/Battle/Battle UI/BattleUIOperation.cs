@@ -21,13 +21,13 @@ public class BattleUIOperation : MonoBehaviour
     public HeroPrefabUIData SelectedUI;
 
     [Header("UI Info")]
-    public GameObject enemyUIPrefab;
+    public GameObject EnemyUIPrefab;
 
-    public List<HeroExtension> heroData;
-    public List<HeroPrefabUIData> heroUIData;
+    public List<HeroExtension> HeroData;
+    public List<HeroPrefabUIData> HeroUIData;
 
-    public List<CharacterTemplate> enemyData;
-    public List<EnemyPrefabUIData> enemyUIData;
+    public List<CharacterTemplate> EnemyData;
+    public List<EnemyPrefabUIData> EnemyUIData;
 
     [Header("Player Main Buttons")]
     [Required] public Button Attack;
@@ -188,15 +188,15 @@ public class BattleUIOperation : MonoBehaviour
 
             if (unit.Profile is HeroExtension hero)
             {
-                heroData.Add(hero);
+                HeroData.Add(hero);
             }
             else
             {
-                enemyData.Add(unit.Profile);
+                EnemyData.Add(unit.Profile);
 
                 var renderer = unit.transform.GetComponentInChildren<Renderer>();
                 var rendererTransform = renderer.transform;
-                var enemyUI = Instantiate(enemyUIPrefab);
+                var enemyUI = Instantiate(EnemyUIPrefab);
                 var rectTransform = enemyUI.GetComponent<RectTransform>();
                 enemyUI.transform.position = new Vector3(rendererTransform.position.x, renderer.bounds.max.y + rectTransform.sizeDelta.y, rendererTransform.position.z);
                 rectTransform.SetParent(rendererTransform, true);
@@ -206,7 +206,7 @@ public class BattleUIOperation : MonoBehaviour
                 data.identity.text = unit.Profile.Name;
                 data.healthBar.fillAmount = unit.Profile.EffectiveStats.HP;
 
-                enemyUIData.Add(data);
+                EnemyUIData.Add(data);
             }
         }
 
@@ -215,22 +215,22 @@ public class BattleUIOperation : MonoBehaviour
         SelectedUI.healthBar.fillAmount = (float)UnitSelected.Profile.CurrentHP / UnitSelected.Profile.EffectiveStats.HP;
         SelectedUI.health.text = UnitSelected.Profile.CurrentHP.ToString();
         int j = 0;
-        for (int i = 0; i < heroData.Count; i++)
+        for (int i = 0; i < HeroData.Count; i++)
         {
-            if (heroData[i] != UnitSelected.Profile)
+            if (HeroData[i] != UnitSelected.Profile)
             {
-                heroUIData[j].gameObject.SetActive(true);
-                heroUIData[j].characterIcon.sprite = heroData[i].Portrait;
-                heroUIData[j].atbBar.fillAmount = heroData[i].ActionsCharged / heroData[i].ActionChargeMax;
-                heroUIData[j].healthBar.fillAmount = (float)heroData[i].CurrentHP / heroData[i].EffectiveStats.HP;
-                heroUIData[j].health.text = heroData[i].CurrentHP.ToString();
+                HeroUIData[j].gameObject.SetActive(true);
+                HeroUIData[j].characterIcon.sprite = HeroData[i].Portrait;
+                HeroUIData[j].atbBar.fillAmount = HeroData[i].ActionsCharged / HeroData[i].ActionChargeMax;
+                HeroUIData[j].healthBar.fillAmount = (float)HeroData[i].CurrentHP / HeroData[i].EffectiveStats.HP;
+                HeroUIData[j].health.text = HeroData[i].CurrentHP.ToString();
                 j++;
             }
         }
-        for (int i = 0; i < enemyData.Count; i++)
+        for (int i = 0; i < EnemyData.Count; i++)
         {
-            enemyUIData[i].healthBar.fillAmount = (float)enemyData[i].CurrentHP / enemyData[i].EffectiveStats.HP;
-            enemyUIData[i].health.text = enemyData[i].CurrentHP.ToString();
+            EnemyUIData[i].healthBar.fillAmount = (float)EnemyData[i].CurrentHP / EnemyData[i].EffectiveStats.HP;
+            EnemyUIData[i].health.text = EnemyData[i].CurrentHP.ToString();
         }
     }
 

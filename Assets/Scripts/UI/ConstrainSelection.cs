@@ -19,7 +19,10 @@ public class ConstrainSelection : MonoBehaviour
         var selection = EventSystem.current.currentSelectedGameObject;
         if (selection == null || selection.GetComponentInParent<ConstrainSelection>() != active)
         {
-            active.GetComponentInChildren<Selectable>()?.Select();
+            if (active.GetComponentInChildren<Selectable>() is {} selectable)
+                selectable.Select();
+            else
+                EventSystem.current.SetSelectedGameObject(null);
         }
     }
 

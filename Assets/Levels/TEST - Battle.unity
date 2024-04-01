@@ -947,6 +947,36 @@ MonoBehaviour:
   - {fileID: 1652238810}
   VideoAnimator: {fileID: 1460729177}
   LosePanel: {fileID: 1178595357}
+  OnWin:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1852918376}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnLose:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1852918376}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &155364975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -962,14 +992,14 @@ MonoBehaviour:
   BattleManagement: {fileID: 155364969}
   UnitSelected: {fileID: 0}
   SelectedUI: {fileID: 1664468196}
-  enemyUIPrefab: {fileID: 440796494752359125, guid: fafde2508c23059448642c4e6aacfb2c, type: 3}
-  heroData: []
-  heroUIData:
+  EnemyUIPrefab: {fileID: 440796494752359125, guid: fafde2508c23059448642c4e6aacfb2c, type: 3}
+  HeroData: []
+  HeroUIData:
   - {fileID: 841263021}
   - {fileID: 1092096631}
   - {fileID: 1662098433}
-  enemyData: []
-  enemyUIData: []
+  EnemyData: []
+  EnemyUIData: []
   Attack: {fileID: 954836201}
   Skills: {fileID: 843113171}
   Items: {fileID: 2007485611}
@@ -2826,7 +2856,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 500344383}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.10914384, y: -0.14023885, z: 0.01555571, w: 0.98396075}
+  m_LocalRotation: {x: 0.10914385, y: -0.14023882, z: 0.015555713, w: 0.98396075}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4774,7 +4804,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 868068727}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.09881451, y: 0.44073957, z: -0.048888143, w: 0.8908391}
+  m_LocalRotation: {x: 0.09881453, y: 0.44073963, z: -0.048888158, w: 0.8908391}
   m_LocalPosition: {x: -15.103438, y: 5, z: -11.527624}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5052,6 +5082,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 934923512}
+  - component: {fileID: 934923514}
   - component: {fileID: 934923513}
   m_Layer: 5
   m_Name: Lose Menu
@@ -5091,6 +5122,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e161bc28a0e2e594185bf12582200142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &934923514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 934923511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7532c762a63247358de8250e65832780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &940718444
@@ -7395,6 +7438,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1460729175}
+  - component: {fileID: 1460729178}
   - component: {fileID: 1460729176}
   - component: {fileID: 1460729177}
   m_Layer: 5
@@ -7478,6 +7522,18 @@ MonoBehaviour:
   videoClips:
   - {fileID: 32900000, guid: c3392082eaf9afa4b879e588ff34f7b8, type: 3}
   - {fileID: 32900000, guid: 5900278462d49ce4f952526996413a38, type: 3}
+--- !u!114 &1460729178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460729174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7532c762a63247358de8250e65832780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1462755777
 GameObject:
   m_ObjectHideFlags: 0
@@ -9793,8 +9849,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1852918377}
+  - component: {fileID: 1852918378}
   m_Layer: 5
-  m_Name: Player Information
+  m_Name: Main
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9824,6 +9881,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1852918378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1852918376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7532c762a63247358de8250e65832780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1878706366
 GameObject:
   m_ObjectHideFlags: 0
@@ -10705,7 +10774,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2093379010}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.09127542, y: -0.14049803, z: 0.013009013, w: 0.98577887}
+  m_LocalRotation: {x: 0.09127542, y: -0.14049797, z: 0.013009016, w: 0.98577887}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
