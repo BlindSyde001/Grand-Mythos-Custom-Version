@@ -51,15 +51,21 @@ namespace Editor
 
                 _utility.Clear();
                 go.GetComponents(_utility);
-                Component mainComponent = _utility.Count > 1 ? _utility[1] : null; // First component is the transform, ignore it
-                if (mainComponent is CanvasRenderer && _utility.Count > 2)
+                Component mainComponent;
+                if (_utility.Count == 1 && _utility[0] is RectTransform)
+                    mainComponent = _utility[0];
+                else if (_utility.Count <= 1)
+                    return false; // First component is the transform, ignore it
+                else if (_utility[1] is CanvasRenderer && _utility.Count > 2)
                     mainComponent = _utility[2];
+                else
+                    mainComponent = _utility[1];
 
                 if (mainComponent == null)
                     return false; // Null can also occur with missing prefabs in a scene
 
                 t = EditorGUIUtility.GetIconForObject(mainComponent);
-                t ??= EditorGUIUtility.ObjectContent(null, mainComponent.GetType())?.image;
+                t ??= EditorGUIUtility.ObjectContent(mainComponent, mainComponent.GetType())?.image;
                 return t != null;
             }
             finally
