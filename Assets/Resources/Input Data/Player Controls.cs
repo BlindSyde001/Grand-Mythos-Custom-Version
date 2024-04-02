@@ -62,6 +62,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CameraSwitch"",
+                    ""type"": ""Button"",
+                    ""id"": ""b54fdbf8-1aa3-4451-a3aa-9529d732a7b8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -249,6 +258,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": ""ScaleVector2(x=200,y=200),TimeDeltaScaler2D"",
                     ""groups"": ""ANY"",
                     ""action"": ""Camera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""16f1a993-7824-4ccf-913f-c183fcda3d34"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""CameraSwitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ecc07678-7741-4316-ab37-aad8852f651a"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""CameraSwitch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1418,6 +1449,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_OverworldMap_Camera = m_OverworldMap.FindAction("Camera", throwIfNotFound: true);
         m_OverworldMap_Interact = m_OverworldMap.FindAction("Interact", throwIfNotFound: true);
         m_OverworldMap_OpenMenu = m_OverworldMap.FindAction("OpenMenu", throwIfNotFound: true);
+        m_OverworldMap_CameraSwitch = m_OverworldMap.FindAction("CameraSwitch", throwIfNotFound: true);
         // Menu Map
         m_MenuMap = asset.FindActionMap("Menu Map", throwIfNotFound: true);
         m_MenuMap_CloseMenu = m_MenuMap.FindAction("CloseMenu", throwIfNotFound: true);
@@ -1512,6 +1544,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_OverworldMap_Camera;
     private readonly InputAction m_OverworldMap_Interact;
     private readonly InputAction m_OverworldMap_OpenMenu;
+    private readonly InputAction m_OverworldMap_CameraSwitch;
     public struct OverworldMapActions
     {
         private @PlayerControls m_Wrapper;
@@ -1520,6 +1553,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Camera => m_Wrapper.m_OverworldMap_Camera;
         public InputAction @Interact => m_Wrapper.m_OverworldMap_Interact;
         public InputAction @OpenMenu => m_Wrapper.m_OverworldMap_OpenMenu;
+        public InputAction @CameraSwitch => m_Wrapper.m_OverworldMap_CameraSwitch;
         public InputActionMap Get() { return m_Wrapper.m_OverworldMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1541,6 +1575,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @OpenMenu.started += instance.OnOpenMenu;
             @OpenMenu.performed += instance.OnOpenMenu;
             @OpenMenu.canceled += instance.OnOpenMenu;
+            @CameraSwitch.started += instance.OnCameraSwitch;
+            @CameraSwitch.performed += instance.OnCameraSwitch;
+            @CameraSwitch.canceled += instance.OnCameraSwitch;
         }
 
         private void UnregisterCallbacks(IOverworldMapActions instance)
@@ -1557,6 +1594,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @OpenMenu.started -= instance.OnOpenMenu;
             @OpenMenu.performed -= instance.OnOpenMenu;
             @OpenMenu.canceled -= instance.OnOpenMenu;
+            @CameraSwitch.started -= instance.OnCameraSwitch;
+            @CameraSwitch.performed -= instance.OnCameraSwitch;
+            @CameraSwitch.canceled -= instance.OnCameraSwitch;
         }
 
         public void RemoveCallbacks(IOverworldMapActions instance)
@@ -1887,6 +1927,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnCamera(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnOpenMenu(InputAction.CallbackContext context);
+        void OnCameraSwitch(InputAction.CallbackContext context);
     }
     public interface IMenuMapActions
     {

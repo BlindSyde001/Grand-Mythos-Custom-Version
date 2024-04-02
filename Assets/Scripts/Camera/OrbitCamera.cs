@@ -30,7 +30,6 @@ public class OrbitCamera : ICameraControl
             distance = hitInfo.distance;
 
         camera.transform.SetPositionAndRotation(center + direction * distance, rotation);
-        //focus.transform.rotation = rotation;
     }
 
     public void OnValidate(CameraFocus focus)

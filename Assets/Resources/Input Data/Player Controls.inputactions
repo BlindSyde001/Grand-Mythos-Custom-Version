@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "CameraSwitch",
+                    "type": "Button",
+                    "id": "b54fdbf8-1aa3-4451-a3aa-9529d732a7b8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -227,6 +236,28 @@
                     "processors": "ScaleVector2(x=200,y=200),TimeDeltaScaler2D",
                     "groups": "ANY",
                     "action": "Camera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "16f1a993-7824-4ccf-913f-c183fcda3d34",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "ANY",
+                    "action": "CameraSwitch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ecc07678-7741-4316-ab37-aad8852f651a",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "ANY",
+                    "action": "CameraSwitch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
