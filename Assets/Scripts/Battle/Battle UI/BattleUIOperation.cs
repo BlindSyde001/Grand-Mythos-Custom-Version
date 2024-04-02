@@ -46,7 +46,9 @@ public class BattleUIOperation : MonoBehaviour
     [ValidateInput(nameof(HasButton), "Must have a button")]
     public RectTransform SkillTemplate;
     [ValidateInput(nameof(HasToggle), "Must have a toggle")]
-    public RectTransform TargetTemplate;
+    public RectTransform HostileTargetTemplate;
+    [ValidateInput(nameof(HasToggle), "Must have a toggle")]
+    public RectTransform AlliesTargetTemplate;
 
     [Header("Previews")]
     [Required] public UIActionPreview ActionPreviewTemplate;
@@ -420,7 +422,7 @@ public class BattleUIOperation : MonoBehaviour
 
         var objects = new List<RectTransform>();
         UnityAction listener = () => submitted = true;
-        bool successfull = false;
+        bool successful = false;
         try
         {
             AcceptSelection.onClick.AddListener(listener);
@@ -436,9 +438,9 @@ public class BattleUIOperation : MonoBehaviour
                     selection.Add(unit);
 
                 var toggles = new List<Toggle>();
-                foreach ((string name, List<BattleCharacterController> units) in groups)
+                foreach ((string name, List<BattleCharacterController> units, bool dumpInHostileList) in groups)
                 {
-                    var toggle = CreateToggle(name, toggles.Count == 0, ref first);
+                    var toggle = CreateToggle(name, toggles.Count == 0, dumpInHostileList, ref first);
                     toggle.onValueChanged.AddListener(ToggleGroup);
                     toggles.Add(toggle);
 
@@ -466,7 +468,7 @@ public class BattleUIOperation : MonoBehaviour
                 var toggles = new Dictionary<BattleCharacterController, Toggle>();
                 foreach (var unitForThisToggle in BattleManagement.Units.OrderByDescending(x => x.IsHostileTo(UnitSelected)))
                 {
-                    var toggle = CreateToggle(unitForThisToggle.Profile.Name, selection.Contains(unitForThisToggle), ref first);
+                    var toggle = CreateToggle(unitForThisToggle.Profile.Name, selection.Contains(unitForThisToggle), unitForThisToggle.IsHostileTo(UnitSelected), ref first);
                     toggle.onValueChanged.AddListener(UpdateSelection);
                     toggles.Add(unitForThisToggle, toggle);
 
@@ -520,11 +522,11 @@ public class BattleUIOperation : MonoBehaviour
                 yield return null;
             }
 
-            successfull = true;
+            successful = true;
         }
         finally
         {
-            if (successfull == false)
+            if (successful == false)
                 _order.Condition = null;
 
             foreach (var obj in objects)
@@ -534,9 +536,10 @@ public class BattleUIOperation : MonoBehaviour
             AcceptSelection.gameObject.SetActive(false);
         }
 
-        Toggle CreateToggle(string label, bool defaultState, ref bool first)
+        Toggle CreateToggle(string label, bool defaultState, bool hostile, ref bool first)
         {
-            var uiElem = Instantiate(TargetTemplate, SelectionContainer, false);
+            var template = hostile ? HostileTargetTemplate : AlliesTargetTemplate;
+            var uiElem = Instantiate(hostile ? HostileTargetTemplate : AlliesTargetTemplate, template.transform.parent, false);
             uiElem.gameObject.SetActive(true);
             objects.Add(uiElem);
             if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
@@ -593,12 +596,12 @@ public class BattleUIOperation : MonoBehaviour
             }
         }
 
-        static bool FindTargetGroups(IActionCollection actions, EvaluationContext context, List<BattleCharacterController> units, out List<(string name, List<BattleCharacterController> units)> groups)
+        static bool FindTargetGroups(IActionCollection actions, EvaluationContext context, List<BattleCharacterController> units, out List<(string name, List<BattleCharacterController> units, bool dumpInHostileList)> groups)
         {
             groups = new()
             {
-                ("Hostiles", units.Where(x => x.IsHostileTo(context.Controller)).ToList()),
-                ("Allies", units.Where(x => x.IsHostileTo(context.Controller) == false).ToList())
+                ("Hostiles", units.Where(x => x.IsHostileTo(context.Controller)).ToList(), true),
+                ("Allies", units.Where(x => x.IsHostileTo(context.Controller) == false).ToList(), false)
             };
             for (int i = groups.Count - 1; i >= 0; i--)
             {
@@ -614,11 +617,11 @@ public class BattleUIOperation : MonoBehaviour
                 else if (count == 1)
                 {
                     var target = newTargets.First();
-                    groups[i] = (target.name, new(){ target });
+                    groups[i] = (target.name, new(){ target }, target.IsHostileTo(context.Controller));
                 }
                 else
                 {
-                    groups[i] = (groups[i].name, newTargets.ToList());
+                    groups[i] = (groups[i].name, newTargets.ToList(), groups[i].dumpInHostileList);
                 }
             }
 
@@ -687,7 +690,8 @@ public class BattleUIOperation : MonoBehaviour
         Discard.gameObject.SetActive(false);
         ItemTemplate.gameObject.SetActive(false);
         SkillTemplate.gameObject.SetActive(false);
-        TargetTemplate.gameObject.SetActive(false);
+        AlliesTargetTemplate.gameObject.SetActive(false);
+        HostileTargetTemplate.gameObject.SetActive(false);
         SelectionContainer.gameObject.SetActive(false);
         AcceptSelection.gameObject.SetActive(false);
 
