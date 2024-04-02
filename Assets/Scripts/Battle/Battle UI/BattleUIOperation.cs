@@ -45,10 +45,7 @@ public class BattleUIOperation : MonoBehaviour
     public RectTransform ItemTemplate;
     [ValidateInput(nameof(HasButton), "Must have a button")]
     public RectTransform SkillTemplate;
-    [ValidateInput(nameof(HasToggle), "Must have a toggle")]
-    public RectTransform HostileTargetTemplate;
-    [ValidateInput(nameof(HasToggle), "Must have a toggle")]
-    public RectTransform AlliesTargetTemplate;
+    public TargetList Targets = new();
 
     [Header("Previews")]
     [Required] public UIActionPreview ActionPreviewTemplate;
@@ -73,11 +70,6 @@ public class BattleUIOperation : MonoBehaviour
     bool HasButton(RectTransform val, ref string errorMessage)
     {
         return val != null &&  val.GetComponentInChildren<Button>();
-    }
-
-    bool HasToggle(RectTransform val, ref string errorMessage)
-    {
-        return val != null && val.GetComponentInChildren<Toggle>();
     }
 
     void OnEnable()
@@ -408,119 +400,157 @@ public class BattleUIOperation : MonoBehaviour
     {
         SelectionContainer.gameObject.SetActive(true);
 
-        HashSet<BattleCharacterController> selection = new();
+        var selection = new HashSet<BattleCharacterController>();
         { // Start with everything selected, remove any target that doesn't pass the action target condition
             foreach (var unit in BattleManagement.Units)
                 selection.Add(unit);
 
-            Filter(_order.Actions, UnitSelected.Context, selection, out selection);
+            Filter(_order.Actions, UnitSelected.Context, selection);
         }
 
         AcceptSelection.gameObject.SetActive(true);
 
-        bool submitted = false;
+        bool accepted = false;
 
-        var objects = new List<RectTransform>();
-        UnityAction listener = () => submitted = true;
+        UnityAction listener = () => accepted = true;
         bool successful = false;
         try
         {
             AcceptSelection.onClick.AddListener(listener);
 
-            _order.Condition = ScriptableObject.CreateInstance<ActionCondition>();
-            _order.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection };
-            bool first = true;
+            Targets.Clear();
 
-            if (FindTargetGroups(_order.Actions, UnitSelected.Context, BattleManagement.Units, out var groups)) // Have [Hostiles] [Allies] instead of [Hostile1] [Hostile2] [Hostile3]...
+            var targetGroups = new[]
             {
-                selection.Clear();
-                foreach (var unit in groups[0].units)
-                    selection.Add(unit);
+                new TargetGroup { GenericName = "Hostiles", Filter = x => x.IsHostileTo(UnitSelected.Context.Controller), InHostileList = true },
+                new TargetGroup { GenericName = "Allies", Filter = x => x.IsHostileTo(UnitSelected.Context.Controller) == false, InHostileList = false }
+            };
 
-                var toggles = new List<Toggle>();
-                foreach ((string name, List<BattleCharacterController> units, bool dumpInHostileList) in groups)
+            Action<HashSet<BattleCharacterController>> Resample;
+            if (targetGroups.FirstOrDefault(x => x.Eval(BattleManagement.Units, _order.Actions, UnitSelected.Context)) is {} group)
+            {
+                var selectedTargetGroups = new HashSet<TargetGroup> { group };
+                Targets.Setup(() => targetGroups.Where(x => x.Eval(BattleManagement.Units, _order.Actions, UnitSelected.Context)), OnNew, OnRemoved);
+
+                Resample = selection =>
                 {
-                    var toggle = CreateToggle(name, toggles.Count == 0, dumpInHostileList, ref first);
-                    toggle.onValueChanged.AddListener(ToggleGroup);
-                    toggles.Add(toggle);
-
-                    void ToggleGroup(bool isOn)
-                    {
-                        if (isOn == false)
-                            return;
-
-                        foreach (var otherToggle in toggles)
-                        {
-                            if (otherToggle == toggle)
-                                continue;
-                            otherToggle.isOn = false;
-                        }
-
-                        selection.Clear();
-                        foreach (var unit in units)
+                    selection.Clear();
+                    foreach (var group in selectedTargetGroups)
+                        foreach (var unit in group.UnitsInGroup)
                             selection.Add(unit);
-                    }
+
+                };
+
+                void OnRemoved(TargetList.Handler<TargetGroup> handler, TargetGroup group)
+                {
+                    selectedTargetGroups.Remove(group);
+                }
+
+                void OnNew(TargetList.Handler<TargetGroup> handler, TargetGroup group, out string label, out bool isOn, out bool inHostileList, out Action<Toggle, bool> onToggled)
+                {
+                    label = group.GenericName;
+                    isOn = selectedTargetGroups.Contains(group);
+                    inHostileList = group.InHostileList;
+
+                    onToggled = (toggle, value) =>
+                    {
+                        if (value)
+                        {
+                            foreach (var (group, (parent, otherToggle)) in handler.Toggles)
+                            {
+                                selectedTargetGroups.Remove(group);
+                                if (otherToggle != toggle)
+                                    otherToggle.SetIsOnWithoutNotify(false);
+                            }
+
+                            selectedTargetGroups.Add(group);
+                        }
+                        else
+                        {
+                            selectedTargetGroups.Remove(group);
+                        }
+                    };
                 }
             }
             else // Fallback to generic handler if no groups could be found
             {
-                var ignoreListenerEvent = new HashSet<BattleCharacterController>();
-                var toggles = new Dictionary<BattleCharacterController, Toggle>();
-                foreach (var unitForThisToggle in BattleManagement.Units.OrderByDescending(x => x.IsHostileTo(UnitSelected)))
+                Resample = _ => { };
+                Targets.Setup(ValidTargets, OnNew, OnRemoved);
+
+                IEnumerable<BattleCharacterController> ValidTargets()
                 {
-                    var toggle = CreateToggle(unitForThisToggle.Profile.Name, selection.Contains(unitForThisToggle), unitForThisToggle.IsHostileTo(UnitSelected), ref first);
-                    toggle.onValueChanged.AddListener(UpdateSelection);
-                    toggles.Add(unitForThisToggle, toggle);
+                    return BattleManagement.Units.Where(x => IsFiltered(x, _order.Actions, UnitSelected.Context, BattleManagement.Units) == false).OrderByDescending(x => x.IsHostileTo(UnitSelected));
+                }
 
-                    void UpdateSelection(bool addUnitIn)
+                void OnRemoved(TargetList.Handler<BattleCharacterController> handler, BattleCharacterController unit)
+                {
+                    selection.Remove(unit);
+
+                    Filter(_order.Actions, UnitSelected.Context, selection);
+
+                    foreach (var (otherUnit, (_, toggle)) in handler.Toggles)
+                        toggle.SetIsOnWithoutNotify(selection.Contains(otherUnit));
+                }
+
+                void OnNew(TargetList.Handler<BattleCharacterController> handler, BattleCharacterController unit, out string label, out bool isOn, out bool inHostileList, out Action<Toggle, bool> ontoggled)
+                {
+                    isOn = selection.Contains(unit);
+                    label = unit.Profile.Name;
+                    ontoggled = UpdateSelectionAndToggles;
+                    inHostileList = unit.IsHostileTo(UnitSelected);
+
+                    void UpdateSelectionAndToggles(Toggle toggle, bool addUnitIn)
                     {
-                        if (ignoreListenerEvent.Remove(unitForThisToggle))
-                            return;
-
                         if (addUnitIn)
-                            selection.Add(unitForThisToggle);
+                            selection.Add(unit);
                         else
-                            selection.Remove(unitForThisToggle);
+                            selection.Remove(unit);
 
-                        Filter(_order.Actions, UnitSelected.Context, selection, out var newSelection);
-
-                        if (selection.Count == newSelection.Count)
+                        if (Filtered(_order.Actions, UnitSelected.Context, selection, out var newSelection) == false)
                             return;
 
                         // Some of the units were filtered out:
                         if (addUnitIn) // Tried to add this unit ?
                         {
-                            if (newSelection.Contains(unitForThisToggle)) // The unit bound to this toggle was added in, some other unit was removed
+                            if (newSelection.Contains(unit)) // The unit bound to this toggle was added in, some other unit was removed
                             {
-                                ReplaceSelection(selection, newSelection, toggles, ignoreListenerEvent);
+                                ReplaceSelection(selection, newSelection, handler.Toggles);
                             }
                             else // This unit was filtered out
                             {
                                 // Try again with just this unit selected
-                                Filter(_order.Actions, UnitSelected.Context, new() { unitForThisToggle }, out var newSelectionWithOnlyIt);
-                                if (newSelectionWithOnlyIt.Count == 1)
-                                    ReplaceSelection(selection, newSelectionWithOnlyIt, toggles, ignoreListenerEvent);
+                                if (Filtered(_order.Actions, UnitSelected.Context, new() { unit }, out var newSelectionWithOnlyIt) == false)
+                                    ReplaceSelection(selection, newSelectionWithOnlyIt, handler.Toggles);
                                 // Else, don't add it, this unit is likely not compatible with this action
                             }
                         }
                         else // Tried to remove this unit ? But it removed more units than that one
                         {
                             // Roll the deselection back
-                            selection.Add(unitForThisToggle);
-                            ignoreListenerEvent.Add(unitForThisToggle);
-                            toggle.isOn = true;
+                            selection.Add(unit);
+                            toggle.SetIsOnWithoutNotify(true);
                         }
                     }
                 }
             }
 
-            while (submitted == false || selection.Count == 0)
+            while (true)
             {
+                Targets.Update();
                 AcceptSelection.interactable = selection.Count > 0;
+                Resample(selection);
+                if (selection.Count != 0 && accepted)
+                    break; // Succeeded
+
                 if (Input.GetKey(KeyCode.Escape))
-                    yield break;
+                    yield break; // Cancel this selection
+
+                accepted = false; // Reset click
                 yield return null;
             }
+
+            _order.Condition = ScriptableObject.CreateInstance<ActionCondition>();
+            _order.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection.ToHashSet() };
 
             successful = true;
         }
@@ -529,44 +559,20 @@ public class BattleUIOperation : MonoBehaviour
             if (successful == false)
                 _order.Condition = null;
 
-            foreach (var obj in objects)
-                Destroy(obj.gameObject);
+            Targets.Clear();
 
             AcceptSelection.onClick.RemoveListener(listener);
             AcceptSelection.gameObject.SetActive(false);
         }
 
-        Toggle CreateToggle(string label, bool defaultState, bool hostile, ref bool first)
-        {
-            var template = hostile ? HostileTargetTemplate : AlliesTargetTemplate;
-            var uiElem = Instantiate(hostile ? HostileTargetTemplate : AlliesTargetTemplate, template.transform.parent, false);
-            uiElem.gameObject.SetActive(true);
-            objects.Add(uiElem);
-            if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
-                text.text = label;
-            if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
-                tmp_text.text = label;
 
-            var toggle = uiElem.GetComponent<Toggle>();
-            toggle.isOn = defaultState;
-
-            if (first)
-                toggle.Select();
-            first = false;
-            return toggle;
-        }
-
-
-        static void ReplaceSelection(HashSet<BattleCharacterController> write, HashSet<BattleCharacterController> read, Dictionary<BattleCharacterController, Toggle> toggles, HashSet<BattleCharacterController> validationUpdates)
+        static void ReplaceSelection(HashSet<BattleCharacterController> write, HashSet<BattleCharacterController> read, IReadOnlyDictionary<BattleCharacterController, (RectTransform parent, Toggle toggle)> toggles)
         {
             // Remove those that are not part of this new selection, and update their toggles
             foreach (var unit in write)
             {
                 if (read.Contains(unit) == false)
-                {
-                    validationUpdates.Add(unit);
-                    toggles[unit].isOn = false;
-                }
+                    toggles[unit].toggle.SetIsOnWithoutNotify(false);
             }
             // Copy new into current
             write.Clear();
@@ -574,58 +580,53 @@ public class BattleUIOperation : MonoBehaviour
                 write.Add(unit);
         }
 
-        static void Filter(IActionCollection actions, EvaluationContext context, HashSet<BattleCharacterController> input, out HashSet<BattleCharacterController> output)
+        static bool Filtered(IActionCollection actions, EvaluationContext context, HashSet<BattleCharacterController> input, out HashSet<BattleCharacterController> output)
         {
-            output = new();
-            foreach (var template in input)
-                output.Add(template);
-
+            var collection = new TargetCollection(input.ToList());
+            var filtered = collection;
             foreach (var action in actions)
-            {
-                if (action.TargetFilter == null)
-                    continue;
+                action.TargetFilter?.Filter(ref filtered, context);
 
-                TargetCollection collection = new(output.ToList());
-                action.TargetFilter.Filter(ref collection, context);
-                if (collection.CountSlow() != output.Count)
-                {
-                    output.Clear();
-                    foreach (var target in collection)
-                        output.Add(target);
-                }
+            if (collection != filtered)
+            {
+                output = filtered.ToHashSet();
+                return true;
+            }
+            else
+            {
+                output = input;
+                return false;
             }
         }
 
-        static bool FindTargetGroups(IActionCollection actions, EvaluationContext context, List<BattleCharacterController> units, out List<(string name, List<BattleCharacterController> units, bool dumpInHostileList)> groups)
+        static bool Filter(IActionCollection actions, EvaluationContext context, HashSet<BattleCharacterController> input)
         {
-            groups = new()
-            {
-                ("Hostiles", units.Where(x => x.IsHostileTo(context.Controller)).ToList(), true),
-                ("Allies", units.Where(x => x.IsHostileTo(context.Controller) == false).ToList(), false)
-            };
-            for (int i = groups.Count - 1; i >= 0; i--)
-            {
-                var newTargets = new TargetCollection(groups[i].units);
-                foreach (var action in actions)
-                    action.TargetFilter?.Filter(ref newTargets, context);
+            var collection = new TargetCollection(input.ToList());
+            var filtered = collection;
+            foreach (var action in actions)
+                action.TargetFilter?.Filter(ref filtered, context);
 
-                var count = newTargets.CountSlow();
-                if (count == 0 || count == 1 && groups[i].units.Count != 1)
-                {
-                    groups.RemoveAt(i);
-                }
-                else if (count == 1)
-                {
-                    var target = newTargets.First();
-                    groups[i] = (target.name, new(){ target }, target.IsHostileTo(context.Controller));
-                }
-                else
-                {
-                    groups[i] = (groups[i].name, newTargets.ToList(), groups[i].dumpInHostileList);
-                }
+            if (collection != filtered)
+            {
+                input.Clear();
+                foreach (var unit in filtered)
+                    input.Add(unit);
+                return true;
             }
 
-            return groups.Count > 0;
+            return false;
+        }
+
+        bool IsFiltered(BattleCharacterController x, IActionCollection actions, EvaluationContext context, List<BattleCharacterController> units)
+        {
+            var alone = new TargetCollection(units);
+            alone.Empty();
+            alone.SetAt(units.IndexOf(x));
+
+            foreach (var action in actions)
+                action.TargetFilter?.Filter(ref alone, context);
+
+            return alone.IsEmpty;
         }
     }
 
@@ -690,8 +691,8 @@ public class BattleUIOperation : MonoBehaviour
         Discard.gameObject.SetActive(false);
         ItemTemplate.gameObject.SetActive(false);
         SkillTemplate.gameObject.SetActive(false);
-        AlliesTargetTemplate.gameObject.SetActive(false);
-        HostileTargetTemplate.gameObject.SetActive(false);
+        Targets.AlliesTargetTemplate.gameObject.SetActive(false);
+        Targets.HostileTargetTemplate.gameObject.SetActive(false);
         SelectionContainer.gameObject.SetActive(false);
         AcceptSelection.gameObject.SetActive(false);
 
@@ -868,19 +869,164 @@ public class BattleUIOperation : MonoBehaviour
         Execution
     }
 
-    class SpecificTargetsCondition : SimplifiedCondition
+    [Serializable]
+    public class TargetList
     {
-        public HashSet<BattleCharacterController> Targets = new();
-        public override string UIDisplayText => "Specific Targets";
+        [ValidateInput(nameof(HasToggle), "Must have a toggle")]
+        public RectTransform HostileTargetTemplate;
+        [ValidateInput(nameof(HasToggle), "Must have a toggle")]
+        public RectTransform AlliesTargetTemplate;
 
-        public override bool IsValid(out string error)
+        [CanBeNull] IHandler _handler;
+
+        bool HasToggle(RectTransform val, ref string errorMessage)
         {
-            error = null;
-            return true;
+            return val != null && val.GetComponentInChildren<Toggle>();
         }
 
-        public override void NotifyUsedCondition(in TargetCollection target, EvaluationContext context){ }
+        public void Setup<T>(Func<IEnumerable<T>> items, OnNewItem<T> onNew, Action<Handler<T>, T> onRemoved)
+        {
+            var handler = new Handler<T>{ GetItems = items, OnNew = onNew, OnRemoved = onRemoved };
+            _handler = handler;
+        }
 
-        protected override bool Filter(BattleCharacterController target, EvaluationContext context) => Targets.Contains(target);
+        public void Update()
+        {
+            _handler?.Update(this);
+        }
+
+        public void Clear()
+        {
+            _handler?.Clear();
+            _handler = null;
+        }
+
+        public delegate void OnNewItem<T>(Handler<T> handler, T item, out string label, out bool isOn, out bool inHostileList, out Action<Toggle, bool> onToggled);
+
+        public class Handler<T> : IHandler
+        {
+            public Func<IEnumerable<T>> GetItems;
+            public OnNewItem<T> OnNew;
+            public Action<Handler<T>, T> OnRemoved;
+            readonly Dictionary<T, (RectTransform parent, Toggle toggle)> _toggles = new();
+            readonly HashSet<T> _temp = new();
+            bool _first = true;
+
+            public IReadOnlyDictionary<T, (RectTransform parent, Toggle toggle)> Toggles => _toggles;
+
+            public void Update(TargetList targetList)
+            {
+                _temp.Clear();
+                foreach (var item in GetItems())
+                {
+                    _temp.Add(item);
+                    if (_toggles.TryGetValue(item, out _))
+                        continue;
+
+                    OnNew.Invoke(this, item, out var label, out var isOn, out var inHostileList, out var onToggled);
+
+                    var template = inHostileList ? targetList.HostileTargetTemplate : targetList.AlliesTargetTemplate;
+                    var uiElem = Instantiate(template, template.transform.parent, false);
+                    uiElem.gameObject.SetActive(true);
+                    if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
+                        text.text = label;
+                    if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
+                        tmp_text.text = label;
+
+                    var toggle = uiElem.GetComponent<Toggle>();
+                    toggle.SetIsOnWithoutNotify(isOn);
+                    toggle.onValueChanged.AddListener(b => onToggled(toggle, b));
+                    _toggles.Add(item, (uiElem, toggle));
+
+                    if (_first)
+                        toggle.Select();
+                    _first = false;
+                }
+
+                foreach (var (t, rect) in _toggles) // Mark all items that are no longer in the list and put them in temp
+                {
+                    if (_temp.Remove(t))
+                        continue; // In both lists, we can continue
+
+                    _temp.Add(t); // Not in existing toggles, add it to temp to mark it for deletion
+                }
+
+                foreach (T item in _temp)
+                {
+                    Destroy(_toggles[item].parent.gameObject);
+                    _toggles.Remove(item);
+                }
+
+                foreach (T item in _temp)
+                    OnRemoved?.Invoke(this, item);
+
+                _temp.Clear();
+            }
+
+            public void Clear()
+            {
+                var cpy = _toggles.Select(x => x.Key).ToArray();
+                foreach (var (t, rect) in _toggles)
+                    Destroy(rect.parent.gameObject);
+
+                _toggles.Clear();
+
+                foreach (T t in cpy)
+                    OnRemoved?.Invoke(this, t);
+            }
+        }
+
+        interface IHandler
+        {
+            void Update(TargetList targetList);
+            void Clear();
+        }
+    }
+
+    class TargetGroup
+    {
+        public string GenericName;
+        public string Name;
+        public Func<BattleCharacterController, bool> Filter;
+        public List<BattleCharacterController> UnitsInGroup = new();
+        public bool InHostileList;
+
+        readonly List<BattleCharacterController> _workingList = new();
+
+        public bool Eval(List<BattleCharacterController> allUnits, IActionCollection actions, EvaluationContext context)
+        {
+            _workingList.Clear();
+            foreach (var unit in allUnits)
+            {
+                if (Filter(unit))
+                    _workingList.Add(unit);
+            }
+            var newTargets = new TargetCollection(_workingList);
+            foreach (var action in actions)
+                action.TargetFilter?.Filter(ref newTargets, context);
+
+            var count = newTargets.CountSlow();
+            if (count == 0 || count == 1 && _workingList.Count != 1)
+            {
+                UnitsInGroup.Clear();
+                return false;
+            }
+            else if (count == 1)
+            {
+                var target = newTargets.First();
+                Name = target.name;
+                UnitsInGroup.Clear();
+                UnitsInGroup.Add(target);
+                return true;
+            }
+            else
+            {
+                Name = GenericName;
+                UnitsInGroup.Clear();
+                foreach (var target in newTargets)
+                    UnitsInGroup.Add(target);
+                return true;
+            }
+        }
     }
 }

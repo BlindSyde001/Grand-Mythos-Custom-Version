@@ -1162,8 +1162,9 @@ MonoBehaviour:
   AcceptSelection: {fileID: 271115888}
   ItemTemplate: {fileID: 1611169537}
   SkillTemplate: {fileID: 1652274323}
-  HostileTargetTemplate: {fileID: 781692266}
-  AlliesTargetTemplate: {fileID: 409254227}
+  Targets:
+    HostileTargetTemplate: {fileID: 781692266}
+    AlliesTargetTemplate: {fileID: 409254227}
   ActionPreviewTemplate: {fileID: 1887660910}
   TargetCursorTemplate: {fileID: 9180537537889386509, guid: d52303945a99cd344b1fe279d9add53e, type: 3}
   DamageTextTemplate: {fileID: 1119355795006311203, guid: 2f4b3bf3966425e43bf9108fb7c9996c, type: 3}
@@ -4899,10 +4900,10 @@ RectTransform:
   - {fileID: 691580273}
   m_Father: {fileID: 1131618621}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 140, y: -20}
-  m_SizeDelta: {x: 280, y: 40}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &781692267
 MonoBehaviour:

@@ -15,11 +15,12 @@ MonoBehaviour:
   _guid:
     a: 4727006276212836141
     b: 13005155708514743190
+  Description: 
   ATBCost: 1
   Effects:
   - rid: 7439448764490973229
   TargetConstraint:
-    rid: 7439448764490973230
+    rid: 4691955925379973120
   PreconditionToUse:
     rid: -2
   references:
@@ -27,6 +28,21 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 4691955925379973120
+      type: {class: And, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        Left:
+          rid: 4691955925379973121
+        Right:
+          rid: 4691955925379973122
+    - rid: 4691955925379973121
+      type: {class: IsHostile, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        State: 0
+    - rid: 4691955925379973122
+      type: {class: TargetTrimming, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        Amount: 1
     - rid: 7439448764490973229
       type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
       data:
@@ -36,7 +52,3 @@ MonoBehaviour:
         Variance: 0
         CritChance: 15
         CritMultiplier: 2.5
-    - rid: 7439448764490973230
-      type: {class: TargetTrimming, ns: Conditions, asm: Assembly-CSharp}
-      data:
-        Amount: 1

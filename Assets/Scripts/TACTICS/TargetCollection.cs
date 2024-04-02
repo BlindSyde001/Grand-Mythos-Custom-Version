@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct TargetCollection : IEnumerable<BattleCharacterController>
+public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquatable<TargetCollection>
 {
     List<BattleCharacterController> _targets;
     ulong _included;
@@ -39,6 +40,11 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>
     public void RemoveAt(int index)
     {
         _included &= ~(1ul << index);
+    }
+
+    public void SetAt(int index)
+    {
+        _included |= 1ul << index;
     }
 
     public void Empty()
@@ -130,4 +136,13 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>
 
         public void Dispose(){ }
     }
+
+    public bool Equals(TargetCollection other) => Equals(_targets, other._targets) && _included == other._included;
+
+    public override bool Equals(object obj) => obj is TargetCollection other && Equals(other);
+
+    public override int GetHashCode() => HashCode.Combine(_targets, _included);
+
+    public static bool operator ==(TargetCollection a, TargetCollection b) => a.Equals(b);
+    public static bool operator !=(TargetCollection a, TargetCollection b) => a.Equals(b) == false;
 }
