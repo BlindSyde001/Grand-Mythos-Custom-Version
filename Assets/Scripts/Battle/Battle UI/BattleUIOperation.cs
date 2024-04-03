@@ -9,6 +9,7 @@ using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -50,6 +51,7 @@ public class BattleUIOperation : MonoBehaviour
     [Header("Previews")]
     [Required] public UIActionPreview ActionPreviewTemplate;
     [Required] public GameObject TargetCursorTemplate;
+    [Required] public BattleTooltipUI TooltipUI;
 
     [Required] public DamageText DamageTextTemplate;
 
@@ -255,8 +257,7 @@ public class BattleUIOperation : MonoBehaviour
             bool first = true;
             foreach (var skill in UnitSelected.Profile.Skills)
             {
-                var button = CreateButton(skill.name, SkillTemplate, SelectionContainer, objects);
-                button.onClick.AddListener(() => selectedSkill = skill);
+                var button = CreateButton(skill.name, SkillTemplate, SelectionContainer, objects, () => selectedSkill = skill, _ => TooltipUI.OnPresentNewTooltip?.Invoke(skill.Description));
 
                 if (_order.Actions.CostTotal() + skill.ATBCost > UnitSelected.Profile.ActionChargeMax)
                 {
@@ -269,8 +270,7 @@ public class BattleUIOperation : MonoBehaviour
                 }
             }
 
-            var back = CreateButton("<<-", SkillTemplate, SelectionContainer, objects);
-            back.onClick.AddListener(() => cancel = true);
+            CreateButton("<<-", SkillTemplate, SelectionContainer, objects, () => cancel = true);
 
             while (selectedSkill == null && cancel == false)
             {
@@ -284,6 +284,7 @@ public class BattleUIOperation : MonoBehaviour
         }
         finally
         {
+            TooltipUI.OnHideTooltip?.Invoke();
             foreach (var o in objects)
                 Destroy(o.gameObject);
         }
@@ -319,8 +320,7 @@ public class BattleUIOperation : MonoBehaviour
                 if (item is not Consumable consumable)
                     continue;
 
-                var button = CreateButton(($"{consumable.name} (x{count})"), SkillTemplate, SelectionContainer, objects);
-                button.onClick.AddListener(() => selectedConsumable = consumable);
+                var button = CreateButton(($"{consumable.name} (x{count})"), SkillTemplate, SelectionContainer, objects, () => selectedConsumable = consumable, _ => { TooltipUI.OnPresentNewTooltip?.Invoke(consumable.Description); });
 
                 if (_order.Actions.CostTotal() + consumable.ATBCost > UnitSelected.Profile.ActionChargeMax)
                 {
@@ -333,8 +333,7 @@ public class BattleUIOperation : MonoBehaviour
                 }
             }
 
-            var back = CreateButton("<<-", SkillTemplate, SelectionContainer, objects);
-            back.onClick.AddListener(() => cancel = true);
+            CreateButton("<<-", SkillTemplate, SelectionContainer, objects, () => cancel = true);
 
             while (selectedConsumable == null && cancel == false)
             {
@@ -348,6 +347,7 @@ public class BattleUIOperation : MonoBehaviour
         }
         finally
         {
+            TooltipUI.OnHideTooltip?.Invoke();
             foreach (var o in objects)
                 Destroy(o.gameObject);
         }
@@ -367,7 +367,7 @@ public class BattleUIOperation : MonoBehaviour
             goto AGAIN;
     }
 
-    static Button CreateButton(string name, RectTransform SkillTemplate, RectTransform SelectionContainer, ICollection<RectTransform> objects)
+    static Button CreateButton(string name, RectTransform SkillTemplate, RectTransform SelectionContainer, ICollection<RectTransform> objects, UnityAction OnClick, [CanBeNull] UnityAction<BaseEventData> OnHoverOrSelected = null)
     {
         var uiElem = Instantiate(SkillTemplate, SelectionContainer, false);
         uiElem.gameObject.SetActive(true);
@@ -377,7 +377,25 @@ public class BattleUIOperation : MonoBehaviour
         if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
             tmp_text.text = name;
 
+
         var button = uiElem.GetComponent<Button>();
+        button.onClick.AddListener(OnClick);
+
+        if (OnHoverOrSelected is not null)
+        {
+            var onHover = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+            onHover.callback.AddListener(OnHoverOrSelected);
+            var onSelect = new EventTrigger.Entry { eventID = EventTriggerType.Select };
+            onSelect.callback.AddListener(OnHoverOrSelected);
+
+            if (button.gameObject.TryGetComponent(out EventTrigger trigger) == false)
+                trigger = button.gameObject.AddComponent<EventTrigger>();
+
+            trigger.triggers.Clear();
+            trigger.triggers.Add(onHover);
+            trigger.triggers.Add(onSelect);
+        }
+
         return button;
     }
 
@@ -430,7 +448,7 @@ public class BattleUIOperation : MonoBehaviour
             if (targetGroups.FirstOrDefault(x => x.Eval(BattleManagement.Units, _order.Actions, UnitSelected.Context)) is {} group)
             {
                 var selectedTargetGroups = new HashSet<TargetGroup> { group };
-                Targets.Setup(() => targetGroups.Where(x => x.Eval(BattleManagement.Units, _order.Actions, UnitSelected.Context)), OnNew, OnRemoved);
+                Targets.Setup(() => targetGroups.Where(x => x.Eval(BattleManagement.Units, _order.Actions, UnitSelected.Context)), OnNew, OnRemoved, OnHoverOrSelected);
 
                 Resample = selection =>
                 {
@@ -440,6 +458,11 @@ public class BattleUIOperation : MonoBehaviour
                             selection.Add(unit);
 
                 };
+
+                void OnHoverOrSelected(TargetGroup group)
+                {
+                    TooltipUI.OnPresentNewTooltip?.Invoke($"Targets: {string.Join(", ", group.UnitsInGroup.Select(x => x.Profile.Name))}");
+                }
 
                 void OnRemoved(TargetList.Handler<TargetGroup> handler, TargetGroup group)
                 {
@@ -475,7 +498,12 @@ public class BattleUIOperation : MonoBehaviour
             else // Fallback to generic handler if no groups could be found
             {
                 Resample = _ => { };
-                Targets.Setup(ValidTargets, OnNew, OnRemoved);
+                Targets.Setup(ValidTargets, OnNew, OnRemoved, OnHoverOrSelected);
+
+                void OnHoverOrSelected(BattleCharacterController obj)
+                {
+                    TooltipUI.OnPresentNewTooltip?.Invoke($"Level {obj.Profile.Level}\n{obj.Profile.EffectiveStats.ToStringOneStatPerLine()}");
+                }
 
                 IEnumerable<BattleCharacterController> ValidTargets()
                 {
@@ -556,6 +584,7 @@ public class BattleUIOperation : MonoBehaviour
         }
         finally
         {
+            TooltipUI.OnHideTooltip?.Invoke();
             if (successful == false)
                 _order.Condition = null;
 
@@ -884,9 +913,9 @@ public class BattleUIOperation : MonoBehaviour
             return val != null && val.GetComponentInChildren<Toggle>();
         }
 
-        public void Setup<T>(Func<IEnumerable<T>> items, OnNewItem<T> onNew, Action<Handler<T>, T> onRemoved)
+        public void Setup<T>(Func<IEnumerable<T>> items, OnNewItem<T> onNew, Action<Handler<T>, T> onRemoved, Action<T> onHoverOrSelected)
         {
-            var handler = new Handler<T>{ GetItems = items, OnNew = onNew, OnRemoved = onRemoved };
+            var handler = new Handler<T>{ GetItems = items, OnNew = onNew, OnRemoved = onRemoved, OnHoverOrSelected = onHoverOrSelected };
             _handler = handler;
         }
 
@@ -906,6 +935,7 @@ public class BattleUIOperation : MonoBehaviour
         public class Handler<T> : IHandler
         {
             public Func<IEnumerable<T>> GetItems;
+            public Action<T> OnHoverOrSelected;
             public OnNewItem<T> OnNew;
             public Action<Handler<T>, T> OnRemoved;
             readonly Dictionary<T, (RectTransform parent, Toggle toggle)> _toggles = new();
@@ -934,6 +964,22 @@ public class BattleUIOperation : MonoBehaviour
                         tmp_text.text = label;
 
                     var toggle = uiElem.GetComponent<Toggle>();
+
+                    if (OnHoverOrSelected is not null)
+                    {
+                        var onHover = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+                        onHover.callback.AddListener(evt => OnHoverOrSelected(item));
+                        var onSelect = new EventTrigger.Entry { eventID = EventTriggerType.Select };
+                        onSelect.callback.AddListener(evt => OnHoverOrSelected(item));
+
+                        if (toggle.gameObject.TryGetComponent(out EventTrigger trigger) == false)
+                            trigger = toggle.gameObject.AddComponent<EventTrigger>();
+
+                        trigger.triggers.Clear();
+                        trigger.triggers.Add(onHover);
+                        trigger.triggers.Add(onSelect);
+                    }
+
                     toggle.SetIsOnWithoutNotify(isOn);
                     toggle.onValueChanged.AddListener(b => onToggled(toggle, b));
                     _toggles.Add(item, (uiElem, toggle));

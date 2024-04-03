@@ -326,4 +326,16 @@ public struct Stats
     public int MagDefense;
 
     public int Speed;
+
+    public string ToStringOneStatPerLine()
+    {
+        return
+@$"HP: {HP}
+MP: {MP}
+Attack: {Attack}
+Magic Attack: {MagAttack}
+Defense: {Defense}
+Magic Defense: {MagDefense}
+Speed: {Speed}";
+    }
 }
