@@ -31,6 +31,6 @@ namespace Conditions
 
         public override void NotifyUsedCondition(in TargetCollection target, EvaluationContext context) { }
 
-        public override string UIDisplayText => $"has at least {AtLeastThisAmount} {Item.name}";
+        public override string UIDisplayText => $"has at least {AtLeastThisAmount} {Item?.name}";
     }
 }
