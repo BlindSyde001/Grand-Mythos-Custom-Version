@@ -38,6 +38,13 @@ public static class SavingSystem
             helper.SavingSystemsGUID.Clear();
             _latestSave = helper.SavingLatestSave;
         };
+        DomainReloadHelper.OnEnterEditMode += () =>
+        {
+            _latestSave = new();
+            _systemsByGuid.Clear();
+            _validatedTypes.Clear();
+            _loading = false;
+        };
     }
 
     /// <summary>

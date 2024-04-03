@@ -17,6 +17,10 @@ public partial class DomainReloadHelper : MonoBehaviour
     /// Called after the domain is reloaded, so after un-serialized fields are reset, but before components have their OnEnable() called.
     /// </summary>
     public static System.Action<DomainReloadHelper> AfterReload;
+    /// <summary>
+    /// Called after exiting play mode.
+    /// </summary>
+    public static System.Action OnEnterEditMode;
 
 #if UNITY_EDITOR
     /// <summary>
@@ -62,9 +66,19 @@ public partial class DomainReloadHelper : MonoBehaviour
 
     static void OnEnterPlaymodeInEditor(PlayModeStateChange change)
     {
+        LastState = change switch
+        {
+            PlayModeStateChange.EnteredEditMode => LastPlayModeState.EnteredEditMode,
+            PlayModeStateChange.ExitingEditMode => LastPlayModeState.ExitingEditMode,
+            PlayModeStateChange.EnteredPlayMode => LastPlayModeState.EnteredPlayMode,
+            PlayModeStateChange.ExitingPlayMode => LastPlayModeState.ExitingPlayMode,
+            _ => throw new ArgumentOutOfRangeException(nameof(change), change, null)
+        };
+
         switch (change)
         {
             case PlayModeStateChange.EnteredEditMode:
+                OnEnterEditMode?.Invoke();
                 break;
             case PlayModeStateChange.ExitingEditMode:
                 break;
@@ -75,15 +89,6 @@ public partial class DomainReloadHelper : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException(nameof(change), change, null);
         }
-
-        LastState = change switch
-        {
-            PlayModeStateChange.EnteredEditMode => LastPlayModeState.EnteredEditMode,
-            PlayModeStateChange.ExitingEditMode => LastPlayModeState.ExitingEditMode,
-            PlayModeStateChange.EnteredPlayMode => LastPlayModeState.EnteredPlayMode,
-            PlayModeStateChange.ExitingPlayMode => LastPlayModeState.ExitingPlayMode,
-            _ => throw new ArgumentOutOfRangeException(nameof(change), change, null)
-        };
     }
 #endif
 
