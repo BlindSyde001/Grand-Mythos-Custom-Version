@@ -115,7 +115,7 @@ public class TacticsMenuActions : MenuContainer
                 });
             }
 
-            TacticsModules[i].onToggleBtn.interactable = heroTactic != null;
+            TacticsModules[i].onToggleBtn.interactable = heroTactic != null && heroTactic.Condition != null;
             TacticsModules[i].onToggleBtn.onClick.RemoveAllListeners();
             TacticsModules[i].onToggleBtn.onClick.AddListener(OnToggleTacticPressed);
 
