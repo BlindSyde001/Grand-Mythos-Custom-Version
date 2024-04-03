@@ -548,11 +548,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 574080924864291746}
-  - component: {fileID: 574080925002128423}
-  - component: {fileID: 3247002552240294306}
-  - component: {fileID: 832645247220319466}
   - component: {fileID: 1545467480899350712}
-  - component: {fileID: 3853535729868994584}
+  - component: {fileID: 574080925002128423}
   m_Layer: 0
   m_Name: Battle - Hero Model
   m_TagString: Untagged
@@ -582,6 +579,26 @@ Transform:
   - {fileID: 574080924864291796}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1545467480899350712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 574080924864135042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67d8996bf8bc39d48ac5f980389ebccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Profile: {fileID: 0}
+  DeathAnimation:
+    StateName: Die
+    Layer: 0
+  IdleAnimation:
+    StateName: Stance
+    Layer: 0
+  Animator: {fileID: 574080925002128423}
 --- !u!95 &574080925002128423
 Animator:
   serializedVersion: 5
@@ -603,84 +620,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!136 &3247002552240294306
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 574080924864135042}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
---- !u!195 &832645247220319466
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 574080924864135042}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 1.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: -0.08
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &1545467480899350712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 574080924864135042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfe73b04d3709fb47b52dd8a583e20f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minRadius: 2
-  maxRadius: 5
-  point: {x: 0, y: 0}
-  agent: {fileID: 832645247220319466}
-  myTarget: {fileID: 0}
-  isRoaming: 0
---- !u!114 &3853535729868994584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 574080924864135042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19ac63caa489724c90c0e6fba56d879, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Template: {fileID: 0}
-  Animator: {fileID: 574080925002128423}
-  MovementController: {fileID: 1545467480899350712}
 --- !u!1 &574080924864135044
 GameObject:
   m_ObjectHideFlags: 0

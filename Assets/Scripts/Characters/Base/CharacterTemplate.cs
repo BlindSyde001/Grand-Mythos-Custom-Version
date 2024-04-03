@@ -14,7 +14,7 @@ public class CharacterTemplate : MonoBehaviour
     [Required]
     public Team Team;
 
-    [HorizontalGroup("ASSETS"), ValidateInput(nameof(HasButton), "Must have a BattleHeroModelController"), SerializeField, PreviewField(100)]
+    [HorizontalGroup("ASSETS"), ValidateInput(nameof(HasBattleCharacterController), "Must have a BattleHeroModelController"), SerializeField, PreviewField(100)]
     public GameObject BattlePrefab;
 
     [HorizontalGroup("ASSETS"), SerializeField, PreviewField(100)]
@@ -118,9 +118,9 @@ public class CharacterTemplate : MonoBehaviour
         _effectiveStatsPreview = EffectiveStats;
     }
 
-    bool HasButton(GameObject go, ref string errorMessage)
+    bool HasBattleCharacterController(GameObject go, ref string errorMessage)
     {
-        return go != null &&  go.GetComponent<BattleCharacterController>();
+        return go != null && go.GetComponent<BattleCharacterController>();
     }
 
     bool ValidateActionAnimation(IActionAnimationCollection actionAnimation, ref string errorMessage)

@@ -27,6 +27,12 @@ namespace ActionAnimation
                 averagePos += target.transform.position;
             }
 
+            controller.Animator.Play(StateName, Layer);
+
+            yield return null; // Can't get current state until one frame passes ...
+
+            var current = controller.Animator.GetCurrentAnimatorStateInfo(Layer);
+
             if (count != 0)
             {
                 averagePos /= count;
@@ -34,12 +40,6 @@ namespace ActionAnimation
                 controller.transform.DOLookAt(averagePos, 0.25f);
                 yield return new WaitForSeconds(0.25f);
             }
-
-            controller.Animator.Play(StateName, Layer);
-
-            yield return null; // Can't get current state until one frame passes ...
-
-            var current = controller.Animator.GetCurrentAnimatorStateInfo(Layer);
 
             if (current.IsName(StateName) == false)
             {
@@ -63,42 +63,19 @@ namespace ActionAnimation
                 return false;
             }
 
-            if (template.BattlePrefab.GetComponentInChildren<Animator>() is {} animator == false)
+            if (template.BattlePrefab.GetComponentInChildren<BattleCharacterController>() is {} controller == false)
             {
-                message = $"{nameof(template.BattlePrefab)} does not have any {nameof(Animator)}";
+                message = $"{nameof(template.BattlePrefab)} does not have any {nameof(BattleCharacterController)}";
                 return false;
             }
 
-            if (animator.runtimeAnimatorController == null)
+            if (controller.Animator == null)
             {
-                message = $"The {nameof(template.BattlePrefab)} {nameof(Animator)}'s controller is null";
+                message = $"{nameof(template.BattlePrefab)} does not have its {nameof(controller.Animator)} set";
                 return false;
             }
 
-#if UNITY_EDITOR
-            var editTimeController = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(UnityEditor.AssetDatabase.GetAssetPath(animator.runtimeAnimatorController));
-            if (Layer >= 0 && Layer < editTimeController.layers.Length)
-            {
-                foreach (var state in editTimeController.layers[Layer].stateMachine.states)
-                {
-                    if (state.state.name == StateName)
-                        return true;
-                }
-            }
-
-            List<string> strings = new();
-            for (int i = 0; i < editTimeController.layers.Length; i++)
-            {
-                foreach (var state in editTimeController.layers[i].stateMachine.states)
-                    strings.Add($"{i}: {state.state.name}");
-            }
-
-            message = $"Animator '{animator.runtimeAnimatorController.name}' in this {nameof(template.BattlePrefab)} does not have a state named '{StateName}'. States: \n{string.Join(" | ", strings.OrderBy(x => x))}";
-            Debug.LogWarning($"{message}, click on me to navigate to that controller", animator.runtimeAnimatorController);
-            return false;
-#else
-            return true;
-#endif
+            return new AnimationState { StateName = StateName, Layer = Layer }.EditorOnlyValidate(controller.Animator, out message);
         }
     }
 }

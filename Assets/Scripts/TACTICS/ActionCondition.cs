@@ -46,6 +46,12 @@ public class ActionCondition : IdentifiableScriptableObject
 
         context.ExecutionFlags.Clear();
 
+        if (context.Profile.EffectiveStats.HP == 0)
+        {
+            context.Tracker?.PostDead(context.Controller.Profile);
+            return false;
+        }
+
         if (accountForCost && actions.CostTotal() > context.Controller.Profile.ActionsCharged)
         {
             context.Tracker?.PostTooCostly(context.Controller.Profile, actions);
@@ -54,23 +60,23 @@ public class ActionCondition : IdentifiableScriptableObject
 
         foreach (var action in actions)
         {
-            if (action.Precondition != null)
-            {
-                var allTargetsCopy = allTargets;
-                try
-                {
-                    action.Precondition.Filter(ref allTargetsCopy, context.Controller.Context);
-                }
-                catch(Exception e) when (action is UnityEngine.Object o)
-                {
-                    Debug.LogException(e, o);
-                }
+            if (action.Precondition == null)
+                continue;
 
-                if (allTargetsCopy.IsEmpty)
-                {
-                    context.Tracker?.PostActionPrecondition(context.Controller.Profile, action, allTargets);
-                    return false;
-                }
+            var allTargetsCopy = allTargets;
+            try
+            {
+                action.Precondition.Filter(ref allTargetsCopy, context.Controller.Context);
+            }
+            catch(Exception e) when (action is UnityEngine.Object o)
+            {
+                Debug.LogException(e, o);
+            }
+
+            if (allTargetsCopy.IsEmpty)
+            {
+                context.Tracker?.PostActionPrecondition(context.Controller.Profile, action, allTargets);
+                return false;
             }
         }
 
@@ -95,23 +101,23 @@ public class ActionCondition : IdentifiableScriptableObject
 
         foreach (var action in actions)
         {
-            if (action.TargetFilter != null)
-            {
-                var previousTargets = selectedTargets;
-                try
-                {
-                    action.TargetFilter.Filter(ref selectedTargets, context);
-                }
-                catch(Exception e) when (action is UnityEngine.Object o)
-                {
-                    Debug.LogException(e, o);
-                }
+            if (action.TargetFilter == null)
+                continue;
 
-                if (selectedTargets.IsEmpty)
-                {
-                    context.Tracker?.PostActionTargetFilter(context.Controller.Profile, action, previousTargets);
-                    return false;
-                }
+            var previousTargets = selectedTargets;
+            try
+            {
+                action.TargetFilter.Filter(ref selectedTargets, context);
+            }
+            catch(Exception e) when (action is UnityEngine.Object o)
+            {
+                Debug.LogException(e, o);
+            }
+
+            if (selectedTargets.IsEmpty)
+            {
+                context.Tracker?.PostActionTargetFilter(context.Controller.Profile, action, previousTargets);
+                return false;
             }
         }
 

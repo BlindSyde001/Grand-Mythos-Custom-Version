@@ -2336,9 +2336,6 @@ GameObject:
   - component: {fileID: 5499571375476056520}
   - component: {fileID: 8219100651902672282}
   - component: {fileID: 5499571376176062029}
-  - component: {fileID: 5499571375476056525}
-  - component: {fileID: 5499571375476056527}
-  - component: {fileID: 2416261146524199157}
   m_Layer: 0
   m_Name: Battle - Enemy Model
   m_TagString: Untagged
@@ -2382,8 +2379,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Profile: {fileID: 0}
+  DeathAnimation:
+    StateName: Die
+    Layer: 0
+  IdleAnimation:
+    StateName: Stance
+    Layer: 0
   Animator: {fileID: 5499571376176062029}
-  MovementController: {fileID: 2416261146524199157}
 --- !u!95 &5499571376176062029
 Animator:
   serializedVersion: 5
@@ -2405,69 +2407,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!136 &5499571375476056525
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5499571375476555240}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
---- !u!195 &5499571375476056527
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5499571375476555240}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: -0.08
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &2416261146524199157
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5499571375476555240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfe73b04d3709fb47b52dd8a583e20f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minRadius: 0
-  maxRadius: 0
-  point: {x: 0, y: 0}
-  agent: {fileID: 0}
-  myTarget: {fileID: 0}
-  isRoaming: 0
 --- !u!1 &5499571375476555242
 GameObject:
   m_ObjectHideFlags: 0

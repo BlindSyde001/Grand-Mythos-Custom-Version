@@ -5,19 +5,19 @@ using UnityEngine;
 [AddComponentMenu(" GrandMythos/BattleCharacterController")]
 public class BattleCharacterController : MonoBehaviour
 {
-    public CharacterTemplate Profile;
+    [ReadOnly] public CharacterTemplate Profile;
+
+    [ValidateInput(nameof(ValidateAnim))]
+    public AnimationState IdleAnimation;
+
+    [ValidateInput(nameof(ValidateAnim))]
+    public AnimationState DeathAnimation;
 
     [Required]
     public Animator Animator;
-    [SerializeField, Required]
-    protected BattleArenaMovement MovementController;
 
     [NonSerialized]
     public EvaluationContext Context;
-
-    const string Battle_EnterFight = "Enter Fight";
-    const string Battle_Stance = "Stance";
-    const string Battle_Die = "Die";
 
     public bool IsHostileTo(BattleCharacterController character)
     {
@@ -29,21 +29,18 @@ public class BattleCharacterController : MonoBehaviour
         Context = new(this);
     }
 
-    // UPDATES
-    void OnEnable()
-    {
-        BattleStateMachine.OnNewStateSwitched += NewCombatState;
-    }
-
-    void OnDisable()
-    {
-        BattleStateMachine.OnNewStateSwitched -= NewCombatState;
-    }
-
     void Start()
     {
         if (BattleStateMachine.TryGetInstance(out var bts))
             bts.Include(this);
+    }
+
+    void Update()
+    {
+        if (Profile.CurrentHP == 0 && Animator.IsPlaying(DeathAnimation) == false)
+            Animator.Play(DeathAnimation);
+        else if (Profile.CurrentHP != 0 && Animator.IsPlaying(DeathAnimation))
+            Animator.Play(IdleAnimation);
     }
 
     void OnDestroy()
@@ -55,41 +52,13 @@ public class BattleCharacterController : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         this.AutoAssign(ref Animator);
-        this.AutoAssign(ref MovementController);
     }
 
-    void NewCombatState(CombatState combatState)
+    void OnValidate()
     {
-        if (Profile.CurrentHP <= 0)
-        {
-            ChangeAnimationState(Battle_Die);
-            return;
-        }
-
-        switch (combatState)
-        {
-            case CombatState.Start:
-                ChangeAnimationState(Battle_EnterFight);
-                break;
-
-            case CombatState.Active:
-                ChangeAnimationState(Battle_Stance);
-                break;
-
-            case CombatState.Wait:
-                ChangeAnimationState(Battle_Stance);
-                break;
-
-            case CombatState.End:
-                break;
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(combatState), combatState, null);
-        }
+        DeathAnimation.EditorOnlyValidate(Animator, out _);
     }
 
-    void ChangeAnimationState(string newAnimState)
-    {
-        Animator.Play(newAnimState);
-    }
+    bool ValidateAnim(AnimationState anim, ref string errorMessage) => anim.EditorOnlyValidate(Animator, out errorMessage);
 }
+

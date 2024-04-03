@@ -11,8 +11,6 @@ using Random = UnityEngine.Random;
 
 public class BattleStateMachine : MonoBehaviour
 {
-    public delegate void SwitchToNewState(CombatState state);
-    public static event SwitchToNewState OnNewStateSwitched;
     static BattleStateMachine _instance;
 
     public bool TurnBased;
@@ -41,7 +39,6 @@ public class BattleStateMachine : MonoBehaviour
 
     public readonly Dictionary<BattleCharacterController, (Tactics chosenTactic, int actionI)> Processing = new();
 
-    CombatState _combatState;
     CinemachineFreeLook _rotateCam;
     HashSet<BattleCharacterController> _busy = new();
 
@@ -86,7 +83,7 @@ public class BattleStateMachine : MonoBehaviour
 
             model.name = $"{hero.gameObject.name} Model";
 
-            var controller = model.GetComponent<BattleHeroModelController>();
+            var controller = model.GetComponent<BattleCharacterController>();
             controller.Profile = hero;
 
             hero.ActionsCharged = Random.Range(0, hero.ActionChargeMax);
@@ -96,16 +93,13 @@ public class BattleStateMachine : MonoBehaviour
             if (Units.Contains(target) == false)
                 Units.Add(target);
 
-        SendStateChangeNotification(CombatState.Start);
         yield return new WaitForSeconds(5);
-        SendStateChangeNotification(CombatState.Active);
 
         do
         {
             if (IsBattleFinished(out bool win))
             {
                 _rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
-                SendStateChangeNotification(CombatState.End);
                 enabled = false;
                 yield return new WaitForSeconds(1f);
                 foreach (var yields in BattleResolution.ResolveBattle(win, this))
@@ -264,7 +258,11 @@ public class BattleStateMachine : MonoBehaviour
                     }
 
                     foreach (var yield in animation.Play(action, unit, selection.ToArray()))
+                    {
                         yield return yield;
+                        if (unit.Profile.EffectiveStats.HP == 0)
+                            break;
+                    }
 
                     // Check AGAIN that our selection is still valid, may not be after playing the animation
                     if (chosenTactic.Condition.CanExecute(chosenTactic.Actions.AsSpan()[i..], allUnits, unit.Context, out var newSelection, true))
@@ -389,42 +387,6 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
 
-    // METHODS
-    void SendStateChangeNotification(CombatState newCombatState)
-    {
-        try
-        {
-            switch(newCombatState)
-            {
-                case CombatState.Start:
-                    _combatState = CombatState.Start;
-                    OnNewStateSwitched?.Invoke(newCombatState);
-                    break;
-
-                case CombatState.Active:
-                    _combatState = CombatState.Active;
-                    OnNewStateSwitched?.Invoke(newCombatState);
-                    break;
-
-                case CombatState.Wait:
-                    _combatState = CombatState.Wait;
-                    OnNewStateSwitched?.Invoke(newCombatState);
-                    break;
-
-                case CombatState.End:
-                    _combatState = CombatState.End;
-                    OnNewStateSwitched?.Invoke(newCombatState);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(newCombatState), newCombatState, null);
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogException(e);
-        }
-    }
-
     #region End of Battle
     internal static void ClearData()
     {
@@ -459,6 +421,11 @@ public class BattleStateMachine : MonoBehaviour
             }
 
             _stackDepth--;
+        }
+
+        public void PostDead(CharacterTemplate source)
+        {
+            // Should be obvious enough not to mention it ?
         }
 
         public void PostTooCostly(CharacterTemplate source, ReadOnlySpan<IAction> actions)
