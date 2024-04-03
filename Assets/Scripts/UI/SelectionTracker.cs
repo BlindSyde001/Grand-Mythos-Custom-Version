@@ -29,6 +29,9 @@ public class SelectionTracker : MonoBehaviour
                 if (_selectionHistory.Count > 50)
                     _selectionHistory.RemoveAt(0);
             }
+
+            if (IsValidForSelection(selection.GetComponent<Selectable>()) == false)
+                SelectLastActiveSelectable();
         }
     }
 
