@@ -9,4 +9,5 @@ public class HeroPrefabUIData : MonoBehaviour
     public TextMeshProUGUI health;
     public Image atbBar;
     public Image healthBar;
+    public TextMeshProUGUI nameLabel;
 }

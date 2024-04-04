@@ -206,6 +206,7 @@ public class BattleUIOperation : MonoBehaviour
             }
         }
 
+        SelectedUI.nameLabel.text = UnitSelected.Profile.Name;
         SelectedUI.characterIcon.sprite = UnitSelected.Profile.Portrait;
         SelectedUI.atbBar.fillAmount = UnitSelected.Profile.ActionsCharged / UnitSelected.Profile.ActionChargeMax;
         SelectedUI.healthBar.fillAmount = (float)UnitSelected.Profile.CurrentHP / UnitSelected.Profile.EffectiveStats.HP;
