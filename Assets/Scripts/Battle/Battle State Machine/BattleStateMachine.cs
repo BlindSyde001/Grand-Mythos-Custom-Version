@@ -142,7 +142,9 @@ public class BattleStateMachine : MonoBehaviour
             {
                 if (unit.Profile.CurrentHP != 0 && _busy.Contains(unit) == false)
                     unit.Profile.ActionsCharged += unit.Profile.ActionRechargeSpeed * Time.deltaTime / 10f;
-                // DO NOT CLAMP HERE, DO IT AFTER ORDERS HAVE BEEN SCHEDULED
+
+                if (unit.Profile.ActionsCharged > unit.Profile.ActionChargeMax)
+                    unit.Profile.ActionsCharged = unit.Profile.ActionChargeMax;
             }
 
             yield return null; // Wait for next frame
@@ -317,9 +319,6 @@ public class BattleStateMachine : MonoBehaviour
 
                 unit.Context.Round++;
             }
-
-            if (unit.Profile.ActionsCharged > unit.Profile.ActionChargeMax)
-                unit.Profile.ActionsCharged = unit.Profile.ActionChargeMax;
         }
         finally
         {
