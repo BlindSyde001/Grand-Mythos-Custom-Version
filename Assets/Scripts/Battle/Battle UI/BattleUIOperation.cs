@@ -159,6 +159,10 @@ public class BattleUIOperation : MonoBehaviour
         {
             UpdatePreview(order, order.Actions, PreviewType.Order);
         }
+        else if (BattleManagement.TacticsDisabled.Contains(UnitSelected))
+        {
+            UpdatePreview(null, default, PreviewType.Order);
+        }
         else // No orders, find the first tactics that can run
         {
             Tactics tacticsPreviewed = null;
