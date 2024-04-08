@@ -24,13 +24,14 @@ public abstract class BaseEncounter : IEncounterDefinition
         var encounterState = battleTransition.AddComponent<EncounterState>();
         foreach (var reserve in GameManager.Instance.ReservesLineup)
             reserve.gameObject.SetActive(false);
-        encounterState.StartCoroutine(OverworldToBattleTransition(Scene, FormationToSpawn()));
+        encounterState.StartCoroutine(OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup, FormationToSpawn()));
     }
 
-    static IEnumerator OverworldToBattleTransition(SceneReference Scene, CharacterTemplate[] opponents)
+    static IEnumerator OverworldToBattleTransition(SceneReference Scene, IEnumerable<CharacterTemplate> allies, CharacterTemplate[] opponents)
     {
         List<GameObject> gameObjectsToReEnable = new List<GameObject>();
-        var hostileController = new List<BattleCharacterController>();
+        var hostileControllers = new List<BattleCharacterController>();
+        var alliesControllers = new List<BattleCharacterController>();
 
         bool ranToCompletion = false;
         try
@@ -67,29 +68,40 @@ public abstract class BaseEncounter : IEncounterDefinition
                 var template = Object.Instantiate(opponents[i]);
                 template.name = $"{opponents[i].gameObject.name} Data {i}";
 
-                // Add Model into Battle
                 var model = Object.Instantiate(template.BattlePrefab, template.transform);
-
                 model.name = $"{template.gameObject.name} Model {i}";
 
                 // Attach Relevant References
                 var controller = model.GetComponent<BattleCharacterController>();
                 controller.Profile = template;
-                template.ActionsCharged = UnityEngine.Random.Range(0, template.ActionChargeMax);
-                hostileController.Add(controller);
+                hostileControllers.Add(controller);
+            }
+
+            foreach (var ally in allies)
+            {
+                var model = Object.Instantiate(ally.BattlePrefab);
+                model.name = $"{ally.gameObject.name} Model";
+
+                // Attach Relevant References
+                var controller = model.GetComponent<BattleCharacterController>();
+                controller.Profile = ally;
+                alliesControllers.Add(controller);
             }
 
             while (loadOperation.isDone == false)
                 yield return null;
 
-            (Vector3 pos, Quaternion rot)[] spawns;
+            (Vector3 pos, Quaternion rot)[] hostileSpawns;
+            (Vector3 pos, Quaternion rot)[] alliesSpawns;
             if (Object.FindObjectOfType<BattleStateMachine>() is { } bsm && bsm != null)
             {
-                spawns = bsm.EnemySpawns.Select(x => (x.position, x.rotation)).ToArray();
+                hostileSpawns = bsm.EnemySpawns.Select(x => (x.position, x.rotation)).ToArray();
+                alliesSpawns = bsm.HeroSpawns.Select(x => (x.position, x.rotation)).ToArray();
             }
             else
             {
-                spawns = new (Vector3, Quaternion)[] { (default, Quaternion.identity) };
+                hostileSpawns = new (Vector3, Quaternion)[] { (default, Quaternion.identity) };
+                alliesSpawns = new (Vector3, Quaternion)[] { (default, Quaternion.identity) };
                 Debug.LogWarning($"Could not find {nameof(BattleStateMachine)} when trying to set encounter");
             }
 
@@ -102,10 +114,16 @@ public abstract class BaseEncounter : IEncounterDefinition
 
             Debug.Assert(runtimeScene.IsValid());
 
-            for (int i = 0; i < hostileController.Count; i++)
+            for (int i = 0; i < hostileControllers.Count; i++)
             {
-                SceneManager.MoveGameObjectToScene(hostileController[i].Profile.gameObject, runtimeScene);
-                hostileController[i].transform.SetPositionAndRotation(spawns[i].pos, spawns[i].rot);
+                SceneManager.MoveGameObjectToScene(hostileControllers[i].Profile.gameObject, runtimeScene);
+                hostileControllers[i].transform.SetPositionAndRotation(hostileSpawns[i % hostileSpawns.Length].pos, hostileSpawns[i % hostileSpawns.Length].rot);
+            }
+
+            for (int i = 0; i < alliesControllers.Count; i++)
+            {
+                SceneManager.MoveGameObjectToScene(alliesControllers[i].gameObject, runtimeScene);
+                alliesControllers[i].transform.SetPositionAndRotation(alliesSpawns[i % alliesSpawns.Length].pos, alliesSpawns[i % alliesSpawns.Length].rot);
             }
 
             Scene previouslyActiveScene = SceneManager.GetActiveScene();
@@ -122,9 +140,9 @@ public abstract class BaseEncounter : IEncounterDefinition
             {
                 foreach (var gameObject in gameObjectsToReEnable)
                     gameObject.SetActive(true);
-                foreach (var controller in hostileController)
+                foreach (var controller in hostileControllers)
                     Object.Destroy(controller.Profile);
-                foreach (var controller in hostileController)
+                foreach (var controller in hostileControllers)
                     Object.Destroy(controller);
             }
 

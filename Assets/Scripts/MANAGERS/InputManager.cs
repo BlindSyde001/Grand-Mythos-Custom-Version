@@ -84,26 +84,22 @@ public class InputManager : MonoBehaviour
     void SetGameState(GameState newState)
     {
         CurrentState = newState;
-        #warning Will have to rethink this OverworldPlayerController thing
         switch (newState)
         {
             case GameState.Overworld:
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
-                /*foreach (var instance in OverworldPlayerController.Instances)
-                    instance.enabled = true;*/
                 break;
 
             case GameState.Cutscene:
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
-                /*foreach (var instance in OverworldPlayerController.Instances)
-                    instance.enabled = false;*/
                 break;
 
             default:
             case GameState.Battle:
             case GameState.Menu:
+            case GameState.Pause:
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
                 break;
@@ -115,6 +111,7 @@ public class InputManager : MonoBehaviour
             GameState.Battle => "Battle Map",
             GameState.Cutscene => "Cutscene Map",
             GameState.Menu => "Menu Map",
+            GameState.Pause => "Pause Map",
             _ => throw new ArgumentOutOfRangeException(nameof(newState), newState, null)
         });
     }

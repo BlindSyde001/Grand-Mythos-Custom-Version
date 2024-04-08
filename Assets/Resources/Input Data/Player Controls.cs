@@ -71,6 +71,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""271db8f6-d577-4d29-905e-e2f09b284eb0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -220,7 +229,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""2c80e7a9-7d0c-4723-ba5a-27d38b08b765"",
-                    ""path"": ""<Keyboard>/tab"",
+                    ""path"": ""<Keyboard>/v"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
@@ -231,7 +240,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""dbbedf2d-4611-4eba-83d2-045213bf12f3"",
-                    ""path"": ""<Gamepad>/start"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
@@ -282,551 +291,26 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""CameraSwitch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
-            ""name"": ""Menu Map"",
-            ""id"": ""ecbcd905-2db8-4b61-bf14-fad53bada67c"",
-            ""actions"": [
-                {
-                    ""name"": ""CloseMenu"",
-                    ""type"": ""Button"",
-                    ""id"": ""b8522af9-72c9-4bea-8add-ccec21a6d4dc"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 },
-                {
-                    ""name"": ""Navigate"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""8a7f72df-7dd6-419c-852a-0df689888332"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Submit"",
-                    ""type"": ""Button"",
-                    ""id"": ""7aff4592-6ff5-4b4f-a45b-73b13c19d5cf"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Cancel"",
-                    ""type"": ""Button"",
-                    ""id"": ""fb041481-90e6-4e25-8f98-b222b76805f2"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Point"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""efc94f1d-5f03-46f3-a068-d94aced23bbf"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""Click"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""9a7f3d3b-93f2-444d-ba98-94f0163198a5"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""ScrollWheel"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""5327cedf-fa66-455e-9d0b-7c414f569646"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""MiddleClick"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""d6a3a09a-4cd6-4ab5-98d8-a707783539f7"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""RightClick"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""a61d6084-ddc7-4fef-b872-699c756b4655"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""TrackedDevicePosition"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""fde3b368-5da1-4463-8f78-437f6c5724c6"",
-                    ""expectedControlType"": ""Vector3"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""TrackedDeviceOrientation"",
-                    ""type"": ""PassThrough"",
-                    ""id"": ""60bd5306-91af-4e49-8904-d138888fa4e4"",
-                    ""expectedControlType"": ""Quaternion"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                }
-            ],
-            ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""174833e3-d0d1-4225-8f66-702bdfd48dc2"",
-                    ""path"": ""<Keyboard>/tab"",
+                    ""id"": ""1b0cb691-c26c-447e-b320-dbd99f03f70d"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
-                    ""action"": ""CloseMenu"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""1d007176-0079-43e1-b69c-b82370efd527"",
+                    ""id"": ""a61d9c05-9465-4b14-8f03-dc23b053b892"",
                     ""path"": ""<Gamepad>/start"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
-                    ""action"": ""CloseMenu"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Gamepad"",
-                    ""id"": ""c3b059f5-f3c1-4851-98d9-3c5684d14baf"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""37dd9868-cfe5-4c4f-80b8-c16c3cc589aa"",
-                    ""path"": ""<Gamepad>/leftStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""78e85595-90ef-488b-a142-f9cc67470d9d"",
-                    ""path"": ""<Gamepad>/rightStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""164714a1-2a8f-49d2-9f95-12bda3a2e85f"",
-                    ""path"": ""<Gamepad>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""7f21acb0-dc6e-4cb1-990c-d86c33c6c242"",
-                    ""path"": ""<Gamepad>/rightStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""24df8de9-597e-4516-af36-a28ce68b6051"",
-                    ""path"": ""<Gamepad>/leftStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""04c015d7-9058-433d-bee5-5a04afee5cb5"",
-                    ""path"": ""<Gamepad>/rightStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""82675f52-bcb1-449f-a84c-4c5f32eebac3"",
-                    ""path"": ""<Gamepad>/leftStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""3545ce64-eac6-40b6-9c0f-b94490f65072"",
-                    ""path"": ""<Gamepad>/rightStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""efe748a0-3e6b-440e-9b62-a0d7f6b2ae51"",
-                    ""path"": ""<Gamepad>/dpad"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Joystick"",
-                    ""id"": ""565ffcfc-ee03-4278-9aeb-a6ae0559a12c"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""d89065b5-31b4-4d65-b1f9-144b31baa435"",
-                    ""path"": ""<Joystick>/stick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""64f125d5-7e22-4c36-b9b9-4f76c92bed49"",
-                    ""path"": ""<Joystick>/stick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""d7a17664-f1df-4b80-a739-c1bd4cf09256"",
-                    ""path"": ""<Joystick>/stick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""9a366a6a-6fd4-4af5-bc0c-701fcd44fddb"",
-                    ""path"": ""<Joystick>/stick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Keyboard"",
-                    ""id"": ""b42c3b54-5b9d-4998-9341-2fea702d5ce3"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""d052f3f5-3ee6-4e78-8fcd-f5ceaf0502d4"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""e835eb9e-61e4-4b7b-8809-46c343395de3"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""e45b9329-ee12-4915-8e88-2756510fc008"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""53e3c5bc-b6e4-48fa-a577-0930b49b1d17"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""241c491f-1fe8-4e7b-bf05-5cde42262eb0"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""a3c4fc42-1ae1-47ea-ad40-90956ad0497a"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""1e89efc7-7f4e-4446-bb30-a83d17b0b288"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""4d63f7ca-caab-49e9-89bc-0691a24e4efe"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0d791050-6669-46e0-8884-e91469a0ba46"",
-                    ""path"": ""*/{Submit}"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Submit"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0a655f85-bc07-4499-9344-b02414cb738b"",
-                    ""path"": ""*/{Cancel}"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Cancel"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""10783932-7567-4651-a50a-3a6b78daabfd"",
-                    ""path"": ""<Mouse>/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""c8609b97-db7d-4443-99f3-fcc179a6abee"",
-                    ""path"": ""<Pen>/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ea475f66-bc25-4787-82b7-6f59d31c3593"",
-                    ""path"": ""<Touchscreen>/touch*/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Point"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3ed60c5b-6110-45a2-920f-e53f6f95229c"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Click"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8efdf6ba-1a2d-4c7f-a4ad-e870a1416752"",
-                    ""path"": ""<Pen>/tip"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Click"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""61dfe7de-be9d-40db-b08e-2c4b6cb6147c"",
-                    ""path"": ""<Touchscreen>/touch*/press"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Click"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0444374b-4121-4653-b78b-365b7c2d0ff3"",
-                    ""path"": ""<XRController>/trigger"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Click"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""b6b52999-f6ee-4248-b923-01ed6d2d86f5"",
-                    ""path"": ""<Mouse>/scroll"",
-                    ""interactions"": """",
-                    ""processors"": ""ScaleVector2(x=10,y=10)"",
-                    ""groups"": ""ANY"",
-                    ""action"": ""ScrollWheel"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""83c278ce-8840-4aa7-b543-ecaf48030431"",
-                    ""path"": ""<Mouse>/middleButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""MiddleClick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3b49aa03-2eb2-499f-9287-d948796ef330"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""RightClick"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e983d053-5b5b-48d5-8271-282c4690831e"",
-                    ""path"": ""<XRController>/devicePosition"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""TrackedDevicePosition"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""1e48066e-17e3-41e4-86f8-0bd701fe8318"",
-                    ""path"": ""<XRController>/deviceRotation"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""TrackedDeviceOrientation"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -931,6 +415,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""type"": ""PassThrough"",
                     ""id"": ""b8d7e0b1-8f50-4851-9a21-d924f81cce29"",
                     ""expectedControlType"": ""Quaternion"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""1537c5ae-1512-4045-9898-57a831455b2f"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -1387,6 +880,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""TrackedDeviceOrientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""20e7c2fe-ad7f-46eb-b0ad-a3012b44baa2"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""01f5fde5-fd95-4a5c-90c0-aa9dc628b948"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1413,6 +928,592 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""New action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Menu Map"",
+            ""id"": ""ecbcd905-2db8-4b61-bf14-fad53bada67c"",
+            ""actions"": [
+                {
+                    ""name"": ""CloseMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8522af9-72c9-4bea-8add-ccec21a6d4dc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Navigate"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""8a7f72df-7dd6-419c-852a-0df689888332"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""7aff4592-6ff5-4b4f-a45b-73b13c19d5cf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""fb041481-90e6-4e25-8f98-b222b76805f2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Point"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""efc94f1d-5f03-46f3-a068-d94aced23bbf"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Click"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""9a7f3d3b-93f2-444d-ba98-94f0163198a5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ScrollWheel"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""5327cedf-fa66-455e-9d0b-7c414f569646"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MiddleClick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""d6a3a09a-4cd6-4ab5-98d8-a707783539f7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RightClick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""a61d6084-ddc7-4fef-b872-699c756b4655"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TrackedDevicePosition"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""fde3b368-5da1-4463-8f78-437f6c5724c6"",
+                    ""expectedControlType"": ""Vector3"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TrackedDeviceOrientation"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""60bd5306-91af-4e49-8904-d138888fa4e4"",
+                    ""expectedControlType"": ""Quaternion"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""Gamepad"",
+                    ""id"": ""c3b059f5-f3c1-4851-98d9-3c5684d14baf"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""37dd9868-cfe5-4c4f-80b8-c16c3cc589aa"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""78e85595-90ef-488b-a142-f9cc67470d9d"",
+                    ""path"": ""<Gamepad>/rightStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""164714a1-2a8f-49d2-9f95-12bda3a2e85f"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""7f21acb0-dc6e-4cb1-990c-d86c33c6c242"",
+                    ""path"": ""<Gamepad>/rightStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""24df8de9-597e-4516-af36-a28ce68b6051"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""04c015d7-9058-433d-bee5-5a04afee5cb5"",
+                    ""path"": ""<Gamepad>/rightStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""82675f52-bcb1-449f-a84c-4c5f32eebac3"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""3545ce64-eac6-40b6-9c0f-b94490f65072"",
+                    ""path"": ""<Gamepad>/rightStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""efe748a0-3e6b-440e-9b62-a0d7f6b2ae51"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Joystick"",
+                    ""id"": ""565ffcfc-ee03-4278-9aeb-a6ae0559a12c"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""d89065b5-31b4-4d65-b1f9-144b31baa435"",
+                    ""path"": ""<Joystick>/stick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""64f125d5-7e22-4c36-b9b9-4f76c92bed49"",
+                    ""path"": ""<Joystick>/stick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""d7a17664-f1df-4b80-a739-c1bd4cf09256"",
+                    ""path"": ""<Joystick>/stick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""9a366a6a-6fd4-4af5-bc0c-701fcd44fddb"",
+                    ""path"": ""<Joystick>/stick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Keyboard"",
+                    ""id"": ""b42c3b54-5b9d-4998-9341-2fea702d5ce3"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""d052f3f5-3ee6-4e78-8fcd-f5ceaf0502d4"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""e835eb9e-61e4-4b7b-8809-46c343395de3"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""e45b9329-ee12-4915-8e88-2756510fc008"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""53e3c5bc-b6e4-48fa-a577-0930b49b1d17"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""241c491f-1fe8-4e7b-bf05-5cde42262eb0"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""a3c4fc42-1ae1-47ea-ad40-90956ad0497a"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""1e89efc7-7f4e-4446-bb30-a83d17b0b288"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""4d63f7ca-caab-49e9-89bc-0691a24e4efe"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0d791050-6669-46e0-8884-e91469a0ba46"",
+                    ""path"": ""*/{Submit}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0a655f85-bc07-4499-9344-b02414cb738b"",
+                    ""path"": ""*/{Cancel}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""10783932-7567-4651-a50a-3a6b78daabfd"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Point"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c8609b97-db7d-4443-99f3-fcc179a6abee"",
+                    ""path"": ""<Pen>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Point"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ea475f66-bc25-4787-82b7-6f59d31c3593"",
+                    ""path"": ""<Touchscreen>/touch*/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Point"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3ed60c5b-6110-45a2-920f-e53f6f95229c"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8efdf6ba-1a2d-4c7f-a4ad-e870a1416752"",
+                    ""path"": ""<Pen>/tip"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""61dfe7de-be9d-40db-b08e-2c4b6cb6147c"",
+                    ""path"": ""<Touchscreen>/touch*/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0444374b-4121-4653-b78b-365b7c2d0ff3"",
+                    ""path"": ""<XRController>/trigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b6b52999-f6ee-4248-b923-01ed6d2d86f5"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=10,y=10)"",
+                    ""groups"": ""ANY"",
+                    ""action"": ""ScrollWheel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""83c278ce-8840-4aa7-b543-ecaf48030431"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""MiddleClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3b49aa03-2eb2-499f-9287-d948796ef330"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""RightClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e983d053-5b5b-48d5-8271-282c4690831e"",
+                    ""path"": ""<XRController>/devicePosition"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""TrackedDevicePosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e48066e-17e3-41e4-86f8-0bd701fe8318"",
+                    ""path"": ""<XRController>/deviceRotation"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""TrackedDeviceOrientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b14e5e58-d4d0-40c4-9a70-48de1e666033"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""CloseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dd0f321d-f028-4a57-87c3-7dcb27e36f42"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""CloseMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Pause Map"",
+            ""id"": ""a8a85ad6-b833-47e3-8a04-0f5ed562e831"",
+            ""actions"": [
+                {
+                    ""name"": ""Unpause"",
+                    ""type"": ""Button"",
+                    ""id"": ""4fa9e5e6-7ba2-4577-97c7-11b0d35e56eb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9eb047b7-a687-4da3-893b-9d21e3ca589d"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Unpause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6b196277-d643-41f9-8a56-64bb29ff79ed"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Unpause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1450,19 +1551,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_OverworldMap_Interact = m_OverworldMap.FindAction("Interact", throwIfNotFound: true);
         m_OverworldMap_OpenMenu = m_OverworldMap.FindAction("OpenMenu", throwIfNotFound: true);
         m_OverworldMap_CameraSwitch = m_OverworldMap.FindAction("CameraSwitch", throwIfNotFound: true);
-        // Menu Map
-        m_MenuMap = asset.FindActionMap("Menu Map", throwIfNotFound: true);
-        m_MenuMap_CloseMenu = m_MenuMap.FindAction("CloseMenu", throwIfNotFound: true);
-        m_MenuMap_Navigate = m_MenuMap.FindAction("Navigate", throwIfNotFound: true);
-        m_MenuMap_Submit = m_MenuMap.FindAction("Submit", throwIfNotFound: true);
-        m_MenuMap_Cancel = m_MenuMap.FindAction("Cancel", throwIfNotFound: true);
-        m_MenuMap_Point = m_MenuMap.FindAction("Point", throwIfNotFound: true);
-        m_MenuMap_Click = m_MenuMap.FindAction("Click", throwIfNotFound: true);
-        m_MenuMap_ScrollWheel = m_MenuMap.FindAction("ScrollWheel", throwIfNotFound: true);
-        m_MenuMap_MiddleClick = m_MenuMap.FindAction("MiddleClick", throwIfNotFound: true);
-        m_MenuMap_RightClick = m_MenuMap.FindAction("RightClick", throwIfNotFound: true);
-        m_MenuMap_TrackedDevicePosition = m_MenuMap.FindAction("TrackedDevicePosition", throwIfNotFound: true);
-        m_MenuMap_TrackedDeviceOrientation = m_MenuMap.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        m_OverworldMap_Pause = m_OverworldMap.FindAction("Pause", throwIfNotFound: true);
         // Battle Map
         m_BattleMap = asset.FindActionMap("Battle Map", throwIfNotFound: true);
         m_BattleMap_HeroSwitch = m_BattleMap.FindAction("HeroSwitch", throwIfNotFound: true);
@@ -1476,9 +1565,26 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_BattleMap_RightClick = m_BattleMap.FindAction("RightClick", throwIfNotFound: true);
         m_BattleMap_TrackedDevicePosition = m_BattleMap.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_BattleMap_TrackedDeviceOrientation = m_BattleMap.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        m_BattleMap_Pause = m_BattleMap.FindAction("Pause", throwIfNotFound: true);
         // Cutscene Map
         m_CutsceneMap = asset.FindActionMap("Cutscene Map", throwIfNotFound: true);
         m_CutsceneMap_Newaction = m_CutsceneMap.FindAction("New action", throwIfNotFound: true);
+        // Menu Map
+        m_MenuMap = asset.FindActionMap("Menu Map", throwIfNotFound: true);
+        m_MenuMap_CloseMenu = m_MenuMap.FindAction("CloseMenu", throwIfNotFound: true);
+        m_MenuMap_Navigate = m_MenuMap.FindAction("Navigate", throwIfNotFound: true);
+        m_MenuMap_Submit = m_MenuMap.FindAction("Submit", throwIfNotFound: true);
+        m_MenuMap_Cancel = m_MenuMap.FindAction("Cancel", throwIfNotFound: true);
+        m_MenuMap_Point = m_MenuMap.FindAction("Point", throwIfNotFound: true);
+        m_MenuMap_Click = m_MenuMap.FindAction("Click", throwIfNotFound: true);
+        m_MenuMap_ScrollWheel = m_MenuMap.FindAction("ScrollWheel", throwIfNotFound: true);
+        m_MenuMap_MiddleClick = m_MenuMap.FindAction("MiddleClick", throwIfNotFound: true);
+        m_MenuMap_RightClick = m_MenuMap.FindAction("RightClick", throwIfNotFound: true);
+        m_MenuMap_TrackedDevicePosition = m_MenuMap.FindAction("TrackedDevicePosition", throwIfNotFound: true);
+        m_MenuMap_TrackedDeviceOrientation = m_MenuMap.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // Pause Map
+        m_PauseMap = asset.FindActionMap("Pause Map", throwIfNotFound: true);
+        m_PauseMap_Unpause = m_PauseMap.FindAction("Unpause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1545,6 +1651,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_OverworldMap_Interact;
     private readonly InputAction m_OverworldMap_OpenMenu;
     private readonly InputAction m_OverworldMap_CameraSwitch;
+    private readonly InputAction m_OverworldMap_Pause;
     public struct OverworldMapActions
     {
         private @PlayerControls m_Wrapper;
@@ -1554,6 +1661,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_OverworldMap_Interact;
         public InputAction @OpenMenu => m_Wrapper.m_OverworldMap_OpenMenu;
         public InputAction @CameraSwitch => m_Wrapper.m_OverworldMap_CameraSwitch;
+        public InputAction @Pause => m_Wrapper.m_OverworldMap_Pause;
         public InputActionMap Get() { return m_Wrapper.m_OverworldMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1578,6 +1686,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @CameraSwitch.started += instance.OnCameraSwitch;
             @CameraSwitch.performed += instance.OnCameraSwitch;
             @CameraSwitch.canceled += instance.OnCameraSwitch;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IOverworldMapActions instance)
@@ -1597,6 +1708,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @CameraSwitch.started -= instance.OnCameraSwitch;
             @CameraSwitch.performed -= instance.OnCameraSwitch;
             @CameraSwitch.canceled -= instance.OnCameraSwitch;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IOverworldMapActions instance)
@@ -1614,6 +1728,186 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public OverworldMapActions @OverworldMap => new OverworldMapActions(this);
+
+    // Battle Map
+    private readonly InputActionMap m_BattleMap;
+    private List<IBattleMapActions> m_BattleMapActionsCallbackInterfaces = new List<IBattleMapActions>();
+    private readonly InputAction m_BattleMap_HeroSwitch;
+    private readonly InputAction m_BattleMap_Navigate;
+    private readonly InputAction m_BattleMap_Submit;
+    private readonly InputAction m_BattleMap_Cancel;
+    private readonly InputAction m_BattleMap_Point;
+    private readonly InputAction m_BattleMap_Click;
+    private readonly InputAction m_BattleMap_ScrollWheel;
+    private readonly InputAction m_BattleMap_MiddleClick;
+    private readonly InputAction m_BattleMap_RightClick;
+    private readonly InputAction m_BattleMap_TrackedDevicePosition;
+    private readonly InputAction m_BattleMap_TrackedDeviceOrientation;
+    private readonly InputAction m_BattleMap_Pause;
+    public struct BattleMapActions
+    {
+        private @PlayerControls m_Wrapper;
+        public BattleMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @HeroSwitch => m_Wrapper.m_BattleMap_HeroSwitch;
+        public InputAction @Navigate => m_Wrapper.m_BattleMap_Navigate;
+        public InputAction @Submit => m_Wrapper.m_BattleMap_Submit;
+        public InputAction @Cancel => m_Wrapper.m_BattleMap_Cancel;
+        public InputAction @Point => m_Wrapper.m_BattleMap_Point;
+        public InputAction @Click => m_Wrapper.m_BattleMap_Click;
+        public InputAction @ScrollWheel => m_Wrapper.m_BattleMap_ScrollWheel;
+        public InputAction @MiddleClick => m_Wrapper.m_BattleMap_MiddleClick;
+        public InputAction @RightClick => m_Wrapper.m_BattleMap_RightClick;
+        public InputAction @TrackedDevicePosition => m_Wrapper.m_BattleMap_TrackedDevicePosition;
+        public InputAction @TrackedDeviceOrientation => m_Wrapper.m_BattleMap_TrackedDeviceOrientation;
+        public InputAction @Pause => m_Wrapper.m_BattleMap_Pause;
+        public InputActionMap Get() { return m_Wrapper.m_BattleMap; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(BattleMapActions set) { return set.Get(); }
+        public void AddCallbacks(IBattleMapActions instance)
+        {
+            if (instance == null || m_Wrapper.m_BattleMapActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_BattleMapActionsCallbackInterfaces.Add(instance);
+            @HeroSwitch.started += instance.OnHeroSwitch;
+            @HeroSwitch.performed += instance.OnHeroSwitch;
+            @HeroSwitch.canceled += instance.OnHeroSwitch;
+            @Navigate.started += instance.OnNavigate;
+            @Navigate.performed += instance.OnNavigate;
+            @Navigate.canceled += instance.OnNavigate;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+            @Point.started += instance.OnPoint;
+            @Point.performed += instance.OnPoint;
+            @Point.canceled += instance.OnPoint;
+            @Click.started += instance.OnClick;
+            @Click.performed += instance.OnClick;
+            @Click.canceled += instance.OnClick;
+            @ScrollWheel.started += instance.OnScrollWheel;
+            @ScrollWheel.performed += instance.OnScrollWheel;
+            @ScrollWheel.canceled += instance.OnScrollWheel;
+            @MiddleClick.started += instance.OnMiddleClick;
+            @MiddleClick.performed += instance.OnMiddleClick;
+            @MiddleClick.canceled += instance.OnMiddleClick;
+            @RightClick.started += instance.OnRightClick;
+            @RightClick.performed += instance.OnRightClick;
+            @RightClick.canceled += instance.OnRightClick;
+            @TrackedDevicePosition.started += instance.OnTrackedDevicePosition;
+            @TrackedDevicePosition.performed += instance.OnTrackedDevicePosition;
+            @TrackedDevicePosition.canceled += instance.OnTrackedDevicePosition;
+            @TrackedDeviceOrientation.started += instance.OnTrackedDeviceOrientation;
+            @TrackedDeviceOrientation.performed += instance.OnTrackedDeviceOrientation;
+            @TrackedDeviceOrientation.canceled += instance.OnTrackedDeviceOrientation;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
+        }
+
+        private void UnregisterCallbacks(IBattleMapActions instance)
+        {
+            @HeroSwitch.started -= instance.OnHeroSwitch;
+            @HeroSwitch.performed -= instance.OnHeroSwitch;
+            @HeroSwitch.canceled -= instance.OnHeroSwitch;
+            @Navigate.started -= instance.OnNavigate;
+            @Navigate.performed -= instance.OnNavigate;
+            @Navigate.canceled -= instance.OnNavigate;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+            @Point.started -= instance.OnPoint;
+            @Point.performed -= instance.OnPoint;
+            @Point.canceled -= instance.OnPoint;
+            @Click.started -= instance.OnClick;
+            @Click.performed -= instance.OnClick;
+            @Click.canceled -= instance.OnClick;
+            @ScrollWheel.started -= instance.OnScrollWheel;
+            @ScrollWheel.performed -= instance.OnScrollWheel;
+            @ScrollWheel.canceled -= instance.OnScrollWheel;
+            @MiddleClick.started -= instance.OnMiddleClick;
+            @MiddleClick.performed -= instance.OnMiddleClick;
+            @MiddleClick.canceled -= instance.OnMiddleClick;
+            @RightClick.started -= instance.OnRightClick;
+            @RightClick.performed -= instance.OnRightClick;
+            @RightClick.canceled -= instance.OnRightClick;
+            @TrackedDevicePosition.started -= instance.OnTrackedDevicePosition;
+            @TrackedDevicePosition.performed -= instance.OnTrackedDevicePosition;
+            @TrackedDevicePosition.canceled -= instance.OnTrackedDevicePosition;
+            @TrackedDeviceOrientation.started -= instance.OnTrackedDeviceOrientation;
+            @TrackedDeviceOrientation.performed -= instance.OnTrackedDeviceOrientation;
+            @TrackedDeviceOrientation.canceled -= instance.OnTrackedDeviceOrientation;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
+        }
+
+        public void RemoveCallbacks(IBattleMapActions instance)
+        {
+            if (m_Wrapper.m_BattleMapActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IBattleMapActions instance)
+        {
+            foreach (var item in m_Wrapper.m_BattleMapActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_BattleMapActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public BattleMapActions @BattleMap => new BattleMapActions(this);
+
+    // Cutscene Map
+    private readonly InputActionMap m_CutsceneMap;
+    private List<ICutsceneMapActions> m_CutsceneMapActionsCallbackInterfaces = new List<ICutsceneMapActions>();
+    private readonly InputAction m_CutsceneMap_Newaction;
+    public struct CutsceneMapActions
+    {
+        private @PlayerControls m_Wrapper;
+        public CutsceneMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Newaction => m_Wrapper.m_CutsceneMap_Newaction;
+        public InputActionMap Get() { return m_Wrapper.m_CutsceneMap; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CutsceneMapActions set) { return set.Get(); }
+        public void AddCallbacks(ICutsceneMapActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CutsceneMapActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CutsceneMapActionsCallbackInterfaces.Add(instance);
+            @Newaction.started += instance.OnNewaction;
+            @Newaction.performed += instance.OnNewaction;
+            @Newaction.canceled += instance.OnNewaction;
+        }
+
+        private void UnregisterCallbacks(ICutsceneMapActions instance)
+        {
+            @Newaction.started -= instance.OnNewaction;
+            @Newaction.performed -= instance.OnNewaction;
+            @Newaction.canceled -= instance.OnNewaction;
+        }
+
+        public void RemoveCallbacks(ICutsceneMapActions instance)
+        {
+            if (m_Wrapper.m_CutsceneMapActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ICutsceneMapActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CutsceneMapActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CutsceneMapActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public CutsceneMapActions @CutsceneMap => new CutsceneMapActions(this);
 
     // Menu Map
     private readonly InputActionMap m_MenuMap;
@@ -1741,177 +2035,51 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     }
     public MenuMapActions @MenuMap => new MenuMapActions(this);
 
-    // Battle Map
-    private readonly InputActionMap m_BattleMap;
-    private List<IBattleMapActions> m_BattleMapActionsCallbackInterfaces = new List<IBattleMapActions>();
-    private readonly InputAction m_BattleMap_HeroSwitch;
-    private readonly InputAction m_BattleMap_Navigate;
-    private readonly InputAction m_BattleMap_Submit;
-    private readonly InputAction m_BattleMap_Cancel;
-    private readonly InputAction m_BattleMap_Point;
-    private readonly InputAction m_BattleMap_Click;
-    private readonly InputAction m_BattleMap_ScrollWheel;
-    private readonly InputAction m_BattleMap_MiddleClick;
-    private readonly InputAction m_BattleMap_RightClick;
-    private readonly InputAction m_BattleMap_TrackedDevicePosition;
-    private readonly InputAction m_BattleMap_TrackedDeviceOrientation;
-    public struct BattleMapActions
+    // Pause Map
+    private readonly InputActionMap m_PauseMap;
+    private List<IPauseMapActions> m_PauseMapActionsCallbackInterfaces = new List<IPauseMapActions>();
+    private readonly InputAction m_PauseMap_Unpause;
+    public struct PauseMapActions
     {
         private @PlayerControls m_Wrapper;
-        public BattleMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @HeroSwitch => m_Wrapper.m_BattleMap_HeroSwitch;
-        public InputAction @Navigate => m_Wrapper.m_BattleMap_Navigate;
-        public InputAction @Submit => m_Wrapper.m_BattleMap_Submit;
-        public InputAction @Cancel => m_Wrapper.m_BattleMap_Cancel;
-        public InputAction @Point => m_Wrapper.m_BattleMap_Point;
-        public InputAction @Click => m_Wrapper.m_BattleMap_Click;
-        public InputAction @ScrollWheel => m_Wrapper.m_BattleMap_ScrollWheel;
-        public InputAction @MiddleClick => m_Wrapper.m_BattleMap_MiddleClick;
-        public InputAction @RightClick => m_Wrapper.m_BattleMap_RightClick;
-        public InputAction @TrackedDevicePosition => m_Wrapper.m_BattleMap_TrackedDevicePosition;
-        public InputAction @TrackedDeviceOrientation => m_Wrapper.m_BattleMap_TrackedDeviceOrientation;
-        public InputActionMap Get() { return m_Wrapper.m_BattleMap; }
+        public PauseMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Unpause => m_Wrapper.m_PauseMap_Unpause;
+        public InputActionMap Get() { return m_Wrapper.m_PauseMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(BattleMapActions set) { return set.Get(); }
-        public void AddCallbacks(IBattleMapActions instance)
+        public static implicit operator InputActionMap(PauseMapActions set) { return set.Get(); }
+        public void AddCallbacks(IPauseMapActions instance)
         {
-            if (instance == null || m_Wrapper.m_BattleMapActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_BattleMapActionsCallbackInterfaces.Add(instance);
-            @HeroSwitch.started += instance.OnHeroSwitch;
-            @HeroSwitch.performed += instance.OnHeroSwitch;
-            @HeroSwitch.canceled += instance.OnHeroSwitch;
-            @Navigate.started += instance.OnNavigate;
-            @Navigate.performed += instance.OnNavigate;
-            @Navigate.canceled += instance.OnNavigate;
-            @Submit.started += instance.OnSubmit;
-            @Submit.performed += instance.OnSubmit;
-            @Submit.canceled += instance.OnSubmit;
-            @Cancel.started += instance.OnCancel;
-            @Cancel.performed += instance.OnCancel;
-            @Cancel.canceled += instance.OnCancel;
-            @Point.started += instance.OnPoint;
-            @Point.performed += instance.OnPoint;
-            @Point.canceled += instance.OnPoint;
-            @Click.started += instance.OnClick;
-            @Click.performed += instance.OnClick;
-            @Click.canceled += instance.OnClick;
-            @ScrollWheel.started += instance.OnScrollWheel;
-            @ScrollWheel.performed += instance.OnScrollWheel;
-            @ScrollWheel.canceled += instance.OnScrollWheel;
-            @MiddleClick.started += instance.OnMiddleClick;
-            @MiddleClick.performed += instance.OnMiddleClick;
-            @MiddleClick.canceled += instance.OnMiddleClick;
-            @RightClick.started += instance.OnRightClick;
-            @RightClick.performed += instance.OnRightClick;
-            @RightClick.canceled += instance.OnRightClick;
-            @TrackedDevicePosition.started += instance.OnTrackedDevicePosition;
-            @TrackedDevicePosition.performed += instance.OnTrackedDevicePosition;
-            @TrackedDevicePosition.canceled += instance.OnTrackedDevicePosition;
-            @TrackedDeviceOrientation.started += instance.OnTrackedDeviceOrientation;
-            @TrackedDeviceOrientation.performed += instance.OnTrackedDeviceOrientation;
-            @TrackedDeviceOrientation.canceled += instance.OnTrackedDeviceOrientation;
+            if (instance == null || m_Wrapper.m_PauseMapActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PauseMapActionsCallbackInterfaces.Add(instance);
+            @Unpause.started += instance.OnUnpause;
+            @Unpause.performed += instance.OnUnpause;
+            @Unpause.canceled += instance.OnUnpause;
         }
 
-        private void UnregisterCallbacks(IBattleMapActions instance)
+        private void UnregisterCallbacks(IPauseMapActions instance)
         {
-            @HeroSwitch.started -= instance.OnHeroSwitch;
-            @HeroSwitch.performed -= instance.OnHeroSwitch;
-            @HeroSwitch.canceled -= instance.OnHeroSwitch;
-            @Navigate.started -= instance.OnNavigate;
-            @Navigate.performed -= instance.OnNavigate;
-            @Navigate.canceled -= instance.OnNavigate;
-            @Submit.started -= instance.OnSubmit;
-            @Submit.performed -= instance.OnSubmit;
-            @Submit.canceled -= instance.OnSubmit;
-            @Cancel.started -= instance.OnCancel;
-            @Cancel.performed -= instance.OnCancel;
-            @Cancel.canceled -= instance.OnCancel;
-            @Point.started -= instance.OnPoint;
-            @Point.performed -= instance.OnPoint;
-            @Point.canceled -= instance.OnPoint;
-            @Click.started -= instance.OnClick;
-            @Click.performed -= instance.OnClick;
-            @Click.canceled -= instance.OnClick;
-            @ScrollWheel.started -= instance.OnScrollWheel;
-            @ScrollWheel.performed -= instance.OnScrollWheel;
-            @ScrollWheel.canceled -= instance.OnScrollWheel;
-            @MiddleClick.started -= instance.OnMiddleClick;
-            @MiddleClick.performed -= instance.OnMiddleClick;
-            @MiddleClick.canceled -= instance.OnMiddleClick;
-            @RightClick.started -= instance.OnRightClick;
-            @RightClick.performed -= instance.OnRightClick;
-            @RightClick.canceled -= instance.OnRightClick;
-            @TrackedDevicePosition.started -= instance.OnTrackedDevicePosition;
-            @TrackedDevicePosition.performed -= instance.OnTrackedDevicePosition;
-            @TrackedDevicePosition.canceled -= instance.OnTrackedDevicePosition;
-            @TrackedDeviceOrientation.started -= instance.OnTrackedDeviceOrientation;
-            @TrackedDeviceOrientation.performed -= instance.OnTrackedDeviceOrientation;
-            @TrackedDeviceOrientation.canceled -= instance.OnTrackedDeviceOrientation;
+            @Unpause.started -= instance.OnUnpause;
+            @Unpause.performed -= instance.OnUnpause;
+            @Unpause.canceled -= instance.OnUnpause;
         }
 
-        public void RemoveCallbacks(IBattleMapActions instance)
+        public void RemoveCallbacks(IPauseMapActions instance)
         {
-            if (m_Wrapper.m_BattleMapActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_PauseMapActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
-        public void SetCallbacks(IBattleMapActions instance)
+        public void SetCallbacks(IPauseMapActions instance)
         {
-            foreach (var item in m_Wrapper.m_BattleMapActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_PauseMapActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_BattleMapActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_PauseMapActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
-    public BattleMapActions @BattleMap => new BattleMapActions(this);
-
-    // Cutscene Map
-    private readonly InputActionMap m_CutsceneMap;
-    private List<ICutsceneMapActions> m_CutsceneMapActionsCallbackInterfaces = new List<ICutsceneMapActions>();
-    private readonly InputAction m_CutsceneMap_Newaction;
-    public struct CutsceneMapActions
-    {
-        private @PlayerControls m_Wrapper;
-        public CutsceneMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_CutsceneMap_Newaction;
-        public InputActionMap Get() { return m_Wrapper.m_CutsceneMap; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(CutsceneMapActions set) { return set.Get(); }
-        public void AddCallbacks(ICutsceneMapActions instance)
-        {
-            if (instance == null || m_Wrapper.m_CutsceneMapActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_CutsceneMapActionsCallbackInterfaces.Add(instance);
-            @Newaction.started += instance.OnNewaction;
-            @Newaction.performed += instance.OnNewaction;
-            @Newaction.canceled += instance.OnNewaction;
-        }
-
-        private void UnregisterCallbacks(ICutsceneMapActions instance)
-        {
-            @Newaction.started -= instance.OnNewaction;
-            @Newaction.performed -= instance.OnNewaction;
-            @Newaction.canceled -= instance.OnNewaction;
-        }
-
-        public void RemoveCallbacks(ICutsceneMapActions instance)
-        {
-            if (m_Wrapper.m_CutsceneMapActionsCallbackInterfaces.Remove(instance))
-                UnregisterCallbacks(instance);
-        }
-
-        public void SetCallbacks(ICutsceneMapActions instance)
-        {
-            foreach (var item in m_Wrapper.m_CutsceneMapActionsCallbackInterfaces)
-                UnregisterCallbacks(item);
-            m_Wrapper.m_CutsceneMapActionsCallbackInterfaces.Clear();
-            AddCallbacks(instance);
-        }
-    }
-    public CutsceneMapActions @CutsceneMap => new CutsceneMapActions(this);
+    public PauseMapActions @PauseMap => new PauseMapActions(this);
     private int m_ANYSchemeIndex = -1;
     public InputControlScheme ANYScheme
     {
@@ -1928,6 +2096,26 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnOpenMenu(InputAction.CallbackContext context);
         void OnCameraSwitch(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
+    }
+    public interface IBattleMapActions
+    {
+        void OnHeroSwitch(InputAction.CallbackContext context);
+        void OnNavigate(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
+        void OnCancel(InputAction.CallbackContext context);
+        void OnPoint(InputAction.CallbackContext context);
+        void OnClick(InputAction.CallbackContext context);
+        void OnScrollWheel(InputAction.CallbackContext context);
+        void OnMiddleClick(InputAction.CallbackContext context);
+        void OnRightClick(InputAction.CallbackContext context);
+        void OnTrackedDevicePosition(InputAction.CallbackContext context);
+        void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
+    }
+    public interface ICutsceneMapActions
+    {
+        void OnNewaction(InputAction.CallbackContext context);
     }
     public interface IMenuMapActions
     {
@@ -1943,22 +2131,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
     }
-    public interface IBattleMapActions
+    public interface IPauseMapActions
     {
-        void OnHeroSwitch(InputAction.CallbackContext context);
-        void OnNavigate(InputAction.CallbackContext context);
-        void OnSubmit(InputAction.CallbackContext context);
-        void OnCancel(InputAction.CallbackContext context);
-        void OnPoint(InputAction.CallbackContext context);
-        void OnClick(InputAction.CallbackContext context);
-        void OnScrollWheel(InputAction.CallbackContext context);
-        void OnMiddleClick(InputAction.CallbackContext context);
-        void OnRightClick(InputAction.CallbackContext context);
-        void OnTrackedDevicePosition(InputAction.CallbackContext context);
-        void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
-    }
-    public interface ICutsceneMapActions
-    {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnUnpause(InputAction.CallbackContext context);
     }
 }

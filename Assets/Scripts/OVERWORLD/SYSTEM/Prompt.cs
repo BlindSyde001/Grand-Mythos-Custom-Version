@@ -10,9 +10,6 @@ public class Prompt : MonoBehaviour
 
     void Awake()
     {
-        if (PromptTemplate == null)
-            PromptTemplate = this;
-
         gameObject.SetActive(false);
     }
 
@@ -25,6 +22,8 @@ public class Prompt : MonoBehaviour
     {
         _promptCache.Remove(this);
         _promptInUse.Remove(this);
+        if (PromptTemplate == this)
+            PromptTemplate = null;
     }
 
     static Prompt()
@@ -52,6 +51,9 @@ public class Prompt : MonoBehaviour
 
         if (_promptInUse.Count > 16)
             return;
+
+        if (PromptTemplate == null)
+            PromptTemplate = FindAnyObjectByType<Prompt>(FindObjectsInactive.Include);
 
         Prompt prompt;
         if (_promptCache.Count == 0)

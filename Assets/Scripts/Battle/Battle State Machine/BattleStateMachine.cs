@@ -67,31 +67,14 @@ public class BattleStateMachine : MonoBehaviour
 
     IEnumerator Start()
     {
-        var gameManager = GameManager.Instance;
-        foreach (var reserve in gameManager.ReservesLineup)
-            reserve.gameObject.SetActive(false);
-
-        for (int i = 0; i < gameManager.PartyLineup.Count; i++)
-        {
-            var hero = gameManager.PartyLineup[i];
-
-            // Add Model into Battle
-            var model = Instantiate(hero.BattlePrefab,
-                HeroSpawns[i].position,
-                HeroSpawns[i].rotation,
-                transform.parent);
-
-            model.name = $"{hero.gameObject.name} Model";
-
-            var controller = model.GetComponent<BattleCharacterController>();
-            controller.Profile = hero;
-
-            hero.ActionsCharged = Random.Range(0, hero.ActionChargeMax);
-        }
-
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
+        {
             if (Units.Contains(target) == false)
+            {
+                target.Profile.ActionsCharged = Random.Range(0, target.Profile.ActionChargeMax);
                 Units.Add(target);
+            }
+        }
 
         yield return new WaitForSeconds(5);
 
