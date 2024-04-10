@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using UnityEngine;
-using Cinemachine;
 using Conditions;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -39,7 +39,6 @@ public class BattleStateMachine : MonoBehaviour
 
     public readonly Dictionary<BattleCharacterController, (Tactics chosenTactic, int actionI)> Processing = new();
 
-    CinemachineFreeLook _rotateCam;
     HashSet<BattleCharacterController> _busy = new();
 
     // UPDATES
@@ -54,7 +53,6 @@ public class BattleStateMachine : MonoBehaviour
             Destroy(this);
             return;
         }
-        _rotateCam = FindObjectOfType<CinemachineFreeLook>();
         InputManager.Instance.PushGameState(GameState.Battle, this);
     }
 
@@ -69,6 +67,9 @@ public class BattleStateMachine : MonoBehaviour
     {
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
         {
+            if (target.Profile is HeroExtension hero && GameManager.Instance.PartyLineup.Contains(hero))
+                PartyLineup.Add(target);
+
             if (Units.Contains(target) == false)
             {
                 target.Profile.ActionsCharged = Random.Range(0, target.Profile.ActionChargeMax);
@@ -76,13 +77,15 @@ public class BattleStateMachine : MonoBehaviour
             }
         }
 
+        // Sort them in the order they are setup in the party
+        PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
+
         yield return new WaitForSeconds(5);
 
         do
         {
             if (IsBattleFinished(out bool win))
             {
-                _rotateCam.GetComponent<CinemachineFreeLook>().enabled = false;
                 enabled = false;
                 yield return new WaitForSeconds(1f);
                 foreach (var yields in BattleResolution.ResolveBattle(win, this))

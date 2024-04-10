@@ -14,7 +14,7 @@ public class CameraFocusSwitch : ICameraControl
 
     public void Update(Camera camera, CameraFocus focus)
     {
-        if (SwitchInput.action.WasReleasedThisFrame())
+        if (SwitchInput.action.WasPerformedThisFrameUnique())
         {
             if (_dir == 0)
                 _dir = _t == 1f ? -1 : 1;

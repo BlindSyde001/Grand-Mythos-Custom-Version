@@ -1,9 +1,8 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 #if UNITY_EDITOR
-[InitializeOnLoad]
+[UnityEditor.InitializeOnLoad]
 #endif
 public class TimeDeltaScaler : InputProcessor<float>
 {
@@ -26,7 +25,7 @@ public class TimeDeltaScaler : InputProcessor<float>
     }
 }
 #if UNITY_EDITOR
-[InitializeOnLoad]
+[UnityEditor.InitializeOnLoad]
 #endif
 public class TimeDeltaScaler2D : InputProcessor<Vector2>
 {
