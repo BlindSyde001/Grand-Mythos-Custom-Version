@@ -102,6 +102,7 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquata
         int _i;
 
         public BattleCharacterController Current { get; private set; }
+        public int CurrentIndex => _i;
 
         object IEnumerator.Current => Current;
 
