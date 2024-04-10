@@ -2,18 +2,22 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Sirenix.OdinInspector;
+using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class AbilitiesMenuActions : MenuContainer
 {
     public UIElementList<Button> HeroSelectionUI = new();
     public UIElementList<AbilityButtonContainer> AbilityUI = new();
-    public AbilityDescriptionContainer abilityDescriptionContainer;
-    HeroExtension selectedHero;
+    [FormerlySerializedAs("abilityDescriptionContainer")] public AbilityDescriptionContainer AbilityDescriptionContainer;
+    [Required] public InputActionReference SwitchHero;
+    HeroExtension _selectedHero;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        SetHeroSelection();
+        SetupHeroUI();
         SetAbilities(GameManager.PartyLineup[0]);
 
         gameObject.SetActive(true);
@@ -30,9 +34,21 @@ public class AbilitiesMenuActions : MenuContainer
             image.DOFade(1, menuInputs.Speed);
         }
         yield return new WaitForSeconds(menuInputs.Speed);
+        SwitchHero.action.performed += Switch;
     }
+
+    void Switch(InputAction.CallbackContext input)
+    {
+        int indexOf = GameManager.PartyLineup.IndexOf(_selectedHero);
+        indexOf += input.ReadValue<float>() >= 0f ? 1 : -1;
+        indexOf = indexOf < 0 ? GameManager.PartyLineup.Count + indexOf : indexOf % GameManager.PartyLineup.Count;
+
+        SetAbilities(GameManager.PartyLineup[indexOf]);
+    }
+
     public override IEnumerable Close(MenuInputs menuInputs)
     {
+        SwitchHero.action.performed -= Switch;
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         foreach (var image in gameObject.transform.GetComponentsInChildren<Graphic>())
@@ -41,10 +57,10 @@ public class AbilitiesMenuActions : MenuContainer
         gameObject.SetActive(false);
     }
 
-    internal void SetHeroSelection()
+    void SetupHeroUI()
     {
-        abilityDescriptionContainer.abilityNameTitle.text = "";
-        abilityDescriptionContainer.abilityDescription.text = "";
+        AbilityDescriptionContainer.abilityNameTitle.text = "";
+        AbilityDescriptionContainer.abilityDescription.text = "";
         HeroSelectionUI.Clear();
         foreach (var hero in GameManager.PartyLineup)
         {
@@ -56,10 +72,10 @@ public class AbilitiesMenuActions : MenuContainer
 
     void SetAbilities(HeroExtension hero)
     {
-        selectedHero = hero;
+        _selectedHero = hero;
 
-        abilityDescriptionContainer.abilityNameTitle.text = "";
-        abilityDescriptionContainer.abilityDescription.text = "";
+        AbilityDescriptionContainer.abilityNameTitle.text = "";
+        AbilityDescriptionContainer.abilityDescription.text = "";
         AbilityUI.Clear();
         foreach (var skill in hero.Skills)
         {
@@ -72,7 +88,7 @@ public class AbilitiesMenuActions : MenuContainer
 
     void SetDescription(IAction skill)
     {
-        abilityDescriptionContainer.abilityNameTitle.text = skill.Name;
-        abilityDescriptionContainer.abilityDescription.text = skill.Description;
+        AbilityDescriptionContainer.abilityNameTitle.text = skill.Name;
+        AbilityDescriptionContainer.abilityDescription.text = skill.Description;
     }
 }

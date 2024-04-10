@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class TacticsMenuActions : MenuContainer
 {
@@ -14,6 +16,10 @@ public class TacticsMenuActions : MenuContainer
     public List<Button> PageList;
     public List<TacticsModuleContainer> TacticsModules;
     public List<NewComponentContainer> NewComponentList;
+    [Required] public InputActionReference SwitchHero;
+    [Required] public InputActionReference SwitchPage;
+    HeroExtension _selectedHero;
+    int _currentPage;
 
     Button _dropdownSource;
 
@@ -29,9 +35,11 @@ public class TacticsMenuActions : MenuContainer
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(230, -100, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
+        SwitchHero.action.performed += Switch;
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
+        SwitchHero.action.performed -= Switch;
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1350, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, -100, 0), menuInputs.Speed);
@@ -41,6 +49,15 @@ public class TacticsMenuActions : MenuContainer
         gameObject.SetActive(false);
     }
 
+    void Switch(InputAction.CallbackContext input)
+    {
+        int indexOf = GameManager.PartyLineup.IndexOf(_selectedHero);
+        indexOf += input.ReadValue<float>() >= 0f ? 1 : -1;
+        indexOf = indexOf < 0 ? GameManager.PartyLineup.Count + indexOf : indexOf % GameManager.PartyLineup.Count;
+
+        SetTacticsList(GameManager.PartyLineup[indexOf]);
+    }
+
     IEnumerator ComponentListOpen()
     {
         gameObject.transform.GetChild(3).gameObject.SetActive(true);
@@ -48,10 +65,21 @@ public class TacticsMenuActions : MenuContainer
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-740, 328, 0), MenuInputs.Speed);
         gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-710, -100, 0), MenuInputs.Speed);
         yield return new WaitForSeconds(MenuInputs.Speed);
+        SwitchPage.action.performed += SwitchPagePerformed;
+    }
+
+    void SwitchPagePerformed(InputAction.CallbackContext input)
+    {
+        int indexOf = _currentPage;
+        indexOf += input.ReadValue<float>() >= 0f ? 1 : -1;
+        indexOf = indexOf < 0 ? PageList.Count + indexOf : indexOf % PageList.Count;
+
+        PageList[indexOf].onClick.Invoke();
     }
 
     IEnumerator ComponentListClose()
     {
+        SwitchPage.action.performed -= SwitchPagePerformed;
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), MenuInputs.Speed);
         gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), MenuInputs.Speed);
         yield return new WaitForSeconds(MenuInputs.Speed);
@@ -73,6 +101,7 @@ public class TacticsMenuActions : MenuContainer
     }
     public void SetTacticsList(HeroExtension hero)
     {
+        _selectedHero = hero;
         if (gameObject.activeInHierarchy)
             StartCoroutine(ComponentListClose());
         ResetActionSegments();
@@ -296,6 +325,7 @@ public class TacticsMenuActions : MenuContainer
         {
             int j = i;
             PageList[i].onClick.RemoveAllListeners();
+            PageList[i].onClick.AddListener(() => _currentPage = j);
             PageList[i].onClick.AddListener(() => OnClick(j));
         }
     }

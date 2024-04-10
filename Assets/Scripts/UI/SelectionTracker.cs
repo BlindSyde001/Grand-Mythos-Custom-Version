@@ -12,6 +12,7 @@ public class SelectionTracker : MonoBehaviour
 
     [InfoBox("Whether selection should be set to the last element that was selected whenever this is enabled again")]
     public bool RestoreSelection = true;
+    public bool WarnWhenNoSelection = true;
     readonly List<GameObject> _selectionHistory = new();
 
     protected virtual void Update()
@@ -19,7 +20,7 @@ public class SelectionTracker : MonoBehaviour
         var selection = EventSystem.current.currentSelectedGameObject;
         if (selection != null && selection.GetComponentInParent<SelectionTracker>() == this)
         {
-            if (_selectionHistory.Count > 0 && _selectionHistory[^1].transform.parent == selection.transform.parent)
+            if (_selectionHistory.Count > 0 && (_selectionHistory[^1] == null || _selectionHistory[^1].transform.parent == selection.transform.parent))
             {
                 _selectionHistory[^1] = selection;
             }
@@ -58,8 +59,8 @@ public class SelectionTracker : MonoBehaviour
         {
             if (DefaultSelection != null && DefaultSelection.GetComponentInChildren<Selectable>() is {} selectable && IsValidForSelection(selectable))
                 selectable.Select();
-            else
-                Debug.LogWarning($"Could not set {nameof(SelectLastActiveSelectable)} - no history or active selectable found under {DefaultSelection}");
+            else if (WarnWhenNoSelection)
+                Debug.LogWarning($"Could not set {nameof(SelectLastActiveSelectable)} - no history or active selectable found under {DefaultSelection}", this);
         }
     }
 

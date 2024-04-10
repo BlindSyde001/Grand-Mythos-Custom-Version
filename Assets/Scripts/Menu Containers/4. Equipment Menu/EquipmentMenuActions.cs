@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using JetBrains.Annotations;
+using Sirenix.OdinInspector;
+using UnityEngine.InputSystem;
 
 public class EquipmentMenuActions : MenuContainer
 {
@@ -14,6 +17,7 @@ public class EquipmentMenuActions : MenuContainer
     public GameObject EquipNewItemList;
 
     public UIElementList<Button> HeroSelections;
+    [Required] public InputActionReference SwitchHero;
 
     readonly List<Equipment> _currentlyEquippedGear = new();
     Button _listToggle;
@@ -23,8 +27,7 @@ public class EquipmentMenuActions : MenuContainer
     public override IEnumerable Open(MenuInputs menuInputs)
     {
         SetHeroSelection();
-        SetStats(GameManager.PartyLineup[0]);
-        SetLoadout(GameManager.PartyLineup[0]);
+        UpdateSelection(GameManager.PartyLineup[0]);
         UpdateCurrentEquippedGear();
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
@@ -32,9 +35,12 @@ public class EquipmentMenuActions : MenuContainer
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-580, -320, 0), menuInputs.Speed);
         gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, -320, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
+        SwitchHero.action.performed += Switch;
     }
+
     public override IEnumerable Close(MenuInputs menuInputs)
     {
+        SwitchHero.action.performed -= Switch;
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-1400, -320, 0), menuInputs.Speed);
@@ -44,19 +50,28 @@ public class EquipmentMenuActions : MenuContainer
         gameObject.SetActive(false);
     }
 
-    internal void SetHeroSelection()
+    void Switch(InputAction.CallbackContext input)
+    {
+        int indexOf = GameManager.PartyLineup.IndexOf(_selectedHero);
+        indexOf += input.ReadValue<float>() >= 0f ? 1 : -1;
+        indexOf = indexOf < 0 ? GameManager.PartyLineup.Count + indexOf : indexOf % GameManager.PartyLineup.Count;
+
+        UpdateSelection(GameManager.PartyLineup[indexOf]);
+    }
+
+    void SetHeroSelection()
     {
         HeroSelections.Clear();
         foreach (var hero in GameManager.PartyLineup)
         {
             HeroSelections.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
-            element.onClick.AddListener(delegate {SetStats(hero); });
-            element.onClick.AddListener(delegate {SetLoadout(hero); });
+            element.onClick.AddListener(delegate {UpdateSelection(hero); });
         }
         EquipNewItemList.SetActive(false);
     }
-    public void SetStats(HeroExtension hero)
+
+    public void UpdateSelection(HeroExtension hero)
     {
         _selectedHero = hero;
 
@@ -83,19 +98,7 @@ public class EquipmentMenuActions : MenuContainer
         EquipStatsContainer.TotalDefenseText.text = hero.EffectiveStats.Defense.ToString();
         EquipStatsContainer.TotalMagDefenseText.text = hero.EffectiveStats.MagDefense.ToString();
         EquipStatsContainer.TotalSpeedText.text = hero.EffectiveStats.Speed.ToString();
-    }
 
-    static Equipment GetItemFromSlot(ItemSlot slot, HeroExtension hero) => slot switch
-    {
-        ItemSlot.Weapon => hero._Weapon,
-        ItemSlot.Armor => hero._Armour,
-        ItemSlot.AccessoryOne => hero._AccessoryOne,
-        ItemSlot.AccessoryTwo => hero._AccessoryTwo,
-        _ => throw new ArgumentOutOfRangeException(nameof(slot), slot, null)
-    };
-
-    public void SetLoadout(HeroExtension hero)
-    {
         for (int i = 0; i <= (int)ItemSlot.Max; i++)
         {
             EquipLoadoutContainers[i].ThisButton.onClick.RemoveAllListeners();
@@ -108,6 +111,15 @@ public class EquipmentMenuActions : MenuContainer
             container.ThisButton.onClick.AddListener(delegate { EquippableItemOpen(slot, container.ThisButton); });
         }
     }
+
+    static Equipment GetItemFromSlot(ItemSlot slot, HeroExtension hero) => slot switch
+    {
+        ItemSlot.Weapon => hero._Weapon,
+        ItemSlot.Armor => hero._Armour,
+        ItemSlot.AccessoryOne => hero._AccessoryOne,
+        ItemSlot.AccessoryTwo => hero._AccessoryTwo,
+        _ => throw new ArgumentOutOfRangeException(nameof(slot), slot, null)
+    };
 
     public void EquippableItemOpen(ItemSlot equipSlot, Button buttonPressed)
     {
@@ -134,12 +146,14 @@ public class EquipmentMenuActions : MenuContainer
                 foreach(var (equipment, _) in InventoryManager.Enumerate<Armour>())
                     if (equipment.armourType == _selectedHero.myArmourType)
                         ButtonSetup(this, equipment, ItemSlot.Armor, ref setSelection);
+                ButtonSetup(this, null, equipSlot, ref setSelection);
                 break;
 
             case ItemSlot.AccessoryTwo:
             case ItemSlot.AccessoryOne:
                 foreach(var (equipment, _) in InventoryManager.Enumerate<Accessory>())
                     ButtonSetup(this, equipment, equipSlot, ref setSelection);
+                ButtonSetup(this, null, equipSlot, ref setSelection);
                 break;
 
             default:
@@ -148,11 +162,11 @@ public class EquipmentMenuActions : MenuContainer
 
         _listToggle = buttonPressed;
 
-        static void ButtonSetup(EquipmentMenuActions @this, Equipment equipment, ItemSlot slot, ref bool setSelection)
+        static void ButtonSetup(EquipmentMenuActions @this, [CanBeNull] Equipment equipment, ItemSlot slot, ref bool setSelection)
         {
             @this.EquipNewItemContainers.Allocate(out var container);
-            container.ThisButton.interactable = @this.CheckOnEquippedGear(equipment);
-            container.EquipName.text = equipment.name;
+            container.ThisButton.interactable = equipment == null || @this.CheckOnEquippedGear(equipment);
+            container.EquipName.text = equipment == null ? "None" : equipment.name;
             container.ThisEquipment = equipment;
             container.ThisButton.onClick.RemoveAllListeners();
             container.ThisButton.onClick.AddListener(delegate { @this.EquipNewItem(equipment, slot); });
@@ -187,6 +201,8 @@ public class EquipmentMenuActions : MenuContainer
                 switch (slotHint)
                 {
                     case ItemSlot.Armor:
+                        _selectedHero._Armour = null;
+                        break;
                     case ItemSlot.Weapon:
                         // mandatory right now, other systems do not expect those to be null
                         break;
@@ -207,8 +223,7 @@ public class EquipmentMenuActions : MenuContainer
         }
         UpdateCurrentEquippedGear();
         _selectedHero.EquipStats();
-        SetStats(_selectedHero);
-        SetLoadout(_selectedHero);
+        UpdateSelection(_selectedHero);
         CloseSwapEquipmentWindow();
     }
 
@@ -224,15 +239,12 @@ public class EquipmentMenuActions : MenuContainer
         {
             // Add Currently Equipped Gear
             _currentlyEquippedGear.Add(hero._Weapon);
-            _currentlyEquippedGear.Add(hero._Armour);
+            if (hero._Armour != null)
+                _currentlyEquippedGear.Add(hero._Armour);
             if (hero._AccessoryOne != null)
-            {
                 _currentlyEquippedGear.Add(hero._AccessoryOne);
-            }
             if (hero._AccessoryTwo != null)
-            {
                 _currentlyEquippedGear.Add(hero._AccessoryTwo);
-            }
         }
     }
 
@@ -245,10 +257,8 @@ public class EquipmentMenuActions : MenuContainer
 
         foreach (Equipment comparison in _currentlyEquippedGear)
         {
-            if(comparison == equipment)
-            {
+            if (comparison == equipment)
                 amountEquipped++;
-            }
         }
         return amountEquipped < amountInInventory;
     }

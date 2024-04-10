@@ -29,7 +29,7 @@ public class OnCancel : MonoBehaviour
         if (EventSystem.current.currentInputModule is not InputSystemUIInputModule module)
             return;
 
-        if (module.cancel.action.WasReleasedThisFrame() == false)
+        if (module.cancel.action.WasPerformedThisFrameUnique() == false)
             return;
 
         var selection = EventSystem.current.currentSelectedGameObject;

@@ -16,7 +16,7 @@ public class PauseHandler : MonoBehaviour
 
     void Update()
     {
-        if (InputToDeactivate.action.WasReleasedThisFrame())
+        if (InputToDeactivate.action.WasPerformedThisFrameUnique())
         {
             SwitchOff();
             return;
@@ -24,7 +24,7 @@ public class PauseHandler : MonoBehaviour
 
         foreach (var input in InputsToActivate)
         {
-            if (input.action.WasReleasedThisFrame())
+            if (input.action.WasPerformedThisFrameUnique())
             {
                 SwitchOn();
                 return;
