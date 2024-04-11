@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class SkillTree : ScriptableObject, ISerializationCallbackReceiver
+public class LevelUnlocks : ScriptableObject, ISerializationCallbackReceiver
 {
     [InfoBox("Right now this just linearly unlock skills, actual tree is for another milestone")]
     [ValidateInput(nameof(SortValidation))]

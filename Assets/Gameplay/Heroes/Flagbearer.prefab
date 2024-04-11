@@ -48,8 +48,8 @@ MonoBehaviour:
   Team: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
   BattlePrefab: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
   Portrait: {fileID: 21300000, guid: e8ebef25f0f504b4aa936076404e341d, type: 3}
-  CurrentHP: 154
-  CurrentMP: 70
+  CurrentHP: 143
+  CurrentMP: 74
   BaseStats:
     HP: 22
     MP: 10
@@ -59,14 +59,21 @@ MonoBehaviour:
     MagDefense: 8
     Speed: 20
   _effectiveStatsPreview:
-    HP: 154
-    MP: 70
-    Attack: 56
-    MagAttack: 56
-    Defense: 56
-    MagDefense: 56
+    HP: 143
+    MP: 74
+    Attack: 52
+    MagAttack: 59
+    Defense: 52
+    MagDefense: 59
     Speed: 20
-  GrowthRate: 2
+  StatGrowth:
+    HP: 1
+    MP: 3
+    Attack: 1
+    MagAttack: 3
+    Defense: 1
+    MagDefense: 3
+    Speed: 0
   Experience: 982
   Level: 5
   AffinityFIRE: 0
@@ -88,7 +95,7 @@ MonoBehaviour:
   ActionsCharged: 0
   ActionChargeMax: 4
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-  SkillTree: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
+  LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
   Skills:
     _backingArray: []
   Tactics:

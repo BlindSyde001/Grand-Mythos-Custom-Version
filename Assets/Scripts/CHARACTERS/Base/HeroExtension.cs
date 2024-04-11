@@ -35,10 +35,6 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     public int EquipMagDefense => equipMagDefense;
     public int EquipSpeed => equipSpeed;
 
-    public int ExperienceToNextLevel => ExperienceThreshold - Experience; // How Much (Relative) you need
-    public int ExperienceThreshold => GetAmountOfXPForLevel(Level); // How Much (Total) you need
-    public int PrevExperienceThreshold => GetAmountOfXPForLevel(Level-1);
-
     [FormerlySerializedAs("charBanner"), HorizontalGroup("ASSETS"), SerializeField, PreviewField(100)]
     internal Sprite Banner;
 
@@ -80,19 +76,6 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     }
     #endregion
     #region Stats & Levelling Up
-    public void LevelUpCheck()
-    {
-        while (Experience >= ExperienceThreshold)
-        {
-            Level++;
-            RegenHealthAndMana();
-            if (SkillTree != null)
-            {
-                foreach (var skill in SkillTree.GetSkillsForLevel((uint)Level))
-                    Skills.Add(skill);
-            }
-        }
-    }
     internal void EquipStats()
     {
         #region Reset Equip Stats

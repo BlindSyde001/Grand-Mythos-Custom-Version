@@ -47,7 +47,6 @@ MonoBehaviour:
   Name: Detective
   Team: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
   BattlePrefab: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
-  BattleController: {fileID: 1545467480899350712, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
   Portrait: {fileID: 21300000, guid: 8c4789b052a71724eae732d73e226d70, type: 3}
   CurrentHP: 201
   CurrentMP: 100
@@ -67,7 +66,14 @@ MonoBehaviour:
     Defense: 50
     MagDefense: 50
     Speed: 20
-  GrowthRate: 3
+  StatGrowth:
+    HP: 3
+    MP: 3
+    Attack: 3
+    MagAttack: 3
+    Defense: 3
+    MagDefense: 3
+    Speed: 0
   Experience: 2496
   Level: 7
   AffinityFIRE: 0
@@ -89,7 +95,7 @@ MonoBehaviour:
   ActionsCharged: 0
   ActionChargeMax: 4
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-  SkillTree: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
+  LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
   Skills:
     _backingArray: []
   Tactics:

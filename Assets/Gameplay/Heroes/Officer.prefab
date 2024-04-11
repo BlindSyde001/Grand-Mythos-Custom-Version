@@ -61,12 +61,19 @@ MonoBehaviour:
   _effectiveStatsPreview:
     HP: 154
     MP: 70
-    Attack: 56
+    Attack: 59
     MagAttack: 56
     Defense: 56
     MagDefense: 56
     Speed: 20
-  GrowthRate: 2
+  StatGrowth:
+    HP: 2
+    MP: 2
+    Attack: 3
+    MagAttack: 2
+    Defense: 2
+    MagDefense: 2
+    Speed: 0
   Experience: 982
   Level: 5
   AffinityFIRE: 0
@@ -88,7 +95,7 @@ MonoBehaviour:
   ActionsCharged: 0
   ActionChargeMax: 4
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-  SkillTree: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
+  LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
   Skills:
     _backingArray: []
   Tactics:

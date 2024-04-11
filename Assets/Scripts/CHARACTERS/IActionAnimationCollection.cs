@@ -44,17 +44,17 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
         var actions = new Dictionary<IAction, string>();
         foreach (var tactic in template.Tactics)
             foreach (var action in tactic.Actions)
-                actions.TryAdd(action, "Tactics");
+                actions.TryAdd(action, nameof(template.Tactics));
 
-        if (template.SkillTree != null)
-            foreach (var unlock in template.SkillTree.Skills)
-                actions.TryAdd(unlock.Skill, "SkillTree");
+        if (template.LevelUnlocks != null)
+            foreach (var unlock in template.LevelUnlocks.Skills)
+                actions.TryAdd(unlock.Skill, nameof(template.LevelUnlocks));
 
         if (template.Inventory is not PlayerInventory)
         {
             foreach ((BaseItem item, uint count) in template.Inventory.Items())
                 if (item is Consumable consumable)
-                    actions.TryAdd(consumable, "Inventory");
+                    actions.TryAdd(consumable, nameof(template.Inventory));
         }
 
         foreach (var keyValue in _backingArray)

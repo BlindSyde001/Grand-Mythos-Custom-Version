@@ -109,12 +109,11 @@ public class BattleResolution : MonoBehaviour
             }
         }
 
-        List<HeroExtension> heroesAlive = new();
+        List<CharacterTemplate> heroesAlive = new();
         foreach (var unit in battle.Units)
         {
-#warning would be nice to remove the cast/test here
-            if (unit.Profile.CurrentHP > 0 && unit.Profile.Team == battle.PlayerTeam && unit.Profile is HeroExtension hero)
-                heroesAlive.Add(hero);
+            if (unit.Profile.CurrentHP > 0 && unit.Profile.Team == battle.PlayerTeam)
+                heroesAlive.Add(unit.Profile);
         }
 
         Debug.Assert(heroesAlive.Count != 0);
@@ -128,7 +127,7 @@ public class BattleResolution : MonoBehaviour
 
         activateUpdate = true;
         InventoryManager.Instance.Credits += creditsEarned;
-        
+
         yield return new WaitForSeconds(duration * 2);
 
         foreach (PartyContainer a in HeroPanels)
@@ -169,7 +168,7 @@ public class BattleResolution : MonoBehaviour
         ReturnToOverworld(battle);
     }
 
-    static IEnumerator ReceiveExperienceRewards(HeroExtension myHero, int individualExperience, float duration)
+    static IEnumerator ReceiveExperienceRewards(CharacterTemplate myHero, int individualExperience, float duration)
     {
         int start = myHero.Experience;
         float t = 0f;
@@ -187,7 +186,6 @@ public class BattleResolution : MonoBehaviour
     {
         foreach (var hero in battle.PartyLineup)
             hero.Profile.CurrentHP = hero.Profile.CurrentHP == 0 ? 1 : hero.Profile.CurrentHP;
-        BattleStateMachine.ClearData();
 
         if (battle.gameObject.scene == SceneManager.GetActiveScene())
         {

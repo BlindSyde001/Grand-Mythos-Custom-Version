@@ -42,7 +42,7 @@ public class InteractionTrigger : MonoBehaviour, IInteractionSource
         if (other.gameObject.layer != OverworldPlayerController.CharacterLayer)
             return;
 
-        if (other.GetComponentInParent<OverworldPlayerController>() is not OverworldPlayerController controller)
+        if (other.GetComponentInParent<OverworldPlayerController>() is not { } controller)
             return;
 
         if (controller.TryPlayInteraction(this, Interaction))

@@ -372,19 +372,6 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
 
-    #region End of Battle
-    internal static void ClearData()
-    {
-        #warning clean this stuff up
-        foreach (var hostile in FindObjectsOfType<BattleCharacterController>())
-        {
-            if (hostile.Profile != null && hostile.Profile is not HeroExtension)
-                Destroy(hostile.Profile);
-            Destroy(hostile.gameObject);
-        }
-    }
-    #endregion
-
     class FailureTracker : IConditionEvalTracker
     {
         int _stackDepth;

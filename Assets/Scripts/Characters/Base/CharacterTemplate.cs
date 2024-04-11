@@ -33,7 +33,7 @@ public class CharacterTemplate : MonoBehaviour
     Stats _effectiveStatsPreview;
 
     [BoxGroup("STATS"), OnValueChanged(nameof(UpdateDummyStats))]
-    public GrowthRate GrowthRate;
+    public StatGrowth StatGrowth;
 
     [BoxGroup("STATS"), OnValueChanged(nameof(UpdateLevelFromExperience))]
     public int Experience;
@@ -62,7 +62,7 @@ public class CharacterTemplate : MonoBehaviour
     public Skill BasicAttack;
 
     [BoxGroup("SKILLS"), CanBeNull]
-    public SkillTree SkillTree;
+    public LevelUnlocks LevelUnlocks;
 
     [BoxGroup("SKILLS")]
     public SerializableHashSet<Skill> Skills;
@@ -101,16 +101,11 @@ public class CharacterTemplate : MonoBehaviour
     /// <summary>
     /// Stats after all mods, like level, equipment and status effects, have been applied
     /// </summary>
-    public virtual Stats EffectiveStats => new Stats
-    {
-        HP = (int)(BaseStats.HP + BaseStats.HP * GetGrowthRateMultiplier(GrowthRate) * Level),
-        MP = (int)(BaseStats.MP + BaseStats.MP * GetGrowthRateMultiplier(GrowthRate) * Level),
-        Attack = (int)(BaseStats.Attack + BaseStats.Attack * GetGrowthRateMultiplier(GrowthRate) * Level),
-        MagAttack = (int)(BaseStats.MagAttack + BaseStats.MagAttack * GetGrowthRateMultiplier(GrowthRate) * Level),
-        Defense = (int)(BaseStats.Defense + BaseStats.Defense * GetGrowthRateMultiplier(GrowthRate) * Level),
-        MagDefense = (int)(BaseStats.MagDefense + BaseStats.MagDefense * GetGrowthRateMultiplier(GrowthRate) * Level),
-        Speed = BaseStats.Speed,
-    };
+    public virtual Stats EffectiveStats => StatGrowth.ApplyGrowth(BaseStats, Level);
+
+    public int ExperienceToNextLevel => ExperienceThreshold - Experience; // How Much (Relative) you need
+    public int ExperienceThreshold => GetAmountOfXPForLevel(Level); // How Much (Total) you need
+    public int PrevExperienceThreshold => GetAmountOfXPForLevel(Level-1);
 
     void UpdateDummyStats()
     {
@@ -182,15 +177,19 @@ public class CharacterTemplate : MonoBehaviour
         return ((int)temp) + 1;
     }
 
-    public static float GetGrowthRateMultiplier(GrowthRate growthRate) => growthRate switch
+    public void LevelUpCheck()
     {
-        GrowthRate.Average => 1.2f,
-        GrowthRate.Strong => 1.3f,
-        GrowthRate.Hyper => 1.5f,
-        GrowthRate.Weak => 1.1f,
-        GrowthRate.Fixed => 0f,
-        _ => throw new ArgumentOutOfRangeException(nameof(growthRate), growthRate, null)
-    };
+        while (Experience >= ExperienceThreshold)
+        {
+            Level++;
+            RegenHealthAndMana();
+            if (LevelUnlocks != null)
+            {
+                foreach (var skill in LevelUnlocks.GetSkillsForLevel((uint)Level))
+                    Skills.Add(skill);
+            }
+        }
+    }
 
     protected virtual void Awake()
     {
@@ -268,7 +267,6 @@ public class CharacterTemplate : MonoBehaviour
     }
 }
 
-
 public enum Attribute
 {
     Health,
@@ -292,50 +290,4 @@ public enum Status
     Paralysed,
     PhysDown,
     MagDown,
-}
-
-
-public enum GrowthRate
-{
-    Fixed,
-    Weak,
-    Average,
-    Strong,
-    Hyper,
-}
-
-[Serializable]
-public struct Stats
-{
-    [HorizontalGroup("POINTS"), GUIColor(0.5f, 1f, 0.5f)]
-    public int HP;
-
-    [HorizontalGroup("POINTS"), GUIColor(0.5f, 0.5f, 0.9f)]
-    public int MP;
-
-    [HorizontalGroup("ATTACKS"), GUIColor(1f, 0.5f, 0.5f)]
-    public int Attack;
-
-    [HorizontalGroup("ATTACKS"), GUIColor(1f, 0.5f, 0.5f)]
-    public int MagAttack;
-
-    [HorizontalGroup("DEFENSE"), GUIColor(0.5f, 0.8f, 0.8f)]
-    public int Defense;
-
-    [HorizontalGroup("DEFENSE"), GUIColor(0.5f, 0.8f, 0.8f)]
-    public int MagDefense;
-
-    public int Speed;
-
-    public string ToStringOneStatPerLine()
-    {
-        return
-@$"HP: {HP}
-MP: {MP}
-Attack: {Attack}
-Magic Attack: {MagAttack}
-Defense: {Defense}
-Magic Defense: {MagDefense}
-Speed: {Speed}";
-    }
 }
