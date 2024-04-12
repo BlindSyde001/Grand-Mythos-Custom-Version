@@ -78,7 +78,7 @@ public class InputManager : MonoBehaviour
         if (StateStack.Count > 0 && StateStack[^1].State != CurrentState)
             SetGameState(StateStack[^1].State);
         else
-            SetGameState(GameState.Overworld);
+            SetGameState(GameState.Menu);
     }
 
     void SetGameState(GameState newState)
