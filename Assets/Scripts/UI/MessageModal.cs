@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MessageModal : ConstrainSelection
 {
-    public TMPro.TMP_Text Header;
-    public TMPro.TMP_InputField Message;
-    public Button Button;
+    [Required] public TMPro.TMP_Text Header;
+    [Required] public TMPro.TMP_InputField Message;
+    [Required] public Button Button;
+    [Required] public Canvas Canvas;
+    [Required] public Image HeaderImage;
 
     static GameObject _reference;
     static List<MessageModal> _instances = new();
@@ -18,7 +21,7 @@ public class MessageModal : ConstrainSelection
         if (buttons == null || buttons.Length == 0)
             buttons = new[] { ("OK", default(Action)) };
 
-        _reference ??= Resources.Load<GameObject>("MessageModal");
+        _reference = _reference == null ? Resources.Load<GameObject>("MessageModal") : _reference;
         var copy = Instantiate(_reference);
         if (copy.GetComponentInChildren<MessageModal>() is { } modal == false)
             throw new InvalidOperationException($"Could not find component {nameof(MessageModal)} in MessageModal asset");
@@ -26,7 +29,7 @@ public class MessageModal : ConstrainSelection
         DontDestroyOnLoad(copy.gameObject);
         modal.Button.gameObject.SetActive(false);
         modal.Header.text = title;
-        modal.Header.GetComponentInParent<Image>().color = type switch
+        modal.HeaderImage.color = type switch
         {
             Type.Error => new Color(1.0f, 0.5f, 0.5f),
             Type.Warning => new Color(1.0f, 0.75f, 0.25f),
@@ -34,7 +37,7 @@ public class MessageModal : ConstrainSelection
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
         modal.Message.text = message;
-        modal.GetComponent<Canvas>().sortingOrder = _instances.Count > 0 ? _instances[^1].GetComponent<Canvas>().sortingOrder - 1 : 32767; // sort by how recent it is
+        modal.Canvas.sortingOrder = _instances.Count > 0 ? _instances[^1].GetComponent<Canvas>().sortingOrder - 1 : 32767; // sort by how recent it is
         _instances.Add(modal);
         foreach (var (label, action) in buttons)
         {
