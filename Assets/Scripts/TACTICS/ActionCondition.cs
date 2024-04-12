@@ -160,7 +160,6 @@ public class EvaluationContext
     /// values set in <see cref="IAction.Precondition"/> can be checked in <see cref="ActionCondition.TargetFilter"/>, etc.
     /// </summary>
     public SerializableDictionary<object, object> ExecutionFlags = new();
-#warning reset after combat
     /// <summary> Reset before every battle </summary>
     public SerializableDictionary<object, object> BattleFlags = new();
 
@@ -169,7 +168,6 @@ public class EvaluationContext
     /// </summary>
     public uint Round;
 
-#warning bind combat seed
     public uint CombatSeed;
     [CanBeNull, NonSerialized] public IConditionEvalTracker Tracker;
 

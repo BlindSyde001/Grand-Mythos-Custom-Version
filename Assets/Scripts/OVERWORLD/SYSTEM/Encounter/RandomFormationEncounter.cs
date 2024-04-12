@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 public class RandomFormationEncounter : BaseEncounter
 {
     public EncounterAndRate[] RandomFormation = Array.Empty<EncounterAndRate>();
+    public uint Seed = (uint)Random.Range(int.MinValue, int.MaxValue);
 
     protected override bool SubIsValid(out string error)
     {
@@ -59,6 +60,8 @@ public class RandomFormationEncounter : BaseEncounter
 
         return RandomFormation[0].Formation;
     }
+
+    protected override uint GetSeedForCharacter(CharacterTemplate character) => Seed;
 
     [Serializable]
     public struct EncounterAndRate

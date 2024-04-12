@@ -24,10 +24,10 @@ public abstract class BaseEncounter : IEncounterDefinition
         var encounterState = battleTransition.AddComponent<EncounterState>();
         foreach (var reserve in GameManager.Instance.ReservesLineup)
             reserve.gameObject.SetActive(false);
-        encounterState.StartCoroutine(OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup, FormationToSpawn()));
+        encounterState.StartCoroutine(OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup, FormationToSpawn(), this.GetSeedForCharacter));
     }
 
-    static IEnumerator OverworldToBattleTransition(SceneReference Scene, IEnumerable<CharacterTemplate> allies, CharacterTemplate[] opponents)
+    static IEnumerator OverworldToBattleTransition(SceneReference Scene, IEnumerable<CharacterTemplate> allies, CharacterTemplate[] opponents, Func<CharacterTemplate, uint> combatSeedProvider)
     {
         List<GameObject> gameObjectsToReEnable = new List<GameObject>();
         var hostileControllers = new List<BattleCharacterController>();
@@ -74,6 +74,7 @@ public abstract class BaseEncounter : IEncounterDefinition
                 // Attach Relevant References
                 var controller = model.GetComponent<BattleCharacterController>();
                 controller.Profile = template;
+                controller.Context.CombatSeed = combatSeedProvider(template);
                 hostileControllers.Add(controller);
             }
 
@@ -85,6 +86,7 @@ public abstract class BaseEncounter : IEncounterDefinition
                 // Attach Relevant References
                 var controller = model.GetComponent<BattleCharacterController>();
                 controller.Profile = ally;
+                controller.Context.CombatSeed = combatSeedProvider(ally);
                 alliesControllers.Add(controller);
             }
 
@@ -163,6 +165,7 @@ public abstract class BaseEncounter : IEncounterDefinition
 
     protected abstract bool SubIsValid(out string error);
     protected abstract CharacterTemplate[] FormationToSpawn();
+    protected abstract uint GetSeedForCharacter(CharacterTemplate character);
 
     public class BackToOverworldOnDestroy : MonoBehaviour
     {

@@ -6,6 +6,7 @@ public class RandomEnemyEncounter : BaseEncounter
 {
     public EncounterAndRate[] RandomUnits = Array.Empty<EncounterAndRate>();
     public RangeInt FormationSize = new RangeInt(1, 3);
+    public uint Seed = (uint)Random.Range(int.MinValue, int.MaxValue);
 
     protected override bool SubIsValid(out string error)
     {
@@ -70,6 +71,8 @@ public class RandomEnemyEncounter : BaseEncounter
 
         return output;
     }
+
+    protected override uint GetSeedForCharacter(CharacterTemplate character) => Seed;
 
     [Serializable]
     public struct EncounterAndRate

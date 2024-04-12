@@ -290,7 +290,7 @@ public class BattleUIOperation : MonoBehaviour
                     TooltipUI.OnPresentNewTooltip?.Invoke(skill.Description);
                 });
 
-                if (previousCursor == skill)
+                if (ReferenceEquals(previousCursor, skill))
                     button.Select();
 
                 if (_order.Actions.CostTotal() + skill.ATBCost > UnitSelected.Profile.ActionChargeMax)
@@ -372,7 +372,7 @@ public class BattleUIOperation : MonoBehaviour
                     TooltipUI.OnPresentNewTooltip?.Invoke(consumable.Description);
                 });
 
-                if (previousCursor == consumable)
+                if (ReferenceEquals(previousCursor, consumable))
                     button.Select();
 
                 if (_order.Actions.CostTotal() + consumable.ATBCost > UnitSelected.Profile.ActionChargeMax)
