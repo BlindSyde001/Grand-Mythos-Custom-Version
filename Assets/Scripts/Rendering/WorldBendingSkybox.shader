@@ -1,4 +1,4 @@
-Shader "Unlit/WorldBendingSkybox"
+Shader "WorldBending/Skybox"
 {
     Properties{}
     SubShader

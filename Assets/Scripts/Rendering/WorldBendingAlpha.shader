@@ -1,8 +1,7 @@
-Shader "WorldBending/Base"
+Shader "WorldBending/Alpha"
 {
     Properties
     {
-        [Toggle] _Keyword ("Keyword", Float) = 0.0
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
@@ -15,9 +14,8 @@ Shader "WorldBending/Base"
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf Standard addshadow fullforwardshadows vertex:vert
+        #pragma surface surf Standard addshadow fullforwardshadows vertex:vert alpha:blend
         #pragma multi_compile _ WorldBendingOn
-        #pragma shader_feature _ _KEYWORD_ON
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
@@ -63,9 +61,6 @@ Shader "WorldBending/Base"
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
-            #if _KEYWORD_ON
-            clip(o.Alpha-0.5);
-            #endif
         }
         ENDCG
     }

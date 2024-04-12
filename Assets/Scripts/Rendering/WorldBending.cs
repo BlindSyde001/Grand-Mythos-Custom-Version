@@ -37,6 +37,26 @@ public class WorldBending : MonoBehaviour
         _instance = this;
         Camera.onPreCull += OnAnyCameraPreCull;
         Shader.SetKeyword(GlobalKeyword.Create(Keyword), true);
+
+        #if UNITY_EDITOR
+        Shader[] matches = { Shader.Find("WorldBending/Base"), Shader.Find("WorldBending/Alpha"), Shader.Find("WorldBending/Skybox"),  };
+        UnityEditor.EditorApplication.delayCall += () =>
+        {
+            foreach (GameObject rootGameObject in gameObject.scene.GetRootGameObjects())
+            {
+                foreach (Renderer child in rootGameObject.GetComponentsInChildren<Renderer>())
+                {
+                    foreach (var material in child.sharedMaterials)
+                    {
+                        if (matches.Contains(material.shader) == false)
+                        {
+                            Debug.LogWarning($"Renderer '{child}' does not use the world bending shader (currently:'{material.shader.name}')", child);
+                        }
+                    }
+                }
+            }
+        };
+        #endif
     }
 
     void OnDisable()
