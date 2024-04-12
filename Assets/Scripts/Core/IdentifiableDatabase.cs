@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IdentifiableDatabase : ScriptableObject
+public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackReceiver
 {
     static IdentifiableDatabase __instance;
 
@@ -30,6 +30,7 @@ public class IdentifiableDatabase : ScriptableObject
     [SerializeField]
     List<IdentifiableScriptableObject> _identifiables = new();
     Dictionary<guid, IdentifiableScriptableObject> _findByGuid;
+    bool _cleanupScheduled = false;
 
 
     public static bool TryGet<T>(guid guid, out T item) where T : IdentifiableScriptableObject
@@ -76,13 +77,56 @@ public class IdentifiableDatabase : ScriptableObject
 
             lock (Instance._identifiables)
             {
+                if (Instance._cleanupScheduled == false)
+                {
+                    Instance._cleanupScheduled = true;
+                    UnityEditor.EditorApplication.update += Cleanup;
+                }
+
                 if (Instance._identifiables.Contains(iso))
                     return;
+
                 Instance._identifiables.Add(iso);
                 UnityEditor.EditorUtility.SetDirty(Instance);
+            }
+        }
+
+        static void Cleanup()
+        {
+            UnityEditor.EditorApplication.update -= Cleanup;
+            lock (Instance._identifiables)
+            {
+                for (int i = Instance._identifiables.Count - 1; i >= 0; i--)
+                {
+                    if (Instance._identifiables[i] == null)
+                    {
+                        Instance._identifiables.RemoveAt(i);
+                        UnityEditor.EditorUtility.SetDirty(Instance);
+                    }
+                }
             }
         }
         #endif
     }
 
+    void ISerializationCallbackReceiver.OnBeforeSerialize()
+    {
+        for (int i = _identifiables.Count - 1; i >= 0; i--)
+        {
+            if (_identifiables[i] == null)
+            {
+                _identifiables.RemoveAt(i);
+                UnityEditor.EditorUtility.SetDirty(Instance);
+            }
+        }
+    }
+
+    void ISerializationCallbackReceiver.OnAfterDeserialize()
+    {
+        for (int i = _identifiables.Count - 1; i >= 0; i--)
+        {
+            if (_identifiables[i] == null)
+                _identifiables.RemoveAt(i);
+        }
+    }
 }
