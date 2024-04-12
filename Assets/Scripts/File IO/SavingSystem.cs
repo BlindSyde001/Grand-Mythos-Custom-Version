@@ -194,10 +194,10 @@ public static class SavingSystem
                 if (newSave.Version != LatestVersion)
                     throw new NotImplementedException("Save version mismatch, version upgrading not implemented");
 
-                if (_latestSave.SpawnPointReference == default)
+                if (newSave.SpawnPointReference == default)
                     throw new InvalidOperationException($"Empty id for spawn in save '{filePath}'");
 
-                IdentifiableDatabase.TryGet(_latestSave.SpawnPointReference, out spawn);
+                IdentifiableDatabase.TryGet(newSave.SpawnPointReference, out spawn);
 
                 if (spawn == null)
                     throw new InvalidOperationException($"No spawn found in save '{filePath}'");
@@ -209,7 +209,7 @@ public static class SavingSystem
                 return false;
             }
 
-            var beforeLoad = SaveToMemory(); // Get latest state and store it in case we need to rollback
+            var beforeLoad = SpawnPoint.LastSpawnUsed != null /*We haven't even spawned yet*/ ? SaveToMemory() : null; // Get latest state and store it in case we need to rollback
             try
             {
                 _latestSave = newSave;
@@ -221,8 +221,11 @@ public static class SavingSystem
                 MessageModal.Show($"Failed to Load {filePath}", e.Message, MessageModal.Type.Error);
 
                 // Rollback saved states since we just failed to load the new one
-                _latestSave = beforeLoad;
-                RestoreSystemsWith(beforeLoad);
+                if (beforeLoad != null)
+                {
+                    _latestSave = beforeLoad;
+                    RestoreSystemsWith(beforeLoad);
+                }
                 return false;
             }
 
