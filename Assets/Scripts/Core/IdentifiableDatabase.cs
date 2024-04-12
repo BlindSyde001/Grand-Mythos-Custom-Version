@@ -69,12 +69,10 @@ public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackRece
     public static void EnsureRegistered(IdentifiableScriptableObject iso)
     {
         #if UNITY_EDITOR
-        UnityEditor.EditorApplication.update += FixupThisIdentifiable;
+        UnityEditor.EditorApplication.delayCall += FixupThisIdentifiable;
 
         void FixupThisIdentifiable()
         {
-            UnityEditor.EditorApplication.update -= FixupThisIdentifiable;
-
             lock (Instance._identifiables)
             {
                 if (Instance._cleanupScheduled == false)

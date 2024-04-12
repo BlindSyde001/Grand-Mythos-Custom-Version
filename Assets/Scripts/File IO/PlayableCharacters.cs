@@ -55,12 +55,10 @@ public class PlayableCharacters : ScriptableObject
     public static void EnsureRegistered(HeroExtension newHero)
     {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.update += FixupThisIdentifiable;
+        UnityEditor.EditorApplication.delayCall += FixupThisIdentifiable;
 
         void FixupThisIdentifiable()
         {
-            UnityEditor.EditorApplication.update -= FixupThisIdentifiable;
-
             if (newHero.Guid == default)
             {
                 Debug.LogException(new InvalidOperationException($"{newHero} has an unset GUID, this is invalid"), newHero);
