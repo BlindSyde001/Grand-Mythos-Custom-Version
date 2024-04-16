@@ -844,7 +844,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""WSAD"",
                     ""id"": ""c5097a49-a7f3-4f4f-b8cb-13780025392e"",
                     ""path"": ""2DVector(mode=2)"",
-                    ""interactions"": ""Hold"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Navigate"",
