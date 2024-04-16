@@ -284,7 +284,7 @@ public class TacticsMenuActions : MenuContainer
                 throw new NotImplementedException();
         }
 
-        textProvider.text = selectedHero.Tactics[tactic].Actions[action].Name;
+        textProvider.text = selectedHero.Tactics[tactic]?.Actions[action].Name ?? "";
 
         actionSelection.gameObject.SetActive(true);
         actionSelection.onClick.RemoveAllListeners();
@@ -301,18 +301,22 @@ public class TacticsMenuActions : MenuContainer
     void ReOrderActions(HeroExtension selectedHero, int tOrder)
     {
         uint eAllowance = 0;
-        for (int i = 0; i < selectedHero.Tactics[tOrder].Actions.Length; i++)
+        var tactic = selectedHero.Tactics[tOrder];
+        if (tactic == null)
+            return;
+
+        for (int i = 0; i < tactic.Actions.Length; i++)
         {
-            if (selectedHero.Tactics[tOrder].Actions[i] != null)
+            if (tactic.Actions[i] != null)
             {
-                if (eAllowance + selectedHero.Tactics[tOrder].Actions[i].ActionCost > 4)
+                if (eAllowance + tactic.Actions[i].ActionCost > 4)
                 {
                     StartCoroutine(SendWarning());
-                    selectedHero.Tactics[tOrder].Actions[i] = null;
+                    tactic.Actions[i] = null;
                 }
                 else
                 {
-                    eAllowance += selectedHero.Tactics[tOrder].Actions[i].ActionCost;
+                    eAllowance += tactic.Actions[i].ActionCost;
                 }
             }
         }

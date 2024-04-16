@@ -43,8 +43,13 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
 
         var actions = new Dictionary<IAction, string>();
         foreach (var tactic in template.Tactics)
+        {
+            if (tactic == null)
+                continue;
+
             foreach (var action in tactic.Actions)
                 actions.TryAdd(action, nameof(template.Tactics));
+        }
 
         if (template.LevelUnlocks != null)
             foreach (var unlock in template.LevelUnlocks.Skills)

@@ -183,7 +183,7 @@ public class BattleUIOperation : MonoBehaviour
             {
                 foreach (var tactic in UnitSelected.Profile.Tactics)
                 {
-                    if (tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(unitsCopy), UnitSelected.Context, out _, accountForCost:false))
+                    if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(unitsCopy), UnitSelected.Context, out _, accountForCost:false))
                     {
                         tacticsPreviewed = tactic;
                         break;

@@ -67,7 +67,7 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("SKILLS")]
     public SerializableHashSet<Skill> Skills;
 
-    [BoxGroup("TACTICS"), Required, ListDrawerSettings(ShowFoldout = false)]
+    [BoxGroup("TACTICS"), Required, ListDrawerSettings(ShowFoldout = false), ItemCanBeNull]
     public Tactics[] Tactics = Array.Empty<Tactics>();
 
     [BoxGroup("ANIMATIONS")]

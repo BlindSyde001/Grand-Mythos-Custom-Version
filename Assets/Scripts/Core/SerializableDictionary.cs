@@ -22,7 +22,11 @@ public class SerializableDictionary<T, T2> : Dictionary<T, T2>, ISerializationCa
         EnsureCapacity(4);
         Clear();
         foreach (KeyValue keyValue in _backingArray)
+        {
+            if (ReferenceEquals(keyValue.Key, null))
+                continue;
             Add(keyValue.Key, keyValue.Value);
+        }
     }
 
     [Serializable]
