@@ -41,7 +41,7 @@ public class BattleCamera : MonoBehaviour
         _euler += new Vector3(input.x, -input.y, 0);
         _euler.y = Mathf.Clamp(_euler.y, MinimumAngle, MaximumAngle);
 
-        var cameraRotation = pivotReference * Quaternion.Euler(_euler.y, _euler.x, 0);
+        var cameraRotation = Quaternion.Euler(_euler.y, _euler.x, 0);
         Camera.transform.SetPositionAndRotation(center + cameraRotation * Vector3.back * Distance, cameraRotation);
     }
 
