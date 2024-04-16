@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
 
-public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtension.SaveV1>, ISerializationCallbackReceiver
+public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtension.SaveV2>, ISerializationCallbackReceiver
 {
     [SerializeField, TitleGroup("EQUIPMENT ATTRIBUTES"), HorizontalGroup("EQUIPMENT ATTRIBUTES/Split"), VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left"), BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
     protected internal Weapon _Weapon;
@@ -38,6 +39,12 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     [FormerlySerializedAs("charBanner"), HorizontalGroup("ASSETS"), SerializeField, PreviewField(100)]
     internal Sprite Banner;
 
+    public SerializableHashSet<guid> UnlockedTreeNodes = new();
+
+    [Required] public SkillTree SkillTree;
+
+    public int SkillPointsTotal => Level;
+
     public override Stats EffectiveStats
     {
         get
@@ -50,14 +57,18 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
             stats.Defense += equipDefense;
             stats.MagDefense += equipMagDefense;
             stats.Speed += equipSpeed;
+            foreach (var modifier in Modifiers)
+                modifier.Value.Apply(ref stats);
             return stats;
         }
     }
 
+    [ReadOnly] public SerializableDictionary<guid, IModifier> Modifiers = new();
+
     // UPDATES
     protected override void Awake()
     {
-        SavingSystem.TryRestore<HeroExtension, SaveV1>(this);
+        SavingSystem.TryRestore<HeroExtension, SaveV2>(this);
         InitializeCharacter();
         EquipStats();
         base.Awake();
@@ -65,7 +76,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
 
     void OnDestroy()
     {
-        SavingSystem.StoreAndUnregister<HeroExtension, SaveV1>(this);
+        SavingSystem.StoreAndUnregister<HeroExtension, SaveV2>(this);
     }
 
     // METHODS
@@ -73,6 +84,19 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     protected void InitializeCharacter()
     {
         LevelUpCheck();
+        var nodes = SkillTree.GetNodes();
+        foreach (guid guid in UnlockedTreeNodes)
+        {
+            if (nodes.TryGetValue(guid, out var node))
+                node.Unlock.OnUnlock(this, guid);
+            else
+                MessageModal.Show($"Failed to find node '{guid}'", $"Could not find node '{guid}', this is likely because the skill tree for character '{Name}' has changed, you will have to re-assign some of your points", MessageModal.Type.Warning);
+        }
+
+        var matchesOnly = UnlockedTreeNodes.Where(x => nodes.ContainsKey(x)).ToArray();
+        UnlockedTreeNodes.Clear();
+        foreach (var guid in matchesOnly)
+            UnlockedTreeNodes.Add(guid);
     }
     #endregion
     #region Stats & Levelling Up
@@ -88,7 +112,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         equipMP = 0;
         #endregion
         #region Add Equipped Items to a Temporary List
-        List<Equipment> tempEquip = new List<Equipment>();
+        var tempEquip = new List<Equipment>();
         tempEquip.Add(_Weapon);
         if (_Armour != null)
             tempEquip.Add(_Armour);
@@ -130,12 +154,48 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     void ISerializationCallbackReceiver.OnAfterDeserialize() => PlayableCharacters.EnsureRegistered(this);
 
     [Button("Generate new GUID", ButtonSizes.Small)]
-    private void NewGuid()
+    void NewGuid()
     {
         _guid = System.Guid.NewGuid();
     }
 
-    [Serializable] public struct SaveV1 : ISaveHandler<HeroExtension>
+    [Serializable] public struct SaveV2 : ISaveDataVersioned<SaveV1>, ISaveHandler<HeroExtension>
+    {
+        public uint Version => 2;
+
+        public int CurrentHP, CurrentMP;
+        public int Experience;
+        public guid Weapon;
+        public guid Armour;
+        public guid AccessoryOne;
+        public guid AccessoryTwo;
+        public SerializableHashSet<guid> AllocatedTreeNodes;
+
+        public void Transfer(HeroExtension source, SavingSystem.Transfer transfer)
+        {
+            transfer.Value(ref CurrentHP, ref source.CurrentHP);
+            transfer.Value(ref CurrentMP, ref source.CurrentMP);
+            transfer.Value(ref Experience, ref source.Experience);
+            transfer.Identifiable(ref Weapon, ref source._Weapon);
+            transfer.Identifiable(ref Armour, ref source._Armour);
+            transfer.Identifiable(ref AccessoryOne, ref source._AccessoryOne);
+            transfer.Identifiable(ref AccessoryTwo, ref source._AccessoryTwo);
+            transfer.Collection<SerializableHashSet<guid>, guid>(ref AllocatedTreeNodes, ref source.UnlockedTreeNodes);
+        }
+
+        public void UpgradeFromPrevious(SaveV1 old)
+        {
+            CurrentHP = old.CurrentHP;
+            CurrentMP = old.CurrentMP;
+            Experience = old.Experience;
+            Weapon = old.Weapon;
+            Armour = old.Armour;
+            AccessoryOne = old.AccessoryOne;
+            AccessoryTwo = old.AccessoryTwo;
+        }
+    }
+
+    [Serializable] public struct SaveV1 : ISaveData
     {
         public uint Version => 1;
 

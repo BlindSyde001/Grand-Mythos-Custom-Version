@@ -8,7 +8,6 @@ using UnityEngine;
 [CreateAssetMenu]
 public class LevelUnlocks : ScriptableObject, ISerializationCallbackReceiver
 {
-    [InfoBox("Right now this just linearly unlock skills, actual tree is for another milestone")]
     [ValidateInput(nameof(SortValidation))]
     public SkillUnlock[] Skills = Array.Empty<SkillUnlock>();
 

@@ -125,7 +125,8 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         if (data.Count == 0)
         {
             data.Previous.Next = data.Next; // Remove from the linked list
-            data.Next.Previous = data.Previous;
+            if (data.Next != null)
+                data.Next.Previous = data.Previous;
             data.Next = null;
             data.Previous = null;
             Items.Remove(item);

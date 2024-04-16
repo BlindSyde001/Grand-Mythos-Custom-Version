@@ -1243,6 +1243,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skilltree Pan"",
+                    ""type"": ""Value"",
+                    ""id"": ""c6bfc43f-cc18-4b04-aa93-5e468bba6a37"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -1269,31 +1278,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""up"",
-                    ""id"": ""78e85595-90ef-488b-a142-f9cc67470d9d"",
-                    ""path"": ""<Gamepad>/rightStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": ""down"",
                     ""id"": ""164714a1-2a8f-49d2-9f95-12bda3a2e85f"",
                     ""path"": ""<Gamepad>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""7f21acb0-dc6e-4cb1-990c-d86c33c6c242"",
-                    ""path"": ""<Gamepad>/rightStick/down"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
@@ -1313,31 +1300,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""left"",
-                    ""id"": ""04c015d7-9058-433d-bee5-5a04afee5cb5"",
-                    ""path"": ""<Gamepad>/rightStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": ""right"",
                     ""id"": ""82675f52-bcb1-449f-a84c-4c5f32eebac3"",
                     ""path"": ""<Gamepad>/leftStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""ANY"",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""3545ce64-eac6-40b6-9c0f-b94490f65072"",
-                    ""path"": ""<Gamepad>/rightStick/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
@@ -1850,6 +1815,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4fa37dec-d399-4f9c-96fc-263c69f25f19"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=200,y=200),TimeDeltaScaler2D"",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Skilltree Pan"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1960,6 +1936,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_MenuMap_TrackedDeviceOrientation = m_MenuMap.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_MenuMap_PageScroll = m_MenuMap.FindAction("Page Scroll", throwIfNotFound: true);
         m_MenuMap_TabScroll = m_MenuMap.FindAction("Tab Scroll", throwIfNotFound: true);
+        m_MenuMap_SkilltreePan = m_MenuMap.FindAction("Skilltree Pan", throwIfNotFound: true);
         // Pause Map
         m_PauseMap = asset.FindActionMap("Pause Map", throwIfNotFound: true);
         m_PauseMap_Unpause = m_PauseMap.FindAction("Unpause", throwIfNotFound: true);
@@ -2327,6 +2304,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_MenuMap_TrackedDeviceOrientation;
     private readonly InputAction m_MenuMap_PageScroll;
     private readonly InputAction m_MenuMap_TabScroll;
+    private readonly InputAction m_MenuMap_SkilltreePan;
     public struct MenuMapActions
     {
         private @PlayerControls m_Wrapper;
@@ -2344,6 +2322,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_MenuMap_TrackedDeviceOrientation;
         public InputAction @PageScroll => m_Wrapper.m_MenuMap_PageScroll;
         public InputAction @TabScroll => m_Wrapper.m_MenuMap_TabScroll;
+        public InputAction @SkilltreePan => m_Wrapper.m_MenuMap_SkilltreePan;
         public InputActionMap Get() { return m_Wrapper.m_MenuMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -2392,6 +2371,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @TabScroll.started += instance.OnTabScroll;
             @TabScroll.performed += instance.OnTabScroll;
             @TabScroll.canceled += instance.OnTabScroll;
+            @SkilltreePan.started += instance.OnSkilltreePan;
+            @SkilltreePan.performed += instance.OnSkilltreePan;
+            @SkilltreePan.canceled += instance.OnSkilltreePan;
         }
 
         private void UnregisterCallbacks(IMenuMapActions instance)
@@ -2435,6 +2417,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @TabScroll.started -= instance.OnTabScroll;
             @TabScroll.performed -= instance.OnTabScroll;
             @TabScroll.canceled -= instance.OnTabScroll;
+            @SkilltreePan.started -= instance.OnSkilltreePan;
+            @SkilltreePan.performed -= instance.OnSkilltreePan;
+            @SkilltreePan.canceled -= instance.OnSkilltreePan;
         }
 
         public void RemoveCallbacks(IMenuMapActions instance)
@@ -2553,6 +2538,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnPageScroll(InputAction.CallbackContext context);
         void OnTabScroll(InputAction.CallbackContext context);
+        void OnSkilltreePan(InputAction.CallbackContext context);
     }
     public interface IPauseMapActions
     {
