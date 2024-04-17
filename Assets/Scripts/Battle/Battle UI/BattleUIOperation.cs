@@ -251,6 +251,9 @@ public class BattleUIOperation : MonoBehaviour
         if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
             Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
 
+        if (UnitSelected == null)
+            yield break;
+
         _order.Actions.BackingArray[^1] = UnitSelected.Profile.BasicAttack;
 
         if (_order.Condition == null)
@@ -278,6 +281,9 @@ public class BattleUIOperation : MonoBehaviour
         var objects = new List<RectTransform>();
         try
         {
+            if (UnitSelected == null)
+                yield break;
+
             bool first = true;
             var previousCursor = _lastActionCursor;
             foreach (var skill in UnitSelected.Profile.Skills)
@@ -357,6 +363,9 @@ public class BattleUIOperation : MonoBehaviour
         var objects = new List<RectTransform>();
         try
         {
+            if (UnitSelected == null)
+                yield break;
+
             bool first = true;
             var previousCursor = _lastActionCursor;
             foreach ((BaseItem item, uint count) in UnitSelected.Profile.Inventory.Items())
@@ -434,9 +443,9 @@ public class BattleUIOperation : MonoBehaviour
         var uiElem = Instantiate(SkillTemplate, SelectionContainer, false);
         uiElem.gameObject.SetActive(true);
         objects.Add(uiElem);
-        if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
+        if (uiElem.GetComponentInChildren<Text>() is { } text && text != null)
             text.text = name;
-        if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
+        if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmp_text && tmp_text != null)
             tmp_text.text = name;
 
 
@@ -556,7 +565,8 @@ public class BattleUIOperation : MonoBehaviour
 
     void ScheduleOrder(Tactics tactics)
     {
-        BattleManagement.Orders[UnitSelected] = tactics;
+        if (UnitSelected != null)
+            BattleManagement.Orders[UnitSelected] = tactics;
         _order = new();
         ResetNavigation();
         BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
@@ -639,7 +649,7 @@ public class BattleUIOperation : MonoBehaviour
     public void UpdatePreview([CanBeNull] Tactics tactics, ReadOnlySpan<IAction> actionsSubset, PreviewType type)
     {
         using var _temp = BattleManagement.Units.TemporaryCopy(out var _unitsCopy);
-        if (tactics != null && tactics.Condition != null && tactics.Condition.CanExecute(tactics.Actions, new TargetCollection(_unitsCopy), UnitSelected.Context, out var selection, accountForCost:false))
+        if (tactics != null && tactics.Condition != null && tactics.Condition.CanExecute(tactics.Actions, new TargetCollection(_unitsCopy), UnitSelected!.Context, out var selection, accountForCost:false))
         {
             int i = 0;
             foreach (var controller in selection)
@@ -651,7 +661,7 @@ public class BattleUIOperation : MonoBehaviour
                 foreach (var renderer in controller.PooledGetInChildren<Renderer>())
                     position.y = Mathf.Max(renderer.bounds.max.y, position.y);
 
-                _targetCursors[i++].transform.SetPositionAndRotation(position, Camera.main.transform.rotation);
+                _targetCursors[i++].transform.SetPositionAndRotation(position, Camera.main!.transform.rotation);
             }
 
             for (; i < _targetCursors.Count; i++)
@@ -774,8 +784,8 @@ public class BattleUIOperation : MonoBehaviour
 
     class TargetSelection : UIElementSelection<BattleCharacterController, HashSet<BattleCharacterController>>
     {
-        readonly HashSet<BattleCharacterController> _lastSelection = new();
-        readonly HashSet<BattleCharacterController> _selection = new();
+        [ItemCanBeNull] readonly HashSet<BattleCharacterController> _lastSelection = new();
+        [ItemCanBeNull] readonly HashSet<BattleCharacterController> _selection = new();
         BattleCharacterController _unitSelected;
         BattleCharacterController _lastCursor;
         IActionCollection _actions;
@@ -804,7 +814,8 @@ public class BattleUIOperation : MonoBehaviour
             }
 
             foreach (var unit in _lastSelection)
-                Toggles[unit].toggle.isOn = true;
+                if (unit != null && Toggles.TryGetValue(unit, out var toggleData))
+                    toggleData.toggle.isOn = true;
 
             if (foundCursor == false)
             {
@@ -813,6 +824,19 @@ public class BattleUIOperation : MonoBehaviour
                     if (toggle.isOn)
                     {
                         toggle.Select();
+                        foundCursor = true;
+                        break;
+                    }
+                }
+            }
+
+            if (foundCursor == false)
+            {
+                foreach (var controller in units)
+                {
+                    if (Toggles.TryGetValue(controller, out var toggleData))
+                    {
+                        toggleData.toggle.Select();
                         break;
                     }
                 }
@@ -1204,9 +1228,9 @@ public class BattleUIOperation : MonoBehaviour
                 var template = inHostileList ? _targetList.HostileTargetTemplate : _targetList.AlliesTargetTemplate;
                 uiElem = Instantiate(template, template.transform.parent, false);
                 uiElem.gameObject.SetActive(true);
-                if (uiElem.GetComponentInChildren<Text>() is Text text && text != null)
+                if (uiElem.GetComponentInChildren<Text>() is { } text && text != null)
                     text.text = label;
-                if (uiElem.GetComponentInChildren<TMP_Text>() is TMP_Text tmp_text && tmp_text != null)
+                if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmp_text && tmp_text != null)
                     tmp_text.text = label;
 
                 var toggle = uiElem.GetComponent<Toggle>();
