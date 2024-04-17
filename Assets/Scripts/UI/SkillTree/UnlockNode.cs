@@ -8,11 +8,11 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class UnlockNode : MonoBehaviour
 {
-    [SerializeReference, Required] public IUnlock Unlock;
-    public UnlockNode[] Requirements = Array.Empty<UnlockNode>();
+    [SerializeReference, Required, BoxGroup("UNLOCKS"), HideLabel] public IUnlock Unlock;
+    [ListDrawerSettings(ShowFoldout = false), BoxGroup("REQUIREMENTS")] public UnlockNode[] Requirements = Array.Empty<UnlockNode>();
 
-    public Button Button;
-    public UnityEvent OnUnlock, OnLock, OnReachable, OnUnreachable;
+    [BoxGroup("VISUALS"), Required] public Button Button;
+    [BoxGroup("VISUALS")] public UnityEvent OnUnlock, OnLock, OnReachable, OnUnreachable;
 
     protected void OnTransformParentChanged()
     {

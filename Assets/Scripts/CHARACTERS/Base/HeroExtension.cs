@@ -39,9 +39,11 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     [FormerlySerializedAs("charBanner"), HorizontalGroup("ASSETS"), SerializeField, PreviewField(100)]
     internal Sprite Banner;
 
-    public SerializableHashSet<guid> UnlockedTreeNodes = new();
+    [Required, BoxGroup("SKILLS")] public SkillTree SkillTree;
 
-    [Required] public SkillTree SkillTree;
+    [BoxGroup("SKILLS")] public SerializableHashSet<guid> UnlockedTreeNodes = new();
+
+    [ReadOnly, BoxGroup("SKILLS")] public SerializableDictionary<guid, IModifier> Modifiers = new();
 
     public int SkillPointsTotal => Level;
 
@@ -62,8 +64,6 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
             return stats;
         }
     }
-
-    [ReadOnly] public SerializableDictionary<guid, IModifier> Modifiers = new();
 
     // UPDATES
     protected override void Awake()
