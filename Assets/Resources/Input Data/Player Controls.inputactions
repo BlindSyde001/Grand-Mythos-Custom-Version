@@ -418,15 +418,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Hero Switch",
-                    "type": "Button",
-                    "id": "fad21261-8d1e-4889-8159-3f0dccb63eaf",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Page Scroll",
                     "type": "Button",
                     "id": "9f20a91c-3bdd-4697-b475-17d46518202f",
@@ -436,7 +427,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Tab Scroll",
+                    "name": "Hero Switch",
                     "type": "Button",
                     "id": "68ca2ffc-5b55-4ade-b915-799288450e95",
                     "expectedControlType": "Button",
@@ -775,50 +766,6 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "1D Axis",
-                    "id": "1873ee7f-7b22-4007-aaf0-a52894efd963",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hero Switch",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "Negative",
-                    "id": "0b980e67-0ef4-4f22-a2ea-c29d649d1edd",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hero Switch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Positive",
-                    "id": "9354074e-d732-4bda-a4c3-0b9238614370",
-                    "path": "<Keyboard>/c",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hero Switch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "0754d3bf-26a5-41bc-87a0-942367660d8b",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hero Switch",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
                     "name": "WSAD",
                     "id": "c5097a49-a7f3-4f4f-b8cb-13780025392e",
                     "path": "2DVector(mode=2)",
@@ -935,7 +882,7 @@
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "Tab Scroll",
+                    "action": "Hero Switch",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -946,7 +893,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "ANY",
-                    "action": "Tab Scroll",
+                    "action": "Hero Switch",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -957,7 +904,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "ANY",
-                    "action": "Tab Scroll",
+                    "action": "Hero Switch",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -968,7 +915,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Tab Scroll",
+                    "action": "Hero Switch",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -979,7 +926,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "ANY",
-                    "action": "Tab Scroll",
+                    "action": "Hero Switch",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -990,7 +937,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "ANY",
-                    "action": "Tab Scroll",
+                    "action": "Hero Switch",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },

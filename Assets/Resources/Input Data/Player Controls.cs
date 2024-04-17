@@ -440,15 +440,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Hero Switch"",
-                    ""type"": ""Button"",
-                    ""id"": ""fad21261-8d1e-4889-8159-3f0dccb63eaf"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Page Scroll"",
                     ""type"": ""Button"",
                     ""id"": ""9f20a91c-3bdd-4697-b475-17d46518202f"",
@@ -458,7 +449,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Tab Scroll"",
+                    ""name"": ""Hero Switch"",
                     ""type"": ""Button"",
                     ""id"": ""68ca2ffc-5b55-4ade-b915-799288450e95"",
                     ""expectedControlType"": ""Button"",
@@ -797,50 +788,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""1873ee7f-7b22-4007-aaf0-a52894efd963"",
-                    ""path"": ""1DAxis"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Hero Switch"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""Negative"",
-                    ""id"": ""0b980e67-0ef4-4f22-a2ea-c29d649d1edd"",
-                    ""path"": """",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Hero Switch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Positive"",
-                    ""id"": ""9354074e-d732-4bda-a4c3-0b9238614370"",
-                    ""path"": ""<Keyboard>/c"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Hero Switch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0754d3bf-26a5-41bc-87a0-942367660d8b"",
-                    ""path"": ""<Gamepad>/buttonWest"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Hero Switch"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
                     ""name"": ""WSAD"",
                     ""id"": ""c5097a49-a7f3-4f4f-b8cb-13780025392e"",
                     ""path"": ""2DVector(mode=2)"",
@@ -957,7 +904,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Tab Scroll"",
+                    ""action"": ""Hero Switch"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -968,7 +915,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
-                    ""action"": ""Tab Scroll"",
+                    ""action"": ""Hero Switch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -979,7 +926,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
-                    ""action"": ""Tab Scroll"",
+                    ""action"": ""Hero Switch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -990,7 +937,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Tab Scroll"",
+                    ""action"": ""Hero Switch"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -1001,7 +948,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
-                    ""action"": ""Tab Scroll"",
+                    ""action"": ""Hero Switch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1012,7 +959,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""ANY"",
-                    ""action"": ""Tab Scroll"",
+                    ""action"": ""Hero Switch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1937,9 +1884,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_BattleMap_TrackedDeviceOrientation = m_BattleMap.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_BattleMap_Pause = m_BattleMap.FindAction("Pause", throwIfNotFound: true);
         m_BattleMap_Camera = m_BattleMap.FindAction("Camera", throwIfNotFound: true);
-        m_BattleMap_HeroSwitch = m_BattleMap.FindAction("Hero Switch", throwIfNotFound: true);
         m_BattleMap_PageScroll = m_BattleMap.FindAction("Page Scroll", throwIfNotFound: true);
-        m_BattleMap_TabScroll = m_BattleMap.FindAction("Tab Scroll", throwIfNotFound: true);
+        m_BattleMap_HeroSwitch = m_BattleMap.FindAction("Hero Switch", throwIfNotFound: true);
         m_BattleMap_ToggleAdditionalInfo = m_BattleMap.FindAction("Toggle Additional Info", throwIfNotFound: true);
         // Cutscene Map
         m_CutsceneMap = asset.FindActionMap("Cutscene Map", throwIfNotFound: true);
@@ -2121,9 +2067,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_BattleMap_TrackedDeviceOrientation;
     private readonly InputAction m_BattleMap_Pause;
     private readonly InputAction m_BattleMap_Camera;
-    private readonly InputAction m_BattleMap_HeroSwitch;
     private readonly InputAction m_BattleMap_PageScroll;
-    private readonly InputAction m_BattleMap_TabScroll;
+    private readonly InputAction m_BattleMap_HeroSwitch;
     private readonly InputAction m_BattleMap_ToggleAdditionalInfo;
     public struct BattleMapActions
     {
@@ -2141,9 +2086,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_BattleMap_TrackedDeviceOrientation;
         public InputAction @Pause => m_Wrapper.m_BattleMap_Pause;
         public InputAction @Camera => m_Wrapper.m_BattleMap_Camera;
-        public InputAction @HeroSwitch => m_Wrapper.m_BattleMap_HeroSwitch;
         public InputAction @PageScroll => m_Wrapper.m_BattleMap_PageScroll;
-        public InputAction @TabScroll => m_Wrapper.m_BattleMap_TabScroll;
+        public InputAction @HeroSwitch => m_Wrapper.m_BattleMap_HeroSwitch;
         public InputAction @ToggleAdditionalInfo => m_Wrapper.m_BattleMap_ToggleAdditionalInfo;
         public InputActionMap Get() { return m_Wrapper.m_BattleMap; }
         public void Enable() { Get().Enable(); }
@@ -2190,15 +2134,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Camera.started += instance.OnCamera;
             @Camera.performed += instance.OnCamera;
             @Camera.canceled += instance.OnCamera;
-            @HeroSwitch.started += instance.OnHeroSwitch;
-            @HeroSwitch.performed += instance.OnHeroSwitch;
-            @HeroSwitch.canceled += instance.OnHeroSwitch;
             @PageScroll.started += instance.OnPageScroll;
             @PageScroll.performed += instance.OnPageScroll;
             @PageScroll.canceled += instance.OnPageScroll;
-            @TabScroll.started += instance.OnTabScroll;
-            @TabScroll.performed += instance.OnTabScroll;
-            @TabScroll.canceled += instance.OnTabScroll;
+            @HeroSwitch.started += instance.OnHeroSwitch;
+            @HeroSwitch.performed += instance.OnHeroSwitch;
+            @HeroSwitch.canceled += instance.OnHeroSwitch;
             @ToggleAdditionalInfo.started += instance.OnToggleAdditionalInfo;
             @ToggleAdditionalInfo.performed += instance.OnToggleAdditionalInfo;
             @ToggleAdditionalInfo.canceled += instance.OnToggleAdditionalInfo;
@@ -2242,15 +2183,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Camera.started -= instance.OnCamera;
             @Camera.performed -= instance.OnCamera;
             @Camera.canceled -= instance.OnCamera;
-            @HeroSwitch.started -= instance.OnHeroSwitch;
-            @HeroSwitch.performed -= instance.OnHeroSwitch;
-            @HeroSwitch.canceled -= instance.OnHeroSwitch;
             @PageScroll.started -= instance.OnPageScroll;
             @PageScroll.performed -= instance.OnPageScroll;
             @PageScroll.canceled -= instance.OnPageScroll;
-            @TabScroll.started -= instance.OnTabScroll;
-            @TabScroll.performed -= instance.OnTabScroll;
-            @TabScroll.canceled -= instance.OnTabScroll;
+            @HeroSwitch.started -= instance.OnHeroSwitch;
+            @HeroSwitch.performed -= instance.OnHeroSwitch;
+            @HeroSwitch.canceled -= instance.OnHeroSwitch;
             @ToggleAdditionalInfo.started -= instance.OnToggleAdditionalInfo;
             @ToggleAdditionalInfo.performed -= instance.OnToggleAdditionalInfo;
             @ToggleAdditionalInfo.canceled -= instance.OnToggleAdditionalInfo;
@@ -2537,9 +2475,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnCamera(InputAction.CallbackContext context);
-        void OnHeroSwitch(InputAction.CallbackContext context);
         void OnPageScroll(InputAction.CallbackContext context);
-        void OnTabScroll(InputAction.CallbackContext context);
+        void OnHeroSwitch(InputAction.CallbackContext context);
         void OnToggleAdditionalInfo(InputAction.CallbackContext context);
     }
     public interface ICutsceneMapActions

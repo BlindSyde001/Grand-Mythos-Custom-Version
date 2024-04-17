@@ -20,6 +20,7 @@ public class BattleUIOperation : MonoBehaviour
     public BattleStateMachine BattleManagement;
 
     [Header("Selected Character")]
+    [Required] public InputActionReference SwitchCharacter;
     [Required] public HeroPrefabUIData SelectedUI;
     [ReadOnly, CanBeNull] public BattleCharacterController UnitSelected;
 
@@ -58,7 +59,6 @@ public class BattleUIOperation : MonoBehaviour
 
     public SerializableHashSet<BattleCharacterController> ProcessedUnits = new();
 
-    PlayerControls _playerControls;
     (Coroutine coroutine, IDisposable disposable)? _runningUIOperation;
     bool _listenerBound;
     Color _initialTacticsColor, _disabledTacticsColor;
@@ -102,17 +102,12 @@ public class BattleUIOperation : MonoBehaviour
             Discard.onClick.AddListener(CancelFullOrder);
         }
 
-        _playerControls = new();
-        _playerControls.Enable();
-        _playerControls.BattleMap.HeroSwitch.performed += SwitchToNextHero;
         ActionPreviewTemplate.gameObject.SetActive(false);
         AttributeAdd.OnApplied += DamageHandler;
     }
 
     void OnDisable()
     {
-        _playerControls.Disable();
-        _playerControls.BattleMap.HeroSwitch.performed -= SwitchToNextHero;
         AttributeAdd.OnApplied -= DamageHandler;
     }
 
@@ -147,6 +142,9 @@ public class BattleUIOperation : MonoBehaviour
 
     void Update()
     {
+        if (SwitchCharacter.action.WasPerformedThisFrameUnique())
+            SwitchToNextHero(SwitchCharacter.action.ReadValue<float>() >= 0 ? 1 : -1);
+
         if (UnitSelected == null && BattleManagement.PartyLineup.Count != 0)
             UnitSelected = BattleManagement.PartyLineup[0];
 
@@ -533,15 +531,12 @@ public class BattleUIOperation : MonoBehaviour
         }
     }
 
-    void SwitchToNextHero(InputAction.CallbackContext context)
+    void SwitchToNextHero(int dir)
     {
-        float dir = context.ReadValue<float>();
-        int sign = dir < 0 ? -1 : 1;
-
         int partyCount = BattleManagement.PartyLineup.Count;
         int indexOfOldSelection = BattleManagement.PartyLineup.IndexOf(UnitSelected);
         // Search for the next unit forward or backwards in the list
-        for (int k = Mod(indexOfOldSelection + sign, partyCount); k != indexOfOldSelection; k = Mod(k + sign, partyCount))
+        for (int k = Mod(indexOfOldSelection + dir, partyCount); k != indexOfOldSelection; k = Mod(k + dir, partyCount))
         {
             if (BattleManagement.PartyLineup[k].Profile.CurrentHP > 0)
             {
