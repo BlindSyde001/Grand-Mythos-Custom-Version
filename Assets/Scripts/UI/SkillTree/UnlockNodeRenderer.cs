@@ -93,7 +93,12 @@ public class UnlockNodeRenderer : Image
         {
             var intersectRight = dir / dir.x * rect.width * 0.5f * Mathf.Sign(dir.x);
             var intersectUp = dir / dir.y * rect.height * 0.5f * Mathf.Sign(dir.y);
-            return intersectUp.sqrMagnitude > intersectRight.sqrMagnitude ? intersectRight : intersectUp;
+            if (dir.y == 0f)
+                return intersectRight;
+            else if (dir.x == 0f)
+                return intersectUp;
+            else
+                return intersectUp.sqrMagnitude > intersectRight.sqrMagnitude && dir.y != 0 ? intersectRight : intersectUp;
         }
     }
 
