@@ -18,23 +18,21 @@ public class ItemMenuActions : MenuContainer
     public override IEnumerable Open(MenuInputs menuInputs)
     {
         gameObject.SetActive(true);
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-470, 200, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-470, -250, 0),  menuInputs.Speed);
-        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(480, 450, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(480, gameObject.transform.GetChild(4).localPosition.y, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-400, 480, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-470, 200, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-470, -250, 0),  menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(480, 450, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(480, gameObject.transform.GetChild(3).localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-400, 480, 0), menuInputs.Speed);
         ShowConsumables();
         yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1750, 480, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1450, 200, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-1450, -250, 0),  menuInputs.Speed);
-        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(1450, 450, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(1450, gameObject.transform.GetChild(4).localPosition.y, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(5).DOLocalMove(new Vector3(-400, 600, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1450, 200, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1450, -250, 0),  menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1450, 450, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(1450, gameObject.transform.GetChild(3).localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-400, 600, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
         gameObject.SetActive(false);
     }

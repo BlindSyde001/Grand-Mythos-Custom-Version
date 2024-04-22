@@ -11,7 +11,6 @@ using UnityEngine.UI;
 public class SkillTreeMenu : MenuContainer
 {
     public UIElementList<Button> HeroSelections;
-    [Required] public RectTransform ReturnButtonContainer;
     [Required] public RectTransform HeroSelectionContainer;
     [Required] public InputActionReference SwitchHero;
     [Required] public TMP_Text PointsLeft;
@@ -46,7 +45,6 @@ public class SkillTreeMenu : MenuContainer
         canvas.alpha = 0f;
         canvas.DOFade(1f, menuInputs.Speed);
 
-        ReturnButtonContainer.DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
         HeroSelectionContainer.DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
         SwitchHero.action.performed += Switch;
@@ -69,7 +67,6 @@ public class SkillTreeMenu : MenuContainer
         canvas.alpha = 1f;
         canvas.DOFade(0f, menuInputs.Speed);
 
-        ReturnButtonContainer.DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
         HeroSelectionContainer.DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
         gameObject.SetActive(false);

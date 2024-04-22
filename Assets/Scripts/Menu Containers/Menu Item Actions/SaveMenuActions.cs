@@ -27,16 +27,14 @@ public class SaveMenuActions : MenuContainer
     {
         OpenLoadFiles();
         gameObject.SetActive(true);
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, gameObject.transform.GetChild(0).transform.localPosition.y, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-800, gameObject.transform.GetChild(1).transform.localPosition.y, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(190, gameObject.transform.GetChild(2).transform.localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, gameObject.transform.GetChild(0).localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(190, gameObject.transform.GetChild(1).localPosition.y, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, gameObject.transform.GetChild(0).transform.localPosition.y, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1200, gameObject.transform.GetChild(1).transform.localPosition.y, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1750, gameObject.transform.GetChild(2).transform.localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, gameObject.transform.GetChild(0).localPosition.y, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(1750, gameObject.transform.GetChild(1).localPosition.y, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
         gameObject.SetActive(false);
     }

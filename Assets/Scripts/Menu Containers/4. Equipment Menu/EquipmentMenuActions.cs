@@ -30,10 +30,9 @@ public class EquipmentMenuActions : MenuContainer
         UpdateSelection(GameManager.PartyLineup[0]);
         UpdateCurrentEquippedGear();
         gameObject.SetActive(true);
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-580, -320, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(0, -320, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-580, -320, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(0, -320, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
         SwitchHero.action.performed += Switch;
     }
@@ -41,11 +40,10 @@ public class EquipmentMenuActions : MenuContainer
     public override IEnumerable Close(MenuInputs menuInputs)
     {
         SwitchHero.action.performed -= Switch;
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(-1400, -320, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(1200, -320, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(4).gameObject.SetActive(false);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1400, -320, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1200, -320, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(3).gameObject.SetActive(false);
         yield return new WaitForSeconds(menuInputs.Speed);
         gameObject.SetActive(false);
     }

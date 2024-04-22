@@ -21,8 +21,7 @@ public class AbilitiesMenuActions : MenuContainer
         SetAbilities(GameManager.PartyLineup[0]);
 
         gameObject.SetActive(true);
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-800, 480, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
 
         foreach (var image in gameObject.transform.GetComponentsInChildren<Graphic>())
         {
@@ -49,8 +48,7 @@ public class AbilitiesMenuActions : MenuContainer
     public override IEnumerable Close(MenuInputs menuInputs)
     {
         SwitchHero.action.performed -= Switch;
-        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1200, 480, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
+        gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         foreach (var image in gameObject.transform.GetComponentsInChildren<Graphic>())
             image.DOFade(0, menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
