@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,19 +10,41 @@ public class BattleCamera : MonoBehaviour
     [Required] public InputActionReference RotationInput;
     [InfoBox("The position of the pivot local to the center of the unit's bounding box")]
     public Vector3 Pivot = new Vector3(0.5f, 0.75f, 0f);
-    public float Distance = 3f;
+    public float DistanceMultiplier = 2.5f;
     public float MinimumAngle = -90f, MaximumAngle = 90f;
-    Vector3 _euler;
+    public float InterpolationFactor = 25f;
+    Vector3 _euler = new(45, 0, 0);
 
     void Update()
     {
         if (BattleController.UnitSelected == null || BattleController.BattleManagement.enabled == false)
             return;
 
+        Vector3 aggregatePosition = default;
+        foreach (var unit in BattleController.BattleManagement.Units)
+            aggregatePosition += unit.transform.position;
+
+        aggregatePosition /= BattleController.BattleManagement.Units.Count;
+
+        float edge = 0f;
+        foreach (var unit in BattleController.BattleManagement.Units)
+            edge = Mathf.Max((aggregatePosition - unit.transform.position).sqrMagnitude, edge);
+
+        var input = RotationInput.action.ReadValue<Vector2>();
+        _euler += new Vector3(-input.y, input.x, 0);
+        _euler.x = Mathf.Clamp(_euler.x, MinimumAngle, MaximumAngle);
+
+        var cameraRotation = Quaternion.Euler(_euler.x, _euler.y, 0);
+        cameraRotation = Quaternion.Lerp(cameraRotation, Camera.transform.rotation, Mathf.Exp(-InterpolationFactor * Time.deltaTime));
+        Camera.transform.SetPositionAndRotation(aggregatePosition + cameraRotation * Vector3.back * Mathf.Sqrt(edge) * DistanceMultiplier, cameraRotation);
+    }
+
+    static void OverTheShoulder(BattleCharacterController character, Vector3 Pivot, Vector3 euler, float Distance, Camera Camera)
+    {
         // Prefer skinned mesh renderer if there are multiple renderers
-        var center = BattleController.UnitSelected.transform.position;
-        var pivotReference = BattleController.UnitSelected.transform.rotation;
-        var renderer = BattleController.UnitSelected.GetComponentInChildren<SkinnedMeshRenderer>();
+        var center = character.transform.position;
+        var pivotReference = character.transform.rotation;
+        var renderer = character.GetComponentInChildren<SkinnedMeshRenderer>();
         if (renderer)
         {
             var localBounds = renderer.localBounds;
@@ -37,11 +60,7 @@ public class BattleCamera : MonoBehaviour
             center = renderer.bounds.center + worldPivot;
         }
 
-        var input = RotationInput.action.ReadValue<Vector2>();
-        _euler += new Vector3(input.x, -input.y, 0);
-        _euler.y = Mathf.Clamp(_euler.y, MinimumAngle, MaximumAngle);
-
-        var cameraRotation = Quaternion.Euler(_euler.y, _euler.x, 0);
+        var cameraRotation = Quaternion.Euler(euler.y, euler.x, 0);
         Camera.transform.SetPositionAndRotation(center + cameraRotation * Vector3.back * Distance, cameraRotation);
     }
 

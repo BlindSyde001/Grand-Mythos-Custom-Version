@@ -1001,9 +1001,10 @@ MonoBehaviour:
   BattleController: {fileID: 155364975}
   RotationInput: {fileID: 2836957885645887625, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
   Pivot: {x: 0.5, y: 0.95, z: 0}
-  Distance: 3
-  MinimumAngle: -90
-  MaximumAngle: 90
+  DistanceMultiplier: 2.5
+  MinimumAngle: 20
+  MaximumAngle: 45
+  InterpolationFactor: 25
 --- !u!224 &166753001 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6592224030047554568, guid: bc91db47167aae243975934ace2be3c7, type: 3}
@@ -2652,7 +2653,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1182718453}
   m_HandleRect: {fileID: 1182718452}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3285,7 +3286,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2144398023}
   m_HandleRect: {fileID: 2144398022}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
