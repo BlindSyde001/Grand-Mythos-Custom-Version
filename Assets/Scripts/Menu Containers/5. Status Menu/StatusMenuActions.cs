@@ -14,16 +14,16 @@ public class StatusMenuActions : MenuContainer
 
     [FormerlySerializedAs("statusContainer"),SerializeField] StatusContainer StatusContainer;
 
-    public UIElementList<Button> HeroSelections;
+    [FormerlySerializedAs("HeroSelections")] public UIElementList<Button> HeroSelectionUI;
     [Required] public InputActionReference SwitchHero;
     HeroExtension _selectedHero;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
+        SetupHeroSelectionUI();
         UpdateSelection(GameManager.PartyLineup[0]);
 
-        SetHeroSelection();
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-600, -300, 0), menuInputs.Speed);
@@ -55,12 +55,12 @@ public class StatusMenuActions : MenuContainer
         UpdateSelection(GameManager.PartyLineup[indexOf]);
     }
 
-    internal void SetHeroSelection()
+    internal void SetupHeroSelectionUI()
     {
-        HeroSelections.Clear();
+        HeroSelectionUI.Clear();
         foreach (var hero in GameManager.PartyLineup)
         {
-            HeroSelections.Allocate(out var element);
+            HeroSelectionUI.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
             element.onClick.AddListener(delegate { UpdateSelection(hero); });
         }
@@ -91,5 +91,7 @@ public class StatusMenuActions : MenuContainer
         StatusContainer.parRes.text = hero.ResistPARALYSIS.ToString();
         StatusContainer.physRes.text = hero.ResistPHYSICAL.ToString();
         StatusContainer.magRes.text = hero.ResistMAGICAL.ToString();
+
+        HighlightSelectedHero(HeroSelectionUI, _selectedHero);
     }
 }

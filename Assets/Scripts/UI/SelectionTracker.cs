@@ -34,6 +34,21 @@ public class SelectionTracker : MonoBehaviour
             if (IsValidForSelection(selection.GetComponent<Selectable>()) == false)
                 SelectLastActiveSelectable();
         }
+
+        if (selection == null)
+        {
+            bool childrenTracker = false;
+            foreach (Transform child in transform)
+            {
+                if (child.gameObject.activeInHierarchy && child.GetComponentInChildren<SelectionTracker>() != null)
+                {
+                    childrenTracker = true;
+                    break;
+                }
+            }
+            if (childrenTracker == false)
+                SelectLastActiveSelectable();
+        }
     }
 
     protected virtual void OnEnable()
@@ -57,8 +72,17 @@ public class SelectionTracker : MonoBehaviour
         }
 
         {
-            if (DefaultSelection != null && DefaultSelection.GetComponentInChildren<Selectable>() is {} selectable && IsValidForSelection(selectable))
-                selectable.Select();
+            if (DefaultSelection != null)
+            {
+                foreach (var selectable in DefaultSelection.GetComponentsInChildren<Selectable>())
+                {
+                    if (IsValidForSelection(selectable))
+                    {
+                        selectable.Select();
+                        break;
+                    }
+                }
+            }
             else if (WarnWhenNoSelection)
                 Debug.LogWarning($"Could not set {nameof(SelectLastActiveSelectable)} - no history or active selectable found under {DefaultSelection}", this);
         }
@@ -66,7 +90,7 @@ public class SelectionTracker : MonoBehaviour
 
     static bool IsValidForSelection(Selectable selectable)
     {
-        if (selectable == null || selectable.enabled == false || selectable.interactable == false)
+        if (selectable == null || selectable.enabled == false || selectable.interactable == false || selectable.navigation.mode == Navigation.Mode.None)
             return false;
         return selectable.gameObject.activeInHierarchy;
     }

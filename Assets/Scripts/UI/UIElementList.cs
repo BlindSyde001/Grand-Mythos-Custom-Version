@@ -12,6 +12,8 @@ public class UIElementList<T> : IEnumerable<T> where T : MonoBehaviour
     [SerializeField, ReadOnly] List<T> _existing = new();
     [SerializeField, ReadOnly] List<T> _pool = new();
 
+    public T this[int index] => _existing[index];
+
     public void Allocate(out T element)
     {
         if (_pool.Count != 0)

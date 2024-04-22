@@ -17,7 +17,7 @@ public class AbilitiesMenuActions : MenuContainer
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        SetupHeroUI();
+        SetupHeroSelectionUI();
         SetAbilities(GameManager.PartyLineup[0]);
 
         gameObject.SetActive(true);
@@ -55,7 +55,7 @@ public class AbilitiesMenuActions : MenuContainer
         gameObject.SetActive(false);
     }
 
-    void SetupHeroUI()
+    void SetupHeroSelectionUI()
     {
         AbilityDescriptionContainer.abilityNameTitle.text = "";
         AbilityDescriptionContainer.abilityDescription.text = "";
@@ -82,6 +82,8 @@ public class AbilitiesMenuActions : MenuContainer
             button.buttonName.text = skill.name;
             button.thisButton.onClick.AddListener(() => SetDescription(skill));
         }
+
+        HighlightSelectedHero(HeroSelectionUI, _selectedHero);
     }
 
     void SetDescription(IAction skill)

@@ -7,6 +7,7 @@ using DG.Tweening;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class EquipmentMenuActions : MenuContainer
 {
@@ -16,7 +17,7 @@ public class EquipmentMenuActions : MenuContainer
     public UIElementList<EquipNewItemContainer> EquipNewItemContainers;
     public GameObject EquipNewItemList;
 
-    public UIElementList<Button> HeroSelections;
+    [FormerlySerializedAs("HeroSelections")] public UIElementList<Button> HeroSelectionUI;
     [Required] public InputActionReference SwitchHero;
 
     readonly List<Equipment> _currentlyEquippedGear = new();
@@ -26,7 +27,7 @@ public class EquipmentMenuActions : MenuContainer
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        SetHeroSelection();
+        SetupHeroSelectionUI();
         UpdateSelection(GameManager.PartyLineup[0]);
         UpdateCurrentEquippedGear();
         gameObject.SetActive(true);
@@ -57,12 +58,12 @@ public class EquipmentMenuActions : MenuContainer
         UpdateSelection(GameManager.PartyLineup[indexOf]);
     }
 
-    void SetHeroSelection()
+    void SetupHeroSelectionUI()
     {
-        HeroSelections.Clear();
+        HeroSelectionUI.Clear();
         foreach (var hero in GameManager.PartyLineup)
         {
-            HeroSelections.Allocate(out var element);
+            HeroSelectionUI.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
             element.onClick.AddListener(delegate {UpdateSelection(hero); });
         }
@@ -108,6 +109,8 @@ public class EquipmentMenuActions : MenuContainer
             container.thisEquipment = item;
             container.ThisButton.onClick.AddListener(delegate { EquippableItemOpen(slot, container.ThisButton); });
         }
+
+        HighlightSelectedHero(HeroSelectionUI, _selectedHero);
     }
 
     static Equipment GetItemFromSlot(ItemSlot slot, HeroExtension hero) => slot switch

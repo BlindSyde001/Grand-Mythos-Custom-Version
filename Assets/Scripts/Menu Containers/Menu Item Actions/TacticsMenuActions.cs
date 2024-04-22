@@ -7,12 +7,13 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class TacticsMenuActions : MenuContainer
 {
     public GameObject SegmentsWarning;
 
-    public UIElementList<Button> HeroSelections = new();
+    [FormerlySerializedAs("HeroSelections")] public UIElementList<Button> HeroSelectionUI = new();
     public List<Button> PageList;
     public List<TacticsModuleContainer> TacticsModules;
     public List<NewComponentContainer> NewComponentList;
@@ -29,10 +30,10 @@ public class TacticsMenuActions : MenuContainer
     //METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        HeroSelections.Clear();
+        HeroSelectionUI.Clear();
         foreach (var hero in GameManager.PartyLineup)
         {
-            HeroSelections.Allocate(out var element);
+            HeroSelectionUI.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
             element.onClick.AddListener(() => ChangeCharacter(hero) );
         }
@@ -100,6 +101,8 @@ public class TacticsMenuActions : MenuContainer
         // Configure all the TacticsList Buttons: On/Off, Select Cnd, Select Action
         for (int i = 0; i < TacticsModules.Count; i++)
             SetupField(i);
+
+        HighlightSelectedHero(HeroSelectionUI, _selectedHero);
     }
 
     void SetupField(int i)

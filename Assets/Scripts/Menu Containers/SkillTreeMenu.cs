@@ -6,11 +6,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class SkillTreeMenu : MenuContainer
 {
-    public UIElementList<Button> HeroSelections;
+    [FormerlySerializedAs("HeroSelections")] public UIElementList<Button> HeroSelectionUI;
     [Required] public RectTransform HeroSelectionContainer;
     [Required] public InputActionReference SwitchHero;
     [Required] public TMP_Text PointsLeft;
@@ -25,7 +26,7 @@ public class SkillTreeMenu : MenuContainer
 
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        SetHeroSelection();
+        SetupHeroSelectionUI();
         SwapSelection(GameManager.PartyLineup[0]);
         gameObject.SetActive(true);
 
@@ -79,6 +80,7 @@ public class SkillTreeMenu : MenuContainer
 
     protected override void Update()
     {
+        base.Update();
         if (_selectedHero == null)
             return;
 
@@ -109,12 +111,12 @@ public class SkillTreeMenu : MenuContainer
             PointsLeft.text = pointsLeft.ToString();
     }
 
-    void SetHeroSelection()
+    void SetupHeroSelectionUI()
     {
-        HeroSelections.Clear();
+        HeroSelectionUI.Clear();
         foreach (var hero in GameManager.PartyLineup)
         {
-            HeroSelections.Allocate(out var element);
+            HeroSelectionUI.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
             element.onClick.AddListener(delegate {SwapSelection(hero); });
         }
@@ -151,5 +153,7 @@ public class SkillTreeMenu : MenuContainer
         rect.localScale = Vector3.one;
         _activeTree.transform.SetSiblingIndex(DragArea.transform.GetSiblingIndex() + 1);
         _activeTree.SelectedHero = _selectedHero;
+
+        HighlightSelectedHero(HeroSelectionUI, _selectedHero);
     }
 }
