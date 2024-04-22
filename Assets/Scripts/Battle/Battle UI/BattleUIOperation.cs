@@ -67,11 +67,12 @@ public class BattleUIOperation : MonoBehaviour
     Queue<(float availableAfter, DamageText component)> _damageTextCache = new();
     Tactics _order = new();
 
-    (IAction action, UIActionPreview ui)[] _existingPreviews = Array.Empty<(IAction, UIActionPreview)>();
+    (IAction action, UIActionPreview ui, PreviewType type)[] _existingPreviews = Array.Empty<(IAction, UIActionPreview, PreviewType)>();
     PreviewType _previewType;
     GroupSelection _groupSelection;
     TargetSelection _targetSelection;
     IAction _lastActionCursor;
+    BattleCharacterController _waitingForScheduledUnit;
 
     public BattleUIOperation()
     {
@@ -150,6 +151,26 @@ public class BattleUIOperation : MonoBehaviour
 
         if (UnitSelected == null)
             return;
+
+        if (_waitingForScheduledUnit != null && (BattleManagement.Orders.TryGetValue(_waitingForScheduledUnit, out _) || BattleManagement.Processing.TryGetValue(_waitingForScheduledUnit, out _)))
+        {
+            if (CancelInput.action.WasPerformedThisFrameUnique())
+            {
+                BattleManagement.Orders.Remove(_waitingForScheduledUnit);
+                BattleManagement.Interrupt(_waitingForScheduledUnit);
+                _waitingForScheduledUnit = null;
+                // Put the battle on pause, the player likely wants to schedule something
+                CancelFullOrder();
+                ResetNavigation();
+                BattleManagement.Blocked |= BlockBattleFlags.PreparingOrders;
+                Discard.gameObject.SetActive(true);
+            }
+        }
+        else if (_waitingForScheduledUnit)
+        {
+            ResetNavigation();
+            _waitingForScheduledUnit = null;
+        }
 
         Skills.interactable = UnitSelected.Profile.Skills.Count > 0;
         Items.interactable = UnitSelected.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
@@ -565,10 +586,15 @@ public class BattleUIOperation : MonoBehaviour
 
     void ScheduleOrder(Tactics tactics)
     {
-        if (UnitSelected != null)
-            BattleManagement.Orders[UnitSelected] = tactics;
         _order = new();
         ResetNavigation();
+        if (UnitSelected != null)
+        {
+            BattleManagement.Orders[UnitSelected] = tactics;
+            _waitingForScheduledUnit = UnitSelected;
+            HideNavigation();
+        }
+
         BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
     }
 
@@ -588,8 +614,19 @@ public class BattleUIOperation : MonoBehaviour
             _runningUIOperation = null;
         }
 
+        HideNavigation();
+
         ActionSelectionContainer.gameObject.SetActive(true);
 
+        if (_order.Actions.Length > 0 && _order.Condition != null)
+        {
+            Schedule.gameObject.SetActive(true);
+            Discard.gameObject.SetActive(true);
+        }
+    }
+
+    void HideNavigation()
+    {
         Schedule.gameObject.SetActive(false);
         Discard.gameObject.SetActive(false);
         ItemTemplate.gameObject.SetActive(false);
@@ -598,12 +635,7 @@ public class BattleUIOperation : MonoBehaviour
         Targets.HostileTargetTemplate.gameObject.SetActive(false);
         SubActionSelectionContainer.gameObject.SetActive(false);
         AcceptSelection.gameObject.SetActive(false);
-
-        if (_order.Actions.Length > 0 && _order.Condition != null)
-        {
-            Schedule.gameObject.SetActive(true);
-            Discard.gameObject.SetActive(true);
-        }
+        ActionSelectionContainer.gameObject.SetActive(false);
     }
 
     bool TryOrderWizard(IEnumerable inner)
@@ -637,8 +669,9 @@ public class BattleUIOperation : MonoBehaviour
 
                 ResetNavigation();
 
-                if (_order.Actions.Length == 0) // Order was cancelled, remove blocker
-                    BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
+                if (_order.Actions.Length == 0) // Order was cancelled
+                    CancelFullOrder();
+
                 if (_order.Actions.CostTotal() >= 4 && _order.Condition != null)
                     ScheduleOrder(_order);
             }
@@ -701,22 +734,32 @@ public class BattleUIOperation : MonoBehaviour
         var toAdd = actionsSubset[nonmatchRange];
 
         if (toDiscard.Length == 0 && toAdd.Length == 0)
+        {
+            for (int i = 0; i < current.Length; i++)
+            {
+                if (current[i].type != type)
+                {
+                    current[i].type = type;
+                    CallPreviewTypeMethod(type, current[i].ui);
+                }
+            }
             return;
+        }
 
-        foreach (var (action, ui) in toDiscard)
+        foreach (var (action, ui, _) in toDiscard)
             ui.Discarded?.Invoke();
 
         if (rightMatches > leftMatches)
         {
             for (int i = 0; i < toKeep.Length; i++)
             {
-                var (action, ui) = toKeep[i];
+                var (action, ui, _) = toKeep[i];
                 int newPosition = toAdd.Length + i;
                 ui.Moved?.Invoke();
             }
         }
 
-        _existingPreviews = new (IAction action, UIActionPreview ui)[toKeep.Length + toAdd.Length];
+        _existingPreviews = new (IAction action, UIActionPreview ui, PreviewType type)[toKeep.Length + toAdd.Length];
         var newAsSpan = _existingPreviews.AsSpan();
         toKeep.CopyTo(newAsSpan[matchRange]);
         var newAsSpanAddRange = newAsSpan[nonmatchRange];
@@ -731,7 +774,7 @@ public class BattleUIOperation : MonoBehaviour
             rect.sizeDelta = size;
             ui.Created?.Invoke(toAdd[i].Name);
             CallPreviewTypeMethod(type, ui);
-            newAsSpanAddRange[i] = (toAdd[i], ui);
+            newAsSpanAddRange[i] = (toAdd[i], ui, type);
         }
 
         if (toAdd.Length != 0)

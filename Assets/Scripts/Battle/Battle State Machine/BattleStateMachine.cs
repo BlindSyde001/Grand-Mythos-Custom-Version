@@ -218,6 +218,7 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
             Orders.Remove(unit);
+            Processing[unit] = (chosenTactic, 0);
 
             if (chosenTactic != null)
             {
@@ -226,7 +227,7 @@ public class BattleStateMachine : MonoBehaviour
                 {
                     var action = chosenTactic.Actions[i];
 
-                    if (unit.Profile.ActionsCharged < action.ActionCost)
+                    if (unit.Profile.ActionsCharged < action.ActionCost || Processing.ContainsKey(unit) == false/* Check if something interrupted us*/)
                         break;
 
                     if (i != 0)
@@ -371,6 +372,8 @@ public class BattleStateMachine : MonoBehaviour
             }
         }
     }
+
+    public bool Interrupt(BattleCharacterController controller) => Processing.Remove(controller);
 
     class FailureTracker : IConditionEvalTracker
     {
