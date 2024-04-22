@@ -16,6 +16,7 @@ public class TacticsMenuActions : MenuContainer
     public List<Button> PageList;
     public List<TacticsModuleContainer> TacticsModules;
     public List<NewComponentContainer> NewComponentList;
+    [Required] public RectTransform NewComponentParentRect;
     [Required] public InputActionReference SwitchHero;
     [Required] public InputActionReference SwitchPage;
     HeroExtension _selectedHero;
@@ -50,9 +51,12 @@ public class TacticsMenuActions : MenuContainer
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(-1350, 480, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1700, -100, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), menuInputs.Speed);
-        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.Speed);
+        NewComponentParentRect.DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.Speed);
+        SwitchPage.action.performed -= SwitchPagePerformed;
+
         yield return new WaitForSeconds(menuInputs.Speed);
+
+        NewComponentParentRect.gameObject.SetActive(false);
         gameObject.SetActive(false);
     }
 
@@ -67,10 +71,8 @@ public class TacticsMenuActions : MenuContainer
 
     IEnumerator ComponentListOpen()
     {
-        gameObject.transform.GetChild(3).gameObject.SetActive(true);
-        gameObject.transform.GetChild(4).gameObject.SetActive(true);
-        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-740, 328, 0), MenuInputs.Speed);
-        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-710, -100, 0), MenuInputs.Speed);
+        NewComponentParentRect.gameObject.SetActive(true);
+        NewComponentParentRect.DOLocalMove(new Vector3(-710, -100, 0), MenuInputs.Speed);
         yield return new WaitForSeconds(MenuInputs.Speed);
         SwitchPage.action.performed += SwitchPagePerformed;
     }
@@ -87,11 +89,9 @@ public class TacticsMenuActions : MenuContainer
     IEnumerator ComponentListClose()
     {
         SwitchPage.action.performed -= SwitchPagePerformed;
-        gameObject.transform.GetChild(3).DOLocalMove(new Vector3(-1300, 328, 0), MenuInputs.Speed);
-        gameObject.transform.GetChild(4).DOLocalMove(new Vector3(-1300, -100, 0), MenuInputs.Speed);
+        NewComponentParentRect.DOLocalMove(new Vector3(-1300, -100, 0), MenuInputs.Speed);
         yield return new WaitForSeconds(MenuInputs.Speed);
-        gameObject.transform.GetChild(3).gameObject.SetActive(false);
-        gameObject.transform.GetChild(4).gameObject.SetActive(false);
+        NewComponentParentRect.gameObject.SetActive(false);
     }
 
     public void ChangeCharacter(HeroExtension hero)
@@ -158,7 +158,7 @@ public class TacticsMenuActions : MenuContainer
         tacticsUI.onToggleBtn.onClick.AddListener(OnToggleTacticPressed);
 
         tacticsUI.conditionBtn.onClick.RemoveAllListeners();
-        tacticsUI.conditionBtn.onClick.AddListener(() => ShowConditionDropdown(tacticsUI, OnSetCondition, tacticsUI.conditionBtn));
+        tacticsUI.conditionBtn.onClick.AddListener(() => ShowConditionDropdown(OnSetCondition, tacticsUI.conditionBtn));
 
         void OnSetAction(IAction newAction, int actionIndex)
         {
@@ -318,12 +318,11 @@ public class TacticsMenuActions : MenuContainer
     /// <summary>
     /// Change Cnds represented on the CndList to match the Page Number
     /// </summary>
-    public void PopulateConditionList(TacticsModuleContainer currentContainer, int pageNo, Action<ActionCondition> OnConditionSelected)
+    public void PopulateConditionList(int pageNo, Action<ActionCondition> OnConditionSelected)
     {
         foreach (var component in NewComponentList)
             component.cmpButton.onClick.RemoveAllListeners();
 
-        bool setSelection = false;
         for (int i = 0; i < NewComponentList.Count; i++) // iterate through the Buttons
         {
             NewComponentList[i].cmpName.text = "";
@@ -344,11 +343,6 @@ public class TacticsMenuActions : MenuContainer
                 OnConditionSelected(newCondition);
                 StartCoroutine(ComponentListClose());
             });
-            if (setSelection == false && NewComponentList[i].cmpButton.interactable)
-            {
-                setSelection = true;
-                NewComponentList[i].cmpButton.Select();
-            }
         }
     }
 
@@ -411,13 +405,13 @@ public class TacticsMenuActions : MenuContainer
     #endregion
 
     #region Swapping Conditions
-    public void ShowConditionDropdown(TacticsModuleContainer currentContainer, Action<ActionCondition> OnConditionSelected, Button dropdownSource)
+    public void ShowConditionDropdown(Action<ActionCondition> OnConditionSelected, Button dropdownSource)
     {
         if (_dropdownSource != dropdownSource)
         {
             StartCoroutine(ComponentListOpen());
-            SetPagesOnClickAction(j => PopulateConditionList(currentContainer, j, OnConditionSelected));
-            PopulateConditionList(currentContainer, 0, OnConditionSelected);
+            SetPagesOnClickAction(j => PopulateConditionList(j, OnConditionSelected));
+            PopulateConditionList(0, OnConditionSelected);
         }
         else // Close if the user pressed on the same source
         {
