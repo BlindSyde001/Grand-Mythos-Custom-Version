@@ -7,13 +7,12 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 public class TacticsMenuActions : MenuContainer
 {
     public GameObject SegmentsWarning;
 
-    [FormerlySerializedAs("HeroSelections")] public UIElementList<Button> HeroSelectionUI = new();
+    public UIElementList<SelectedHeroView> HeroSelectionUI = new();
     public List<Button> PageList;
     public List<TacticsModuleContainer> TacticsModules;
     public List<NewComponentContainer> NewComponentList;
@@ -35,7 +34,7 @@ public class TacticsMenuActions : MenuContainer
         {
             HeroSelectionUI.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
-            element.onClick.AddListener(() => ChangeCharacter(hero) );
+            element.Button.onClick.AddListener(() => ChangeCharacter(hero) );
         }
 
         ChangeCharacter(GameManager.PartyLineup[0]);

@@ -5,16 +5,15 @@ using TMPro;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 public class StatusMenuActions : MenuContainer
 {
-    [FormerlySerializedAs("totalExp")] public TextMeshProUGUI TotalExp;
-    [FormerlySerializedAs("nextLevelExp")] public TextMeshProUGUI NextLevelExp;
+    [Required] public TextMeshProUGUI TotalExp;
+    [Required] public TextMeshProUGUI NextLevelExp;
 
-    [FormerlySerializedAs("statusContainer"),SerializeField] StatusContainer StatusContainer;
+    [SerializeField] StatusContainer StatusContainer;
 
-    [FormerlySerializedAs("HeroSelections")] public UIElementList<Button> HeroSelectionUI;
+    public UIElementList<SelectedHeroView> HeroSelectionUI;
     [Required] public InputActionReference SwitchHero;
     HeroExtension _selectedHero;
 
@@ -62,7 +61,7 @@ public class StatusMenuActions : MenuContainer
         {
             HeroSelectionUI.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
-            element.onClick.AddListener(delegate { UpdateSelection(hero); });
+            element.Button.onClick.AddListener(delegate { UpdateSelection(hero); });
         }
     }
 

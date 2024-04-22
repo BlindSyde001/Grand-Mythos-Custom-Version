@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 public class AbilitiesMenuActions : MenuContainer
 {
-    public UIElementList<Button> HeroSelectionUI = new();
+    public UIElementList<SelectedHeroView> HeroSelectionUI = new();
     public UIElementList<AbilityButtonContainer> AbilityUI = new();
     [FormerlySerializedAs("abilityDescriptionContainer")] public AbilityDescriptionContainer AbilityDescriptionContainer;
     [Required] public InputActionReference SwitchHero;
@@ -62,9 +62,9 @@ public class AbilitiesMenuActions : MenuContainer
         HeroSelectionUI.Clear();
         foreach (var hero in GameManager.PartyLineup)
         {
-            HeroSelectionUI.Allocate(out var button);
-            button.GetComponent<Image>().sprite = hero.Portrait;
-            button.onClick.AddListener(() => SetAbilities(hero));
+            HeroSelectionUI.Allocate(out var selectedHeroView);
+            selectedHeroView.GetComponent<Image>().sprite = hero.Portrait;
+            selectedHeroView.Button.onClick.AddListener(() => SetAbilities(hero));
         }
     }
 

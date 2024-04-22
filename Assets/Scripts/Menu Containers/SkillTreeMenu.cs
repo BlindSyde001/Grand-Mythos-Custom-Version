@@ -6,12 +6,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class SkillTreeMenu : MenuContainer
 {
-    [FormerlySerializedAs("HeroSelections")] public UIElementList<Button> HeroSelectionUI;
+    public UIElementList<SelectedHeroView> HeroSelectionUI;
     [Required] public RectTransform HeroSelectionContainer;
     [Required] public InputActionReference SwitchHero;
     [Required] public TMP_Text PointsLeft;
@@ -118,7 +117,7 @@ public class SkillTreeMenu : MenuContainer
         {
             HeroSelectionUI.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
-            element.onClick.AddListener(delegate {SwapSelection(hero); });
+            element.Button.onClick.AddListener(delegate {SwapSelection(hero); });
         }
     }
 

@@ -17,7 +17,7 @@ public class EquipmentMenuActions : MenuContainer
     public UIElementList<EquipNewItemContainer> EquipNewItemContainers;
     public GameObject EquipNewItemList;
 
-    [FormerlySerializedAs("HeroSelections")] public UIElementList<Button> HeroSelectionUI;
+    [FormerlySerializedAs("HeroSelections")] public UIElementList<SelectedHeroView> HeroSelectionUI;
     [Required] public InputActionReference SwitchHero;
 
     readonly List<Equipment> _currentlyEquippedGear = new();
@@ -65,7 +65,7 @@ public class EquipmentMenuActions : MenuContainer
         {
             HeroSelectionUI.Allocate(out var element);
             element.GetComponent<Image>().sprite = hero.Portrait;
-            element.onClick.AddListener(delegate {UpdateSelection(hero); });
+            element.Button.onClick.AddListener(delegate {UpdateSelection(hero); });
         }
         EquipNewItemList.SetActive(false);
     }
