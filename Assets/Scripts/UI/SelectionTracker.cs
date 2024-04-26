@@ -90,7 +90,7 @@ public class SelectionTracker : MonoBehaviour
 
     static bool IsValidForSelection(Selectable selectable)
     {
-        if (selectable == null || selectable.enabled == false || selectable.interactable == false || selectable.navigation.mode == Navigation.Mode.None)
+        if (selectable == null || selectable.enabled == false || selectable.IsInteractable() == false || selectable.navigation.mode == Navigation.Mode.None)
             return false;
         return selectable.gameObject.activeInHierarchy;
     }
