@@ -50,7 +50,12 @@ public class AbilitiesMenuActions : MenuContainer
         SwitchHero.action.performed -= Switch;
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         foreach (var image in gameObject.transform.GetComponentsInChildren<Graphic>())
+        {
+            if (image.isActiveAndEnabled == false || image.gameObject.activeInHierarchy == false)
+                continue;
             image.DOFade(0, menuInputs.Speed);
+        }
+
         yield return new WaitForSeconds(menuInputs.Speed);
         gameObject.SetActive(false);
     }
