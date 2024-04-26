@@ -12,7 +12,7 @@ namespace UnityEngine.UI
     /// <summary>
     /// Simple selectable object - derived from to create a selectable control.
     /// </summary>
-    public class Selectable
+    public partial class Selectable
         :
         UIBehaviour,
         IMoveHandler,
@@ -774,7 +774,7 @@ namespace UnityEngine.UI
         /// ]]>
         ///</code>
         /// </example>
-        public Selectable FindSelectable(Vector3 dir)
+        public Selectable FindSelectableOld(Vector3 dir)
         {
             dir = dir.normalized;
             Vector3 localDir = Quaternion.Inverse(transform.rotation) * dir;
@@ -911,7 +911,7 @@ namespace UnityEngine.UI
             }
             if ((m_Navigation.mode & Navigation.Mode.Horizontal) != 0)
             {
-                return FindSelectable(transform.rotation * Vector3.left);
+                return FindSelectable(Vector3.left);
             }
             return null;
         }
@@ -950,7 +950,7 @@ namespace UnityEngine.UI
             }
             if ((m_Navigation.mode & Navigation.Mode.Horizontal) != 0)
             {
-                return FindSelectable(transform.rotation * Vector3.right);
+                return FindSelectable(Vector3.right);
             }
             return null;
         }
@@ -989,7 +989,7 @@ namespace UnityEngine.UI
             }
             if ((m_Navigation.mode & Navigation.Mode.Vertical) != 0)
             {
-                return FindSelectable(transform.rotation * Vector3.up);
+                return FindSelectable(Vector3.up);
             }
             return null;
         }
@@ -1028,7 +1028,7 @@ namespace UnityEngine.UI
             }
             if ((m_Navigation.mode & Navigation.Mode.Vertical) != 0)
             {
-                return FindSelectable(transform.rotation * Vector3.down);
+                return FindSelectable(Vector3.down);
             }
             return null;
         }
