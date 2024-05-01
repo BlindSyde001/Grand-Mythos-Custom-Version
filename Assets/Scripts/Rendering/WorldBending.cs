@@ -42,6 +42,12 @@ public class WorldBending : MonoBehaviour
         Shader[] matches = { Shader.Find("WorldBending/Base"), Shader.Find("WorldBending/Alpha"), Shader.Find("WorldBending/Skybox"),  };
         UnityEditor.EditorApplication.delayCall += () =>
         {
+            if (this == null)
+                return; // This function may error out when building since the editor opens and closes scenes while building
+
+            if (Application.isPlaying)
+                return; // Only check stuff in edit mode
+
             foreach (GameObject rootGameObject in gameObject.scene.GetRootGameObjects())
             {
                 foreach (Renderer child in rootGameObject.GetComponentsInChildren<Renderer>())
