@@ -114,7 +114,9 @@ public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackRece
             if (_identifiables[i] == null)
             {
                 _identifiables.RemoveAt(i);
+#if UNITY_EDITOR
                 UnityEditor.EditorUtility.SetDirty(Instance);
+#endif
             }
         }
     }
