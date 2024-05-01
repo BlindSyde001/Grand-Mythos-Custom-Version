@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Scripting;
 
 #if UNITY_EDITOR
 [UnityEditor.InitializeOnLoad]
 #endif
+[Preserve]
 public class TimeDeltaScaler : InputProcessor<float>
 {
     public override float Process(float value, InputControl control)
@@ -18,7 +20,7 @@ public class TimeDeltaScaler : InputProcessor<float>
     }
 #endif
 
-    [RuntimeInitializeOnLoadMethod]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Initialize()
     {
         InputSystem.RegisterProcessor<TimeDeltaScaler>();
@@ -27,6 +29,7 @@ public class TimeDeltaScaler : InputProcessor<float>
 #if UNITY_EDITOR
 [UnityEditor.InitializeOnLoad]
 #endif
+[Preserve]
 public class TimeDeltaScaler2D : InputProcessor<Vector2>
 {
     public override Vector2 Process(Vector2 value, InputControl control)
@@ -41,7 +44,7 @@ public class TimeDeltaScaler2D : InputProcessor<Vector2>
     }
 #endif
 
-    [RuntimeInitializeOnLoadMethod]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Initialize()
     {
         InputSystem.RegisterProcessor<TimeDeltaScaler2D>();
