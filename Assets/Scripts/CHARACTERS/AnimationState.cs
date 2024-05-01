@@ -49,6 +49,7 @@ public struct AnimationState
             Debug.LogWarning($"{message}, click on me to navigate to that controller", animator.runtimeAnimatorController);
         return false;
 #else
+        message = "";
         return true;
 #endif
     }
