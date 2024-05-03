@@ -14,6 +14,7 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
     [SerializeField]
     [ListDrawerSettings(ShowFoldout = false)]
     [CanBeNull, InlineProperty]
+    [LabelText("Actions' Animations"), TableList]
     BackingKeyValue[] _backingArray;
 
     public void OnBeforeSerialize(){}
@@ -86,7 +87,7 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
     public struct BackingKeyValue
     {
         [ConstrainedType(typeof(IAction)), ValidateInput(nameof(IsIAction), "Must be an IAction, skill or consumable")]
-        [HideLabel]
+        [HideLabel, TableColumnWidth(150, resizable:false)]
         public ScriptableObject Action;
 
         [SerializeReference, InlineProperty]

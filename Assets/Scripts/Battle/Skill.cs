@@ -21,7 +21,7 @@ public class Skill : IdentifiableScriptableObject, IAction
     public uint ATBCost = 1;
 
     [Space]
-    [ListDrawerSettings(ShowFoldout = false)]
+    [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
     [LabelText(@"@""Effects:   "" + this.UIDisplayText")]
     [SerializeReference]
     public IEffect[] Effects = Array.Empty<IEffect>();
@@ -54,4 +54,25 @@ public class Skill : IdentifiableScriptableObject, IAction
 
     string IAction.Name => name;
     public string Description => string.IsNullOrWhiteSpace(_description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : _description;
+
+
+    void BeginDrawEffect(int index)
+    {
+        #if UNITY_EDITOR
+        var effect = Effects[index];
+        var text = effect?.UIDisplayText ?? "null";
+        var color = effect?.UIColor ?? Color.black;
+        var prevContent = GUI.backgroundColor;
+        GUI.backgroundColor = color;
+        Sirenix.Utilities.Editor.SirenixEditorGUI.BeginBox(text, true);
+        GUI.backgroundColor = prevContent;
+        #endif
+    }
+
+    void EndDrawEffect(int index)
+    {
+        #if UNITY_EDITOR
+        Sirenix.Utilities.Editor.SirenixEditorGUI.EndBox();
+        #endif
+    }
 }

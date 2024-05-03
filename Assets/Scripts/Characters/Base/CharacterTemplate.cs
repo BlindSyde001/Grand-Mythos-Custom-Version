@@ -67,17 +67,19 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("SKILLS"), CanBeNull]
     public LevelUnlocks LevelUnlocks;
 
-    [BoxGroup("TACTICS"), Required, ListDrawerSettings(ShowFoldout = false), ItemCanBeNull]
+    [BoxGroup("TACTICS"), Required, ListDrawerSettings(ShowFoldout = false), TableList, ItemCanBeNull]
     public Tactics[] Tactics = Array.Empty<Tactics>();
 
     [BoxGroup("ANIMATIONS")]
     [ValidateInput(nameof(ValidateActionAnimation)), InlineProperty, HideLabel]
     public IActionAnimationCollection ActionAnimations = new();
 
-    [BoxGroup("ANIMATIONS"), SerializeReference, ValidateInput(nameof(ValidateFallbackAnimation))]
+    [BoxGroup("ANIMATIONS/Fallback Animation")]
+    [InfoBox("When this unit performs an action that hasn't been added to the list above, the following fallback animation will run")]
+    [SerializeReference, ValidateInput(nameof(ValidateFallbackAnimation)), InlineProperty, HideLabel]
     public IActionAnimation FallbackAnimation;
 
-    [Required, SerializeReference, BoxGroup("INVENTORY")]
+    [Required, SerializeReference, BoxGroup("INVENTORY"), InlineProperty, HideLabel]
     public IInventory Inventory = new InlineInventory();
 
     /// <summary>

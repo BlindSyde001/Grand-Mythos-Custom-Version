@@ -7,7 +7,9 @@ using UnityEngine;
 [Serializable]
 public class Tactics
 {
+    [TableColumnWidth(48, resizable:false)]
     public bool IsOn = true;
+    [TableColumnWidth(200, resizable:false)]
     public ActionCondition Condition;
     [HideLabel] public IActionCollection Actions = new();
 }

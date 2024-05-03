@@ -23,7 +23,7 @@ namespace Effects
                 effect.Apply(targets, context);
         }
 
-        public string UIDisplayText => $"when {Condition?.UIDisplayText} do {Effects.UIDisplayText()}";
+        public string UIDisplayText => $"When {Condition?.UIDisplayText} do {Effects.UIDisplayText()}";
 
         public string UIDisplaySubText => Effects.UIDisplayText();
     }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Conditions;
 using Effects;
 using Sirenix.OdinInspector;
@@ -21,7 +20,7 @@ public class Consumable : BaseItem, IAction
     public uint ATBCost = 1;
 
     [Space]
-    [ListDrawerSettings(ShowFoldout = false)]
+    [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
     [LabelText(@"@""Effects:   "" + this.UIDisplayText")]
     [SerializeReference]
     public IEffect[] Effects;
@@ -87,4 +86,25 @@ public class Consumable : BaseItem, IAction
 
     string IAction.Name => name;
     string IAction.Description => string.IsNullOrWhiteSpace(Description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : Description;
+
+
+    void BeginDrawEffect(int index)
+    {
+        #if UNITY_EDITOR
+        var effect = Effects[index];
+        var text = effect?.UIDisplayText ?? "null";
+        var color = effect?.UIColor ?? Color.black;
+        var prevContent = GUI.backgroundColor;
+        GUI.backgroundColor = color;
+        Sirenix.Utilities.Editor.SirenixEditorGUI.BeginBox(text, true);
+        GUI.backgroundColor = prevContent;
+        #endif
+    }
+
+    void EndDrawEffect(int index)
+    {
+        #if UNITY_EDITOR
+        Sirenix.Utilities.Editor.SirenixEditorGUI.EndBox();
+        #endif
+    }
 }

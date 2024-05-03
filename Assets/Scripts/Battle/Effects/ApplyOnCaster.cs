@@ -8,6 +8,7 @@ namespace Effects
     [Serializable]
     public class ApplyOnCaster : IEffect
     {
+        [Space]
         [ListDrawerSettings(ShowFoldout = false)]
         [LabelText(@"@""Effects:   "" + this.UIDisplaySubText")]
         [SerializeReference]
@@ -20,7 +21,7 @@ namespace Effects
                 effect.Apply(casterTarget, context);
         }
 
-        public string UIDisplayText => $"Caster: {Effects.UIDisplayText()}";
+        public string UIDisplayText => $"{Effects.UIDisplayText()} on Caster";
 
         public string UIDisplaySubText => Effects.UIDisplayText();
     }

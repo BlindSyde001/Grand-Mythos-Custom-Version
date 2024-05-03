@@ -21,6 +21,6 @@ namespace Effects
             }
         }
 
-        public string UIDisplayText => $"set {Attribute} to {Value}";
+        public string UIDisplayText => $"Set {Attribute} to {Value}";
     }
 }

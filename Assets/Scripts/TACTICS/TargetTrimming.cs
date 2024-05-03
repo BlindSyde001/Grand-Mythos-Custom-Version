@@ -1,17 +1,18 @@
 ﻿using System;
 using Sirenix.OdinInspector;
+using UnityEngine.Serialization;
 
 namespace Conditions
 {
     [Serializable]
     public class TargetTrimming : Condition
     {
-        [HideLabel, SuffixLabel("target max.")]
-        public int Amount = 1;
+        [FormerlySerializedAs("Amount"), LabelText("Target Amount Max")]
+        public int Max = 1;
 
         protected override void FilterInner(ref TargetCollection targets, EvaluationContext context)
         {
-            int left = Amount;
+            int left = Max;
             for (int i = -1; targets.TryGetNext(ref i, out _); )
             {
                 if (left != 0)
@@ -33,6 +34,6 @@ namespace Conditions
 
         public override void NotifyUsedCondition(in TargetCollection target, EvaluationContext context){}
 
-        public override string UIDisplayText => $"Keep {Amount} target maximum";
+        public override string UIDisplayText => $"Keep {Max} target maximum";
     }
 }
