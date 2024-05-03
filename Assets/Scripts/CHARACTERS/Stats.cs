@@ -22,7 +22,11 @@ public struct Stats
     [HorizontalGroup("DEFENSE"), GUIColor(0.5f, 0.8f, 0.8f)]
     public int MagDefense;
 
+    [HorizontalGroup("MISC"), GUIColor(0.75f, 0.75f, 0.75f)]
     public int Speed;
+
+    [HorizontalGroup("MISC"), GUIColor(0.75f, 0.75f, 0.75f)]
+    public int Luck;
 
     public int this[Stat i]
     {
@@ -35,6 +39,7 @@ public struct Stats
             Stat.Defense => Defense,
             Stat.MagicDefense => MagDefense,
             Stat.Speed => Speed,
+            Stat.Luck => Luck,
             _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
         };
         set
@@ -48,6 +53,7 @@ public struct Stats
                 case Stat.Defense: Defense = value; return;
                 case Stat.MagicDefense: MagDefense = value; return;
                 case Stat.Speed: Speed = value; return;
+                case Stat.Luck: Luck = value; return;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(i), i, null);
             }
@@ -63,6 +69,7 @@ Attack: {Attack}
 Magic Attack: {MagAttack}
 Defense: {Defense}
 Magic Defense: {MagDefense}
-Speed: {Speed}";
+Speed: {Speed}
+Luck: {Luck}";
     }
 }

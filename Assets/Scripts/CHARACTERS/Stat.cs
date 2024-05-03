@@ -7,4 +7,5 @@
     Defense,
     MagicDefense,
     Speed,
+    Luck,
 }

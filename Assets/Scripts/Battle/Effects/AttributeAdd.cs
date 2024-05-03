@@ -1,6 +1,7 @@
 ﻿using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Effects
 {
@@ -12,26 +13,33 @@ namespace Effects
 
         [HorizontalGroup, HideLabel, SuffixLabel("+=")]
         public Attribute Attribute = Attribute.Health;
-        [HorizontalGroup, HideLabel]
+        [HorizontalGroup, HideLabel, SuffixLabel("+-")]
         public int Amount = 10;
+
+        [HorizontalGroup, HideLabel]
+        public int Variance = 5;
+
         [HorizontalGroup, HideLabel]
         public ScalingType Scaling = ScalingType.Flat;
         [HorizontalGroup, HideLabel]
         public Element Element = Element.Neutral;
 
-        public int Variance = 5;
-
-        [Range(0f, 100f), SuffixLabel("%"), HorizontalGroup("Crit")]
-        public float CritChance = 0f;
         [HorizontalGroup("Crit")]
-        public float CritMultiplier = 2.5f;
+        public bool CanCrit = true;
+        [Range(0f, 100f), SuffixLabel("% added chance"), HideLabel, HorizontalGroup("Crit"), FormerlySerializedAs("CritChance")]
+        public float AdditionalCritChance = 0f;
+        [HorizontalGroup("Crit"), SuffixLabel("x added crit damage"), HideLabel, FormerlySerializedAs("CritMultiplier")]
+        public float AdditionalCritMultiplier = 2.5f;
 
         public void Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
+            CriticalFormula.GetCritModifiersBasedOnLuck(context.Profile.EffectiveStats.Luck, out var luckBasedChance, out var luckBasedMult);
+            float critChanceTotal = CanCrit ? AdditionalCritChance + luckBasedChance : 0f;
+            float critDamageMultiplier = AdditionalCritMultiplier + luckBasedMult;
             foreach (var target in targets)
             {
                 float delta = Amount + UnityEngine.Random.Range(-Variance, Variance+1);
-                delta *= UnityEngine.Random.Range(0f, 100f) < CritChance ? CritMultiplier : 1f;
+                delta *= UnityEngine.Random.Range(0f, 100f) < critChanceTotal ? critDamageMultiplier : 1f;
                 delta = Scaling switch
                 {
                     ScalingType.Flat => delta,

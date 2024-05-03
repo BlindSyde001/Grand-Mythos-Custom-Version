@@ -22,7 +22,11 @@ public struct StatGrowth
     [HorizontalGroup("DEFENSE"), GUIColor(0.5f, 0.8f, 0.8f)]
     public GrowthRate MagDefense;
 
+    [HorizontalGroup("MISC"), GUIColor(0.75f, 0.75f, 0.75f)]
     public GrowthRate Speed;
+
+    [HorizontalGroup("MISC"), GUIColor(0.75f, 0.75f, 0.75f)]
+    public GrowthRate Luck;
 
     public Stats ApplyGrowth(Stats baseStats, int level)
     {
@@ -35,6 +39,7 @@ public struct StatGrowth
             Defense = (int)(baseStats.Defense + baseStats.Defense * GetGrowthRateMultiplier(Defense) * level),
             MagDefense = (int)(baseStats.MagDefense + baseStats.MagDefense * GetGrowthRateMultiplier(MagDefense) * level),
             Speed = (int)(baseStats.Speed + baseStats.Speed * GetGrowthRateMultiplier(Speed) * level),
+            Luck = (int)(baseStats.Luck + baseStats.Luck * GetGrowthRateMultiplier(Luck) * level),
         };
     }
 
