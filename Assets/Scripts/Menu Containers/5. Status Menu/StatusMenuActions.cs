@@ -79,10 +79,10 @@ public class StatusMenuActions : MenuContainer
         StatusContainer.MDef.text = hero.EffectiveStats.MagDefense.ToString();
         StatusContainer.Spd.text = hero.EffectiveStats.Speed.ToString();
 
-        StatusContainer.fireRes.text = hero.AffinityFIRE.ToString();
-        StatusContainer.iceRes.text = hero.AffinityICE.ToString();
-        StatusContainer.waterRes.text = hero.AffinityWATER.ToString();
-        StatusContainer.lightRes.text = hero.AffinityLIGHTNING.ToString();
+        StatusContainer.fireRes.text = hero.ResistanceFire.ToString();
+        StatusContainer.iceRes.text = hero.ResistanceIce.ToString();
+        StatusContainer.waterRes.text = hero.ResistanceWater.ToString();
+        StatusContainer.lightRes.text = hero.ResistanceLightning.ToString();
 
         StatusContainer.blindRes.text = hero.ResistBLIND.ToString();
         StatusContainer.silRes.text = hero.ResistSILENCE.ToString();

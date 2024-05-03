@@ -41,8 +41,14 @@ public class CharacterTemplate : MonoBehaviour
     [FormerlySerializedAs("StartingLevel"), BoxGroup("STATS"), OnValueChanged(nameof(UpdateExperienceFromLevel))]
     public int Level = 1;
 
-    [BoxGroup("ELEMENTAL RESISTANCES"), PropertyRange(-100, 100)]
-    public int AffinityFIRE, AffinityICE, AffinityLIGHTNING, AffinityWATER;
+    [BoxGroup("ELEMENTAL RESISTANCES")]
+    public ElementalResistance ResistanceFire = ElementalResistance.Neutral;
+    [BoxGroup("ELEMENTAL RESISTANCES")]
+    public ElementalResistance ResistanceIce = ElementalResistance.Neutral;
+    [BoxGroup("ELEMENTAL RESISTANCES")]
+    public ElementalResistance ResistanceLightning = ElementalResistance.Neutral;
+    [BoxGroup("ELEMENTAL RESISTANCES")]
+    public ElementalResistance ResistanceWater = ElementalResistance.Neutral;
 
     [HorizontalGroup("STATUS"), VerticalGroup("STATUS/Left"), BoxGroup("STATUS/Left/AFFLICTION STATUS")]
     public bool IsBlinded, IsSilenced, IsFurored, IsParalysed, IsPhysDown, IsMagDown;
