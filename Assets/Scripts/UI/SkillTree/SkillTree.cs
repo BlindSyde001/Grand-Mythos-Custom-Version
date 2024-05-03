@@ -5,13 +5,16 @@ using UnityEngine;
 
 public class SkillTree : MonoBehaviour
 {
+    [Required] public UnlockNode Root;
     [ReadOnly] public HeroExtension SelectedHero;
     [ReadOnly, SerializeField] SerializableDictionary<UnlockNode, guid> _nodeToGuid = new();
     [ReadOnly, SerializeField] SerializableHashSet<UnlockNode> _reachableNodes = new();
 
     void Start()
     {
-        _reachableNodes.Clear();
+        if (Root == null)
+            Debug.LogError($"You must set a node as the {nameof(Root)} on {gameObject}'s {nameof(SkillTree)} otherwise nodes cannot be unlocked by the user");
+
         foreach (var (node, guid) in _nodeToGuid)
         {
             node.Button.onClick.AddListener(() => TryUnlock(node));
@@ -26,21 +29,20 @@ public class SkillTree : MonoBehaviour
 
     void UpdateReachableNodes()
     {
-        foreach (var (node, _) in _nodeToGuid)
+        if (_reachableNodes.Add(Root))
+            Root.OnReachable?.Invoke();
+
+        foreach (var (node, guid) in _nodeToGuid)
         {
-            if (_reachableNodes.Contains(node))
+            if (SelectedHero.UnlockedTreeNodes.Contains(guid) == false)
                 continue;
 
-            bool reachable = node.Requirements.Length == 0;
-            foreach (var requirement in node.Requirements)
-                if (SelectedHero.UnlockedTreeNodes.Contains(_nodeToGuid[requirement]))
-                    reachable = true;
-
-            if (reachable)
-            {
-                _reachableNodes.Add(node);
+            if (_reachableNodes.Add(node))
                 node.OnReachable?.Invoke();
-            }
+
+            foreach (var linked in node.LinkedTo)
+                if (_reachableNodes.Add(linked))
+                    linked.OnReachable?.Invoke();
         }
     }
 
@@ -53,6 +55,8 @@ public class SkillTree : MonoBehaviour
         return nodes;
     }
 
+    public Dictionary<UnlockNode, guid>.Enumerator NodesEnum() => _nodeToGuid.GetEnumerator();
+
     public void EnsureRegistered(UnlockNode nodeDrawer)
     {
         if (_nodeToGuid.ContainsKey(nodeDrawer) == false)
@@ -62,21 +66,21 @@ public class SkillTree : MonoBehaviour
             _nodeToGuid.Remove(keyValuePair.Key);
     }
 
-    public void TryUnlock(UnlockNode nodeDrawer)
+    public void TryUnlock(UnlockNode node)
     {
         var unlockedNodes = SelectedHero.UnlockedTreeNodes;
         if (unlockedNodes.Count >= SelectedHero.SkillPointsTotal)
             return;
 
-        if (nodeDrawer.Requirements.Length != 0 && nodeDrawer.Requirements.Any(requirement => unlockedNodes.Contains(_nodeToGuid[requirement])) == false)
+        if (node != Root && _reachableNodes.Contains(node) == false)
             return;
 
-        var guid = _nodeToGuid[nodeDrawer];
+        var guid = _nodeToGuid[node];
         if (unlockedNodes.Add(guid) == false)
             return;
 
-        nodeDrawer.Unlock.OnUnlock(SelectedHero, guid);
-        nodeDrawer.OnUnlock?.Invoke();
+        node.Unlock.OnUnlock(SelectedHero, guid);
+        node.OnUnlock?.Invoke();
         UpdateReachableNodes();
     }
 }

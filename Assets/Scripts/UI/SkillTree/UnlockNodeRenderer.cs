@@ -20,11 +20,11 @@ public class UnlockNodeRenderer : Image
     {
         Data ??= GetComponent<UnlockNode>();
 
-        if (Data.Requirements.Length != _posCache.Length)
+        if (Data.LinkedTo.Length != _posCache.Length)
             RebuildLineRenderers();
-        for (int i = 0; i < Data.Requirements.Length; i++)
+        for (int i = 0; i < Data.LinkedTo.Length; i++)
         {
-            if (_posCache[i] != (Data.Requirements[i].transform.position, this.transform.position))
+            if (_posCache[i] != (Data.LinkedTo[i].transform.position, this.transform.position))
             {
                 RebuildLineRenderers();
                 break;
@@ -40,7 +40,7 @@ public class UnlockNodeRenderer : Image
         var matrix = transform.worldToLocalMatrix;
         Span<Vector2> points = stackalloc Vector2[2];
 
-        foreach (var requirement in Data.Requirements)
+        foreach (var requirement in Data.LinkedTo)
         {
             points[0] = matrix.MultiplyPoint3x4(transform.position);
             points[1] = matrix.MultiplyPoint3x4(requirement.transform.position);
@@ -119,9 +119,9 @@ public class UnlockNodeRenderer : Image
 
     void RebuildLineRenderers()
     {
-        _posCache = new (Vector3, Vector3)[Data.Requirements.Length];
-        for (int i = 0; i < Data.Requirements.Length; i++)
-            _posCache[i] = (Data.Requirements[i].transform.position, transform.position);
+        _posCache = new (Vector3, Vector3)[Data.LinkedTo.Length];
+        for (int i = 0; i < Data.LinkedTo.Length; i++)
+            _posCache[i] = (Data.LinkedTo[i].transform.position, transform.position);
 
         SetVerticesDirty();
     }
