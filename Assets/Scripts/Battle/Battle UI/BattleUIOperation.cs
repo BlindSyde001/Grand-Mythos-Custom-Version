@@ -17,6 +17,8 @@ using UnityEngine.UI;
 
 public class BattleUIOperation : MonoBehaviour
 {
+    const bool MultiSelection = false;
+
     public BattleStateMachine BattleManagement;
 
     [Header("Selected Character")]
@@ -509,11 +511,14 @@ public class BattleUIOperation : MonoBehaviour
     {
         SubActionSelectionContainer.gameObject.SetActive(true);
 
-        AcceptSelection.gameObject.SetActive(true);
-
         bool accepted = false;
-
         UnityAction listener = () => accepted = true;
+        if (MultiSelection)
+        {
+            AcceptSelection.gameObject.SetActive(true); // Disabled for now, may come back if selection targeting comes back
+            AcceptSelection.onClick.AddListener(listener);
+        }
+
         IUIElementSelection<HashSet<BattleCharacterController>> selector = null;
         try
         {
@@ -527,14 +532,16 @@ public class BattleUIOperation : MonoBehaviour
                 selector = _targetSelection;
             }
 
-            AcceptSelection.onClick.AddListener(listener);
             HashSet<BattleCharacterController> selection;
             do
             {
-                selector.ReEvaluate();
-                AcceptSelection.interactable = selector.HasValidSelection();
+                selector.UpdateRenderingAndSelection();
+                if (MultiSelection)
+                    AcceptSelection.interactable = selector.HasAnythingSelected();
+                else
+                    accepted = selector.HasAnythingSelected();
 
-                if (accepted && selector.TryExtract(out selection))
+                if (accepted && selector.TryGetSelected(out selection))
                     break; // Succeeded
 
                 accepted = false; // Reset click
@@ -844,7 +851,7 @@ public class BattleUIOperation : MonoBehaviour
             _units = units;
 
             Clear();
-            ReEvaluate();
+            UpdateRenderingAndSelection();
 
             bool foundCursor = false;
             foreach (var (unit, (parent, toggle)) in Toggles)
@@ -856,9 +863,10 @@ public class BattleUIOperation : MonoBehaviour
                 }
             }
 
-            foreach (var unit in _lastSelection)
-                if (unit != null && Toggles.TryGetValue(unit, out var toggleData))
-                    toggleData.toggle.isOn = true;
+            if (MultiSelection)
+                foreach (var unit in _lastSelection)
+                    if (unit != null && Toggles.TryGetValue(unit, out var toggleData))
+                        toggleData.toggle.isOn = true;
 
             if (foundCursor == false)
             {
@@ -896,12 +904,12 @@ public class BattleUIOperation : MonoBehaviour
             base.Close();
         }
 
-        public override bool HasValidSelection()
+        public override bool HasAnythingSelected()
         {
             return _selection.Count > 0;
         }
 
-        public override bool TryExtract(out HashSet<BattleCharacterController> values)
+        public override bool TryGetSelected(out HashSet<BattleCharacterController> values)
         {
             values = new(_selection);
             return _selection.Count > 0;
@@ -1072,7 +1080,7 @@ public class BattleUIOperation : MonoBehaviour
 
             _selectedTargetGroups.Clear();
             Clear();
-            ReEvaluate();
+            UpdateRenderingAndSelection();
 
             bool foundCursor = false;
             foreach (var (otherGroup, (_, otherToggle)) in Toggles)
@@ -1083,7 +1091,7 @@ public class BattleUIOperation : MonoBehaviour
                     foundCursor = true;
                 }
 
-                if (_lastSelection.Contains(otherGroup))
+                if (MultiSelection && _lastSelection.Contains(otherGroup))
                     otherToggle.isOn = true;
             }
 
@@ -1112,12 +1120,12 @@ public class BattleUIOperation : MonoBehaviour
             base.Close();
         }
 
-        public override bool HasValidSelection()
+        public override bool HasAnythingSelected()
         {
             return _selectedTargetGroups.Count != 0;
         }
 
-        public override bool TryExtract([MaybeNullWhen(false)]out HashSet<BattleCharacterController> units)
+        public override bool TryGetSelected([MaybeNullWhen(false)]out HashSet<BattleCharacterController> units)
         {
             if (_selectedTargetGroups.Count == 0)
             {
@@ -1247,8 +1255,8 @@ public class BattleUIOperation : MonoBehaviour
             battleUI = battleUIParam;
         }
 
-        public abstract bool HasValidSelection();
-        public abstract bool TryExtract(out T2 values);
+        public abstract bool HasAnythingSelected();
+        public abstract bool TryGetSelected(out T2 values);
         protected abstract IEnumerable<T> GetItems();
         protected abstract void OnHoverOrSelected(T obj);
         protected abstract void OnRemoved(T obj, bool fromClearAction);
@@ -1256,7 +1264,7 @@ public class BattleUIOperation : MonoBehaviour
         protected abstract void OnToggled(T obj, bool isOn);
 
 
-        public void ReEvaluate()
+        public void UpdateRenderingAndSelection()
         {
             _temp.Clear();
             foreach (var item in GetItems())
@@ -1334,9 +1342,9 @@ public class BattleUIOperation : MonoBehaviour
 
     interface IUIElementSelection<T>
     {
-        bool HasValidSelection();
-        bool TryExtract(out T values);
-        void ReEvaluate();
+        bool HasAnythingSelected();
+        bool TryGetSelected(out T values);
+        void UpdateRenderingAndSelection();
         void Close();
     }
 
