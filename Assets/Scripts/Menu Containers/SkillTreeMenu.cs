@@ -8,25 +8,25 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class SkillTreeMenu : MenuContainer
+public class SkillTreeMenu : MenuContainerWithHeroSelection
 {
-    public UIElementList<SelectedHeroView> HeroSelectionUI;
     [Required] public RectTransform HeroSelectionContainer;
-    [Required] public InputActionReference SwitchHero;
     [Required] public TMP_Text PointsLeft;
     [Required] public InputActionReference PointInput;
     [Required] public InputActionReference StickInput;
     [Required] public Image DragArea;
     [ReadOnly, SerializeField] SkillTree _activeTree;
-    HeroExtension _selectedHero;
     [ReadOnly, SerializeField] EventTrigger _trigger;
     bool _isDragging;
     Vector2 _lastMousePos;
 
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        SetupHeroSelectionUI();
-        SwapSelection(GameManager.PartyLineup[0]);
+        foreach (var yields in base.Open(menuInputs))
+        {
+            yield return yields;
+        }
+
         gameObject.SetActive(true);
 
         if (_trigger == null)
@@ -47,8 +47,6 @@ public class SkillTreeMenu : MenuContainer
 
         HeroSelectionContainer.DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
-        SwitchHero.action.performed += Switch;
-
 
         static EventTrigger.Entry NewCallback(EventTriggerType type, UnityAction<BaseEventData> callback)
         {
@@ -58,10 +56,31 @@ public class SkillTreeMenu : MenuContainer
         }
     }
 
+    protected override void OnSelectedHeroChanged()
+    {
+        if (_activeTree != null)
+        {
+            Destroy(_activeTree.gameObject);
+            _activeTree = null;
+        }
+
+        _activeTree = Instantiate(SelectedHero.SkillTree, this.transform);
+        Destroy(_activeTree.GetComponent<CanvasRenderer>());
+        Destroy(_activeTree.GetComponent<CanvasScaler>());
+        Destroy(_activeTree.GetComponent<GraphicRaycaster>());
+        Destroy(_activeTree.GetComponent<Canvas>());
+        var rect = _activeTree.gameObject.GetComponent<RectTransform>();
+        rect.anchorMin = default;
+        rect.anchorMax = new Vector2(1, 1);
+        rect.offsetMin = default;
+        rect.offsetMax = default;
+        rect.localScale = Vector3.one;
+        _activeTree.transform.SetSiblingIndex(DragArea.transform.GetSiblingIndex() + 1);
+        _activeTree.SelectedHero = SelectedHero;
+    }
+
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        SwitchHero.action.performed -= Switch;
-
         if (gameObject.TryGetComponent<CanvasGroup>(out var canvas) == false)
             canvas = gameObject.AddComponent<CanvasGroup>();
         canvas.alpha = 1f;
@@ -80,7 +99,7 @@ public class SkillTreeMenu : MenuContainer
     protected override void Update()
     {
         base.Update();
-        if (_selectedHero == null)
+        if (SelectedHero == null)
             return;
 
         if (_isDragging)
@@ -105,54 +124,8 @@ public class SkillTreeMenu : MenuContainer
             _activeTree.transform.position += worldCenter - selectionCenter;
         }
 
-        int pointsLeft = _selectedHero.SkillPointsTotal - _selectedHero.UnlockedTreeNodes.Count;
+        int pointsLeft = SelectedHero.SkillPointsTotal - SelectedHero.UnlockedTreeNodes.Count;
         if (int.TryParse(PointsLeft.text, out int result) == false || result != pointsLeft)
             PointsLeft.text = pointsLeft.ToString();
-    }
-
-    void SetupHeroSelectionUI()
-    {
-        HeroSelectionUI.Clear();
-        foreach (var hero in GameManager.PartyLineup)
-        {
-            HeroSelectionUI.Allocate(out var element);
-            element.GetComponent<Image>().sprite = hero.Portrait;
-            element.Button.onClick.AddListener(delegate {SwapSelection(hero); });
-        }
-    }
-
-    void Switch(InputAction.CallbackContext input)
-    {
-        int indexOf = GameManager.PartyLineup.IndexOf(_selectedHero);
-        indexOf += input.ReadValue<float>() >= 0f ? 1 : -1;
-        indexOf = indexOf < 0 ? GameManager.PartyLineup.Count + indexOf : indexOf % GameManager.PartyLineup.Count;
-
-        SwapSelection(GameManager.PartyLineup[indexOf]);
-    }
-
-    public void SwapSelection(HeroExtension hero)
-    {
-        _selectedHero = hero;
-        if (_activeTree != null)
-        {
-            Destroy(_activeTree.gameObject);
-            _activeTree = null;
-        }
-
-        _activeTree = Instantiate(_selectedHero.SkillTree, this.transform);
-        Destroy(_activeTree.GetComponent<CanvasRenderer>());
-        Destroy(_activeTree.GetComponent<CanvasScaler>());
-        Destroy(_activeTree.GetComponent<GraphicRaycaster>());
-        Destroy(_activeTree.GetComponent<Canvas>());
-        var rect = _activeTree.gameObject.GetComponent<RectTransform>();
-        rect.anchorMin = default;
-        rect.anchorMax = new Vector2(1, 1);
-        rect.offsetMin = default;
-        rect.offsetMax = default;
-        rect.localScale = Vector3.one;
-        _activeTree.transform.SetSiblingIndex(DragArea.transform.GetSiblingIndex() + 1);
-        _activeTree.SelectedHero = _selectedHero;
-
-        HighlightSelectedHero(HeroSelectionUI, _selectedHero);
     }
 }

@@ -443,6 +443,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Hero Special",
+                    "type": "Button",
+                    "id": "bbfb6d27-0dd2-4101-bf9e-f7c41334b73e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1048,6 +1057,28 @@
                     "processors": "",
                     "groups": "ANY",
                     "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "607c3c55-1852-4582-9bb6-25ec410ae94c",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "ANY",
+                    "action": "Hero Special",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6d0ee28b-a801-4265-9c6d-7b7357d5d603",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "ANY",
+                    "action": "Hero Special",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

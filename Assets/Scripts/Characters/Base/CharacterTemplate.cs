@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using StatusHandler;
+using SwitchSpecial;
 using UnityEngine.Serialization;
 
 [AddComponentMenu(" GrandMythos/CharacterTemplate")]
@@ -41,20 +43,16 @@ public class CharacterTemplate : MonoBehaviour
     [FormerlySerializedAs("StartingLevel"), BoxGroup("STATS"), OnValueChanged(nameof(UpdateExperienceFromLevel))]
     public int Level = 1;
 
-    [BoxGroup("ELEMENTAL RESISTANCES")]
-    public ElementalResistance ResistanceFire = ElementalResistance.Neutral;
-    [BoxGroup("ELEMENTAL RESISTANCES")]
-    public ElementalResistance ResistanceIce = ElementalResistance.Neutral;
-    [BoxGroup("ELEMENTAL RESISTANCES")]
-    public ElementalResistance ResistanceLightning = ElementalResistance.Neutral;
-    [BoxGroup("ELEMENTAL RESISTANCES")]
-    public ElementalResistance ResistanceWater = ElementalResistance.Neutral;
+    [BoxGroup("ELEMENTAL RESISTANCES")] public ElementalResistance ResistanceFire = ElementalResistance.Neutral;
+    [BoxGroup("ELEMENTAL RESISTANCES")] public ElementalResistance ResistanceIce = ElementalResistance.Neutral;
+    [BoxGroup("ELEMENTAL RESISTANCES")] public ElementalResistance ResistanceLightning = ElementalResistance.Neutral;
+    [BoxGroup("ELEMENTAL RESISTANCES")] public ElementalResistance ResistanceWater = ElementalResistance.Neutral;
 
-    [HorizontalGroup("STATUS"), VerticalGroup("STATUS/Left"), BoxGroup("STATUS/Left/AFFLICTION STATUS")]
-    public bool IsBlinded, IsSilenced, IsFurored, IsParalysed, IsPhysDown, IsMagDown;
+    [HorizontalGroup("STATUS"), VerticalGroup("STATUS/Left"), BoxGroup("STATUS/Left/MODIFIERS-STATUS")]
+    public ListOfMixed<IModifier> Modifiers = new();
 
-    [VerticalGroup("STATUS/Right"), BoxGroup("STATUS/Right/AFFLICTION RESISTANCE"), PropertyRange(-100, 100)]
-    public int ResistBLIND, ResistSILENCE, ResistFUROR, ResistPARALYSIS, ResistPHYSICAL, ResistMAGICAL;
+    [HorizontalGroup("STATUS"), VerticalGroup("STATUS/Right"), BoxGroup("STATUS/Right/STATUS RESISTANCE"), PropertyRange(-100, 100)]
+    public Dictionary<StatusModifier, int> StatusResistances = new();
 
     public float ActionRechargeSpeed => EffectiveStats.Speed;
 
@@ -69,6 +67,9 @@ public class CharacterTemplate : MonoBehaviour
 
     [BoxGroup("SKILLS")]
     public SerializableHashSet<Skill> Skills;
+
+    [BoxGroup("SKILLS"), CanBeNull, SerializeReference]
+    public ISwitchSpecialHandler SwitchSpecialHandler;
 
     [BoxGroup("SKILLS"), CanBeNull]
     public LevelUnlocks LevelUnlocks;
@@ -238,27 +239,9 @@ public class CharacterTemplate : MonoBehaviour
         }
     }
 
-    public bool HasStatus(Status status) => status switch
-    {
-        Status.Blind => IsBlinded,
-        Status.Silenced => IsSilenced,
-        Status.Furored => IsFurored,
-        Status.Paralysed => IsParalysed,
-        Status.PhysDown => IsPhysDown,
-        Status.MagDown => IsMagDown,
-        _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
-    };
+    public bool HasStatus(StatusModifier status) => Modifiers.Exists(x => ReferenceEquals(x, status));
 
-    public int GetStatusResistance(Status status) => status switch
-    {
-        Status.Blind => ResistBLIND,
-        Status.Silenced => ResistSILENCE,
-        Status.Furored => ResistFUROR,
-        Status.Paralysed => ResistPARALYSIS,
-        Status.PhysDown => ResistPHYSICAL,
-        Status.MagDown => ResistMAGICAL,
-        _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
-    };
+    public int GetStatusResistance(StatusModifier status) => StatusResistances[status];
 
     [Serializable]
     public struct Drop
@@ -288,14 +271,4 @@ public enum Attribute
     Defense,
     MagicDefense,
     Speed,
-}
-
-public enum Status
-{
-    Blind,
-    Silenced,
-    Furored,
-    Paralysed,
-    PhysDown,
-    MagDown,
 }

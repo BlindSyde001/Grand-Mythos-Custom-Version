@@ -1,11 +1,12 @@
 ﻿using System;
+using StatusHandler;
 
 namespace Conditions
 {
     [Serializable]
     public class StatusApplied : SimplifiedCondition
     {
-        public Status Status;
+        public StatusModifier Status;
 
         protected override bool Filter(BattleCharacterController target, EvaluationContext context) => target.Profile.HasStatus(Status);
 

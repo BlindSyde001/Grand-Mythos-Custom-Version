@@ -58,6 +58,7 @@ MonoBehaviour:
     Defense: 5
     MagDefense: 5
     Speed: 20
+    Luck: 2
   _effectiveStatsPreview:
     HP: 201
     MP: 100
@@ -66,6 +67,7 @@ MonoBehaviour:
     Defense: 50
     MagDefense: 50
     Speed: 20
+    Luck: 17
   StatGrowth:
     HP: 3
     MP: 3
@@ -74,30 +76,24 @@ MonoBehaviour:
     Defense: 3
     MagDefense: 3
     Speed: 0
+    Luck: 1
   Experience: 2496
   Level: 7
-  AffinityFIRE: 0
-  AffinityICE: 0
-  AffinityLIGHTNING: 0
-  AffinityWATER: 0
-  IsBlinded: 0
-  IsSilenced: 0
-  IsFurored: 0
-  IsParalysed: 0
-  IsPhysDown: 0
-  IsMagDown: 0
-  ResistBLIND: 0
-  ResistSILENCE: 0
-  ResistFUROR: 0
-  ResistPARALYSIS: 0
-  ResistPHYSICAL: 0
-  ResistMAGICAL: 0
+  ResistanceFire: 100
+  ResistanceIce: 100
+  ResistanceLightning: 100
+  ResistanceWater: 100
+  Modifiers:
+    _refs: []
+    _objects: []
   ActionsCharged: 0
   ActionChargeMax: 4
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-  LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
   Skills:
     _backingArray: []
+  SwitchSpecialHandler:
+    rid: 6231890249175007260
+  LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
   Tactics:
   - IsOn: 1
     Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
@@ -144,10 +140,10 @@ MonoBehaviour:
   equipMagDefense: 0
   equipSpeed: 0
   Banner: {fileID: 21300000, guid: e2368ee01c9e284449a43aa5be256c28, type: 3}
+  SkillTree: {fileID: 248158881564659840, guid: 1fcb273e1da81064c90f4559082510e8, type: 3}
   UnlockedTreeNodes:
     _backingArray: []
-  SkillTree: {fileID: 248158881564659840, guid: 1fcb273e1da81064c90f4559082510e8, type: 3}
-  Modifiers:
+  SkillModifiers:
     _backingArray: []
   _guid:
     a: 5077588653819292730
@@ -155,6 +151,10 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 6231890249175007260
+      type: {class: ElementalAmmoHandler, ns: SwitchSpecial, asm: Assembly-CSharp}
+      data:
+        AssociatedStatus: {fileID: 11400000, guid: d4d5d8459cb4d9e44b93492eb7897dda, type: 2}
     - rid: 7380285029310791778
       type: {class: PlayerInventory, ns: , asm: Assembly-CSharp}
       data: 

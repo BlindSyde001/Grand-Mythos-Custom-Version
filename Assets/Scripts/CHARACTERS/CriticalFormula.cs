@@ -1,7 +1,7 @@
 ﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
-[CreateAssetMenu]
+[CreateAssetMenu(menuName = "Gameplay")]
 public class CriticalFormula : ScriptableObject
 {
     [InfoBox("Height is the percent chance, width is the amount of stats required to attain this percentage")]
@@ -17,7 +17,12 @@ public class CriticalFormula : ScriptableObject
     void OnEnable()
     {
         if (SingletonManager.Instance.CriticalFormula == null)
+        {
             SingletonManager.Instance.CriticalFormula = this;
+            #if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(SingletonManager.Instance);
+            #endif
+        }
         else if (ReferenceEquals(SingletonManager.Instance.CriticalFormula, this) == false)
             Debug.LogError($"Multiple instances of {nameof(CriticalFormula)} is not allowed");
     }

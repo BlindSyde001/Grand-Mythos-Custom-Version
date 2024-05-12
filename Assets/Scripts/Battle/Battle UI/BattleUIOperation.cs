@@ -22,6 +22,7 @@ public class BattleUIOperation : MonoBehaviour
     public BattleStateMachine BattleManagement;
 
     [Header("Selected Character")]
+    [Required] public InputActionReference SwitchSpecialInput;
     [Required] public InputActionReference SwitchCharacter;
     [Required] public HeroPrefabUIData SelectedUI;
     [ReadOnly, CanBeNull] public BattleCharacterController UnitSelected;
@@ -36,7 +37,11 @@ public class BattleUIOperation : MonoBehaviour
 
     [Required] public BattleTooltipUI TooltipUI;
 
-    [FormerlySerializedAs("ActionSelectionParent"), Header("Action Selection")]
+    [Header("Modifier Display")]
+    [Required] public RectTransform ModifierContainer;
+    [ReadOnly] public Dictionary<IModifier, ModifierDisplay> ModifierDisplays = new();
+
+    [Header("Action Selection")]
     [Required] public RectTransform ActionSelectionContainer;
     [Required] public Button Attack;
     [Required] public Button Skills;
@@ -103,6 +108,9 @@ public class BattleUIOperation : MonoBehaviour
 
             Schedule.onClick.AddListener(() => ScheduleOrder(_order));
             Discard.onClick.AddListener(CancelFullOrder);
+
+            for (int i = ModifierContainer.transform.childCount - 1; i >= 0; i--)
+                Destroy(ModifierContainer.transform.GetChild(i).gameObject);
         }
 
         ActionPreviewTemplate.gameObject.SetActive(false);
@@ -114,9 +122,9 @@ public class BattleUIOperation : MonoBehaviour
         AttributeAdd.OnApplied -= DamageHandler;
     }
 
-    void DamageHandler(BattleCharacterController target, Attribute attribute, int delta)
+    void DamageHandler(BattleCharacterController target, int initialAttributeValue, ComputableDamageScaling computeDamage)
     {
-        if (attribute != Attribute.Health)
+        if (computeDamage.Attribute != Attribute.Health)
             return;
 
         DamageText damageText;
@@ -139,8 +147,38 @@ public class BattleUIOperation : MonoBehaviour
             center /= hits;
 
         damageText.transform.position = center;
+
+        int finalAttributeValue = initialAttributeValue;
+        computeDamage.ApplyDelta(ref finalAttributeValue);
+        int delta = finalAttributeValue - initialAttributeValue;
+
+        damageText.ElementColorTarget.color = computeDamage.Element == Element.Neutral ? Color.red : computeDamage.Element.GetAssociatedColor();
         (delta > 0 ? damageText.OnHeal : damageText.OnDamage)?.Invoke(Math.Abs(delta).ToString());
         _damageTextCache.Enqueue((Time.time + damageText.Lifetime, damageText));
+    }
+
+    void OnSwappedSelectedUnit()
+    {
+        UpdateTacticsButtonColor();
+
+        if (UnitSelected == null)
+            return;
+
+        foreach (var (mod, display) in ModifierDisplays)
+        {
+            display.RemoveDisplay();
+        }
+        ModifierDisplays.Clear();
+
+        foreach (var modifier in UnitSelected.Profile.Modifiers)
+        {
+            if (ModifierDisplays.TryGetValue(modifier, out _) || modifier.DisplayPrefab == null)
+                continue;
+
+            var display = Instantiate(modifier.DisplayPrefab, ModifierContainer);
+            ModifierDisplays[modifier] = display;
+            display.OnDisplayed(UnitSelected, this, modifier);
+        }
     }
 
     void Update()
@@ -149,10 +187,61 @@ public class BattleUIOperation : MonoBehaviour
             SwitchToNextHero(SwitchCharacter.action.ReadValue<float>() >= 0 ? 1 : -1);
 
         if (UnitSelected == null && BattleManagement.PartyLineup.Count != 0)
+        {
             UnitSelected = BattleManagement.PartyLineup[0];
+            OnSwappedSelectedUnit();
+        }
 
         if (UnitSelected == null)
             return;
+
+        if (SwitchSpecialInput.action.WasPerformedThisFrameUnique())
+            UnitSelected.Profile.SwitchSpecialHandler?.OnSwitch(UnitSelected);
+
+        { // MODIFIERS
+            foreach (var modifier in UnitSelected.Profile.Modifiers)
+            {
+                if (ModifierDisplays.TryGetValue(modifier, out _) || modifier.DisplayPrefab == null)
+                    continue;
+
+                var display = Instantiate(modifier.DisplayPrefab, ModifierContainer);
+                ModifierDisplays[modifier] = display;
+                display.OnDisplayed(UnitSelected, this, modifier);
+                display.OnNewModifier();
+            }
+
+            List<IModifier> modifiersToRemove = null;
+            foreach (var (mod, display) in ModifierDisplays)
+            {
+                foreach (var modifier in UnitSelected.Profile.Modifiers)
+                {
+                    if (ReferenceEquals(modifier, mod))
+                        goto FoundMatch;
+                }
+
+                try
+                {
+                    display.RemoveDisplay();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+
+                modifiersToRemove ??= new();
+                modifiersToRemove.Add(mod);
+
+                FoundMatch:{}
+            }
+
+            if (modifiersToRemove is not null)
+            {
+                foreach (var modifier in modifiersToRemove)
+                {
+                    ModifierDisplays.Remove(modifier);
+                }
+            }
+        }
 
         if (_waitingForScheduledUnit != null && (BattleManagement.Orders.TryGetValue(_waitingForScheduledUnit, out _) || BattleManagement.Processing.TryGetValue(_waitingForScheduledUnit, out _)))
         {
@@ -575,12 +664,12 @@ public class BattleUIOperation : MonoBehaviour
         // Search for the next unit forward or backwards in the list
         for (int k = Mod(indexOfOldSelection + dir, partyCount); k != indexOfOldSelection; k = Mod(k + dir, partyCount))
         {
-            if (BattleManagement.PartyLineup[k].Profile.CurrentHP > 0)
-            {
-                UnitSelected = BattleManagement.PartyLineup[k];
-                UpdateTacticsButtonColor();
-                break;
-            }
+            if (BattleManagement.PartyLineup[k].Profile.CurrentHP == 0)
+                continue;
+
+            UnitSelected = BattleManagement.PartyLineup[k];
+            OnSwappedSelectedUnit();
+            break;
         }
 
         static int Mod(int x, int y)

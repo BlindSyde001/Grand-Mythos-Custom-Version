@@ -9,7 +9,7 @@ using Sirenix.OdinInspector;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
-public class EquipmentMenuActions : MenuContainer
+public class EquipmentMenuActions : MenuContainerWithHeroSelection
 {
     public EquipStatsContainer EquipStatsContainer;
     public List<EquipLoadoutContainer> EquipLoadoutContainers;
@@ -17,30 +17,27 @@ public class EquipmentMenuActions : MenuContainer
     public UIElementList<EquipNewItemContainer> EquipNewItemContainers;
     public GameObject EquipNewItemList;
 
-    [FormerlySerializedAs("HeroSelections")] public UIElementList<SelectedHeroView> HeroSelectionUI;
-    [Required] public InputActionReference SwitchHero;
-
     readonly List<Equipment> _currentlyEquippedGear = new();
     Button _listToggle;
-    HeroExtension _selectedHero;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        SetupHeroSelectionUI();
-        UpdateSelection(GameManager.PartyLineup[0]);
+        foreach (var yields in base.Open(menuInputs))
+        {
+            yield return yields;
+        }
+        EquipNewItemList.SetActive(false);
         UpdateCurrentEquippedGear();
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-580, -320, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(0, -320, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
-        SwitchHero.action.performed += Switch;
     }
 
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        SwitchHero.action.performed -= Switch;
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-1400, -320, 0), menuInputs.Speed);
         gameObject.transform.GetChild(2).DOLocalMove(new Vector3(1200, -320, 0), menuInputs.Speed);
@@ -49,68 +46,43 @@ public class EquipmentMenuActions : MenuContainer
         gameObject.SetActive(false);
     }
 
-    void Switch(InputAction.CallbackContext input)
+    protected override void OnSelectedHeroChanged()
     {
-        int indexOf = GameManager.PartyLineup.IndexOf(_selectedHero);
-        indexOf += input.ReadValue<float>() >= 0f ? 1 : -1;
-        indexOf = indexOf < 0 ? GameManager.PartyLineup.Count + indexOf : indexOf % GameManager.PartyLineup.Count;
+        EquipStatsContainer.baseHPText.text = SelectedHero.BaseStats.HP.ToString();
+        EquipStatsContainer.baseMPText.text = SelectedHero.BaseStats.MP.ToString();
+        EquipStatsContainer.baseAttackText.text = SelectedHero.BaseStats.Attack.ToString();
+        EquipStatsContainer.baseMagAttackText.text = SelectedHero.BaseStats.MagAttack.ToString();
+        EquipStatsContainer.baseDefenseText.text = SelectedHero.BaseStats.Defense.ToString();
+        EquipStatsContainer.baseMagDefenseText.text = SelectedHero.BaseStats.MagDefense.ToString();
+        EquipStatsContainer.baseSpeedText.text = SelectedHero.BaseStats.Speed.ToString();
 
-        UpdateSelection(GameManager.PartyLineup[indexOf]);
-    }
+        EquipStatsContainer.EquipHPText.text = SelectedHero.EquipHP.ToString();
+        EquipStatsContainer.EquipMPText.text = SelectedHero.EquipMP.ToString();
+        EquipStatsContainer.EquipAttackText.text = SelectedHero.EquipAttack.ToString();
+        EquipStatsContainer.EquipMagAttackText.text = SelectedHero.EquipMagAttack.ToString();
+        EquipStatsContainer.EquipDefenseText.text = SelectedHero.EquipDefense.ToString();
+        EquipStatsContainer.EquipMagDefenseText.text = SelectedHero.EquipMagDefense.ToString();
+        EquipStatsContainer.EquipSpeedText.text = SelectedHero.EquipSpeed.ToString();
 
-    void SetupHeroSelectionUI()
-    {
-        HeroSelectionUI.Clear();
-        foreach (var hero in GameManager.PartyLineup)
-        {
-            HeroSelectionUI.Allocate(out var element);
-            element.GetComponent<Image>().sprite = hero.Portrait;
-            element.Button.onClick.AddListener(delegate {UpdateSelection(hero); });
-        }
-        EquipNewItemList.SetActive(false);
-    }
-
-    public void UpdateSelection(HeroExtension hero)
-    {
-        _selectedHero = hero;
-
-        EquipStatsContainer.baseHPText.text = hero.BaseStats.HP.ToString();
-        EquipStatsContainer.baseMPText.text = hero.BaseStats.MP.ToString();
-        EquipStatsContainer.baseAttackText.text = hero.BaseStats.Attack.ToString();
-        EquipStatsContainer.baseMagAttackText.text = hero.BaseStats.MagAttack.ToString();
-        EquipStatsContainer.baseDefenseText.text = hero.BaseStats.Defense.ToString();
-        EquipStatsContainer.baseMagDefenseText.text = hero.BaseStats.MagDefense.ToString();
-        EquipStatsContainer.baseSpeedText.text = hero.BaseStats.Speed.ToString();
-
-        EquipStatsContainer.EquipHPText.text = hero.EquipHP.ToString();
-        EquipStatsContainer.EquipMPText.text = hero.EquipMP.ToString();
-        EquipStatsContainer.EquipAttackText.text = hero.EquipAttack.ToString();
-        EquipStatsContainer.EquipMagAttackText.text = hero.EquipMagAttack.ToString();
-        EquipStatsContainer.EquipDefenseText.text = hero.EquipDefense.ToString();
-        EquipStatsContainer.EquipMagDefenseText.text = hero.EquipMagDefense.ToString();
-        EquipStatsContainer.EquipSpeedText.text = hero.EquipSpeed.ToString();
-
-        EquipStatsContainer.TotalHPText.text = hero.EffectiveStats.HP.ToString();
-        EquipStatsContainer.TotalMPText.text = hero.EffectiveStats.MP.ToString();
-        EquipStatsContainer.TotalAttackText.text = hero.EffectiveStats.Attack.ToString();
-        EquipStatsContainer.TotalMagAttackText.text = hero.EffectiveStats.MagAttack.ToString();
-        EquipStatsContainer.TotalDefenseText.text = hero.EffectiveStats.Defense.ToString();
-        EquipStatsContainer.TotalMagDefenseText.text = hero.EffectiveStats.MagDefense.ToString();
-        EquipStatsContainer.TotalSpeedText.text = hero.EffectiveStats.Speed.ToString();
+        EquipStatsContainer.TotalHPText.text = SelectedHero.EffectiveStats.HP.ToString();
+        EquipStatsContainer.TotalMPText.text = SelectedHero.EffectiveStats.MP.ToString();
+        EquipStatsContainer.TotalAttackText.text = SelectedHero.EffectiveStats.Attack.ToString();
+        EquipStatsContainer.TotalMagAttackText.text = SelectedHero.EffectiveStats.MagAttack.ToString();
+        EquipStatsContainer.TotalDefenseText.text = SelectedHero.EffectiveStats.Defense.ToString();
+        EquipStatsContainer.TotalMagDefenseText.text = SelectedHero.EffectiveStats.MagDefense.ToString();
+        EquipStatsContainer.TotalSpeedText.text = SelectedHero.EffectiveStats.Speed.ToString();
 
         for (int i = 0; i <= (int)ItemSlot.Max; i++)
         {
             EquipLoadoutContainers[i].ThisButton.onClick.RemoveAllListeners();
 
             var slot = (ItemSlot)i;
-            var item = GetItemFromSlot(slot, hero);
+            var item = GetItemFromSlot(slot, SelectedHero);
             var container = EquipLoadoutContainers[i];
             container.EquippedName.text = item == null ? "None" : item.name;
             container.thisEquipment = item;
             container.ThisButton.onClick.AddListener(delegate { EquippableItemOpen(slot, container.ThisButton); });
         }
-
-        HighlightSelectedHero(HeroSelectionUI, _selectedHero);
     }
 
     static Equipment GetItemFromSlot(ItemSlot slot, HeroExtension hero) => slot switch
@@ -139,13 +111,13 @@ public class EquipmentMenuActions : MenuContainer
         {
             case ItemSlot.Weapon:
                 foreach(var (equipment, _) in InventoryManager.Enumerate<Weapon>())
-                    if (equipment.weaponType == _selectedHero.myWeaponType)
+                    if (equipment.weaponType == SelectedHero.myWeaponType)
                         ButtonSetup(this, equipment, ItemSlot.Weapon, ref setSelection);
                 break;
 
             case ItemSlot.Armor:
                 foreach(var (equipment, _) in InventoryManager.Enumerate<Armour>())
-                    if (equipment.armourType == _selectedHero.myArmourType)
+                    if (equipment.armourType == SelectedHero.myArmourType)
                         ButtonSetup(this, equipment, ItemSlot.Armor, ref setSelection);
                 ButtonSetup(this, null, equipSlot, ref setSelection);
                 break;
@@ -184,34 +156,34 @@ public class EquipmentMenuActions : MenuContainer
         switch(newEquip)
         {
             case Weapon w:
-                _selectedHero._Weapon = w;
+                SelectedHero._Weapon = w;
                 break;
 
             case Armour a:
-                _selectedHero._Armour = a;
+                SelectedHero._Armour = a;
                 break;
 
             case Accessory acc:
                 if (ItemSlot.AccessoryOne == slotHint)
-                    _selectedHero._AccessoryOne = acc;
+                    SelectedHero._AccessoryOne = acc;
                 else
-                    _selectedHero._AccessoryTwo = acc;
+                    SelectedHero._AccessoryTwo = acc;
                 break;
 
             case null:
                 switch (slotHint)
                 {
                     case ItemSlot.Armor:
-                        _selectedHero._Armour = null;
+                        SelectedHero._Armour = null;
                         break;
                     case ItemSlot.Weapon:
                         // mandatory right now, other systems do not expect those to be null
                         break;
                     case ItemSlot.AccessoryOne:
-                        _selectedHero._AccessoryOne = null;
+                        SelectedHero._AccessoryOne = null;
                         break;
                     case ItemSlot.AccessoryTwo:
-                        _selectedHero._AccessoryTwo = null;
+                        SelectedHero._AccessoryTwo = null;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(slotHint), slotHint, null);
@@ -223,8 +195,8 @@ public class EquipmentMenuActions : MenuContainer
                 throw new NotImplementedException(slotHint.ToString());
         }
         UpdateCurrentEquippedGear();
-        _selectedHero.EquipStats();
-        UpdateSelection(_selectedHero);
+        SelectedHero.EquipStats();
+        OnSelectedHeroChanged();
         CloseSwapEquipmentWindow();
     }
 

@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public abstract class MenuContainer : SelectionTracker
@@ -11,9 +13,47 @@ public abstract class MenuContainer : SelectionTracker
 
     public abstract IEnumerable Open(MenuInputs menuInputs);
     public abstract IEnumerable Close(MenuInputs menuInputs);
+}
 
-    protected void HighlightSelectedHero(UIElementList<SelectedHeroView> HeroSelectionUI, HeroExtension hero)
+public abstract class MenuContainerWithHeroSelection : MenuContainer
+{
+    public UIElementList<SelectedHeroView> HeroSelectionUI;
+    [Required, SerializeField] InputActionReference SwitchHero;
+    [ReadOnly, SerializeField] protected HeroExtension SelectedHero;
+
+    protected override void Update()
     {
+        float dir = SwitchHero.action.ReadValue<float>();
+        if (SwitchHero.action.WasPerformedThisFrameUnique())
+        {
+            int indexOf = GameManager.PartyLineup.IndexOf(SelectedHero);
+            indexOf += dir >= 0f ? 1 : -1;
+            indexOf = indexOf < 0 ? GameManager.PartyLineup.Count + indexOf : indexOf % GameManager.PartyLineup.Count;
+
+            ChangeSelectedHero(GameManager.PartyLineup[indexOf]);
+        }
+
+        base.Update();
+    }
+
+    public override IEnumerable Open(MenuInputs menuInputs)
+    {
+        HeroSelectionUI.Clear();
+        foreach (var hero in GameManager.PartyLineup)
+        {
+            HeroSelectionUI.Allocate(out var element);
+            element.GetComponent<Image>().sprite = hero.Portrait;
+            element.Button.onClick.AddListener(() => ChangeSelectedHero(hero));
+        }
+
+        ChangeSelectedHero(GameManager.PartyLineup[0]);
+
+        yield break;
+    }
+
+    void ChangeSelectedHero(HeroExtension hero)
+    {
+        SelectedHero = hero;
         foreach (var selectedHeroView in HeroSelectionUI)
         {
             var block = selectedHeroView.Button.colors;
@@ -22,7 +62,7 @@ public abstract class MenuContainer : SelectionTracker
             selectedHeroView.Outline.enabled = false;
         }
 
-        if (GameManager.PartyLineup.IndexOf(hero) is int indexOf and >= 0)
+        if (GameManager.PartyLineup.IndexOf(SelectedHero) is int indexOf and >= 0)
         {
             var ui = HeroSelectionUI[indexOf];
             var block = ui.Button.colors;
@@ -30,5 +70,9 @@ public abstract class MenuContainer : SelectionTracker
             ui.Button.colors = block;
             ui.Outline.enabled = true;
         }
+
+        OnSelectedHeroChanged();
     }
+
+    protected abstract void OnSelectedHeroChanged();
 }

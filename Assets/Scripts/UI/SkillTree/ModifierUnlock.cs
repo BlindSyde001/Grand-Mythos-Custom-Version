@@ -7,11 +7,13 @@ public class ModifierUnlock : IUnlock
 
     public void OnUnlock(HeroExtension hero, guid guid)
     {
-        hero.Modifiers.Add(guid, Modifier);
+        hero.SkillModifiers.Add(guid, Modifier);
+        hero.Modifiers.Add(Modifier);
     }
 
     public void OnLock(HeroExtension hero, guid guid)
     {
-        hero.Modifiers.Remove(guid);
+        if (hero.SkillModifiers.Remove(guid, out var modifier))
+            hero.Modifiers.Remove(modifier);
     }
 }

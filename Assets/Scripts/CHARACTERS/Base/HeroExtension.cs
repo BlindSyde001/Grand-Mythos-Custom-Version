@@ -43,7 +43,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
 
     [BoxGroup("SKILLS")] public SerializableHashSet<guid> UnlockedTreeNodes = new();
 
-    [ReadOnly, BoxGroup("SKILLS")] public SerializableDictionary<guid, IModifier> Modifiers = new();
+    [ReadOnly, BoxGroup("SKILLS")] public SerializableDictionary<guid, IModifier> SkillModifiers = new();
 
     public int SkillPointsTotal => Level;
 
@@ -60,7 +60,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
             stats.MagDefense += equipMagDefense;
             stats.Speed += equipSpeed;
             foreach (var modifier in Modifiers)
-                modifier.Value.Apply(ref stats);
+                modifier.ModifyStats(ref stats);
             return stats;
         }
     }

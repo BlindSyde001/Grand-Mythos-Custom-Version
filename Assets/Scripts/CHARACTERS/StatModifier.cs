@@ -12,10 +12,22 @@ public class StatModifier : IModifier
         }
     };
 
-    public void Apply(ref Stats stats)
+    public ModifierDisplay DisplayPrefab => null;
+
+    public void ModifyStats(ref Stats stats)
     {
         foreach (var mod in Mods)
             stats[mod.Attribute] += mod.Value;
+    }
+
+    public void ModifyOutgoingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
+    {
+
+    }
+
+    public void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
+    {
+
     }
 
     [Serializable]

@@ -465,6 +465,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hero Special"",
+                    ""type"": ""Button"",
+                    ""id"": ""bbfb6d27-0dd2-4101-bf9e-f7c41334b73e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1070,6 +1079,28 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""ANY"",
                     ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""607c3c55-1852-4582-9bb6-25ec410ae94c"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Hero Special"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6d0ee28b-a801-4265-9c6d-7b7357d5d603"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""ANY"",
+                    ""action"": ""Hero Special"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1887,6 +1918,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_BattleMap_PageScroll = m_BattleMap.FindAction("Page Scroll", throwIfNotFound: true);
         m_BattleMap_HeroSwitch = m_BattleMap.FindAction("Hero Switch", throwIfNotFound: true);
         m_BattleMap_ToggleAdditionalInfo = m_BattleMap.FindAction("Toggle Additional Info", throwIfNotFound: true);
+        m_BattleMap_HeroSpecial = m_BattleMap.FindAction("Hero Special", throwIfNotFound: true);
         // Cutscene Map
         m_CutsceneMap = asset.FindActionMap("Cutscene Map", throwIfNotFound: true);
         // Menu Map
@@ -2070,6 +2102,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_BattleMap_PageScroll;
     private readonly InputAction m_BattleMap_HeroSwitch;
     private readonly InputAction m_BattleMap_ToggleAdditionalInfo;
+    private readonly InputAction m_BattleMap_HeroSpecial;
     public struct BattleMapActions
     {
         private @PlayerControls m_Wrapper;
@@ -2089,6 +2122,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @PageScroll => m_Wrapper.m_BattleMap_PageScroll;
         public InputAction @HeroSwitch => m_Wrapper.m_BattleMap_HeroSwitch;
         public InputAction @ToggleAdditionalInfo => m_Wrapper.m_BattleMap_ToggleAdditionalInfo;
+        public InputAction @HeroSpecial => m_Wrapper.m_BattleMap_HeroSpecial;
         public InputActionMap Get() { return m_Wrapper.m_BattleMap; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -2143,6 +2177,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ToggleAdditionalInfo.started += instance.OnToggleAdditionalInfo;
             @ToggleAdditionalInfo.performed += instance.OnToggleAdditionalInfo;
             @ToggleAdditionalInfo.canceled += instance.OnToggleAdditionalInfo;
+            @HeroSpecial.started += instance.OnHeroSpecial;
+            @HeroSpecial.performed += instance.OnHeroSpecial;
+            @HeroSpecial.canceled += instance.OnHeroSpecial;
         }
 
         private void UnregisterCallbacks(IBattleMapActions instance)
@@ -2192,6 +2229,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @ToggleAdditionalInfo.started -= instance.OnToggleAdditionalInfo;
             @ToggleAdditionalInfo.performed -= instance.OnToggleAdditionalInfo;
             @ToggleAdditionalInfo.canceled -= instance.OnToggleAdditionalInfo;
+            @HeroSpecial.started -= instance.OnHeroSpecial;
+            @HeroSpecial.performed -= instance.OnHeroSpecial;
+            @HeroSpecial.canceled -= instance.OnHeroSpecial;
         }
 
         public void RemoveCallbacks(IBattleMapActions instance)
@@ -2478,6 +2518,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnPageScroll(InputAction.CallbackContext context);
         void OnHeroSwitch(InputAction.CallbackContext context);
         void OnToggleAdditionalInfo(InputAction.CallbackContext context);
+        void OnHeroSpecial(InputAction.CallbackContext context);
     }
     public interface ICutsceneMapActions
     {

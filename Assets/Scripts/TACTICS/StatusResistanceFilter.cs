@@ -1,12 +1,13 @@
 ﻿using System;
 using Sirenix.OdinInspector;
+using StatusHandler;
 
 namespace Conditions
 {
     [Serializable]
     public class StatusResistanceFilter : SimplifiedCondition
     {
-        [HorizontalGroup, SuffixLabel("is")] public Status ResistanceTo;
+        [HorizontalGroup, SuffixLabel("is")] public StatusModifier ResistanceTo;
         [HorizontalGroup, HideLabel] public ComparisonType Comparison;
         [HorizontalGroup, HideLabel] public int Value;
 

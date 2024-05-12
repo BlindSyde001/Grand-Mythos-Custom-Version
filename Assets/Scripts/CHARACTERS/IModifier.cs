@@ -1,4 +1,9 @@
-﻿public interface IModifier
+﻿using System.Diagnostics.CodeAnalysis;
+
+public interface IModifier
 {
-    void Apply(ref Stats stats);
+    [MaybeNull] ModifierDisplay DisplayPrefab { get; }
+    void ModifyStats(ref Stats stats);
+    void ModifyOutgoingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling);
+    void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling);
 }

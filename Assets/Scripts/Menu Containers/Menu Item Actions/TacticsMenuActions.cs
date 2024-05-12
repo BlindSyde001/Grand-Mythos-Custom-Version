@@ -8,18 +8,15 @@ using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine.InputSystem;
 
-public class TacticsMenuActions : MenuContainer
+public class TacticsMenuActions : MenuContainerWithHeroSelection
 {
     public GameObject SegmentsWarning;
 
-    public UIElementList<SelectedHeroView> HeroSelectionUI = new();
     public List<Button> PageList;
     public List<TacticsModuleContainer> TacticsModules;
     public List<NewComponentContainer> NewComponentList;
     [Required] public RectTransform NewComponentParentRect;
-    [Required] public InputActionReference SwitchHero;
     [Required] public InputActionReference SwitchPage;
-    HeroExtension _selectedHero;
     int _currentPage;
 
     Button _dropdownSource;
@@ -29,24 +26,19 @@ public class TacticsMenuActions : MenuContainer
     //METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
     {
-        HeroSelectionUI.Clear();
-        foreach (var hero in GameManager.PartyLineup)
+        foreach (var yields in base.Open(menuInputs))
         {
-            HeroSelectionUI.Allocate(out var element);
-            element.GetComponent<Image>().sprite = hero.Portrait;
-            element.Button.onClick.AddListener(() => ChangeCharacter(hero) );
+            yield return yields;
         }
 
-        ChangeCharacter(GameManager.PartyLineup[0]);
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(230, -100, 0), menuInputs.Speed);
         yield return new WaitForSeconds(menuInputs.Speed);
-        SwitchHero.action.performed += Switch;
     }
+
     public override IEnumerable Close(MenuInputs menuInputs)
     {
-        SwitchHero.action.performed -= Switch;
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 610, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(1700, -100, 0), menuInputs.Speed);
         NewComponentParentRect.DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.Speed);
@@ -58,13 +50,13 @@ public class TacticsMenuActions : MenuContainer
         gameObject.SetActive(false);
     }
 
-    void Switch(InputAction.CallbackContext input)
+    protected override void OnSelectedHeroChanged()
     {
-        int indexOf = GameManager.PartyLineup.IndexOf(_selectedHero);
-        indexOf += input.ReadValue<float>() >= 0f ? 1 : -1;
-        indexOf = indexOf < 0 ? GameManager.PartyLineup.Count + indexOf : indexOf % GameManager.PartyLineup.Count;
-
-        ChangeCharacter(GameManager.PartyLineup[indexOf]);
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(ComponentListClose());
+        // Configure all the TacticsList Buttons: On/Off, Select Cnd, Select Action
+        for (int i = 0; i < TacticsModules.Count; i++)
+            SetupField(i);
     }
 
     IEnumerator ComponentListOpen()
@@ -92,18 +84,6 @@ public class TacticsMenuActions : MenuContainer
         NewComponentParentRect.gameObject.SetActive(false);
     }
 
-    public void ChangeCharacter(HeroExtension hero)
-    {
-        _selectedHero = hero;
-        if (gameObject.activeInHierarchy)
-            StartCoroutine(ComponentListClose());
-        // Configure all the TacticsList Buttons: On/Off, Select Cnd, Select Action
-        for (int i = 0; i < TacticsModules.Count; i++)
-            SetupField(i);
-
-        HighlightSelectedHero(HeroSelectionUI, _selectedHero);
-    }
-
     void SetupField(int i)
     {
         TacticsModuleContainer tacticsUI = TacticsModules[i];
@@ -118,13 +98,13 @@ public class TacticsMenuActions : MenuContainer
         for(int j = 0; j < tacticsUI.addActionBtns.Count; j++)
             tacticsUI.addActionBtns[j].gameObject.SetActive(j == 0);
 
-        var heroTactic = i < _selectedHero.Tactics.Length ? _selectedHero.Tactics[i] : null;
+        var heroTactic = i < SelectedHero.Tactics.Length ? SelectedHero.Tactics[i] : null;
 
         // Go through all my Actions and turn on their respective Buttons (Based on Segment Cost)
         uint costTotal = 0;
         for (int actionIndex = 0; actionIndex < heroTactic?.Actions.Length; actionIndex++)
         {
-            SetActionsBasedOnSegmentCost(_selectedHero, heroTactic.Actions[actionIndex] != null ? heroTactic.Actions[actionIndex].ActionCost : 0, i, actionIndex, costTotal, OnSetAction);
+            SetActionsBasedOnSegmentCost(SelectedHero, heroTactic.Actions[actionIndex] != null ? heroTactic.Actions[actionIndex].ActionCost : 0, i, actionIndex, costTotal, OnSetAction);
             costTotal += heroTactic.Actions[actionIndex] != null ? heroTactic.Actions[actionIndex].ActionCost : 0;
         }
 
@@ -138,16 +118,16 @@ public class TacticsMenuActions : MenuContainer
             btn.onClick.RemoveAllListeners();
             btn.onClick.AddListener(() =>
             {
-                if (i >= _selectedHero.Tactics.Length)
+                if (i >= SelectedHero.Tactics.Length)
                 {
                     var newTactics = new Tactics[i+1];
-                    _selectedHero.Tactics.CopyTo(newTactics, 0);
-                    _selectedHero.Tactics = newTactics;
+                    SelectedHero.Tactics.CopyTo(newTactics, 0);
+                    SelectedHero.Tactics = newTactics;
                 }
 
-                _selectedHero.Tactics[i] ??= new(){ IsOn = false };
-                int slot = _selectedHero.Tactics[i].Actions.Length;
-                ShowActionDropdown(_selectedHero, action => OnSetAction(action, slot), btn);
+                SelectedHero.Tactics[i] ??= new(){ IsOn = false };
+                int slot = SelectedHero.Tactics[i].Actions.Length;
+                ShowActionDropdown(SelectedHero, action => OnSetAction(action, slot), btn);
             });
         }
 
@@ -165,15 +145,15 @@ public class TacticsMenuActions : MenuContainer
             if (newAction is null)
                 throw new NullReferenceException(nameof(newAction));
 
-            if (i >= _selectedHero.Tactics.Length)
+            if (i >= SelectedHero.Tactics.Length)
             {
                 var newTactics = new Tactics[i + 1];
-                _selectedHero.Tactics.CopyTo(newTactics, 0);
-                _selectedHero.Tactics = newTactics;
+                SelectedHero.Tactics.CopyTo(newTactics, 0);
+                SelectedHero.Tactics = newTactics;
             }
-            _selectedHero.Tactics[i] ??= new() { IsOn = false };
+            SelectedHero.Tactics[i] ??= new() { IsOn = false };
 
-            var tactic = _selectedHero.Tactics[i];
+            var tactic = SelectedHero.Tactics[i];
             if (actionIndex >= tactic.Actions.Length) // Make sure we have space for this new action
             {
                 IActionCollection newCollection = new()
@@ -191,7 +171,7 @@ public class TacticsMenuActions : MenuContainer
             uint totalCost = 0;
             foreach (var action in tactic.Actions)
             {
-                if (totalCost + action.ActionCost > _selectedHero.ActionChargeMax)
+                if (totalCost + action.ActionCost > SelectedHero.ActionChargeMax)
                     break;
                 newActions.Add(action);
             }
@@ -202,10 +182,10 @@ public class TacticsMenuActions : MenuContainer
 
         void OnToggleTacticPressed()
         {
-            if (i >= _selectedHero.Tactics.Length)
+            if (i >= SelectedHero.Tactics.Length)
                 return;
 
-            var tactic = _selectedHero.Tactics[i];
+            var tactic = SelectedHero.Tactics[i];
             if (tactic is not null && tactic.Condition != null && tactic.Actions.Length > 0)
                 tactic.IsOn = !tactic.IsOn;
             SetupField(i);
@@ -213,14 +193,14 @@ public class TacticsMenuActions : MenuContainer
 
         void OnSetCondition(ActionCondition newCondition)
         {
-            if (i >= _selectedHero.Tactics.Length)
+            if (i >= SelectedHero.Tactics.Length)
             {
                 var newTactics = new Tactics[i + 1];
-                _selectedHero.Tactics.CopyTo(newTactics, 0);
-                _selectedHero.Tactics = newTactics;
+                SelectedHero.Tactics.CopyTo(newTactics, 0);
+                SelectedHero.Tactics = newTactics;
             }
 
-            var tactic = _selectedHero.Tactics[i] ??= new() { IsOn = false };
+            var tactic = SelectedHero.Tactics[i] ??= new() { IsOn = false };
             tactic.Condition = newCondition;
             SetupField(i);
         }
