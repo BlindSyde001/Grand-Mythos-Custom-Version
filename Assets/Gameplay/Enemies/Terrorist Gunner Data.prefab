@@ -48,8 +48,8 @@ MonoBehaviour:
   Team: {fileID: 11400000, guid: 998822fe4b9cbd14e99fabd4b5e31caa, type: 2}
   BattlePrefab: {fileID: 5499571375476555240, guid: 1eb592d996651674d93b63d2df0729e2, type: 3}
   Portrait: {fileID: 0}
-  CurrentHP: 0
-  CurrentMP: 0
+  CurrentHP: 1000
+  CurrentMP: 10
   BaseStats:
     HP: 1000
     MP: 10
@@ -57,7 +57,8 @@ MonoBehaviour:
     MagAttack: 10
     Defense: 5
     MagDefense: 5
-    Speed: 20
+    Speed: 10
+    Luck: 0
   _effectiveStatsPreview:
     HP: 1000
     MP: 10
@@ -65,32 +66,34 @@ MonoBehaviour:
     MagAttack: 10
     Defense: 5
     MagDefense: 5
-    Speed: 20
-  GrowthRate: 0
+    Speed: 10
+    Luck: 0
+  StatGrowth:
+    HP: 0
+    MP: 0
+    Attack: 0
+    MagAttack: 0
+    Defense: 0
+    MagDefense: 0
+    Speed: 0
+    Luck: 0
   Experience: 0
   Level: 1
-  AffinityFIRE: 0
-  AffinityICE: 0
-  AffinityLIGHTNING: 0
-  AffinityWATER: 0
-  IsBlinded: 0
-  IsSilenced: 0
-  IsFurored: 0
-  IsParalysed: 0
-  IsPhysDown: 0
-  IsMagDown: 0
-  ResistBLIND: 0
-  ResistSILENCE: 0
-  ResistFUROR: 0
-  ResistPARALYSIS: 0
-  ResistPHYSICAL: 0
-  ResistMAGICAL: 0
+  ResistanceFire: 100
+  ResistanceIce: 100
+  ResistanceLightning: 100
+  ResistanceWater: 100
+  Modifiers:
+    _refs: []
+    _objects: []
   ActionsCharged: 0
   ActionChargeMax: 4
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-  LevelUnlocks: {fileID: 0}
   Skills:
     _backingArray: []
+  SwitchSpecialHandler:
+    rid: -2
+  LevelUnlocks: {fileID: 0}
   Tactics:
   - IsOn: 1
     Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
@@ -129,6 +132,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 7380285029310791837
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
       data:

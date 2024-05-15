@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 23800000, guid: 95f74d58869bb964bb69c17dcbde7005, type: 2}
+  m_NavMeshData: {fileID: 0}
 --- !u!1 &6136739
 GameObject:
   m_ObjectHideFlags: 0
@@ -1138,37 +1138,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1556967028}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &92958915
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 92958916}
-  m_Layer: 0
-  m_Name: NavMesh
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &92958916
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 92958915}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.24865842, y: 1.6815834, z: 1.2817163}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &95079573
 GameObject:
@@ -4317,13 +4286,14 @@ MonoBehaviour:
       type: {class: FixedEncounter, ns: , asm: Assembly-CSharp}
       data:
         Scene:
-          _path: Assets/Levels/TEST - Battle.unity
+          _path: Assets/Levels/Test Areas/Test - Battle/Test - Battle.unity
           _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
         Formation:
         - {fileID: 485800061}
         - {fileID: 485800061}
         - {fileID: 787370285}
         - {fileID: 787370285}
+        Seed: 2210254255
 --- !u!4 &386819916
 Transform:
   m_ObjectHideFlags: 0
@@ -4333,7 +4303,7 @@ Transform:
   m_GameObject: {fileID: 386819911}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.95, y: 0.798, z: -2.17}
+  m_LocalPosition: {x: 8.5, y: 0.5, z: -2.6000023}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4754,8 +4724,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 435116617}
+  - component: {fileID: 435116618}
   m_Layer: 0
-  m_Name: ENVIRONMENT
+  m_Name: Environment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4782,6 +4753,37 @@ Transform:
   - {fileID: 693586998}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &435116618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435116616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 2
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: c6f9c8810a327d04684aeae9c8df6719, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &442656066
 GameObject:
   m_ObjectHideFlags: 0
@@ -5935,13 +5937,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 559401436}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.8, y: 0.05, z: 3.12}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 7, y: 0.05, z: 1.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &560345418
 GameObject:
   m_ObjectHideFlags: 0
@@ -7399,7 +7401,7 @@ Transform:
   m_GameObject: {fileID: 656430718}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.1700029, y: 0.7980004, z: 5.792}
+  m_LocalPosition: {x: -2.02, y: 0.7980004, z: 3.78}
   m_LocalScale: {x: 1.0000002, y: 1, z: 1.0000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7934,8 +7936,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 105999999}
   - {fileID: 1545234168}
+  - {fileID: 105999999}
   m_Father: {fileID: 435116617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &694829781
@@ -11883,13 +11885,14 @@ MonoBehaviour:
       type: {class: FixedEncounter, ns: , asm: Assembly-CSharp}
       data:
         Scene:
-          _path: Assets/Levels/TEST - Battle.unity
+          _path: Assets/Levels/Test Areas/Test - Battle/Test - Battle.unity
           _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
         Formation:
         - {fileID: 787370285}
         - {fileID: 787370285}
         - {fileID: 485800061}
         - {fileID: 485800061}
+        Seed: 545104273
 --- !u!4 &1005582018
 Transform:
   m_ObjectHideFlags: 0
@@ -11899,8 +11902,8 @@ Transform:
   m_GameObject: {fileID: 1005582013}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.97, y: 0.798, z: -5.49}
-  m_LocalScale: {x: 11.517245, y: 2.7391, z: 5.4031086}
+  m_LocalPosition: {x: 6.21, y: 1.5000999, z: 7.15}
+  m_LocalScale: {x: 5, y: 3, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13544,7 +13547,7 @@ Transform:
   m_GameObject: {fileID: 1167821333}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.12, y: 0.798, z: 0.86}
+  m_LocalPosition: {x: 6.5, y: 0.5, z: -2.6000023}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13847,13 +13850,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1172801844}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.6787598, y: 0.18414523, z: 0.1818731, w: -0.6872394}
+  m_LocalRotation: {x: 0.20483194, y: -0.4857087, z: 0.67218786, w: -0.5198985}
   m_LocalPosition: {x: 94.3, y: 0, z: 25.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 270.711, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 386.103, y: 60.349, z: -89.208}
 --- !u!1 &1180297491
 GameObject:
   m_ObjectHideFlags: 0
@@ -14387,8 +14390,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2124487786}
   - {fileID: 288717676}
+  - {fileID: 2124487786}
   - {fileID: 1151694955}
   m_Father: {fileID: 435116617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -15679,7 +15682,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1381518878}
   m_Layer: 0
-  m_Name: Test Dummies
+  m_Name: NPCs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16560,9 +16563,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 911492617}
-  - {fileID: 1198938585}
   - {fileID: 829984603}
+  - {fileID: 1198938585}
+  - {fileID: 911492617}
   m_Father: {fileID: 435116617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1463393468
@@ -21612,13 +21615,14 @@ MonoBehaviour:
       type: {class: FixedEncounter, ns: , asm: Assembly-CSharp}
       data:
         Scene:
-          _path: Assets/Levels/TEST - Battle.unity
+          _path: Assets/Levels/Test Areas/Test - Battle/Test - Battle.unity
           _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
         Formation:
         - {fileID: 787370285}
         - {fileID: 485800061}
         - {fileID: 787370285}
         - {fileID: 787370285}
+        Seed: 2355037024
 --- !u!4 &1879192469
 Transform:
   m_ObjectHideFlags: 0
@@ -21628,7 +21632,7 @@ Transform:
   m_GameObject: {fileID: 1879192464}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.122, y: 0.869, z: 6.014}
+  m_LocalPosition: {x: 4.183943, y: 0.5, z: -3.283945}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22174,9 +22178,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 850201757}
-  - {fileID: 183287614}
   - {fileID: 226242352}
+  - {fileID: 183287614}
+  - {fileID: 850201757}
   m_Father: {fileID: 435116617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1919434783
@@ -27547,11 +27551,10 @@ SceneRoots:
   - {fileID: 435116617}
   - {fileID: 31896842}
   - {fileID: 1381518878}
-  - {fileID: 92958916}
   - {fileID: 656430723}
   - {fileID: 1167821338}
   - {fileID: 386819916}
   - {fileID: 1005582018}
-  - {fileID: 559401438}
   - {fileID: 1879192469}
+  - {fileID: 559401438}
   - {fileID: 1992597443}
