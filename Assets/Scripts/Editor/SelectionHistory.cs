@@ -61,7 +61,8 @@ namespace Editor
                     window.Close();
                 }
 
-                instance = CreateInstance<SelectionHistory>();
+                instance = GetWindow<SelectionHistory>();
+                instance.ShowAsDropDown(default, default);
                 instance.Current = Current;
                 instance.History = History;
             }
