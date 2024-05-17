@@ -734,7 +734,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b209f9c2b8447324ea291c48005027e5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1bc7a555be2e64c4ba55cf1f25154441, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -935,14 +935,15 @@ MonoBehaviour:
   DefaultSelection: {fileID: 401345362287278145}
   RestoreSelection: 1
   WarnWhenNoSelection: 1
-  TotalExp: {fileID: 8686092437233469389}
-  NextLevelExp: {fileID: 2136303868764161311}
-  StatusContainer: {fileID: 6804199828427104296}
   HeroSelectionUI:
     Template: {fileID: 8529211131261313913}
     _existing: []
     _pool: []
   SwitchHero: {fileID: 6791081572993808853, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
+  SelectedHero: {fileID: 0}
+  TotalExp: {fileID: 8686092437233469389}
+  NextLevelExp: {fileID: 2136303868764161311}
+  StatusContainer: {fileID: 6804199828427104296}
 --- !u!114 &3299921034759036376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4465,12 +4466,13 @@ MonoBehaviour:
     Template: {fileID: 8794627795319856162}
     _existing: []
     _pool: []
+  SwitchHero: {fileID: 6791081572993808853, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
+  SelectedHero: {fileID: 0}
   AbilityUI:
     Template: {fileID: 9207087367308374743}
     _existing: []
     _pool: []
   AbilityDescriptionContainer: {fileID: 688581940622132496}
-  SwitchHero: {fileID: 6791081572993808853, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
 --- !u!114 &1620027588115056889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24619,8 +24621,9 @@ MonoBehaviour:
     Template: {fileID: 5663235797625129274}
     _existing: []
     _pool: []
-  HeroSelectionContainer: {fileID: 2501814836273467752}
   SwitchHero: {fileID: 6791081572993808853, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
+  SelectedHero: {fileID: 0}
+  HeroSelectionContainer: {fileID: 2501814836273467752}
   PointsLeft: {fileID: 8661274019003599085}
   PointInput: {fileID: 4740273027957597423, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
   StickInput: {fileID: 8631551147567064150, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
@@ -26085,6 +26088,12 @@ MonoBehaviour:
   DefaultSelection: {fileID: 1641333607048112507}
   RestoreSelection: 1
   WarnWhenNoSelection: 1
+  HeroSelectionUI:
+    Template: {fileID: 8129356898575534198}
+    _existing: []
+    _pool: []
+  SwitchHero: {fileID: 6791081572993808853, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
+  SelectedHero: {fileID: 0}
   EquipStatsContainer: {fileID: 1469682910123255745}
   EquipLoadoutContainers:
   - {fileID: 5705413553337273468}
@@ -26096,11 +26105,6 @@ MonoBehaviour:
     _existing: []
     _pool: []
   EquipNewItemList: {fileID: 3277514565537307350}
-  HeroSelectionUI:
-    Template: {fileID: 8129356898575534198}
-    _existing: []
-    _pool: []
-  SwitchHero: {fileID: 6791081572993808853, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
 --- !u!114 &1624222576936848893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30461,11 +30465,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Control:
-    rid: 1000
+    rid: 4691955921095229441
   references:
     version: 2
     RefIds:
-    - rid: 1000
+    - rid: 4691955921095229441
+      type: {class: CameraFocusSwitch, ns: , asm: Assembly-CSharp}
+      data:
+        A:
+          rid: 4691955921095229442
+        B:
+          rid: 4691955921095229464
+        SwitchInput: {fileID: -4490110422112614200, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
+        TransitionDuration: 0.5
+    - rid: 4691955921095229442
       type: {class: OrbitCamera, ns: , asm: Assembly-CSharp}
       data:
         Input: {fileID: -7085994932723323525, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
@@ -30475,6 +30488,11 @@ MonoBehaviour:
         ObstructionMask:
           serializedVersion: 2
           m_Bits: 1
+    - rid: 4691955921095229464
+      type: {class: BirdsEyeView, ns: , asm: Assembly-CSharp}
+      data:
+        Distance: 10
+        WorldRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433914}
 --- !u!1 &8005878532033404396
 GameObject:
   m_ObjectHideFlags: 0
@@ -30888,11 +30906,13 @@ MonoBehaviour:
   DefaultSelection: {fileID: 6853668187745151463}
   RestoreSelection: 1
   WarnWhenNoSelection: 1
-  SegmentsWarning: {fileID: 556371769205405374}
   HeroSelectionUI:
     Template: {fileID: 3625958180715048652}
     _existing: []
     _pool: []
+  SwitchHero: {fileID: 6791081572993808853, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
+  SelectedHero: {fileID: 0}
+  SegmentsWarning: {fileID: 556371769205405374}
   PageList:
   - {fileID: 3567896700950933077}
   - {fileID: 7418677205664383599}
@@ -30922,7 +30942,6 @@ MonoBehaviour:
   - {fileID: 8307607847395347354}
   - {fileID: 862510877511652533}
   NewComponentParentRect: {fileID: 7151001795215991990}
-  SwitchHero: {fileID: 6791081572993808853, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
   SwitchPage: {fileID: 3890911586890391834, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
 --- !u!114 &1644737227552541639
 MonoBehaviour:
