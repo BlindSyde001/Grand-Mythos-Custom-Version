@@ -13,7 +13,11 @@ namespace Interactables
         public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
         {
             Encounter.Start(source.transform, player);
-            yield break;
+            #warning this is a bit flacky, should change this into something more robust
+            while (InputManager.CurrentState != GameState.Battle) // Wait for transition into battle
+                yield return Delay.WaitTillNextFrame;
+            while (InputManager.CurrentState == GameState.Battle) // Wait for transition out of battle
+                yield return Delay.WaitTillNextFrame;
         }
 
         public bool IsValid(out string error)

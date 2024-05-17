@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using Nodalog;
+using Sirenix.OdinInspector;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class SingletonManager : ScriptableObject
 {
-    public CriticalFormula CriticalFormula;
-    public InputActionAsset PlayerInput;
+    [Required] public CriticalFormula CriticalFormula;
+    [Required] public InputActionAsset PlayerInput;
+    [Required] public Tally HunterRank;
 
 
 
