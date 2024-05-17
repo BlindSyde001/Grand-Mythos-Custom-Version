@@ -4,37 +4,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Object = UnityEngine.Object;
 
-public class InputManager : MonoBehaviour
+public static class InputManager
 {
-    // VARIABLES
-    public static InputManager Instance { get; private set; }
-
-    public PlayerInput PlayerInput;
-
-    public GameState CurrentState { get; private set; }
-    public List<GameStateRequests> StateStack = new();
-
-    // UPDATES
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else if (Instance != this)
-        {
-            Destroy(this.gameObject);
-            return;
-        }
-
-        SetGameState(GameState.Menu);
-        this.transform.parent = null;
-        DontDestroyOnLoad(this.gameObject);
-    }
-
-    // METHODS
-    #region INPUT COMMANDS
-
+    public static GameState CurrentState { get; private set; } = GameState.Menu;
+    public static List<GameStateRequests> StateStack = new(){ new(){ Key = null, State = GameState.Menu } };
+    static InputActionAsset PlayerInput => SingletonManager.Instance.PlayerInput;
 
     /// <summary>
     /// Push a new gamestate to change the control scheme, the key is used when poping said game state.
@@ -42,7 +16,7 @@ public class InputManager : MonoBehaviour
     /// <remarks>
     /// When poping a gamestate, the last gamestate that was pushed before that one is used as the new gamestate.
     /// </remarks>
-    public void PushGameState(GameState newState, Object key)
+    public static void PushGameState(GameState newState, Object key)
     {
         StateStack.Add(new(){ State = newState, Key = key });
 
@@ -55,7 +29,7 @@ public class InputManager : MonoBehaviour
     /// <summary>
     /// Pop the gamestate associated with this key, setting the gamestate to the last one set before that one.
     /// </summary>
-    public void PopGameState(Object key)
+    public static void PopGameState(Object key)
     {
         for (int i = StateStack.Count - 1; i >= 0; i--)
         {
@@ -72,7 +46,7 @@ public class InputManager : MonoBehaviour
             }
         }
 
-        if (PlayerInput == null) // When unloading the game input gets destroyed but this function will still be called
+        if (PlayerInput == null && ReferenceEquals(PlayerInput, null) == false) // When unloading the game input gets destroyed but this function will still be called
             return;
 
         if (StateStack.Count > 0 && StateStack[^1].State != CurrentState)
@@ -81,8 +55,17 @@ public class InputManager : MonoBehaviour
             SetGameState(GameState.Menu);
     }
 
-    void SetGameState(GameState newState)
+    static void SetGameState(GameState newState)
     {
+        var oldMap = PlayerInput.FindActionMap(StateToMap(CurrentState));
+        var currentMap = PlayerInput.FindActionMap(StateToMap(newState));
+        oldMap.Disable();
+        currentMap.Enable();
+        foreach (var action in currentMap.actions)
+            action.Enable();
+        foreach (var action in oldMap.actions)
+            action.Disable();
+
         CurrentState = newState;
         switch (newState)
         {
@@ -92,11 +75,6 @@ public class InputManager : MonoBehaviour
                 break;
 
             case GameState.Cutscene:
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-                break;
-
-            default:
             case GameState.Battle:
             case GameState.Menu:
             case GameState.Pause:
@@ -104,18 +82,20 @@ public class InputManager : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
                 break;
         }
+    }
 
-        PlayerInput.SwitchCurrentActionMap(newState switch
+    static string StateToMap(GameState state)
+    {
+        return state switch
         {
             GameState.Overworld => "Overworld Map",
             GameState.Battle => "Battle Map",
             GameState.Cutscene => "Cutscene Map",
             GameState.Menu => "Menu Map",
             GameState.Pause => "Pause Map",
-            _ => throw new ArgumentOutOfRangeException(nameof(newState), newState, null)
-        });
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
+        };
     }
-    #endregion
 
     [Serializable]
     public struct GameStateRequests
@@ -126,12 +106,12 @@ public class InputManager : MonoBehaviour
 
     static InputManager()
     {
-        DomainReloadHelper.BeforeReload += helper => helper.InputManagerInstance = Instance;
-        DomainReloadHelper.AfterReload += helper => Instance = helper.InputManagerInstance;
+        DomainReloadHelper.BeforeReload += helper => helper.InputManagerInstance = StateStack;
+        DomainReloadHelper.AfterReload += helper => StateStack = helper.InputManagerInstance;
     }
 }
 
 public partial class DomainReloadHelper
 {
-    public InputManager InputManagerInstance;
+    public List<InputManager.GameStateRequests> InputManagerInstance;
 }

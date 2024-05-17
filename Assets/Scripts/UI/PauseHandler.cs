@@ -35,14 +35,14 @@ public class PauseHandler : MonoBehaviour
     void SwitchOn()
     {
         Time.timeScale = 0f;
-        InputManager.Instance.PushGameState(GameState.Pause, this);
+        InputManager.PushGameState(GameState.Pause, this);
         OnPause.Invoke();
     }
 
     void SwitchOff()
     {
         Time.timeScale = 1f;
-        InputManager.Instance.PopGameState(this);
+        InputManager.PopGameState(this);
         OnUnpause.Invoke();
     }
 }

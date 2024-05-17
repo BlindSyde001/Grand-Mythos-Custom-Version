@@ -53,14 +53,14 @@ public class BattleStateMachine : MonoBehaviour
             Destroy(this);
             return;
         }
-        InputManager.Instance.PushGameState(GameState.Battle, this);
+        InputManager.PushGameState(GameState.Battle, this);
     }
 
     void OnDestroy()
     {
         if (_instance == this)
             _instance = null;
-        InputManager.Instance.PopGameState(this);
+        InputManager.PopGameState(this);
     }
 
     IEnumerator Start()

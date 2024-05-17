@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SingletonManager : ScriptableObject
 {
     public CriticalFormula CriticalFormula;
+    public InputActionAsset PlayerInput;
 
 
 

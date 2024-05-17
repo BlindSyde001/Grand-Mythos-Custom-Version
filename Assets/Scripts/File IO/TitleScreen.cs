@@ -6,14 +6,12 @@ public class TitleScreen : MonoBehaviour
 
     void OnEnable()
     {
-        if (InputManager.Instance != null)
-            InputManager.Instance.PushGameState(GameState.Menu, this);
+        InputManager.PushGameState(GameState.Menu, this);
     }
 
     void OnDisable()
     {
-        if (InputManager.Instance != null)
-            InputManager.Instance.PopGameState(this);
+        InputManager.PopGameState(this);
     }
 
     public void NewGame() => NewGameScene.SwapSceneToThisSpawnPoint();

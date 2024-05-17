@@ -8,8 +8,6 @@ using UnityEngine.InputSystem;
 
 public class MenuInputs : MonoBehaviour
 {
-    // VARIABLES
-    public InputManager InputManager { get; private set; }
     public GameManager GameManager { get; private set; }
 
     [Required]
@@ -29,7 +27,6 @@ public class MenuInputs : MonoBehaviour
     // UPDATES
     void Start()
     {
-        InputManager = InputManager.Instance;
         GameManager = GameManager.Instance;
         CurrentMenuOpen = null;
         startMenuActions.gameObject.SetActive(false);
@@ -103,12 +100,12 @@ public class MenuInputs : MonoBehaviour
 
             if (from == null)
             {
-                InputManager.Instance.PushGameState(GameState.Menu, this);
+                InputManager.PushGameState(GameState.Menu, this);
                 MenuBackground.DOFade(1, Speed);
             }
             if (to == null)
             {
-                InputManager.Instance.PopGameState(this);
+                InputManager.PopGameState(this);
                 MenuBackground.DOFade(0, Speed);
             }
 

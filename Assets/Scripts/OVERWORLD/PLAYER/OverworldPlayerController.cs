@@ -65,7 +65,7 @@ public class OverworldPlayerController : ReloadableBehaviour
 
     protected override void OnEnabled(bool afterDomainReload)
     {
-        InputManager.Instance.PushGameState(GameState.Overworld, this);
+        InputManager.PushGameState(GameState.Overworld, this);
         Instances.Add(this);
 
         _noNavmesh = false;
@@ -90,7 +90,7 @@ public class OverworldPlayerController : ReloadableBehaviour
 
     protected override void OnDisabled(bool beforeDomainReload)
     {
-        InputManager.Instance.PopGameState(this);
+        InputManager.PopGameState(this);
     }
 
     public bool TryPlayInteraction(IInteractionSource source, IInteraction interaction)
