@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 public static class InputManager
 {
     public static GameState CurrentState { get; private set; } = GameState.Menu;
-    public static List<GameStateRequests> StateStack = new(){ new(){ Key = null, State = GameState.Menu } };
+    public static List<GameStateRequests> StateStack = new();
     static InputActionAsset PlayerInput => SingletonManager.Instance.PlayerInput;
 
     /// <summary>
@@ -61,10 +61,10 @@ public static class InputManager
         var currentMap = PlayerInput.FindActionMap(StateToMap(newState));
         oldMap.Disable();
         currentMap.Enable();
-        foreach (var action in currentMap.actions)
-            action.Enable();
         foreach (var action in oldMap.actions)
             action.Disable();
+        foreach (var action in currentMap.actions)
+            action.Enable();
 
         CurrentState = newState;
         switch (newState)
@@ -95,6 +95,12 @@ public static class InputManager
             GameState.Pause => "Pause Map",
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void InitInputManager()
+    {
+        SetGameState(GameState.Menu);
     }
 
     [Serializable]
