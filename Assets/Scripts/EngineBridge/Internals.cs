@@ -1,6 +1,8 @@
 using System;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditorInternal;
+#endif
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -8,6 +10,7 @@ namespace UnityHackyInternals
 {
     public static class Internals
     {
+#if UNITY_EDITOR
         public delegate UnityEngine.Object ObjectFieldValidator(
             UnityEngine.Object[] references,
             System.Type objType,
@@ -382,5 +385,6 @@ namespace UnityHackyInternals
             MonoScript monoScript = MonoScript.FromScriptedObject(obj);
             return !(monoScript == null) && !(monoScript.GetClass() == null);
         }
+#endif
     }
 }
