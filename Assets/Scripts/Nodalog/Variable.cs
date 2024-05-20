@@ -9,20 +9,34 @@ namespace Nodalog
         protected virtual void OnEnable()
         {
 #if UNITY_EDITOR
-            UnityEditor.EditorApplication.playModeStateChanged += RollbackPlayModeChanges;
-
-            // Rollback changes made in play mode to states
-            void RollbackPlayModeChanges(UnityEditor.PlayModeStateChange state)
-            {
-                if (state == UnityEditor.PlayModeStateChange.ExitingPlayMode)
-                    Resources.UnloadAsset(this);
-            }
+            UnityEditor.EditorApplication.playModeStateChanged += StateChanged;
 #endif
+            if (Application.isPlaying)
+                OnPlay();
         }
 
         protected virtual void OnDisable()
         {
-
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.playModeStateChanged -= StateChanged;
+#endif
+            if (Application.isPlaying)
+                OnExit();
         }
+
+        #if UNITY_EDITOR
+
+        // Rollback changes made in play mode to states
+        void StateChanged(UnityEditor.PlayModeStateChange state)
+        {
+            if (state == UnityEditor.PlayModeStateChange.EnteredPlayMode)
+                OnPlay();
+            else if (state == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+                OnExit();
+        }
+        #endif
+
+        protected abstract void OnPlay();
+        protected abstract void OnExit();
     }
 }

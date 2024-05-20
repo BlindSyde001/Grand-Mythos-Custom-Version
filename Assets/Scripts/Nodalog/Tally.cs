@@ -1,4 +1,5 @@
 ﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Nodalog
@@ -6,20 +7,30 @@ namespace Nodalog
     [CreateAssetMenu(menuName = "Nodalog/Tally")]
     public class Tally : Variable, ISaved<Tally, Tally.Save>
     {
+        [OnValueChanged(nameof(OnInspectorChange))]
         public int Amount;
+
+        [SerializeField, ReadOnly]
+        int _defaultValue;
 
         guid ISaved.UniqueConstID => Guid;
 
-        protected override void OnEnable()
+        void OnInspectorChange()
         {
-            SavingSystem.TryRestore<Tally, Save>(this);
-            base.OnEnable();
+            if (Application.isPlaying == false)
+                _defaultValue = Amount;
         }
 
-        protected override void OnDisable()
+        protected override void OnPlay()
         {
-            SavingSystem.StoreAndUnregister<Tally, Save>(this);
-            base.OnDisable();
+            SavingSystem.TryRestore<Tally, Save>(this);
+        }
+
+        protected override void OnExit()
+        {
+            if (Amount != _defaultValue)
+                SavingSystem.StoreAndUnregister<Tally, Save>(this);
+            Amount = _defaultValue;
         }
 
         [Serializable] public struct Save : ISaveHandler<Tally>

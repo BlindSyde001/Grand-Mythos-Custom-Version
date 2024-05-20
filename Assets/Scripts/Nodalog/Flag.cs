@@ -1,4 +1,5 @@
 ﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Nodalog
@@ -6,20 +7,30 @@ namespace Nodalog
     [CreateAssetMenu(menuName = "Nodalog/Flag")]
     public class Flag : Variable, ISaved<Flag, Flag.Save>
     {
+        [OnValueChanged(nameof(OnInspectorChange))]
         public bool State;
+
+        [SerializeField, ReadOnly]
+        bool _defaultValue;
 
         guid ISaved.UniqueConstID => Guid;
 
-        protected override void OnEnable()
+        void OnInspectorChange()
         {
-            SavingSystem.TryRestore<Flag, Save>(this);
-            base.OnEnable();
+            if (Application.isPlaying == false)
+                _defaultValue = State;
         }
 
-        protected override void OnDisable()
+        protected override void OnPlay()
         {
-            SavingSystem.StoreAndUnregister<Flag, Save>(this);
-            base.OnDisable();
+            SavingSystem.TryRestore<Flag, Save>(this);
+        }
+
+        protected override void OnExit()
+        {
+            if (State != _defaultValue)
+                SavingSystem.StoreAndUnregister<Flag, Save>(this);
+            State = _defaultValue;
         }
 
         [Serializable] public struct Save : ISaveHandler<Flag>
