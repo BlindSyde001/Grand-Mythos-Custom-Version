@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.UI;
 
 public partial class DomainReloadHelper
 {
@@ -72,6 +70,12 @@ public static class SavingSystem
     /// </summary>
     public static void Store<TSaved, THandler>(TSaved source) where TSaved : ISaved<TSaved, THandler> where THandler : ISaveHandler<TSaved>, new()
     {
+        if (ReferenceEquals(SpawnPoint.LastSpawnUsed, null))
+        {
+            Debug.LogWarning("Could not store progress as the player character did not spawn");
+            return;
+        }
+
         RegisterAndValidate<TSaved, THandler>(source);
 
         var newSaveData = new Save(_latestSave.Instances, SpawnPoint.LastSpawnUsed.Reference);

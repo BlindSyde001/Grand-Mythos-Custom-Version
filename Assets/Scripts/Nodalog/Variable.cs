@@ -6,9 +6,9 @@ namespace Nodalog
     {
         [Multiline(lines:3)] public string Description = "";
 
-#if UNITY_EDITOR
-        void OnEnable()
+        protected virtual void OnEnable()
         {
+#if UNITY_EDITOR
             UnityEditor.EditorApplication.playModeStateChanged += RollbackPlayModeChanges;
 
             // Rollback changes made in play mode to states
@@ -17,7 +17,12 @@ namespace Nodalog
                 if (state == UnityEditor.PlayModeStateChange.ExitingPlayMode)
                     Resources.UnloadAsset(this);
             }
-        }
 #endif
+        }
+
+        protected virtual void OnDisable()
+        {
+
+        }
     }
 }
