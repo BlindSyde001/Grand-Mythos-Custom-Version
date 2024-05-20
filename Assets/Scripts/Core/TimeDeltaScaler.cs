@@ -20,7 +20,7 @@ public class TimeDeltaScaler : InputProcessor<float>
     }
 #endif
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
     static void Initialize()
     {
         InputSystem.RegisterProcessor<TimeDeltaScaler>();
@@ -44,7 +44,7 @@ public class TimeDeltaScaler2D : InputProcessor<Vector2>
     }
 #endif
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
     static void Initialize()
     {
         InputSystem.RegisterProcessor<TimeDeltaScaler2D>();
