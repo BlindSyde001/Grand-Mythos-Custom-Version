@@ -13,7 +13,7 @@ namespace Nodalog
     [IncludeInSettings(true)]
     public class NodeStart : Unit
     {
-        public static Dictionary<Flow, (UIBase ui, bool fromPrefab)> Starts = new();
+        public static Dictionary<Flow, (NodeStart entrypoint, UIBase ui, bool fromPrefab)> Starts = new();
 
         [DoNotSerialize, PortLabelHidden]
         public ControlInput? Enter { get; private set; }
@@ -27,20 +27,40 @@ namespace Nodalog
         [DoNotSerialize]
         public ValueInput UI;
 
+        static NodeStart()
+        {
+            DomainReloadHelper.OnEnterEditMode += () =>
+            {
+                Starts.Clear();
+            };
+        }
+
         protected override void Definition()
         {
             Exit = ControlOutput(nameof(Exit));
             Enter = ControlInput(nameof(Enter), flow =>
             {
-                if (Starts.ContainsKey(flow) == false)
+                if (Starts.TryGetValue(flow, out var data))
                 {
-                    var ui = flow.GetValue<UIBase>(UI);
-                    if (ui.gameObject.scene.rootCount == 0) // This is a prefab, create a copy and use that instead
-                        Starts[flow] = (Object.Instantiate(ui), true);
+                    if (ReferenceEquals(data.entrypoint, this))
+                    {
+                        // We already started a dialog on this entry point, but it never hit the dialog end node,
+                        // an exception might have prevented the dialog from completing
+                        Debug.LogError("Restarting uncompleted dialog, recreating interface as a failsafe");
+                    }
                     else
-                        Starts[flow] = (ui, false);
-                    ui.StartDialogPresentation();
+                    {
+                        Debug.LogWarning("This flow has already Started a dialog, proceeding regardless but this may not be intended");
+                        return Exit;
+                    }
                 }
+
+                var ui = flow.GetValue<UIBase>(UI);
+                if (ui.gameObject.scene.rootCount == 0) // This is a prefab, create a copy and use that instead
+                    Starts[flow] = (this, Object.Instantiate(ui), true);
+                else
+                    Starts[flow] = (this, ui, false);
+                ui.StartDialogPresentation();
                 return Exit;
             });
             Succession(Enter, Exit);
