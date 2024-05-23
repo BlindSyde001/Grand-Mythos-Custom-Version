@@ -93,9 +93,12 @@ public class OverworldPlayerController : ReloadableBehaviour
         InputManager.PopGameState(this);
     }
 
-    public bool TryPlayInteraction(IInteractionSource source, IInteraction interaction)
+    public bool TryPlayInteraction(UniqueInteractionSource source)
     {
         if ((Disabler & ControlDisabler.Interacting) != 0)
+            return false;
+
+        if (source.TryConsumeInteraction(out var interaction) == false)
             return false;
 
         Disabler |= ControlDisabler.Interacting; // Just in case coroutine does not start immediately
@@ -120,21 +123,30 @@ public class OverworldPlayerController : ReloadableBehaviour
         if (Disabler != 0)
             return;
 
-        for (int i = Physics.OverlapSphereNonAlloc(transform.position, InteractDistance, _sphereCastUtility, ~CharacterLayerMask, QueryTriggerInteraction.Collide) - 1; i >= 0; i--)
         {
-            Collider c = _sphereCastUtility[i];
-            if (c.GetComponent<Interactable>() is not Interactable interactable)
-                continue;
-
-            Prompt.TryShowPromptThisFrame(interactable.transform.position, interactable.Text);
-            if (interactable.Interaction == null)
+            Interactable closestInteractable = null;
+            float closestDist = float.PositiveInfinity;
+            for (int i = Physics.OverlapSphereNonAlloc(transform.position, InteractDistance, _sphereCastUtility, ~CharacterLayerMask, QueryTriggerInteraction.Collide) - 1; i >= 0; i--)
             {
-                Debug.LogError($"No interaction on this interactable ({interactable})", interactable);
-                continue;
+                Collider c = _sphereCastUtility[i];
+                if (c.GetComponent<Interactable>() is not Interactable interactable)
+                    continue;
+
+                var closestOnBounds = c.ClosestPointOnBounds(transform.position);
+                var distToBounds = Vector3.Distance(closestOnBounds, transform.position);
+                if (distToBounds < closestDist)
+                {
+                    closestDist = distToBounds;
+                    closestInteractable = interactable;
+                }
             }
 
-            if (Interact.action.WasPressedThisFrame() && TryPlayInteraction(interactable, interactable.Interaction))
-                return;
+            if (closestInteractable)
+            {
+                Prompt.TryShowPromptThisFrame(closestInteractable.transform.position, closestInteractable.Text);
+                if (Interact.action.WasPressedThisFrame() && TryPlayInteraction(closestInteractable))
+                    return;
+            }
         }
 
         Vector3 movementVector;

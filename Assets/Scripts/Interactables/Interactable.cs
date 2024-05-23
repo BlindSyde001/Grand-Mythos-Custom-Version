@@ -1,11 +1,9 @@
-﻿using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 
 [AddComponentMenu(" GrandMythos/Interactable")]
-public class Interactable : MonoBehaviour, IInteractionSource
+public class Interactable : UniqueInteractionSource
 {
     public string Text = "Interact?";
-    [Required, SerializeReference] public IInteraction Interaction = null;
 
     void OnDrawGizmos()
     {

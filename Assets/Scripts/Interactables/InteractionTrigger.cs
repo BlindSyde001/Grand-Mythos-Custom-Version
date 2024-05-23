@@ -3,18 +3,8 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [AddComponentMenu(" GrandMythos/InteractionTrigger")]
-public class InteractionTrigger : MonoBehaviour, IInteractionSource
+public class InteractionTrigger : UniqueInteractionSource
 {
-    public TriggerType Type = TriggerType.OnceEveryLoad;
-    [Required, SerializeReference] public IInteraction Interaction = null;
-
-    public enum TriggerType
-    {
-        Always,
-        OnceEveryLoad,
-        OnceEver
-    }
-
     // Show the disable/enable toggle in editor
     void OnEnable(){}
     void OnDisable(){}
@@ -36,6 +26,9 @@ public class InteractionTrigger : MonoBehaviour, IInteractionSource
 
     void OnTriggerEnter(Collider other)
     {
+        if (Type is TriggerType.OnceEver or TriggerType.OnceEveryLoad && Consumed)
+            return;
+
         if (enabled == false)
             return;
 
@@ -45,17 +38,14 @@ public class InteractionTrigger : MonoBehaviour, IInteractionSource
         if (other.GetComponentInParent<OverworldPlayerController>() is not { } controller)
             return;
 
-        if (controller.TryPlayInteraction(this, Interaction))
+        if (controller.TryPlayInteraction(this))
         {
             switch (Type)
             {
                 case TriggerType.Always:
                     break;
                 case TriggerType.OnceEveryLoad:
-                    enabled = false;
-                    break;
                 case TriggerType.OnceEver:
-                    #warning save and load this trigger as being triggered
                     enabled = false;
                     break;
                 default:
