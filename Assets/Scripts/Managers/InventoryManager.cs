@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using System.Linq;
 using Sirenix.OdinInspector;
-using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, ISaved<InventoryManager, InventoryManager.SaveV1>
 {
@@ -16,41 +17,44 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     /// </summary>
     ItemData _first;
 
-    [SerializeField]
-    [OnValueChanged(nameof(EditorCreditsChanged))]
-    int _credits = 1000;
+    [FormerlySerializedAs("_credits")]
+    public int Credits = 1000;
 
-    [SerializeField] SerializableDictionary<BaseItem, ItemData> Items = new();
+    [SerializeField, OnValueChanged(nameof(ConsolidateItems))]
+    ItemSet Items = new();
 
     public List<ActionCondition> ConditionsAcquired;
-
-    public int Credits
-    {
-        get => _credits;
-        set
-        {
-            _credits = value;
-            OnCreditsChanged?.Invoke(_credits);
-        }
-    }
-
-    public UnityAction<int> OnCreditsChanged;
-    public UnityAction OnItemsChanged;
 
     void ISerializationCallbackReceiver.OnBeforeSerialize() {}
 
     void ISerializationCallbackReceiver.OnAfterDeserialize()
     {
-        foreach (var (item, data) in Items)
-        {
-            if (data.Item == null)
-                data.Item = item;
-        }
-
         #if UNITY_EDITOR
+        ConsolidateItems();
         if (DomainReloadHelper.LastState == DomainReloadHelper.LastPlayModeState.EnteredPlayMode)
             SortBy(Sort.Type); // Make sure that if the user is adding new items through the editor during runtime, those are sorted and part of the enumeration
         #endif
+    }
+
+    void OnValidate()
+    {
+        ConsolidateItems();
+    }
+
+    void ConsolidateItems()
+    {
+        var data = Items.ToArray();
+        Items.Clear();
+        foreach (var item in data)
+        {
+            if (Items.TryGetValue(item.Item, out var d))
+            {
+                Debug.LogWarning($"{item.Item} was already part of the collection, adding the count to pre-existing definition");
+                d.Count += item.Count;
+            }
+            else
+                Items.Add(item);
+        }
     }
 
     public enum Sort
@@ -60,10 +64,6 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         Count,
         Name,
     }
-
-
-
-
 
 
 
@@ -89,6 +89,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
             return;
         }
         SavingSystem.TryRestore<InventoryManager, SaveV1>(this);
+        SortBy(Sort.Type);
     }
 
     void OnDestroy()
@@ -124,9 +125,17 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         data.Count -= count;
         if (data.Count == 0)
         {
-            data.Previous.Next = data.Next; // Remove from the linked list
-            if (data.Next != null)
-                data.Next.Previous = data.Previous;
+            if (ReferenceEquals(_first, data))
+            {
+                _first = data.Next;
+            }
+            else
+            {
+                data.Previous.Next = data.Next; // Remove from the linked list
+                if (data.Next != null)
+                    data.Next.Previous = data.Previous;
+            }
+
             data.Next = null;
             data.Previous = null;
             Items.Remove(item);
@@ -136,7 +145,6 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
             if (_lastSort == Sort.Count)
                 SortedInsertion(data);
         }
-        OnItemsChanged?.Invoke();
     }
 
     public void AddToInventory(BaseItem item, uint count)
@@ -152,10 +160,9 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         }
         else // New item
         {
-            Items[item] = data = new ItemData() { Item = item, Count = count };
+            Items.Add(data = new() { Item = item, Count = count });
             SortedInsertion(data);
         }
-        OnItemsChanged?.Invoke();
     }
 
     void SortedInsertion(ItemData insertion)
@@ -243,7 +250,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     public void SortBy(Sort sort)
     {
         _lastSort = sort;
-        var sorting = Items.OrderBy(x => x.Value, sort switch
+        var sorting = Items.OrderBy(x => x, sort switch
         {
             Sort.Timestamp => new SortByTimestamp(),
             Sort.Type => new SortByType(),
@@ -254,7 +261,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
 
         ItemData previous = null;
         _first = null;
-        foreach (var (_, data) in sorting)
+        foreach (var data in sorting)
         {
             data.Next = null;
             data.Previous = previous;
@@ -265,12 +272,6 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
 
             _first ??= data;
         }
-    }
-
-    void EditorCreditsChanged()
-    {
-        if (Application.isPlaying)
-            OnCreditsChanged?.Invoke(_credits);
     }
 
     struct SortByTimestamp : IComparer<ItemData>
@@ -314,12 +315,56 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     [Serializable]
     public class ItemData
     {
-        [Required]
+        [Required, HorizontalGroup, HideLabel, SuffixLabel("x")]
         public BaseItem Item;
+        [HorizontalGroup, HideLabel]
         public uint Count = 1;
         public DateTime Timestamp = DateTime.Now;
         [NonSerialized]
         public ItemData Previous, Next;
+    }
+
+    [Serializable]
+    public class ItemSet : SerializableHashSet<ItemData>
+    {
+        public ItemSet() : base(new OnlyCollideWithItem()) { }
+
+        [ThreadStatic]
+        static ItemData _dummy;
+
+        public bool TryGetValue(BaseItem item, [MaybeNullWhen(false)] out ItemData data)
+        {
+            _dummy ??= new();
+            _dummy.Item = item;
+            return TryGetValue(_dummy, out data);
+        }
+
+        public bool Contains(BaseItem item)
+        {
+            _dummy ??= new();
+            _dummy.Item = item;
+            return Contains(_dummy);
+        }
+
+        public bool Remove(BaseItem item)
+        {
+            _dummy ??= new();
+            _dummy.Item = item;
+            return Remove(_dummy);
+        }
+
+        public class OnlyCollideWithItem : IEqualityComparer<ItemData>
+        {
+            public bool Equals(ItemData x, ItemData y)
+            {
+                return ReferenceEquals(x, y) || (x != null && y != null && Equals(x.Item, y.Item));
+            }
+
+            public int GetHashCode(ItemData obj)
+            {
+                return obj.Item?.GetHashCode() ?? 0;
+            }
+        }
     }
 
     [Serializable] public struct SaveV1 : ISaveHandler<InventoryManager>
@@ -334,7 +379,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
 
         public void Transfer(InventoryManager source, SavingSystem.Transfer transfer)
         {
-            transfer.Value(ref Credits, ref source._credits);
+            transfer.Value(ref Credits, ref source.Credits);
             transfer.Value(ref LastSort, ref source._lastSort);
             transfer.Identifiables<List<guid>, List<ActionCondition>, ActionCondition>(ref Conditions, ref source.ConditionsAcquired);
 
@@ -342,9 +387,9 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
             {
                 Items = source.Items.Select(x => new SavedItemData
                 {
-                    Item = x.Value.Item.Guid,
-                    Count = x.Value.Count,
-                    Timestamp = x.Value.Timestamp
+                    Item = x.Item.Guid,
+                    Count = x.Count,
+                    Timestamp = x.Timestamp
                 }).ToArray();
             }
             else
@@ -354,8 +399,8 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
                 {
                     if (IdentifiableDatabase.TryGet(x.Item, out BaseItem item))
                     {
-                        var next = new ItemData { Item = item, Count = x.Count, Timestamp = x.Timestamp };
-                        source.Items.Add(item, next);
+                        var data = new ItemData { Item = item, Count = x.Count, Timestamp = x.Timestamp };
+                        source.Items.Add(data);
                     }
                     else
                     {

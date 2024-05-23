@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Consumable", menuName = "Consumables")]
-public class Consumable : BaseItem, IAction
+public class Consumable : TradeableItem, IAction
 {
     const string TargetInfoTextShort = "The state the TARGET of this consumable MUST ABSOLUTELY BE IN to be able to use this consumable ON THEM.";
     const string TargetInfoText = "The state the TARGET of this consumable MUST ABSOLUTELY BE IN to be able to use this consumable ON THEM.\n" +

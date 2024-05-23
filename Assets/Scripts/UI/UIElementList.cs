@@ -9,8 +9,8 @@ using Object = UnityEngine.Object;
 public class UIElementList<T> : IEnumerable<T> where T : MonoBehaviour
 {
     [Required] public T Template;
-    [SerializeField, ReadOnly] List<T> _existing = new();
-    [SerializeField, ReadOnly] List<T> _pool = new();
+    [SerializeField, ReadOnly, HorizontalGroup] List<T> _existing = new();
+    [SerializeField, ReadOnly, HorizontalGroup] List<T> _pool = new();
 
     public T this[int index] => _existing[index];
 
