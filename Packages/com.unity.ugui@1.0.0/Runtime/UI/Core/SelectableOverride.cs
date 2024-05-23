@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
@@ -8,6 +9,49 @@ namespace UnityEngine.UI
         enum Axis : int
         {
             X = 0, Y = 1
+        }
+
+        // Convenience function -- change the selection to the specified object if it's not null and happens to be active.
+        void Navigate(AxisEventData eventData, Selectable sel)
+        {
+            if (sel != null && sel.IsActive())
+                eventData.selectedObject = sel.gameObject;
+
+            if (sel != null && sel.GetComponentInParent<ScrollRect>() is {} scrollRect)
+            {
+                for (var p = sel.transform; p != null; p = p.parent)
+                {
+                    if (p == scrollRect.content)
+                    {
+                        ScrollInView((RectTransform)sel.transform, scrollRect);
+                        break;
+                    }
+                }
+            }
+        }
+
+        void ScrollInView(RectTransform child, ScrollRect scrollRect)
+        {
+            // Source: https://stackoverflow.com/a/76485551
+            var viewPosMin = scrollRect.viewport.rect.min;
+            var viewPosMax = scrollRect.viewport.rect.max;
+
+            var childPosMin = scrollRect.viewport.InverseTransformPoint(child.TransformPoint(child.rect.min));
+            var childPosMax = scrollRect.viewport.InverseTransformPoint(child.TransformPoint(child.rect.max));
+
+            var move = Vector2.zero;
+
+            if (childPosMin.y < viewPosMin.y)
+                move.y += childPosMin.y - viewPosMin.y;
+            if (childPosMax.y > viewPosMax.y)
+                move.y += childPosMax.y - viewPosMax.y;
+            if (childPosMin.x < viewPosMin.x)
+                move.x += childPosMin.x - viewPosMin.x;
+            if (childPosMax.x > viewPosMax.x)
+                move.x += childPosMax.x - viewPosMax.x;
+
+            Vector3 worldMove = scrollRect.viewport.TransformDirection(move);
+            scrollRect.content.localPosition -= scrollRect.content.InverseTransformDirection(worldMove);
         }
 
         /// <summary>

@@ -870,13 +870,6 @@ namespace UnityEngine.UI
             return dir;
         }
 
-        // Convenience function -- change the selection to the specified object if it's not null and happens to be active.
-        void Navigate(AxisEventData eventData, Selectable sel)
-        {
-            if (sel != null && sel.IsActive())
-                eventData.selectedObject = sel.gameObject;
-        }
-
         /// <summary>
         /// Find the selectable object to the left of this one.
         /// </summary>
