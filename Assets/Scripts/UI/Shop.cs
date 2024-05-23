@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Interactables;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [AddComponentMenu(" GrandMythos/Shop")]
@@ -23,11 +25,13 @@ public class Shop : MonoBehaviour
     public UIElementList<ShopItemButton> ItemsList = new();
 
     [Required] public TMP_Text PlayerCredits;
+    [Required] public TMP_Text ItemDescription;
 
     Categories _selectedCategory;
 
     void OnEnable()
     {
+        ItemDescription.text = "";
         BuyTab.onClick.RemoveListener(OnClickBuy);
         SellTab.onClick.RemoveListener(OnClickSell);
 
@@ -138,8 +142,31 @@ public class Shop : MonoBehaviour
                 element.Button.onClick.AddListener(() =>
                 {
                     PlayerTrySell(item);
+                    var selection = EventSystem.current.currentSelectedGameObject;
+                    if (selection == element.Button.gameObject)
+                    {
+                        // Change selection to another element
+                        var arr = ItemsList.ToArray();
+                        var i = Array.IndexOf(arr, element);
+                        if (i + 1 < arr.Length)
+                            arr[i+1].Button.Select();
+                        else if (i - 1 >= 0)
+                            arr[i-1].Button.Select();
+                    }
                     ItemsList.Remove(element);
                 });
+
+            var onHover = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+            onHover.callback.AddListener(_ => ItemDescription.text = item.Description);
+            var onSelect = new EventTrigger.Entry { eventID = EventTriggerType.Select };
+            onSelect.callback.AddListener(_ => ItemDescription.text = item.Description);
+
+            if (element.Button.gameObject.TryGetComponent(out EventTrigger trigger) == false)
+                trigger = element.Button.gameObject.AddComponent<EventTrigger>();
+
+            trigger.triggers.Clear();
+            trigger.triggers.Add(onHover);
+            trigger.triggers.Add(onSelect);
         }
     }
 
