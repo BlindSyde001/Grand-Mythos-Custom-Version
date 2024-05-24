@@ -7,9 +7,9 @@ public class Interactable : UniqueInteractionSource
 
     void OnDrawGizmos()
     {
-        if (Interaction == null)
+        if (OnTrigger == null)
             GizmosHelper.Label(transform.position, $"No interaction set on this {nameof(Interactable)}", Color.red);
-        else if (Interaction.IsValid(out string error) == false)
+        else if (OnTrigger.IsValid(out string error) == false)
             GizmosHelper.Label(transform.position, error, Color.red);
         else if (GetComponent<Collider>() is Collider c && c != null)
         {

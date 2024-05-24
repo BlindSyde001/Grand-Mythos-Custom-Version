@@ -129,7 +129,7 @@ public class OverworldPlayerController : ReloadableBehaviour
             for (int i = Physics.OverlapSphereNonAlloc(transform.position, InteractDistance, _sphereCastUtility, ~CharacterLayerMask, QueryTriggerInteraction.Collide) - 1; i >= 0; i--)
             {
                 Collider c = _sphereCastUtility[i];
-                if (c.GetComponent<Interactable>() is not Interactable interactable)
+                if (c.GetComponent<Interactable>() is not Interactable interactable || interactable.Consumed)
                     continue;
 
                 var closestOnBounds = c.ClosestPointOnBounds(transform.position);

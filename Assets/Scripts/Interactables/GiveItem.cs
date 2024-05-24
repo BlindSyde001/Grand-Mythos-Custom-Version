@@ -8,25 +8,29 @@ namespace Interactables
     public class GiveItem : IInteraction
     {
         [Required]
-        public CharacterTemplate.Drop Item;
+        public BaseItem Item;
+        [ValidateInput(nameof(ValidateCount), "Must be greater than 0!")]
+        public uint Count = 1;
+
+        bool ValidateCount(uint count) => count > 0;
 
         public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
         {
-            InventoryManager.Instance.AddToInventory(Item.Item, Item.Count);
+            InventoryManager.Instance.AddToInventory(Item, Count);
             yield break;
         }
 
         public bool IsValid(out string error)
         {
-            if (Item.Item == null)
+            if (Item == null)
             {
                 error = $"{nameof(Item)} is null";
                 return false;
             }
 
-            if (Item.Count == 0)
+            if (Count == 0)
             {
-                error = $"{nameof(Item.Count)} is 0";
+                error = $"{nameof(Count)} is 0";
                 return false;
             }
 

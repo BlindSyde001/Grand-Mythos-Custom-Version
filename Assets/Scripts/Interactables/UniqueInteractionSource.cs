@@ -1,20 +1,30 @@
 ﻿using System;
+using System.Collections;
+using System.Linq;
+using Interactables;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSource, ISaved<UniqueInteractionSource, UniqueInteractionSource.Save>
 {
-    const string InfoBoxWarning =
+    const string InfoBoxGuidWarning =
         "This value identifies this component for saving and restoring its state when its Type is set to 'Once Ever',\n" +
         "if you delete it and recreate one, any saved state won't transfer to the new one.\n" +
         "Talk to a programmer if you ever mistakenly do so.";
 
-    [InfoBox(InfoBoxWarning, InfoMessageType.Warning)]
+    const string InfoBoxWarningPersistent = "The reaction that runs after 'OnTrigger' and whenever we load a game in which this object has been triggered.\n" +
+                                   "For example, this interaction would open the locked door to keep it open between sessions, while OnTrigger would remove the key from the player's inventory";
+
+    [InfoBox(InfoBoxGuidWarning, InfoMessageType.Warning)]
     [SerializeField, DisplayAsString]
     guid _guid = Guid.NewGuid();
 
-    [Required, SerializeReference, SerializeField]
-    protected IInteraction Interaction;
+    [FormerlySerializedAs("Interaction"), Required, SerializeReference, SerializeField]
+    protected IInteraction OnTrigger;
+
+    [SerializeReference, SerializeField, Tooltip(InfoBoxWarningPersistent)]
+    protected IInteraction PersistentEffect;
 
     public TriggerType Type = TriggerType.OnceEveryLoad;
 
@@ -29,8 +39,21 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
         if (Type == TriggerType.OnceEver)
             SavingSystem.TryRestore<UniqueInteractionSource, Save>(this);
 
-        if (_consumed)
-            enabled = false;
+        if (_consumed && PersistentEffect is not null)
+        {
+            if (OverworldPlayerController.Instances.Count == 0)
+                StartCoroutine(WaitForPlayerAndTriggerPersistentEffect());
+            else
+                PersistentEffect?.Interact(this, OverworldPlayerController.Instances.First());
+
+            IEnumerator WaitForPlayerAndTriggerPersistentEffect()
+            {
+                while (OverworldPlayerController.Instances.Count == 0)
+                    yield return null;
+
+                PersistentEffect?.Interact(this, OverworldPlayerController.Instances.First());
+            }
+        }
     }
 
     void OnDestroy()
@@ -47,11 +70,14 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             return false;
         }
 
-        if (Interaction == null)
+        if (OnTrigger == null)
             Debug.LogError($"No interaction on this interactable ({this})", this);
 
         _consumed = true;
-        interaction = Interaction;
+        if (PersistentEffect is null)
+            interaction = OnTrigger;
+        else
+            interaction = new MultiInteraction { Array = new[] { OnTrigger, PersistentEffect }, Execution = MultiInteraction.Mode.Sequentially };
         return true;
     }
 
