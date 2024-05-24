@@ -16,9 +16,6 @@ public class OverworldPlayerController : ReloadableBehaviour
     /// <summary> LayerMask containing only Characters </summary>
     public readonly LayerMask CharacterLayerMask = 1<<4;
 
-    const int OffMeshLinkStart = 0;
-    const int OffMeshLinkEnd = 2;
-
     public static HashSet<OverworldPlayerController> Instances = new();
     static Collider[] _sphereCastUtility = new Collider[16];
 
@@ -143,8 +140,9 @@ public class OverworldPlayerController : ReloadableBehaviour
 
             if (closestInteractable)
             {
-                Prompt.TryShowPromptThisFrame(closestInteractable.transform.position, closestInteractable.Text);
-                if (Interact.action.WasPressedThisFrame() && TryPlayInteraction(closestInteractable))
+                if (Prompt.TryShowInteractivePromptThisFrame(closestInteractable.transform.position, closestInteractable.Text)
+                    && Interact.action.WasPressedThisFrame()
+                    && TryPlayInteraction(closestInteractable))
                     return;
             }
         }
@@ -231,98 +229,16 @@ public class OverworldPlayerController : ReloadableBehaviour
 
     void JumpLinkQuery()
     {
-        const Allocator allocator = Allocator.TempJob;
-
-        var position = Controller.transform.position;
-        var navMeshWorld = NavMeshWorld.GetDefaultWorld();
-        if (navMeshWorld.IsValid() == false)
+        if (OffMeshLinkRegistry.ClosestLink(this.transform.position, InteractDistance, out var start, out var end))
         {
-            Debug.LogError("Invalid world");
-            return;
+            if (Prompt.TryShowInteractivePromptThisFrame(start, "Jump") == false)
+                return;
+
+            if (Interact.action.WasPressedThisFrame() == false)
+                return;
+
+            StartCoroutine(Jump(end));
         }
-
-        using var edgeVertices = new NativeArray<Vector3>(6, allocator);
-        using var neighbors = new NativeArray<PolygonId>(32, allocator);
-        using var indices = new NativeArray<byte>(neighbors.Length, allocator);
-        using var edgeVerticesForLink = new NativeArray<Vector3>(4, allocator);
-
-        using var navQuery = new NavMeshQuery(navMeshWorld, allocator);
-        var closestLocation = navQuery.MapLocation(position, Vector3.one, agentTypeID:0);
-        var neighborsResult = navQuery.GetEdgesAndNeighbors(closestLocation.polygon, edgeVertices, neighbors, indices, out int verticesCount, out int neighborsTotal);
-
-        Debug.Assert(neighborsResult == PathQueryStatus.Success, neighborsResult);
-        if (neighborsResult != PathQueryStatus.Success)
-            return;
-
-        float closestDist = float.PositiveInfinity;
-        Vector3 closestStart = default, closestEnd = default;
-        Debug.Assert(neighborsTotal <= neighbors.Length);
-        for (int i = 0; i < neighborsTotal; i++)
-        {
-            PolygonId neighborId = neighbors[i];
-            if (navQuery.GetPolygonType(neighborId) != NavMeshPolyTypes.OffMeshConnection)
-                continue;
-
-            if (indices[i] == OffMeshLinkEnd)
-                continue;
-
-            navQuery.GetEdgesAndNeighbors(neighborId, edgeVerticesForLink, default, default, out _, out _);
-
-            // This stuff is not very intuitive, but according to the documentation https://docs.unity3d.com/ScriptReference/Experimental.AI.NavMeshQuery.GetEdgesAndNeighbors.html
-            // "For link nodes the returned edgeVertices array contains two pairs of points at indices [0]-[1] and [2]-[3] that define the end points of the start and end edges of the link, in this order.
-            // [...] For nodes added through Off-mesh Link components the pairs contain the same value in both of their elements."
-            // so startVertA may very well be equal to startVertB depending on the NavMesh method used,
-            // nevertheless, we'll implement logic expecting them to actually form a line segment instead of a point,
-            // as considering the point as a line of zero length works just as well.
-
-            Vector3 startVertA = edgeVerticesForLink[0];
-            Vector3 startVertB = edgeVerticesForLink[1];
-
-            Vector3 edgeDir = startVertA - startVertB;
-            Vector3 vertToPos = startVertA - position;
-
-            Vector3 closestPointOnLine = position + vertToPos - Vector3.Project(vertToPos, edgeDir);
-            Vector3 deltaToVert = startVertA - closestPointOnLine;
-            float dot = Vector3.Dot(deltaToVert, edgeDir);
-            Vector3 closestPointOnSegment;
-            if (dot < 0)
-                closestPointOnSegment = startVertA;
-            else if (dot > 1)
-                closestPointOnSegment = startVertB;
-            else
-                closestPointOnSegment = closestPointOnLine;
-            Debug.DrawRay(startVertA, Vector3.up, Color.blue);
-            Debug.DrawRay(startVertB, Vector3.up, Color.blue);
-            Debug.DrawLine(startVertA, startVertB, Color.blue);
-            Debug.DrawLine(closestPointOnSegment, position, Color.red);
-
-
-            Vector3 endVertA = edgeVerticesForLink[2];
-            Vector3 endVertB = edgeVerticesForLink[3];
-
-            Debug.DrawLine(closestPointOnSegment, endVertA, Color.green);
-
-            float distanceToJumpPoint = Vector3.Distance(closestPointOnSegment, position);
-            if (distanceToJumpPoint >= InteractDistance)
-                continue;
-
-            if (distanceToJumpPoint < closestDist)
-            {
-                closestDist = distanceToJumpPoint;
-                closestEnd = (endVertA + endVertB) / 2f;
-                closestStart = closestPointOnSegment;
-            }
-        }
-
-        if (closestDist == float.PositiveInfinity)
-            return;
-
-        Prompt.TryShowPromptThisFrame(closestStart, "Jump");
-
-        if (Interact.action.WasPressedThisFrame() == false)
-            return;
-
-        StartCoroutine(Jump(closestEnd));
     }
 
     void ChangeOfTransportQuery()
@@ -337,9 +253,7 @@ public class OverworldPlayerController : ReloadableBehaviour
             if (!NavMesh.SamplePosition(pos, out var hit, SwapTransportQueryRadius, (int)transport.NavFlags))
                 continue;
 
-            Prompt.TryShowPromptThisFrame(hit.position, transport.PromptLabel);
-
-            if (Interact.action.WasPressedThisFrame())
+            if (Prompt.TryShowInteractivePromptThisFrame(hit.position, transport.PromptLabel) && Interact.action.WasPressedThisFrame())
             {
                 MeansOfTransports[_activeTransport].OnDeactivate.Invoke();
                 _activeTransport = i;

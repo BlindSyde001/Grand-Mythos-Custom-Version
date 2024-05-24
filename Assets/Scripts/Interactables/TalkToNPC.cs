@@ -19,7 +19,7 @@ namespace Interactables
         {
             for (float time = 0; time < 2f; time += Time.deltaTime)
             {
-                Prompt.TryShowPromptThisFrame(DialogAnchor.transform.position, DialogContent);
+                Prompt.ShowPromptThisFrame(DialogAnchor.transform.position, DialogContent);
                 yield return Delay.WaitTillNextFrame;
             }
         }

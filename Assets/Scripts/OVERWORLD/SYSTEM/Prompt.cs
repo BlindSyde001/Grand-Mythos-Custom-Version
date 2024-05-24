@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Prompt : MonoBehaviour
 {
+    const int PromptLimit = 16;
+
     static Prompt PromptTemplate;
 
     public TMP_Text Text;
@@ -41,15 +43,13 @@ public class Prompt : MonoBehaviour
     }
 
     static int _lastClear;
+    static bool _presentedUnique;
     static List<Prompt> _promptCache = new List<Prompt>();
     static List<Prompt> _promptInUse = new List<Prompt>();
 
-    public static void TryShowPromptThisFrame(Vector3 worldPosition, string text)
+    public static void ShowPromptThisFrame(Vector3 worldPosition, string text)
     {
-        if (_lastClear != Time.frameCount)
-            ClearPrompts();
-
-        if (_promptInUse.Count > 16)
+        if (_promptInUse.Count > PromptLimit)
             return;
 
         if (PromptTemplate == null)
@@ -73,8 +73,25 @@ public class Prompt : MonoBehaviour
         prompt.transform.position = RectTransformUtility.WorldToScreenPoint(Camera.main, worldPosition);
     }
 
+    public static bool TryShowInteractivePromptThisFrame(Vector3 worldPosition, string text)
+    {
+        if (_lastClear != Time.frameCount)
+            ClearPrompts();
+
+        if (_presentedUnique)
+            return false;
+
+        if (_promptInUse.Count > PromptLimit)
+            return false;
+
+        _presentedUnique = true;
+        ShowPromptThisFrame(worldPosition, text);
+        return true;
+    }
+
     static void ClearPrompts()
     {
+        _presentedUnique = false;
         _lastClear = Time.frameCount;
         foreach (var prompt in _promptInUse)
             prompt.gameObject.SetActive(false);
