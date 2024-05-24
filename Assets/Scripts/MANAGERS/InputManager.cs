@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using Object = UnityEngine.Object;
 
 public static class InputManager
@@ -67,21 +68,6 @@ public static class InputManager
             action.Enable();
 
         CurrentState = newState;
-        switch (newState)
-        {
-            case GameState.Overworld:
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-                break;
-
-            case GameState.Cutscene:
-            case GameState.Battle:
-            case GameState.Menu:
-            case GameState.Pause:
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-                break;
-        }
     }
 
     static string StateToMap(GameState state)
@@ -101,6 +87,7 @@ public static class InputManager
     static void InitInputManager()
     {
         SetGameState(GameState.Menu);
+        new GameObject(nameof(ManageMouseCursorVisibility)).AddComponent<ManageMouseCursorVisibility>();
     }
 
     [Serializable]
@@ -114,6 +101,66 @@ public static class InputManager
     {
         DomainReloadHelper.BeforeReload += helper => helper.InputManagerInstance = StateStack;
         DomainReloadHelper.AfterReload += helper => StateStack = helper.InputManagerInstance;
+    }
+
+    public class ManageMouseCursorVisibility : MonoBehaviour
+    {
+        bool _inDesktopMode;
+
+        void Update()
+        {
+            (CursorLockMode lockMode, bool visible) targetState = CurrentState switch
+            {
+                GameState.Battle => (CursorLockMode.None, true),
+                GameState.Overworld => (CursorLockMode.Locked, false),
+                GameState.Cutscene => (CursorLockMode.None, true),
+                GameState.Menu => (CursorLockMode.None, true),
+                GameState.Pause => (CursorLockMode.None, true),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            if (_inDesktopMode)
+            {
+                foreach (var ctrl in Gamepad.current.allControls)
+                {
+                    if (ctrl is ButtonControl { isPressed: true, synthetic: false })
+                    {
+                        _inDesktopMode = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var ctrl in Keyboard.current.allControls)
+                {
+                    if (ctrl is ButtonControl { isPressed: true, synthetic: false })
+                    {
+                        _inDesktopMode = true;
+                        break;
+                    }
+                }
+                foreach (var ctrl in Mouse.current.allControls)
+                {
+                    if (ctrl is ButtonControl { isPressed: true, synthetic: false })
+                    {
+                        _inDesktopMode = true;
+                        break;
+                    }
+                }
+            }
+
+            if (_inDesktopMode)
+            {
+                Cursor.visible = targetState.visible;
+                Cursor.lockState = targetState.lockMode;
+            }
+            else
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Confined;
+            }
+        }
     }
 }
 
