@@ -105,7 +105,7 @@ public static class InputManager
 
     public class ManageMouseCursorVisibility : MonoBehaviour
     {
-        bool _inDesktopMode;
+        bool _inDesktopMode = true;
 
         void Update()
         {
