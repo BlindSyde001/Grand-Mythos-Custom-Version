@@ -14,9 +14,18 @@ public class OrbitCamera : ICameraControl
     public LayerMask ObstructionMask = 1;
 
     Vector3 _euler;
+    bool _initialized;
 
     public void Update(Camera camera, CameraFocus focus)
     {
+        if (_initialized == false)
+        {
+            _initialized = true;
+            _euler = focus.transform.eulerAngles;
+            (_euler.x, _euler.y) = (_euler.y, _euler.x);
+            _euler.z = 0;
+        }
+
         var input = Input.action.ReadValue<Vector2>();
         _euler += new Vector3(input.x, -input.y, 0);
         _euler.y = Mathf.Clamp(_euler.y, MinimumAngle, MaximumAngle);
