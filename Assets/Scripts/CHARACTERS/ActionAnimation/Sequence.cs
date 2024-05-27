@@ -8,7 +8,7 @@ namespace ActionAnimation
 {
     public class Sequence : IActionAnimation
     {
-        [InfoBox("Plays the following animations in sequence; when the first one finishes, the second starts.")]
+        [Tooltip("Plays the following animations in sequence; when the first one finishes, the second starts.")]
         [SerializeReference]
         public IActionAnimation[] Animations = Array.Empty<IActionAnimation>();
 

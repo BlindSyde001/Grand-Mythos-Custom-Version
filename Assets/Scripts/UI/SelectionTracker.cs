@@ -7,10 +7,10 @@ using UnityEngine.UI;
 [AddComponentMenu(" GrandMythos/UI/SelectionTracker")]
 public class SelectionTracker : MonoBehaviour
 {
-    [InfoBox("The element that should be selected when this is opened, can be a parent containing selectable, the first one will be selected.")]
+    [Tooltip("The element that should be selected when this is opened, can be a parent containing selectable, the first one will be selected.")]
     [Required] public GameObject DefaultSelection;
 
-    [InfoBox("Whether selection should be set to the last element that was selected whenever this is enabled again")]
+    [Tooltip("Whether selection should be set to the last element that was selected whenever this is enabled again")]
     public bool RestoreSelection = true;
     public bool WarnWhenNoSelection = true;
     readonly List<GameObject> _selectionHistory = new();

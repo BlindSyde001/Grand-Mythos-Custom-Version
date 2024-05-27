@@ -8,7 +8,7 @@ namespace ActionAnimation
 {
     public class Simultaneous : IActionAnimation
     {
-        [InfoBox("Plays the following animations simultaneously; all of them start and play together at the same time")]
+        [Tooltip("Plays the following animations simultaneously; all of them start and play together at the same time")]
         [SerializeReference]
         public IActionAnimation[] Animations = Array.Empty<IActionAnimation>();
 

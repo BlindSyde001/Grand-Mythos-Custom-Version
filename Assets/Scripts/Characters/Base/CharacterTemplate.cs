@@ -82,7 +82,7 @@ public class CharacterTemplate : MonoBehaviour
     public IActionAnimationCollection ActionAnimations = new();
 
     [BoxGroup("ANIMATIONS/Fallback Animation")]
-    [InfoBox("When this unit performs an action that hasn't been added to the list above, the following fallback animation will run")]
+    [Tooltip("When this unit performs an action that hasn't been added to the list above, this animation will run to ensure the unit doesn't look idle")]
     [SerializeReference, ValidateInput(nameof(ValidateFallbackAnimation)), InlineProperty, HideLabel]
     public IActionAnimation FallbackAnimation;
 

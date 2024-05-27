@@ -8,8 +8,6 @@ public class BattleCamera : MonoBehaviour
     [Required] public Camera Camera;
     [Required] public BattleUIOperation BattleController;
     [Required] public InputActionReference RotationInput;
-    [InfoBox("The position of the pivot local to the center of the unit's bounding box")]
-    public Vector3 Pivot = new Vector3(0.5f, 0.75f, 0f);
     public float DistanceMultiplier = 2.5f;
     public float MinimumAngle = -90f, MaximumAngle = 90f;
     public float InterpolationFactor = 25f;

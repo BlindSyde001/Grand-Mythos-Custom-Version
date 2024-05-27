@@ -9,7 +9,7 @@ using UnityEngine;
 public class ActionCondition : IdentifiableScriptableObject
 {
     [BoxGroup(nameof(TargetFilter), LabelText = @"@""TargetFilter:   "" + this.TargetFilter?.UIDisplayText")]
-    [InfoBox("If at least one unit matches this condition, the AI will execute the action on them")]
+    [Tooltip("If at least one unit matches this condition, the AI will execute the action on them")]
     [ValidateInput(nameof(ValidateCondition), "")]
     [HideLabel]
     [SerializeReference]
@@ -17,7 +17,7 @@ public class ActionCondition : IdentifiableScriptableObject
     public Condition TargetFilter;
 
     [BoxGroup(nameof(AdditionalCondition), LabelText = @"@""AdditionalCondition:   "" + this.AdditionalCondition?.UIDisplayText")]
-    [InfoBox("Condition that must be true in general")]
+    [Tooltip("Condition that must be true in general")]
     [HideLabel]
     [SerializeReference]
     [CanBeNull]

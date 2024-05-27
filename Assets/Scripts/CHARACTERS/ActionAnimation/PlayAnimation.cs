@@ -10,7 +10,7 @@ namespace ActionAnimation
 {
     public class PlayAnimator : IActionAnimation
     {
-        [InfoBox("Plays the following state through the BattlePrefab's Animator")]
+        [Tooltip("Plays the following state through the BattlePrefab's Animator")]
         public string StateName;
         public int Layer;
 
