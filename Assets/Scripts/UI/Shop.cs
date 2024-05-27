@@ -13,7 +13,9 @@ public class Shop : MonoBehaviour
 {
     [Header("Logic")]
     public Categories PlayersCanSellItemsOfType = ~Categories.Loot; // Everything but loot by default, loot is reserved to poachers
+    [Tooltip("Multiplier on the base cost of items when the player buys items from this shop, PlayerMoney -= ItemCost * BuyRatio")]
     public float BuyRatio = 1f;
+    [Tooltip("Multiplier on the amount received from items the player sells to the shop, PlayerMoney += ItemCost * SellRatio")]
     public float SellRatio = 0.5f;
     [TableList]
     public List<ItemWithCondition> Stock = new();
@@ -207,7 +209,7 @@ public class Shop : MonoBehaviour
     {
         [Required]
         public TradeableItem Item;
-        [SerializeReference]
+        [SerializeReference, Tooltip("Condition for this item to become available, None means it is always available")]
         public ICondition Availability;
     }
 
