@@ -11,6 +11,9 @@ using UnityEngine.InputSystem;
 
 public class OverworldPlayerController : ReloadableBehaviour
 {
+    const int OffMeshLinkStart = 0;
+    const int OffMeshLinkEnd = 2;
+
     /// <summary> Index of the character layer </summary>
     public const int CharacterLayer = 3;
     /// <summary> LayerMask containing only Characters </summary>
@@ -229,7 +232,7 @@ public class OverworldPlayerController : ReloadableBehaviour
 
     void JumpLinkQuery()
     {
-        if (OffMeshLinkRegistry.ClosestLink(this.transform.position, InteractDistance, out var start, out var end))
+        if (ClosestNavmeshLink(transform.position, InteractDistance, out var start, out var end))
         {
             if (Prompt.TryShowInteractivePromptThisFrame(start, "Jump") == false)
                 return;
@@ -306,5 +309,80 @@ public class OverworldPlayerController : ReloadableBehaviour
         {
             Disabler &= ~ControlDisabler.Interacting;
         }
+    }
+
+    static bool ClosestNavmeshLink(Vector3 position, float maxDist, out Vector3 closestStart, out Vector3 closestEnd)
+    {
+        const Allocator allocator = Allocator.TempJob;
+
+        closestEnd = closestStart = default;
+
+        var navMeshWorld = NavMeshWorld.GetDefaultWorld();
+        if (navMeshWorld.IsValid() == false)
+        {
+            Debug.LogError("Invalid world");
+            return false;
+        }
+
+        float closestDist = maxDist;
+
+        using var navQuery = new NavMeshQuery(navMeshWorld, allocator);
+        var closestLocation = navQuery.MapLocation(position, Vector3.one, agentTypeID:0);
+        const Allocator allocator1 = Allocator.TempJob;
+
+        using var edgeVertices = new NativeArray<Vector3>(6, allocator1);
+        using var neighbors = new NativeArray<PolygonId>(32, allocator1);
+        using var indices = new NativeArray<byte>(neighbors.Length, allocator1);
+        using var edgeVerticesForLink = new NativeArray<Vector3>(4, allocator1);
+
+        var neighborsResult = navQuery.GetEdgesAndNeighbors(closestLocation.polygon, edgeVertices, neighbors, indices, out int verticesCount, out int neighborsTotal);
+        Debug.Assert(neighborsResult == PathQueryStatus.Success, neighborsResult);
+        Debug.Assert(neighborsTotal <= neighbors.Length);
+        for (int i = 0; i < neighborsTotal; i++)
+        {
+            PolygonId neighborId = neighbors[i];
+            if (navQuery.GetPolygonType(neighborId) != NavMeshPolyTypes.OffMeshConnection)
+                continue;
+
+            navQuery.GetEdgesAndNeighbors(neighborId, edgeVerticesForLink, default, default, out _, out _);
+
+            // This stuff is not very intuitive, but according to the documentation https://docs.unity3d.com/ScriptReference/Experimental.AI.NavMeshQuery.GetEdgesAndNeighbors.html
+            // "For link nodes the returned edgeVertices array contains two pairs of points at indices [0]-[1] and [2]-[3] that define the end points of the start and end edges of the link, in this order.
+            // [...] For nodes added through Off-mesh Link components the pairs contain the same value in both of their elements."
+            // so startVertA may very well be equal to startVertB depending on the NavMesh method used,
+            // nevertheless, we'll implement logic expecting them to actually form a line segment instead of a point,
+            // as considering the point as a line of zero length works just as well.
+
+            bool isEnd = indices[i] == OffMeshLinkEnd;
+            Vector3 startVertA = edgeVerticesForLink[isEnd ? 2 : 0];
+            Vector3 startVertB = edgeVerticesForLink[isEnd ? 3 : 1];
+
+            Vector3 edgeDir = startVertB - startVertA;
+            Vector3 vertToPos = position - startVertA;
+
+            Vector3 proj = Vector3.Project(vertToPos, edgeDir);
+            Vector3 closestPointOnLine = startVertA + proj;
+            Vector3 closestPointOnSegment;
+            if (Vector3.Dot(proj, edgeDir) < 0)
+                closestPointOnSegment = startVertA;
+            else if (proj.sqrMagnitude > edgeDir.sqrMagnitude)
+                closestPointOnSegment = startVertB;
+            else
+                closestPointOnSegment = closestPointOnLine;
+
+
+            Vector3 endVertA = edgeVerticesForLink[isEnd ? 0 : 2];
+            Vector3 endVertB = edgeVerticesForLink[isEnd ? 1 : 3];
+
+            float distanceToJumpPoint = Vector3.Distance(closestPointOnSegment, position);
+            if (distanceToJumpPoint < closestDist)
+            {
+                closestDist = distanceToJumpPoint;
+                closestEnd = (endVertA + endVertB) / 2f;
+                closestStart = closestPointOnSegment;
+            }
+        }
+
+        return closestDist != maxDist;
     }
 }
