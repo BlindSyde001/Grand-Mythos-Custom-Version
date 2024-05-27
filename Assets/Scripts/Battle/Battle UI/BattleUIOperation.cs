@@ -750,7 +750,11 @@ public class BattleUIOperation : MonoBehaviour
                 ActionSelectionContainer.gameObject.SetActive(false);
 
                 foreach (var yield in inner)
+                {
+                    if (yield is CancelRequested)
+                        break;
                     yield return yield;
+                }
             }
             finally
             {
