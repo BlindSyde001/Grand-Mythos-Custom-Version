@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.UI;
 using Object = UnityEngine.Object;
 
 public static class InputManager
@@ -10,6 +13,7 @@ public static class InputManager
     public static GameState CurrentState { get; private set; } = GameState.Menu;
     public static List<GameStateRequests> StateStack = new();
     static InputActionAsset PlayerInput => SingletonManager.Instance.PlayerInput;
+    static InputSystemUIInputModule Module;
 
     /// <summary>
     /// Push a new gamestate to change the control scheme, the key is used when poping said game state.
@@ -67,6 +71,22 @@ public static class InputManager
         foreach (var action in currentMap.actions)
             action.Enable();
 
+        if (ReferenceEquals(Module, null))
+            throw new NullReferenceException(nameof(Module));
+        else if (Module != null) // Exist but not destroyed, if it doesn't exist it better throw which is why we have the exception above
+        {
+            Module.move = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Navigate"));
+            Module.submit = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Submit"));
+            Module.cancel = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Cancel"));
+            Module.point = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Point"));
+            Module.leftClick = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Click"));
+            Module.middleClick = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "MiddleClick"));
+            Module.rightClick = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "RightClick"));
+            Module.scrollWheel = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "ScrollWheel"));
+            Module.trackedDevicePosition = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "TrackedDevicePosition"));
+            Module.trackedDeviceOrientation = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "TrackedDeviceOrientation"));
+        }
+
         CurrentState = newState;
     }
 
@@ -86,10 +106,12 @@ public static class InputManager
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void InitInputManager()
     {
-        SetGameState(GameState.Menu);
-        var go = new GameObject(nameof(ManageMouseCursorVisibility));
-        go.AddComponent<ManageMouseCursorVisibility>();
+        var go = new GameObject("InputManager");
+        go.AddComponent<EventSystem>();
+        Module = go.AddComponent<InputSystemUIInputModule>();
+        go.AddComponent<InputManagement>();
         Object.DontDestroyOnLoad(go);
+        SetGameState(GameState.Menu);
     }
 
     [Serializable]
@@ -105,7 +127,7 @@ public static class InputManager
         DomainReloadHelper.AfterReload += helper => StateStack = helper.InputManagerInstance;
     }
 
-    public class ManageMouseCursorVisibility : MonoBehaviour
+    public class InputManagement : MonoBehaviour
     {
         bool _inDesktopMode = true;
 
