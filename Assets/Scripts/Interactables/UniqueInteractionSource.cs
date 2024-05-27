@@ -31,8 +31,9 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
     bool _consumed;
 
     public guid UniqueConstID => _guid;
+
     /// <summary> Was this event triggered </summary>
-    public bool Consumed => _consumed;
+    public bool Consumed => _consumed && Type is TriggerType.OnceEver or TriggerType.OnceEveryLoad;
 
     void Awake()
     {
@@ -73,7 +74,7 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
         if (OnTrigger == null)
             Debug.LogError($"No interaction on this interactable ({this})", this);
 
-        _consumed = true;
+        _consumed |= Type is TriggerType.OnceEver or TriggerType.OnceEveryLoad;
         if (PersistentEffect is null)
             interaction = OnTrigger;
         else
