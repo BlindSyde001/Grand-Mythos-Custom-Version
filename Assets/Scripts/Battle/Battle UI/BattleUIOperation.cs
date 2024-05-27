@@ -44,6 +44,7 @@ public class BattleUIOperation : MonoBehaviour
     [Header("Action Selection")]
     [Required] public RectTransform ActionSelectionContainer;
     [Required] public Button Attack;
+    [Required] public Button Repeat;
     [Required] public Button Skills;
     [Required] public Button Items;
     [Required] public Button Tactics;
@@ -57,6 +58,7 @@ public class BattleUIOperation : MonoBehaviour
     [ValidateInput(nameof(HasButton), "Must have a button")] public RectTransform ItemTemplate;
     [ValidateInput(nameof(HasButton), "Must have a button")] public RectTransform SkillTemplate;
     public TargetList Targets = new();
+    [Required] public InputActionReference SelectActionSet1, SelectActionSet2;
 
     [Header("Previews")]
     [Required] public UIActionPreview ActionPreviewTemplate;
@@ -80,6 +82,7 @@ public class BattleUIOperation : MonoBehaviour
     TargetSelection _targetSelection;
     IAction _lastActionCursor;
     BattleCharacterController _waitingForScheduledUnit;
+    [MaybeNull] IAction[] _lastActions;
 
     public BattleUIOperation()
     {
@@ -102,11 +105,12 @@ public class BattleUIOperation : MonoBehaviour
             _disabledTacticsColor = Tactics.colors.disabledColor;
             UpdateTacticsButtonColor();
             Attack.onClick.AddListener(() => TryOrderWizard(PresentAttackUI()));
+            Repeat.onClick.AddListener(() => FillWithActions(_lastActions));
             Skills.onClick.AddListener(() => TryOrderWizard(PresentSkillsUI()));
             Items.onClick.AddListener(() => TryOrderWizard(PresentItemUI()));
             Tactics.onClick.AddListener(TacticsPressed);
 
-            Schedule.onClick.AddListener(() => ScheduleOrder(_order));
+            Schedule.onClick.AddListener(() => TryOrderWizard(PresentTargetSelectionUI()));
             Discard.onClick.AddListener(CancelFullOrder);
 
             for (int i = ModifierContainer.transform.childCount - 1; i >= 0; i--)
@@ -159,6 +163,7 @@ public class BattleUIOperation : MonoBehaviour
 
     void OnSwappedSelectedUnit()
     {
+        _lastActions = null;
         UpdateTacticsButtonColor();
 
         if (UnitSelected == null)
@@ -181,8 +186,21 @@ public class BattleUIOperation : MonoBehaviour
         }
     }
 
+    void FillWithActions(IEnumerable<IAction> actions)
+    {
+        if (actions.Any() == false)
+            return;
+
+        _order.Actions.BackingArray = actions.ToArray();
+        _order.Condition = null;
+        ResetNavigation();
+        TryOrderWizard(PresentTargetSelectionUI());
+    }
+
     void Update()
     {
+        Repeat.interactable = _lastActions != null;
+
         if (SwitchCharacter.action.WasPerformedThisFrameUnique())
             SwitchToNextHero(SwitchCharacter.action.ReadValue<float>() >= 0 ? 1 : -1);
 
@@ -194,6 +212,14 @@ public class BattleUIOperation : MonoBehaviour
 
         if (UnitSelected == null)
             return;
+
+        if (SelectActionSet1.action.WasPerformedThisFrameUnique())
+            if (UnitSelected.Profile is HeroExtension hero)
+                FillWithActions(hero.Actionset1);
+
+        if (SelectActionSet2.action.WasPerformedThisFrameUnique())
+            if (UnitSelected.Profile is HeroExtension hero)
+                FillWithActions(hero.Actionset1);
 
         if (SwitchSpecialInput.action.WasPerformedThisFrameUnique())
             UnitSelected.Profile.SwitchSpecialHandler?.OnSwitch(UnitSelected);
@@ -367,20 +393,6 @@ public class BattleUIOperation : MonoBehaviour
             yield break;
 
         _order.Actions.BackingArray[^1] = UnitSelected.Profile.BasicAttack;
-
-        if (_order.Condition == null)
-        {
-            foreach (var yields in PresentTargetSelectionUI())
-            {
-                if (yields is CancelRequested)
-                {
-                    _order.Actions.BackingArray = _order.Actions.BackingArray.AsSpan()[..^1].ToArray();
-                    yield break;
-                }
-
-                yield return yields;
-            }
-        }
     }
 
     IEnumerable PresentSkillsUI()
@@ -447,21 +459,7 @@ public class BattleUIOperation : MonoBehaviour
 
         _order.Actions.BackingArray[^1] = selectedSkill;
 
-        if (_order.Condition == null)
-        {
-            foreach (var yields in PresentTargetSelectionUI())
-            {
-                if (yields is CancelRequested)
-                {
-                    _order.Actions.BackingArray = _order.Actions.BackingArray.AsSpan()[..^1].ToArray();
-                    goto AGAIN;
-                }
-
-                yield return yields;
-            }
-        }
-
-        if (_order.Condition != null && _order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax && _order.Condition != null)
+        if (_order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax)
             goto AGAIN;
     }
 
@@ -532,21 +530,7 @@ public class BattleUIOperation : MonoBehaviour
 
         _order.Actions.BackingArray[^1] = selectedConsumable;
 
-        if (_order.Condition == null)
-        {
-            foreach (var yields in PresentTargetSelectionUI())
-            {
-                if (yields is CancelRequested)
-                {
-                    _order.Actions.BackingArray = _order.Actions.BackingArray.AsSpan()[..^1].ToArray();
-                    goto AGAIN;
-                }
-
-                yield return yields;
-            }
-        }
-
-        if (_order.Condition != null && _order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax && _order.Condition != null)
+        if (_order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax)
             goto AGAIN;
     }
 
@@ -655,6 +639,8 @@ public class BattleUIOperation : MonoBehaviour
             AcceptSelection.gameObject.SetActive(false);
             SubActionSelectionContainer.gameObject.SetActive(false);
         }
+
+        ScheduleOrder(_order);
     }
 
     void SwitchToNextHero(int dir)
@@ -682,6 +668,13 @@ public class BattleUIOperation : MonoBehaviour
 
     void ScheduleOrder(Tactics tactics)
     {
+        if (tactics.Actions.Length == 0 || tactics.Condition == null)
+        {
+            Debug.LogWarning("Tried to schedule an incomplete order");
+            return;
+        }
+
+        _lastActions = tactics.Actions.ToArray();
         _order = new();
         ResetNavigation();
         if (UnitSelected != null)
@@ -714,7 +707,7 @@ public class BattleUIOperation : MonoBehaviour
 
         ActionSelectionContainer.gameObject.SetActive(true);
 
-        if (_order.Actions.Length > 0 && _order.Condition != null)
+        if (_order.Actions.Length > 0)
         {
             Schedule.gameObject.SetActive(true);
             Discard.gameObject.SetActive(true);
@@ -767,9 +760,6 @@ public class BattleUIOperation : MonoBehaviour
 
                 if (_order.Actions.Length == 0) // Order was cancelled
                     CancelFullOrder();
-
-                if (_order.Actions.CostTotal() >= 4 && _order.Condition != null)
-                    ScheduleOrder(_order);
             }
         }
     }
