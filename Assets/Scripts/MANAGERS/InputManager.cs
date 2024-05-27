@@ -119,7 +119,7 @@ public static class InputManager
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            if (_inDesktopMode)
+            if (_inDesktopMode && Gamepad.current != null)
             {
                 foreach (var ctrl in Gamepad.current.allControls)
                 {
@@ -132,20 +132,27 @@ public static class InputManager
             }
             else
             {
-                foreach (var ctrl in Keyboard.current.allControls)
+                if (Keyboard.current != null)
                 {
-                    if (ctrl is ButtonControl { isPressed: true, synthetic: false })
+                    foreach (var ctrl in Keyboard.current.allControls)
                     {
-                        _inDesktopMode = true;
-                        break;
+                        if (ctrl is ButtonControl { isPressed: true, synthetic: false })
+                        {
+                            _inDesktopMode = true;
+                            break;
+                        }
                     }
                 }
-                foreach (var ctrl in Mouse.current.allControls)
+
+                if (Mouse.current != null)
                 {
-                    if (ctrl is ButtonControl { isPressed: true, synthetic: false })
+                    foreach (var ctrl in Mouse.current.allControls)
                     {
-                        _inDesktopMode = true;
-                        break;
+                        if (ctrl is ButtonControl { isPressed: true, synthetic: false })
+                        {
+                            _inDesktopMode = true;
+                            break;
+                        }
                     }
                 }
             }
