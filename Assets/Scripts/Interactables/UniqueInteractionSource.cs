@@ -99,4 +99,31 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             transfer.Value(ref Consumed, ref source._consumed);
         }
     }
+
+    static UniqueInteractionSource()
+    {
+        #if UNITY_EDITOR
+        UnityEditor.ObjectChangeEvents.changesPublished += ChangesPublished;
+        static void ChangesPublished(ref UnityEditor.ObjectChangeEventStream stream)
+        {
+            for (int i = 0; i < stream.length; ++i)
+            {
+                var type = stream.GetEventType(i);
+                switch (type)
+                {
+                    case UnityEditor.ObjectChangeKind.CreateGameObjectHierarchy:
+                        stream.GetCreateGameObjectHierarchyEvent(i, out var createGameObjectHierarchyEvent);
+                        var newGameObject = (GameObject)UnityEditor.EditorUtility.InstanceIDToObject(createGameObjectHierarchyEvent.instanceId);
+                        foreach (var source in newGameObject.GetComponentsInChildren<UniqueInteractionSource>())
+                        {
+                            source._guid = Guid.NewGuid();
+                            Debug.LogWarning($"Assigning new GUID for duplicated object {newGameObject} to ensure it doesn't clash with its original.");
+                        }
+
+                        break;
+                }
+            }
+        }
+        #endif
+    }
 }
