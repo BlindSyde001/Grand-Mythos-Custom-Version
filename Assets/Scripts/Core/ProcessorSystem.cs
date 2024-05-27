@@ -28,7 +28,9 @@ namespace ProcessorSystem
                     return instanceOfT;
             }
 
-            return new T();
+            var output = new T();
+            _instance.Instances.Add(output);
+            return output;
         }
 
         void Update()
@@ -36,11 +38,18 @@ namespace ProcessorSystem
             foreach (var instance in _instance.Instances)
                 instance.Update();
         }
+
+        void OnDestroy()
+        {
+            foreach (var instance in _instance.Instances)
+                instance.Cleanup();
+        }
     }
 
     public interface IProcessorBase
     {
         void Update();
+        void Cleanup();
     }
 
     public abstract class IComponent<T, T2> : MonoBehaviour where T : IComponent<T, T2>.IProcessor, new() where T2 : IComponent<T, T2>
@@ -81,6 +90,7 @@ namespace ProcessorSystem
 
             void Add(T2 item);
             void Remove(T2 item);
+            void IProcessorBase.Cleanup() => CachedProcessor = default;
         }
 
         [Serializable]
