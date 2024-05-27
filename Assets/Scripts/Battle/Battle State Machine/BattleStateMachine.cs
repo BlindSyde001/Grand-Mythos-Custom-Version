@@ -127,7 +127,7 @@ public class BattleStateMachine : MonoBehaviour
             foreach (var unit in Units)
             {
                 if (unit.Profile.CurrentHP != 0 && _busy.Contains(unit) == false)
-                    unit.Profile.ActionsCharged += unit.Profile.ActionRechargeSpeed * Time.deltaTime * Settings.Current.BattleSpeed / 10f;
+                    unit.Profile.ActionsCharged += unit.Profile.ActionRechargeSpeed * unit.Profile.ActionChargeMax * Time.deltaTime * Settings.Current.BattleSpeed / 100f;
 
                 if (unit.Profile.ActionsCharged > unit.Profile.ActionChargeMax)
                     unit.Profile.ActionsCharged = unit.Profile.ActionChargeMax;
