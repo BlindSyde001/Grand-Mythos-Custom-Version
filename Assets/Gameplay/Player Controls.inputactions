@@ -1899,6 +1899,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ActionSet1",
+                    "type": "Button",
+                    "id": "58925808-494b-4af3-8e29-5aed3207bd97",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ActionSet2",
+                    "type": "Button",
+                    "id": "0e52c604-441a-4707-9b4e-07b6a511a79d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -2526,6 +2544,28 @@
                     "processors": "",
                     "groups": "ANY",
                     "action": "Hero Special",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8d252c62-18cf-4f03-a539-77981638a785",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "ANY",
+                    "action": "ActionSet1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1ceded91-ed76-423d-af1a-fdc181fcdf49",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "ANY",
+                    "action": "ActionSet2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
