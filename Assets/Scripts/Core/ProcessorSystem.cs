@@ -35,13 +35,13 @@ namespace ProcessorSystem
 
         void Update()
         {
-            foreach (var instance in _instance.Instances)
+            foreach (var instance in Instances)
                 instance.Update();
         }
 
         void OnDestroy()
         {
-            foreach (var instance in _instance.Instances)
+            foreach (var instance in Instances)
                 instance.Cleanup();
         }
     }
