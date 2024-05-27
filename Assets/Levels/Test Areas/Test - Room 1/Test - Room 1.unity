@@ -3760,12 +3760,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893b1cd4f4c646adaf59f8f2f4d43bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: Shop
-  Interaction:
+  _guid:
+    a: 5759274564165942913
+    b: 4138909244758376099
+  OnTrigger:
     rid: 1925725743531950080
+  PersistentEffect:
+    rid: -2
+  Type: 1
+  Text: Shop
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 1925725743531950080
       type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
       data:
@@ -4388,12 +4396,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e09196cccf7440dba2ecb50990bf0e94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 1
-  Interaction:
+  _guid:
+    a: 4900377418252688270
+    b: 6342056291929957272
+  OnTrigger:
     rid: 7439448652803211266
+  PersistentEffect:
+    rid: -2
+  Type: 1
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 7439448652803211266
       type: {class: MultiInteraction, ns: Interactables, asm: Assembly-CSharp}
       data:
@@ -7321,12 +7336,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893b1cd4f4c646adaf59f8f2f4d43bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: Talk
-  Interaction:
+  _guid:
+    a: 5507571375413666186
+    b: 14510840650619610260
+  OnTrigger:
     rid: 7439448649709387778
+  PersistentEffect:
+    rid: -2
+  Type: 1
+  Text: Talk
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 7439448649709387778
       type: {class: MultiInteraction, ns: Interactables, asm: Assembly-CSharp}
       data:
@@ -10012,12 +10035,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893b1cd4f4c646adaf59f8f2f4d43bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: Shop
-  Interaction:
+  _guid:
+    a: 4709092717275989327
+    b: 17910909202790162074
+  OnTrigger:
     rid: 1925725743531950080
+  PersistentEffect:
+    rid: -2
+  Type: 1
+  Text: Shop
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 1925725743531950080
       type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
       data:
@@ -13595,12 +13626,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893b1cd4f4c646adaf59f8f2f4d43bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: Take Item
-  Interaction:
+  _guid:
+    a: 5099177923563751612
+    b: 12491434985497058230
+  OnTrigger:
     rid: 7439448649709387781
+  PersistentEffect:
+    rid: -2
+  Type: 1
+  Text: Take Item
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 7439448649709387781
       type: {class: MultiInteraction, ns: Interactables, asm: Assembly-CSharp}
       data:
@@ -13611,10 +13650,8 @@ MonoBehaviour:
     - rid: 7439448652803211273
       type: {class: GiveItem, ns: Interactables, asm: Assembly-CSharp}
       data:
-        Item:
-          Item: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
-          Count: 1
-          DropRatePercent: 100
+        Item: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+        Count: 1
     - rid: 7439448652803211274
       type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
       data:
@@ -14648,12 +14685,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893b1cd4f4c646adaf59f8f2f4d43bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: Go to Room 2
-  Interaction:
+  _guid:
+    a: 5544188941900901826
+    b: 7606410682926390957
+  OnTrigger:
     rid: 1925725739402919936
+  PersistentEffect:
+    rid: -2
+  Type: 1
+  Text: Go to Room 2
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 1925725739402919936
       type: {class: TeleportToSpawn, ns: , asm: Assembly-CSharp}
       data:
@@ -21893,12 +21938,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e09196cccf7440dba2ecb50990bf0e94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 1
-  Interaction:
+  _guid:
+    a: 5495532181066433562
+    b: 16606747449323713709
+  OnTrigger:
     rid: 7439448655393456146
+  PersistentEffect:
+    rid: -2
+  Type: 1
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 7439448655393456146
       type: {class: StartEncounter, ns: Interactables, asm: Assembly-CSharp}
       data:
@@ -23007,12 +23059,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893b1cd4f4c646adaf59f8f2f4d43bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: Go to World Map
-  Interaction:
+  _guid:
+    a: 5685519249789974838
+    b: 17805423292800149915
+  OnTrigger:
     rid: 7380285192293580943
+  PersistentEffect:
+    rid: -2
+  Type: 1
+  Text: Go to World Map
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 7380285192293580943
       type: {class: TeleportToSpawn, ns: , asm: Assembly-CSharp}
       data:
