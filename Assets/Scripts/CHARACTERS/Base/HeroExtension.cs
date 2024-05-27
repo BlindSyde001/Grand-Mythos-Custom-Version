@@ -5,7 +5,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
 
-public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtension.SaveV2>, ISerializationCallbackReceiver
+public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtension.SaveV3>, ISerializationCallbackReceiver
 {
     [SerializeField, TitleGroup("EQUIPMENT ATTRIBUTES"), HorizontalGroup("EQUIPMENT ATTRIBUTES/Split"), VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left"), BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
     protected internal Weapon _Weapon;
@@ -44,6 +44,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     [BoxGroup("SKILLS")] public SerializableHashSet<guid> UnlockedTreeNodes = new();
 
     [ReadOnly, BoxGroup("SKILLS")] public SerializableDictionary<guid, IModifier> SkillModifiers = new();
+    [BoxGroup("SKILLS")] public IActionCollection Actionset1 = new(), Actionset2 = new();
 
     public int SkillPointsTotal => Level;
 
@@ -68,7 +69,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     // UPDATES
     protected override void Awake()
     {
-        SavingSystem.TryRestore<HeroExtension, SaveV2>(this);
+        SavingSystem.TryRestore<HeroExtension, SaveV3>(this);
         InitializeCharacter();
         EquipStats();
         base.Awake();
@@ -76,7 +77,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
 
     void OnDestroy()
     {
-        SavingSystem.StoreAndUnregister<HeroExtension, SaveV2>(this);
+        SavingSystem.StoreAndUnregister<HeroExtension, SaveV3>(this);
     }
 
     // METHODS
@@ -159,7 +160,48 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         _guid = System.Guid.NewGuid();
     }
 
-    [Serializable] public struct SaveV2 : ISaveDataVersioned<SaveV1>, ISaveHandler<HeroExtension>
+    [Serializable] public struct SaveV3 : ISaveDataVersioned<SaveV2>, ISaveHandler<HeroExtension>
+    {
+        public uint Version => 3;
+
+        public int CurrentHP, CurrentMP;
+        public int Experience;
+        public guid Weapon;
+        public guid Armour;
+        public guid AccessoryOne;
+        public guid AccessoryTwo;
+        public SerializableHashSet<guid> AllocatedTreeNodes;
+        public List<guid> ActionSet1;
+        public List<guid> ActionSet2;
+
+        public void Transfer(HeroExtension source, SavingSystem.Transfer transfer)
+        {
+            transfer.Value(ref CurrentHP, ref source.CurrentHP);
+            transfer.Value(ref CurrentMP, ref source.CurrentMP);
+            transfer.Value(ref Experience, ref source.Experience);
+            transfer.Identifiable(ref Weapon, ref source._Weapon);
+            transfer.Identifiable(ref Armour, ref source._Armour);
+            transfer.Identifiable(ref AccessoryOne, ref source._AccessoryOne);
+            transfer.Identifiable(ref AccessoryTwo, ref source._AccessoryTwo);
+            transfer.Collection<SerializableHashSet<guid>, guid>(ref AllocatedTreeNodes, ref source.UnlockedTreeNodes);
+            transfer.Collection(ref ActionSet1, ref source.Actionset1);
+            transfer.Collection(ref ActionSet2, ref source.Actionset2);
+        }
+
+        public void UpgradeFromPrevious(SaveV2 old)
+        {
+            CurrentHP = old.CurrentHP;
+            CurrentMP = old.CurrentMP;
+            Experience = old.Experience;
+            Weapon = old.Weapon;
+            Armour = old.Armour;
+            AccessoryOne = old.AccessoryOne;
+            AccessoryTwo = old.AccessoryTwo;
+            AllocatedTreeNodes = old.AllocatedTreeNodes;
+        }
+    }
+
+    [Serializable] public struct SaveV2 : ISaveDataVersioned<SaveV1>
     {
         public uint Version => 2;
 

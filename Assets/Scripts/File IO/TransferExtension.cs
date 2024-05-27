@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class TransferExtension
@@ -44,6 +45,27 @@ public static class TransferExtension
             source.Clear();
             foreach (T2 item in handler)
                 source.Add(item);
+        }
+    }
+
+    public static void Collection(this SavingSystem.Transfer type, ref List<guid> handler, ref IActionCollection source)
+    {
+        if (type.TryTransferAsNull(ref handler, ref source))
+            return;
+
+        type.EnsureNotNull(ref handler, ref source);
+        if (type == SavingSystem.Transfer.PullFromSource)
+        {
+            handler.Clear();
+            foreach (var item in source)
+                handler.Add(item.Guid);
+        }
+        else
+        {
+            source.BackingArray = handler
+                .Select(x => IdentifiableDatabase.TryGet(x, out IdentifiableScriptableObject item) ? item as IAction : null)
+                .Where(x => x != null)
+                .ToArray();
         }
     }
 

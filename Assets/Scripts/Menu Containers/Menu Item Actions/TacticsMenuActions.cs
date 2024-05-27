@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -17,6 +18,7 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
     public List<NewComponentContainer> NewComponentList;
     [Required] public RectTransform NewComponentParentRect;
     [Required] public InputActionReference SwitchPage;
+    [Required] public ActionSetContainer ActionSet1, ActionSet2;
     int _currentPage;
 
     Button _dropdownSource;
@@ -34,6 +36,9 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(230, -100, 0), menuInputs.Speed);
+        QuickFade(ActionSet1.gameObject, 1, menuInputs.Speed);
+        QuickFade(ActionSet2.gameObject, 1, menuInputs.Speed);
+
         yield return new WaitForSeconds(menuInputs.Speed);
     }
 
@@ -43,11 +48,26 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(1700, -100, 0), menuInputs.Speed);
         NewComponentParentRect.DOLocalMove(new Vector3(-1300, -100, 0), menuInputs.Speed);
         SwitchPage.action.performed -= SwitchPagePerformed;
+        QuickFade(ActionSet1.gameObject, 0, menuInputs.Speed);
+        QuickFade(ActionSet2.gameObject, 0, menuInputs.Speed);
 
         yield return new WaitForSeconds(menuInputs.Speed);
 
         NewComponentParentRect.gameObject.SetActive(false);
         gameObject.SetActive(false);
+    }
+
+    void QuickFade(GameObject target, float goalAlpha, float speed)
+    {
+        foreach (var image in target.GetComponentsInChildren<Graphic>())
+        {
+            if (image.isActiveAndEnabled == false || image.gameObject.activeInHierarchy == false)
+                continue;
+            var col = image.color;
+            col.a = 1-goalAlpha;
+            image.color = col;
+            image.DOFade(goalAlpha, speed);
+        }
     }
 
     protected override void OnSelectedHeroChanged()
@@ -57,6 +77,9 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
         // Configure all the TacticsList Buttons: On/Off, Select Cnd, Select Action
         for (int i = 0; i < TacticsModules.Count; i++)
             SetupField(i);
+
+        SetupActionSet(ActionSet1, SelectedHero.Actionset1);
+        SetupActionSet(ActionSet2, SelectedHero.Actionset2);
     }
 
     IEnumerator ComponentListOpen()
@@ -84,9 +107,9 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
         NewComponentParentRect.gameObject.SetActive(false);
     }
 
-    void SetupField(int i)
+    void PrepareAndEnumerateDisplayFor(IEnumerable<IAction> actions, ActionSetContainer actionSetContainer, Action<Button, int> OnPressAdd)
     {
-        TacticsModuleContainer tacticsUI = TacticsModules[i];
+        var tacticsUI = actionSetContainer;
         foreach(var button in tacticsUI.singleActionBtns)
             button.gameObject.SetActive(false);
         foreach (var button in tacticsUI.doubleActionBtns)
@@ -96,49 +119,129 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
         tacticsUI.quadActionBtn.gameObject.SetActive(false);
 
         for(int j = 0; j < tacticsUI.addActionBtns.Count; j++)
-            tacticsUI.addActionBtns[j].gameObject.SetActive(j == 0);
+            tacticsUI.addActionBtns[j].gameObject.SetActive(false);
 
-        var heroTactic = i < SelectedHero.Tactics.Length ? SelectedHero.Tactics[i] : null;
-
-        // Go through all my Actions and turn on their respective Buttons (Based on Segment Cost)
         uint costTotal = 0;
-        for (int actionIndex = 0; actionIndex < heroTactic?.Actions.Length; actionIndex++)
+        int actionIndex = 0;
+        foreach (var action in actions)
         {
-            SetActionsBasedOnSegmentCost(SelectedHero, heroTactic.Actions[actionIndex] != null ? heroTactic.Actions[actionIndex].ActionCost : 0, i, actionIndex, costTotal, OnSetAction);
-            costTotal += heroTactic.Actions[actionIndex] != null ? heroTactic.Actions[actionIndex].ActionCost : 0;
+            Button actionSelection;
+            TextMeshProUGUI textProvider;
+            switch (action.ActionCost)
+            {
+                case 1:
+                    actionSelection = tacticsUI.singleActionBtns[(int)costTotal];
+                    textProvider = tacticsUI.singlesText[(int)costTotal];
+                    break;
+
+                case 2:
+                    actionSelection = tacticsUI.doubleActionBtns[(int)costTotal];
+                    textProvider = tacticsUI.doublesText[(int)costTotal];
+                    break;
+
+                case 3:
+                    actionSelection = tacticsUI.tripleActionBtns[(int)costTotal];
+                    textProvider = tacticsUI.triplesText[(int)costTotal];
+                    break;
+
+                case 4:
+                    actionSelection = tacticsUI.quadActionBtn;
+                    textProvider = tacticsUI.quadruplesText;
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            var currentIndex = actionIndex;
+            actionIndex++;
+
+            textProvider.text = action.Name;
+            costTotal += action.ActionCost;
+            actionSelection.gameObject.SetActive(true);
+            actionSelection.onClick.RemoveAllListeners();
+            actionSelection.onClick.AddListener(() => OnPressAdd(actionSelection, currentIndex));
         }
 
-        foreach(Button btn in tacticsUI.addActionBtns)
-            btn.gameObject.SetActive(false);
-
-        if (costTotal < 4)
+        if (costTotal > SelectedHero.ActionChargeMax)
+        {
+            StartCoroutine(SendLackOfSegmentsWarning());
+        }
+        else if (costTotal < SelectedHero.ActionChargeMax)
         {
             var btn = tacticsUI.addActionBtns[(int)costTotal];
             btn.gameObject.SetActive(true);
             btn.onClick.RemoveAllListeners();
-            btn.onClick.AddListener(() =>
-            {
-                if (i >= SelectedHero.Tactics.Length)
-                {
-                    var newTactics = new Tactics[i+1];
-                    SelectedHero.Tactics.CopyTo(newTactics, 0);
-                    SelectedHero.Tactics = newTactics;
-                }
+            btn.onClick.AddListener(() => OnPressAdd(btn, actionIndex));
+        }
+    }
 
-                SelectedHero.Tactics[i] ??= new(){ IsOn = false };
-                int slot = SelectedHero.Tactics[i].Actions.Length;
-                ShowActionDropdown(SelectedHero, action => OnSetAction(action, slot), btn);
-            });
+    void SetupActionSet(ActionSetContainer ui, IActionCollection set)
+    {
+        PrepareAndEnumerateDisplayFor(set, ui, OnClickAction);
+
+        void OnClickAction(Button pressedButton, int index)
+        {
+            ShowActionDropdown(SelectedHero, action => OnSetAction(action, index), pressedButton);
         }
 
-        tacticsUI.onToggle.text = heroTactic == null ? "Off" : heroTactic.IsOn ? "On" : "Off";
+        void OnSetAction(IAction newAction, int actionIndex)
+        {
+            if (newAction is null)
+                throw new NullReferenceException(nameof(newAction));
+
+            if (actionIndex >= set.Length) // Make sure we have space for this new action
+            {
+                var newActions = new IAction[actionIndex + 1];
+                set.BackingArray.CopyTo(newActions, 0);
+                set.BackingArray = newActions;
+            }
+
+            set[actionIndex] = newAction; // Insert this new action
+
+            { // Remove any actions which would go over our max amount of charge
+                var newActions = new List<IAction>();
+                uint totalCost = 0;
+                foreach (var action in set)
+                {
+                    if (totalCost + action.ActionCost > SelectedHero.ActionChargeMax)
+                    {
+                        StartCoroutine(SendLackOfSegmentsWarning());
+                        break;
+                    }
+
+                    newActions.Add(action);
+                    totalCost += action.ActionCost;
+                }
+                set.BackingArray = newActions.ToArray();
+            }
+
+            SetupActionSet(ui, set);
+        }
+    }
+
+    void SetupField(int i)
+    {
+        var heroTactic = i < SelectedHero.Tactics.Length ? SelectedHero.Tactics[i] : null;
+
+        var tacticsUI = TacticsModules[i];
+        var actions = heroTactic?.Actions ?? Enumerable.Empty<IAction>();
+
+        PrepareAndEnumerateDisplayFor(actions, tacticsUI, OnAddAction);
+
+        tacticsUI.onToggle.text = heroTactic?.IsOn == true ? "On" : "Off";
         tacticsUI.condition.text = heroTactic?.Condition != null ? heroTactic.Condition.name : "";
-        tacticsUI.onToggleBtn.interactable = heroTactic != null && heroTactic.Condition != null && heroTactic.Actions.Length > 0;
+        tacticsUI.onToggleBtn.interactable = heroTactic?.Condition != null && heroTactic.Actions.Length > 0;
         tacticsUI.onToggleBtn.onClick.RemoveAllListeners();
         tacticsUI.onToggleBtn.onClick.AddListener(OnToggleTacticPressed);
 
         tacticsUI.conditionBtn.onClick.RemoveAllListeners();
         tacticsUI.conditionBtn.onClick.AddListener(() => ShowConditionDropdown(OnSetCondition, tacticsUI.conditionBtn));
+
+        void OnAddAction(Button pressedButton, int index)
+        {
+            ShowActionDropdown(SelectedHero, action => OnSetAction(action, index), pressedButton);
+        }
 
         void OnSetAction(IAction newAction, int actionIndex)
         {
@@ -172,8 +275,12 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
             foreach (var action in tactic.Actions)
             {
                 if (totalCost + action.ActionCost > SelectedHero.ActionChargeMax)
+                {
+                    StartCoroutine(SendLackOfSegmentsWarning());
                     break;
+                }
                 newActions.Add(action);
+                totalCost += action.ActionCost;
             }
 
             tactic.Actions = new(){ BackingArray = newActions.ToArray() };
@@ -207,80 +314,11 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
     }
 
     #region Action Segment Methods
-
-    void SetActionsBasedOnSegmentCost(HeroExtension selectedHero, uint actionCost, int tactic, int action, uint previousActionCostTotal, Action<IAction, int> OnNewAction)
-    {
-        if (previousActionCostTotal + actionCost > 4)
-        {
-            Debug.Log("Not enough Segments!");
-            ReOrderActions(selectedHero, tactic);
-            return;
-        }
-
-        Button actionSelection;
-        TextMeshProUGUI textProvider;
-        switch (actionCost)
-        {
-            case 1:
-                actionSelection = TacticsModules[tactic].singleActionBtns[(int)previousActionCostTotal];
-                textProvider = TacticsModules[tactic].singlesText[(int)previousActionCostTotal];
-                break;
-
-            case 2:
-                actionSelection = TacticsModules[tactic].doubleActionBtns[(int)previousActionCostTotal];
-                textProvider = TacticsModules[tactic].doublesText[(int)previousActionCostTotal];
-                break;
-
-            case 3:
-                actionSelection = TacticsModules[tactic].tripleActionBtns[(int)previousActionCostTotal];
-                textProvider = TacticsModules[tactic].triplesText[(int)previousActionCostTotal];
-                break;
-
-            case 4:
-                actionSelection = TacticsModules[tactic].quadActionBtn;
-                textProvider = TacticsModules[tactic].quadruplesText;
-                break;
-
-            default:
-                throw new NotImplementedException();
-        }
-
-        textProvider.text = selectedHero.Tactics[tactic]?.Actions[action].Name ?? "";
-
-        actionSelection.gameObject.SetActive(true);
-        actionSelection.onClick.RemoveAllListeners();
-        actionSelection.onClick.AddListener(() => ShowActionDropdown(selectedHero, actionObject => OnNewAction(actionObject, action), actionSelection));
-    }
-
-    IEnumerator SendWarning()
+    IEnumerator SendLackOfSegmentsWarning()
     {
         SegmentsWarning.SetActive(true);
         yield return new WaitForSeconds(2f);
         SegmentsWarning.SetActive(false);
-    }
-
-    void ReOrderActions(HeroExtension selectedHero, int tOrder)
-    {
-        uint eAllowance = 0;
-        var tactic = selectedHero.Tactics[tOrder];
-        if (tactic == null)
-            return;
-
-        for (int i = 0; i < tactic.Actions.Length; i++)
-        {
-            if (tactic.Actions[i] != null)
-            {
-                if (eAllowance + tactic.Actions[i].ActionCost > 4)
-                {
-                    StartCoroutine(SendWarning());
-                    tactic.Actions[i] = null;
-                }
-                else
-                {
-                    eAllowance += tactic.Actions[i].ActionCost;
-                }
-            }
-        }
     }
     #endregion
     #region Open Page of Conditions/Actions
