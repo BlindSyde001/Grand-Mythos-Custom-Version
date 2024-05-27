@@ -87,7 +87,9 @@ public static class InputManager
     static void InitInputManager()
     {
         SetGameState(GameState.Menu);
-        new GameObject(nameof(ManageMouseCursorVisibility)).AddComponent<ManageMouseCursorVisibility>();
+        var go = new GameObject(nameof(ManageMouseCursorVisibility));
+        go.AddComponent<ManageMouseCursorVisibility>();
+        Object.DontDestroyOnLoad(go);
     }
 
     [Serializable]
