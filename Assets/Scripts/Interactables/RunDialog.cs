@@ -9,7 +9,7 @@ namespace Interactables
     [Serializable]
     public class RunDialog : IInteraction
     {
-        [Required]
+        [Required, Tooltip("A ScriptMachine component containing a graph which contains a Dialog Triggered Event")]
         public ScriptMachine DialogScript;
 
         public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)

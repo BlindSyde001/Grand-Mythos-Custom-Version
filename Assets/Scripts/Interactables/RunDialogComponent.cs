@@ -6,7 +6,7 @@ using UnityEngine;
 [AddComponentMenu(" GrandMythos/RunDialogComponent")]
 public class RunDialogComponent : MonoBehaviour
 {
-    [Required]
+    [Required, Tooltip("A ScriptMachine component containing a graph which contains a Dialog Triggered Event")]
     public ScriptMachine DialogScript;
 
     void Start()
