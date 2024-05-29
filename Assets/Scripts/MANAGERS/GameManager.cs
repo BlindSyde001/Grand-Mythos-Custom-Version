@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1>
 {
@@ -15,7 +13,7 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
 
     public TimeSpan DurationTotal => _stopwatch.Elapsed + _lastPlaytime;
     TimeSpan _lastPlaytime;
-    Stopwatch _stopwatch = Stopwatch.StartNew();
+    System.Diagnostics.Stopwatch _stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
     void Awake()
     {
@@ -25,10 +23,14 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         }
         else if (Instance != this)
         {
-            Destroy(gameObject);
+            Debug.LogWarning($"Destroyed {gameObject}, no two {nameof(GameManager)} can coexist");
+            Destroy(this);
             return;
         }
+
         transform.parent = null;
+        DontDestroyOnLoad(this.gameObject);
+
         SavingSystem.TryRestore<GameManager, SaveV1>(this);
         for (int i = 0; i < PartyLineup.Count; i++)
         {
@@ -44,6 +46,9 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
 
     void OnDestroy()
     {
+        if (Instance == this)
+            Instance = null;
+
         SavingSystem.Unregister<GameManager, SaveV1>(this);
     }
 
@@ -51,6 +56,8 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
     public List<HeroExtension> PartyLineup;  // Who I've selected to be fighting
     [BoxGroup("PARTY DATA")]
     public List<HeroExtension> ReservesLineup;  // Who I have available in the Party
+
+    public IEnumerable<HeroExtension> AllHeroes => PartyLineup.Concat(ReservesLineup);
 
     guid ISaved.UniqueConstID => Guid;
 
