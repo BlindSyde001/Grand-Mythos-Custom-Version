@@ -40,7 +40,7 @@ public class SettingsMenuActions : MenuContainer
         for (int i = 0; i < resolutions.Length; i++)
         {
             var resolution = resolutions[i];
-            ResolutionDropdown.options.Add(new($"{resolution.width}x{resolution.height} {resolution.refreshRateRatio}"));
+            ResolutionDropdown.options.Add(new($"{resolution.width}x{resolution.height} : {resolution.refreshRateRatio}hz"));
             if (ResolutionMatch(resolution, currentResolution))
                 ResolutionDropdown.value = i;
         }
