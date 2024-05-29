@@ -5,9 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using JetBrains.Annotations;
-using Sirenix.OdinInspector;
-using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 public class EquipmentMenuActions : MenuContainerWithHeroSelection
 {
@@ -16,8 +13,6 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
 
     public UIElementList<EquipNewItemContainer> EquipNewItemContainers;
     public GameObject EquipNewItemList;
-
-    readonly List<Equipment> _currentlyEquippedGear = new();
     Button _listToggle;
 
     // METHODS
@@ -28,7 +23,6 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
             yield return yields;
         }
         EquipNewItemList.SetActive(false);
-        UpdateCurrentEquippedGear();
         gameObject.SetActive(true);
         gameObject.transform.GetChild(0).DOLocalMove(new Vector3(500, 470, 0), menuInputs.Speed);
         gameObject.transform.GetChild(1).DOLocalMove(new Vector3(-580, -320, 0), menuInputs.Speed);
@@ -138,7 +132,8 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
         static void ButtonSetup(EquipmentMenuActions @this, [CanBeNull] Equipment equipment, ItemSlot slot, ref bool setSelection)
         {
             @this.EquipNewItemContainers.Allocate(out var container);
-            container.ThisButton.interactable = equipment == null || @this.CheckOnEquippedGear(equipment);
+
+            container.ThisButton.interactable = true;
             container.EquipName.text = equipment == null ? "None" : equipment.name;
             container.ThisEquipment = equipment;
             container.ThisButton.onClick.RemoveAllListeners();
@@ -156,33 +151,52 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
         switch(newEquip)
         {
             case Weapon w:
+                if (SelectedHero._Weapon is not null)
+                    InventoryManager.AddToInventory(SelectedHero._Weapon, 1);
                 SelectedHero._Weapon = w;
                 break;
 
             case Armour a:
+                if (SelectedHero._Armour is not null)
+                    InventoryManager.AddToInventory(SelectedHero._Armour, 1);
                 SelectedHero._Armour = a;
                 break;
 
             case Accessory acc:
                 if (ItemSlot.AccessoryOne == slotHint)
+                {
+                    if (SelectedHero._AccessoryOne is not null)
+                        InventoryManager.AddToInventory(SelectedHero._AccessoryOne, 1);
                     SelectedHero._AccessoryOne = acc;
+                }
                 else
+                {
+                    if (SelectedHero._AccessoryTwo is not null)
+                        InventoryManager.AddToInventory(SelectedHero._AccessoryTwo, 1);
                     SelectedHero._AccessoryTwo = acc;
+                }
+
                 break;
 
             case null:
                 switch (slotHint)
                 {
                     case ItemSlot.Armor:
+                        if (SelectedHero._Armour is not null)
+                            InventoryManager.AddToInventory(SelectedHero._Armour, 1);
                         SelectedHero._Armour = null;
                         break;
                     case ItemSlot.Weapon:
                         // mandatory right now, other systems do not expect those to be null
                         break;
                     case ItemSlot.AccessoryOne:
+                        if (SelectedHero._AccessoryOne is not null)
+                            InventoryManager.AddToInventory(SelectedHero._AccessoryOne, 1);
                         SelectedHero._AccessoryOne = null;
                         break;
                     case ItemSlot.AccessoryTwo:
+                        if (SelectedHero._AccessoryTwo is not null)
+                            InventoryManager.AddToInventory(SelectedHero._AccessoryTwo, 1);
                         SelectedHero._AccessoryTwo = null;
                         break;
                     default:
@@ -194,8 +208,9 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
             default:
                 throw new NotImplementedException(slotHint.ToString());
         }
-        UpdateCurrentEquippedGear();
-        SelectedHero.EquipStats();
+        if (newEquip != null)
+            InventoryManager.Remove(newEquip, 1);
+        SelectedHero.RefreshEquipmentStats();
         OnSelectedHeroChanged();
         CloseSwapEquipmentWindow();
     }
@@ -203,37 +218,6 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
     public void CloseSwapEquipmentWindow()
     {
         EquipNewItemList.SetActive(false);
-    }
-
-    void UpdateCurrentEquippedGear()
-    {
-        _currentlyEquippedGear.Clear();
-        foreach (var hero in GameManager.PartyLineup)
-        {
-            // Add Currently Equipped Gear
-            _currentlyEquippedGear.Add(hero._Weapon);
-            if (hero._Armour != null)
-                _currentlyEquippedGear.Add(hero._Armour);
-            if (hero._AccessoryOne != null)
-                _currentlyEquippedGear.Add(hero._AccessoryOne);
-            if (hero._AccessoryTwo != null)
-                _currentlyEquippedGear.Add(hero._AccessoryTwo);
-        }
-    }
-
-    bool CheckOnEquippedGear(Equipment equipment)
-    {
-        int amountEquipped = 0;
-
-        uint amountInInventory;
-        InventoryManager.FindItem(equipment, out amountInInventory);
-
-        foreach (Equipment comparison in _currentlyEquippedGear)
-        {
-            if (comparison == equipment)
-                amountEquipped++;
-        }
-        return amountEquipped < amountInInventory;
     }
 
     public enum ItemSlot
