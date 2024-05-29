@@ -1397,62 +1397,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &444488639
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 444488641}
-  - component: {fileID: 444488640}
-  m_Layer: 0
-  m_Name: Dummy Inventory
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &444488640
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 444488639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89c59eea08a6e524bb008ef23254d781, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Credits: 20
-  Items:
-    _backingArray:
-    - Item: {fileID: 11400000, guid: afec5ea83deda194c9481b1e574082bd, type: 2}
-      Count: 4
-    - Item: {fileID: 11400000, guid: 3bb3436e75dcb2f4b9e1cef60150b9ad, type: 2}
-      Count: 2
-    - Item: {fileID: 11400000, guid: 370d5bab6d025854ab86d6f8679d5c32, type: 2}
-      Count: 2
-    - Item: {fileID: 11400000, guid: 214ce23e42aeeb748b765b6103941168, type: 2}
-      Count: 1
-  ConditionsAcquired: []
---- !u!4 &444488641
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 444488639}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &448965350
 GameObject:
   m_ObjectHideFlags: 0
@@ -3355,7 +3299,7 @@ MonoBehaviour:
   m_AgentTypeID: 0
   m_StartPoint: {x: 0, y: 0, z: -6.42}
   m_EndPoint: {x: 0, y: 0, z: 0.61}
-  m_Width: 2.15
+  m_Width: 2.71
   m_CostModifier: -1
   m_Bidirectional: 1
   m_AutoUpdatePosition: 0
@@ -4705,7 +4649,6 @@ SceneRoots:
   - {fileID: 472340054}
   - {fileID: 2019332724}
   - {fileID: 188978995}
-  - {fileID: 444488641}
   - {fileID: 1765773258}
   - {fileID: 1195558172}
   - {fileID: 1144075352}
