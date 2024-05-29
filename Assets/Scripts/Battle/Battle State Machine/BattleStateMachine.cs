@@ -357,20 +357,7 @@ public class BattleStateMachine : MonoBehaviour
         if (unit == null)
             return;
         Units.Remove(unit);
-
-#warning clean this up
-        PartyLineup.Clear();
-        foreach (var heroExtension in GameManager.Instance.PartyLineup)
-        {
-            foreach (var controller in Units)
-            {
-                if (controller.Profile == heroExtension)
-                {
-                    PartyLineup.Add(controller);
-                    break;
-                }
-            }
-        }
+        PartyLineup.Remove(unit);
     }
 
     public bool Interrupt(BattleCharacterController controller) => Processing.Remove(controller);

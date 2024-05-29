@@ -86,29 +86,20 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         else if (Instance != this)
         {
             Destroy(this.gameObject);
+            Debug.LogWarning($"Destroyed {gameObject}, no two {nameof(InventoryManager)} can coexist");
             return;
         }
         SavingSystem.TryRestore<InventoryManager, SaveV1>(this);
         SortBy(Sort.Type);
+        DontDestroyOnLoad(this.gameObject);
     }
 
     void OnDestroy()
     {
-        SavingSystem.Unregister<InventoryManager, SaveV1>(this);
-    }
+        if (Instance == this)
+            Instance = null;
 
-    // UPDATES
-    void OnEnable()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else if (Instance != this)
-        {
-            Destroy(this.gameObject);
-        }
-        DontDestroyOnLoad(this.gameObject);
+        SavingSystem.Unregister<InventoryManager, SaveV1>(this);
     }
 
     public void Remove(BaseItem item, uint count)

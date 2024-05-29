@@ -71,7 +71,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     {
         SavingSystem.TryRestore<HeroExtension, SaveV3>(this);
         InitializeCharacter();
-        EquipStats();
+        RefreshEquipmentStats();
         base.Awake();
     }
 
@@ -101,7 +101,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     }
     #endregion
     #region Stats & Levelling Up
-    internal void EquipStats()
+    internal void RefreshEquipmentStats()
     {
         #region Reset Equip Stats
         equipAttack = 0;

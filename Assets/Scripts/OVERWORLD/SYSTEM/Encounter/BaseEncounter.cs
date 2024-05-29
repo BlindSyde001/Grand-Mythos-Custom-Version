@@ -174,6 +174,9 @@ public abstract class BaseEncounter : IEncounterDefinition
 
         void OnDestroy()
         {
+            if (DomainReloadHelper.LastState == DomainReloadHelper.LastPlayModeState.ExitingPlayMode)
+                return;
+
             foreach (var gameObject in gameObjectsToReEnable)
             {
                 if (gameObject != null)
