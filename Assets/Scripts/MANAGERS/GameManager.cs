@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -84,6 +85,21 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
                 source._lastPlaytime = TimeSpan.FromTicks(Ticks);
                 source._stopwatch.Restart();
             }
+        }
+    }
+
+    /// <summary>
+    /// A coroutine that won't stop once its object is disabled,
+    /// <paramref name="destroyDependency"/> is to ensure the coroutine stops when the object is destroyed
+    /// </summary>
+    public void StartUndisablableCoroutine(UnityEngine.Object destroyDependency, IEnumerator coroutine)
+    {
+        StartCoroutine(CoroutineRunner());
+
+        IEnumerator CoroutineRunner()
+        {
+            for (var e = coroutine; e.MoveNext() && destroyDependency;)
+                yield return e.Current;
         }
     }
 

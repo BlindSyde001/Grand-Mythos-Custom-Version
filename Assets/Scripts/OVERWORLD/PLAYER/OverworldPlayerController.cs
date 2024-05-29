@@ -102,7 +102,7 @@ public class OverworldPlayerController : ReloadableBehaviour
             return false;
 
         Disabler |= ControlDisabler.Interacting; // Just in case coroutine does not start immediately
-        StartCoroutine(InteractionRoutine(source, interaction));
+        GameManager.Instance.StartUndisablableCoroutine(this, InteractionRoutine(source, interaction));
         return true;
     }
 
