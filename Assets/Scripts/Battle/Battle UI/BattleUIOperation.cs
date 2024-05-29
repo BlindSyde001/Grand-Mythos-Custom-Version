@@ -219,7 +219,7 @@ public class BattleUIOperation : MonoBehaviour
 
         if (SelectActionSet2.action.WasPerformedThisFrameUnique())
             if (UnitSelected.Profile is HeroExtension hero)
-                FillWithActions(hero.Actionset1);
+                FillWithActions(hero.Actionset2);
 
         if (SwitchSpecialInput.action.WasPerformedThisFrameUnique())
             UnitSelected.Profile.SwitchSpecialHandler?.OnSwitch(UnitSelected);
