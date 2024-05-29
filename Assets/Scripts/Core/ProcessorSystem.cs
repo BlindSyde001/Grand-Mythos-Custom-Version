@@ -65,8 +65,7 @@ namespace ProcessorSystem
 
         protected virtual void OnDestroy()
         {
-            CachedProcessor ??= ProcessorsManager.GetInstance<T>();
-            if (CachedProcessor.AddOnAwakeRemoveOnDestroy)
+            if (CachedProcessor != null && CachedProcessor.AddOnAwakeRemoveOnDestroy)
                 CachedProcessor.Remove((T2)this);
         }
 
@@ -79,8 +78,7 @@ namespace ProcessorSystem
 
         protected virtual void OnDisable()
         {
-            CachedProcessor ??= ProcessorsManager.GetInstance<T>();
-            if (CachedProcessor.AddOnAwakeRemoveOnDestroy == false)
+            if (CachedProcessor != null && CachedProcessor.AddOnAwakeRemoveOnDestroy == false)
                 CachedProcessor.Remove((T2)this);
         }
 
