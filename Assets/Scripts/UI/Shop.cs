@@ -33,6 +33,13 @@ public class Shop : MonoBehaviour
 
     void OnEnable()
     {
+        if (InventoryManager.Instance == null)
+        {
+            Debug.LogWarning($"No {typeof(InventoryManager)} in scene, disabling the shop");
+            gameObject.SetActive(false);
+            return;
+        }
+
         ItemDescription.text = "";
         BuyTab.onClick.RemoveListener(OnClickBuy);
         SellTab.onClick.RemoveListener(OnClickSell);
@@ -201,8 +208,6 @@ public class Shop : MonoBehaviour
         InventoryManager.Instance.Credits -= cost;
         return true;
     }
-
-
 
     [Serializable]
     public struct ItemWithCondition
