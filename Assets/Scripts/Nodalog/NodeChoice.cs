@@ -17,13 +17,13 @@ namespace Nodalog
         public ControlInput? Enter { get; private set; }
 
         [DoNotSerialize, PortLabelHidden]
-        public ReadOnlyCollection<ControlOutput> ChoiceExits;
+        public ReadOnlyCollection<ControlOutput> ChoiceExits = null!;
 
         [Serialize, Inspectable, InspectorTextArea, UnitHeaderInspectable, InspectorWide]
         public string[] Choices = Array.Empty<string>();
 
         [DoNotSerialize]
-        public ReadOnlyCollection<ValueInput> ChoiceVisible;
+        public ReadOnlyCollection<ValueInput> ChoiceVisible = null!;
 
         protected override void Definition()
         {

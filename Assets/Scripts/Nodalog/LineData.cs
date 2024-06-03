@@ -8,6 +8,6 @@ namespace Nodalog
     [Serializable]
     public class LineData
     {
-        [Multiline(lines:10)] public string RawString = "";
+        [TextArea(4, 20)] public string RawString = "";
     }
 }

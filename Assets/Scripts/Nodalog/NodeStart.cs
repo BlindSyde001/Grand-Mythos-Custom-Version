@@ -25,7 +25,7 @@ namespace Nodalog
         public DialogIssues Issues = new();
 
         [DoNotSerialize]
-        public ValueInput UI;
+        public ValueInput UI = null!;
 
         static NodeStart()
         {

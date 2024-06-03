@@ -137,7 +137,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
 
 
     [InfoBox("Each character must have a unique GUID, characters will share GUID when duplicated, in which case you must press the button below on the new character", InfoMessageType.Warning)]
-    [SerializeField, DisplayAsString]
+    [SerializeField, DisplayAsString, ReadOnly]
     guid _guid;
 
     public guid Guid => _guid;
