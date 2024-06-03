@@ -11,7 +11,18 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
 
     public static GameManager Instance { get; private set; }
 
+    [BoxGroup("PARTY DATA")]
+    public List<HeroExtension> PartyLineup;  // Who I've selected to be fighting
+    [BoxGroup("PARTY DATA")]
+    public List<HeroExtension> ReservesLineup;  // Who I have available in the Party
+
+    public SerializableHashSet<QuestStep> CompletedSteps = new();
+    public SerializableHashSet<Quest> DiscoveredQuests = new();
+
+    public IEnumerable<HeroExtension> AllHeroes => PartyLineup.Concat(ReservesLineup);
     public TimeSpan DurationTotal => _stopwatch.Elapsed + _lastPlaytime;
+    guid ISaved.UniqueConstID => Guid;
+
     TimeSpan _lastPlaytime;
     System.Diagnostics.Stopwatch _stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -52,14 +63,92 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         SavingSystem.Unregister<GameManager, SaveV1>(this);
     }
 
-    [BoxGroup("PARTY DATA")]
-    public List<HeroExtension> PartyLineup;  // Who I've selected to be fighting
-    [BoxGroup("PARTY DATA")]
-    public List<HeroExtension> ReservesLineup;  // Who I have available in the Party
+    /// <summary>
+    /// A coroutine that won't stop once its object is disabled,
+    /// <paramref name="destroyDependency"/> is to ensure the coroutine stops when the object is destroyed
+    /// </summary>
+    public void StartUndisablableCoroutine(UnityEngine.Object destroyDependency, IEnumerator coroutine)
+    {
+        StartCoroutine(CoroutineRunner());
 
-    public IEnumerable<HeroExtension> AllHeroes => PartyLineup.Concat(ReservesLineup);
+        IEnumerator CoroutineRunner()
+        {
+            for (var e = coroutine; e.MoveNext() && destroyDependency;)
+                yield return e.Current;
+        }
+    }
 
-    guid ISaved.UniqueConstID => Guid;
+    [Serializable] public struct SaveV2 : ISaveHandler<GameManager>, ISaveDataVersioned<SaveV1>
+    {
+        public TimeSpan TimeSpan => TimeSpan.FromTicks(Ticks);
+        public long Ticks;
+        public guid[] Party, Reserve;
+        public QuestStep[] CompletedSteps;
+        public guid[] DiscoveredQuests;
+
+        public uint Version => 2;
+
+        public void Transfer(GameManager source, SavingSystem.Transfer transfer)
+        {
+            if (transfer == SavingSystem.Transfer.PullFromSource)
+            {
+                Party = source.PartyLineup.Select(x => x.Guid).ToArray();
+                Reserve = source.ReservesLineup.Select(x => x.Guid).ToArray();
+                Ticks = source.DurationTotal.Ticks;
+                CompletedSteps = source.CompletedSteps.Select(x => new QuestStep { quest = x.Quest.Guid, step = x.Guid }).ToArray();
+                DiscoveredQuests = source.DiscoveredQuests.Select(x => x.Guid).ToArray();
+            }
+            else
+            {
+                source.PartyLineup = new();
+                foreach (guid guid in Party)
+                    if (PlayableCharacters.TryGet(guid, out var hero))
+                        source.PartyLineup.Add(hero);
+
+                source.ReservesLineup = new();
+                foreach (guid guid in Reserve)
+                    if (PlayableCharacters.TryGet(guid, out var hero))
+                        source.ReservesLineup.Add(hero);
+
+                source._lastPlaytime = TimeSpan.FromTicks(Ticks);
+                source._stopwatch.Restart();
+                source.CompletedSteps = new();
+                foreach (var questStep in CompletedSteps)
+                {
+                    if (IdentifiableDatabase.TryGet(questStep.quest, out Quest quest))
+                    {
+                        if (quest.Steps.FirstOrDefault(x => x.Guid == questStep.step) is { } step)
+                            source.CompletedSteps.Add(step);
+                        else
+                            Debug.LogWarning($"Could not find step {questStep.step} in quest {quest}");
+                    }
+                    else
+                        Debug.LogWarning($"Could not find quest {questStep.quest}");
+                }
+                source.DiscoveredQuests = new();
+                foreach (var guid in DiscoveredQuests)
+                {
+                    if (IdentifiableDatabase.TryGet(guid, out Quest quest))
+                        source.DiscoveredQuests.Add(quest);
+                    else
+                        Debug.LogWarning($"Could not find quest {guid}");
+                }
+            }
+        }
+
+        public void UpgradeFromPrevious(SaveV1 old)
+        {
+            Ticks = old.Ticks;
+            Party = old.Party;
+            Reserve = old.Reserve;
+        }
+
+        [Serializable]
+        public struct QuestStep
+        {
+            public guid quest, step;
+        }
+    }
 
     [Serializable] public struct SaveV1 : ISaveHandler<GameManager>
     {
@@ -92,21 +181,6 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
                 source._lastPlaytime = TimeSpan.FromTicks(Ticks);
                 source._stopwatch.Restart();
             }
-        }
-    }
-
-    /// <summary>
-    /// A coroutine that won't stop once its object is disabled,
-    /// <paramref name="destroyDependency"/> is to ensure the coroutine stops when the object is destroyed
-    /// </summary>
-    public void StartUndisablableCoroutine(UnityEngine.Object destroyDependency, IEnumerator coroutine)
-    {
-        StartCoroutine(CoroutineRunner());
-
-        IEnumerator CoroutineRunner()
-        {
-            for (var e = coroutine; e.MoveNext() && destroyDependency;)
-                yield return e.Current;
         }
     }
 

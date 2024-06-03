@@ -18,6 +18,12 @@ public struct guid : IComparable<guid>, IEquatable<guid>
         this = systemGuid;
     }
 
+    public guid(ulong a, ulong b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+
     public int CompareTo(guid other)
     {
         return (a, b).CompareTo((other.a, other.b));
@@ -62,4 +68,6 @@ public struct guid : IComparable<guid>, IEquatable<guid>
     public override int GetHashCode() => (a, b).GetHashCode();
 
     public override string ToString() => ((Guid)this).ToString();
+
+    public static guid New() => Guid.NewGuid();
 }
