@@ -38,10 +38,10 @@ public class CharacterTemplate : MonoBehaviour
     public StatGrowth StatGrowth;
 
     [BoxGroup("STATS"), OnValueChanged(nameof(UpdateLevelFromExperience))]
-    public int Experience;
+    public uint Experience;
 
     [FormerlySerializedAs("StartingLevel"), BoxGroup("STATS"), OnValueChanged(nameof(UpdateExperienceFromLevel))]
-    public int Level = 1;
+    public uint Level = 1;
 
     [BoxGroup("ELEMENTAL RESISTANCES")] public ElementalResistance ResistanceFire = ElementalResistance.Neutral;
     [BoxGroup("ELEMENTAL RESISTANCES")] public ElementalResistance ResistanceIce = ElementalResistance.Neutral;
@@ -112,9 +112,9 @@ public class CharacterTemplate : MonoBehaviour
     /// </summary>
     public virtual Stats EffectiveStats => StatGrowth.ApplyGrowth(BaseStats, Level);
 
-    public int ExperienceToNextLevel => ExperienceThreshold - Experience; // How Much (Relative) you need
-    public int ExperienceThreshold => GetAmountOfXPForLevel(Level); // How Much (Total) you need
-    public int PrevExperienceThreshold => GetAmountOfXPForLevel(Level-1);
+    public uint ExperienceToNextLevel => ExperienceThreshold - Experience; // How Much (Relative) you need
+    public uint ExperienceThreshold => GetAmountOfXPForLevel(Level); // How Much (Total) you need
+    public uint PrevExperienceThreshold => GetAmountOfXPForLevel(Level-1);
 
     void UpdateDummyStats()
     {
@@ -166,24 +166,24 @@ public class CharacterTemplate : MonoBehaviour
         Level = GetAmountOfLevelForXP(Experience);
     }
 
-    public static int GetAmountOfXPForLevel(int level)
+    public static uint GetAmountOfXPForLevel(uint level)
     {
-        if (level <= 0)
+        if (level == 0)
             return 0;
         level -= 1;
         double temp = level;
         temp *= 5d;
         temp = Math.Pow(temp, 2.3d);
-        return (int)Math.Floor(temp);
+        return (uint)Math.Floor(temp);
     }
 
-    public static int GetAmountOfLevelForXP(int xp)
+    public static uint GetAmountOfLevelForXP(uint xp)
     {
-        if (xp <= 0)
+        if (xp == 0)
             return 0;
         double temp = Math.Pow(xp+1, 1d/2.3d);
         temp /= 5d;
-        return ((int)temp) + 1;
+        return ((uint)temp) + 1;
     }
 
     public void LevelUpCheck()

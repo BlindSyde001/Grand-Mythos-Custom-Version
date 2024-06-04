@@ -46,7 +46,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     [ReadOnly, BoxGroup("SKILLS")] public SerializableDictionary<guid, IModifier> SkillModifiers = new();
     [BoxGroup("SKILLS")] public IActionCollection Actionset1 = new(), Actionset2 = new();
 
-    public int SkillPointsTotal => Level;
+    public uint SkillPointsTotal => Level;
 
     public override Stats EffectiveStats
     {
@@ -165,7 +165,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         public uint Version => 3;
 
         public int CurrentHP, CurrentMP;
-        public int Experience;
+        public uint Experience;
         public guid Weapon;
         public guid Armour;
         public guid AccessoryOne;
@@ -206,7 +206,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         public uint Version => 2;
 
         public int CurrentHP, CurrentMP;
-        public int Experience;
+        public uint Experience;
         public guid Weapon;
         public guid Armour;
         public guid AccessoryOne;
@@ -242,7 +242,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         public uint Version => 1;
 
         public int CurrentHP, CurrentMP;
-        public int Experience;
+        public uint Experience;
         public guid Weapon;
         public guid Armour;
         public guid AccessoryOne;

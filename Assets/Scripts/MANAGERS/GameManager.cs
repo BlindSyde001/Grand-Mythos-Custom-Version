@@ -55,6 +55,12 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         }
     }
 
+    void Update()
+    {
+        var singleton = SingletonManager.Instance;
+        singleton.HunterRank.Amount = (int)CharacterTemplate.GetAmountOfLevelForXP((uint)singleton.HunterExperience.Amount);
+    }
+
     void OnDestroy()
     {
         if (Instance == this)
