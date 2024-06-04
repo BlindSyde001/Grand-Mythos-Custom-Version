@@ -2,7 +2,7 @@ using System;
 
 namespace UnityEditor.PostProcessing
 {
-    public class PostProcessingModelEditorAttribute : Attribute
+    public class PostProcessingModelEditorAttribute : System.Attribute
     {
         public readonly Type type;
         public readonly bool alwaysEnabled;

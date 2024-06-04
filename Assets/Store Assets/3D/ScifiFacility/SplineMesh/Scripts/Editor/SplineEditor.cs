@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(Spline))]
-public class SplineEditor : Editor {
+public class SplineEditor : UnityEditor.Editor {
 
     private const int QUAD_SIZE = 12;
     private Color CURVE_COLOR = new Color(0.8f, 0.8f, 0.8f);

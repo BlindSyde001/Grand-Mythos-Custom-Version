@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(SplineExtrusion))]
-public class SplineExtrusionEditor : Editor
+public class SplineExtrusionEditor : UnityEditor.Editor
 {
     private const int QUAD_SIZE = 10;
     private Color CURVE_COLOR = new Color(0.8f, 0.8f, 0.8f);
