@@ -170,16 +170,16 @@ public class BattleResolution : MonoBehaviour
 
     static IEnumerator ReceiveExperienceRewards(CharacterTemplate myHero, int individualExperience, float duration)
     {
-        int start = myHero.Experience;
+        uint start = myHero.Experience;
         float t = 0f;
         while (t < 1f)
         {
-            myHero.Experience = (int)Mathf.Lerp(start, start + individualExperience, t);
+            myHero.Experience = (uint)Mathf.Lerp(start, start + individualExperience, t);
             t += Time.deltaTime / duration;
             myHero.LevelUpCheck();
             yield return null;
         }
-        myHero.Experience = start + individualExperience;
+        myHero.Experience = (uint)(start + individualExperience);
     }
 
     static void ReturnToOverworld(BattleStateMachine battle)

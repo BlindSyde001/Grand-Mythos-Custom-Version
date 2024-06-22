@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4034720880787443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 843f18c3b94e45f894a0266a520645d6, type: 3}
+  m_Name: New Quest - New Step
+  m_EditorClassIdentifier: 
+  Title: New Step
+  Description: 
+  _quest: {fileID: 11400000}
+  _guid:
+    a: 5082994205500361815
+    b: 238492264250677693
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0928c64675ee2a40966a3b5af018f76, type: 3}
+  m_Name: New Quest
+  m_EditorClassIdentifier: 
+  _guid:
+    a: 4903539452590933529
+    b: 8390259444973426573
+  Description: 
+  Outcome:
+    rid: -2
+  Steps:
+  - {fileID: -4034720880787443}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

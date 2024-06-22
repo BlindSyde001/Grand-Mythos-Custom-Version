@@ -17,13 +17,13 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
                                    "For example, this interaction would open the locked door to keep it open between sessions, while OnTrigger would remove the key from the player's inventory";
 
     [InfoBox(InfoBoxGuidWarning, InfoMessageType.Warning)]
-    [SerializeField, DisplayAsString]
+    [SerializeField, DisplayAsString, ReadOnly]
     guid _guid = Guid.NewGuid();
 
-    [FormerlySerializedAs("Interaction"), Required, SerializeReference, SerializeField]
+    [FormerlySerializedAs("Interaction"), Required, SerializeReference, SerializeField, ValidateInput(nameof(ValidateOnTrigger))]
     protected IInteraction OnTrigger;
 
-    [SerializeReference, SerializeField, Tooltip(InfoBoxWarningPersistent)]
+    [SerializeReference, SerializeField, Tooltip(InfoBoxWarningPersistent), ValidateInput(nameof(ValidatePersistentEffect))]
     protected IInteraction PersistentEffect;
 
     public TriggerType Type = TriggerType.OnceEveryLoad;
@@ -45,14 +45,14 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             if (OverworldPlayerController.Instances.Count == 0)
                 StartCoroutine(WaitForPlayerAndTriggerPersistentEffect());
             else
-                PersistentEffect?.Interact(this, OverworldPlayerController.Instances.First());
+                OverworldPlayerController.Instances.First().PlayInteraction(this, PersistentEffect);
 
             IEnumerator WaitForPlayerAndTriggerPersistentEffect()
             {
                 while (OverworldPlayerController.Instances.Count == 0)
                     yield return null;
 
-                PersistentEffect?.Interact(this, OverworldPlayerController.Instances.First());
+                OverworldPlayerController.Instances.First().PlayInteraction(this, PersistentEffect);
             }
         }
     }
@@ -63,11 +63,20 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             SavingSystem.StoreAndUnregister<UniqueInteractionSource, Save>(this);
     }
 
-    public bool TryConsumeInteraction(out IInteraction interaction)
+    static bool ValidateOnTrigger(IInteraction interaction, ref string message)
+    {
+        return interaction != null && interaction.IsValid(out message);
+    }
+
+    static bool ValidatePersistentEffect(IInteraction interaction, ref string message)
+    {
+        return interaction == null || interaction.IsValid(out message);
+    }
+
+    public bool TryConsumeAndPlayInteraction(OverworldPlayerController controller)
     {
         if (_consumed && Type is TriggerType.OnceEver or TriggerType.OnceEveryLoad)
         {
-            interaction = null;
             return false;
         }
 
@@ -75,10 +84,13 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             Debug.LogError($"No interaction on this interactable ({this})", this);
 
         _consumed |= Type is TriggerType.OnceEver or TriggerType.OnceEveryLoad;
+        IInteraction interaction;
         if (PersistentEffect is null)
             interaction = OnTrigger;
         else
             interaction = new MultiInteraction { Array = new[] { OnTrigger, PersistentEffect }, Execution = MultiInteraction.Mode.Sequentially };
+
+        controller.PlayInteraction(this, interaction);
         return true;
     }
 

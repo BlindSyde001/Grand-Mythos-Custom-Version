@@ -17,21 +17,21 @@ namespace Interactables
             Simultaneously
         }
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
+        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             switch (Execution)
             {
                 case Mode.Sequentially:
                     foreach (var interaction in Array)
                     {
-                        foreach (var yields in interaction.Interact(source, player))
+                        foreach (var yields in interaction.InteractEnum(source, player))
                             yield return yields;
                     }
                     break;
                 case Mode.Simultaneously:
                     var enums = new IEnumerator<Delay>[Array.Length];
                     for (int i = 0; i < enums.Length; i++)
-                        enums[i] = Array[i].Interact(source, player).GetEnumerator();
+                        enums[i] = Array[i].InteractEnum(source, player).GetEnumerator();
 
                     int idles = 0;
                     do

@@ -11,7 +11,7 @@ namespace StatusHandler
     public class StatusModifier : IdentifiableScriptableObject, IModifier
     {
         [PreviewField] public Texture Icon;
-        [Multiline] public string Description;
+        [TextArea] public string Description;
 
         public ModifierDisplay DisplayPrefab;
 

@@ -28,7 +28,7 @@ public struct StatGrowth
     [HorizontalGroup("MISC"), GUIColor(0.75f, 0.75f, 0.75f)]
     public GrowthRate Luck;
 
-    public Stats ApplyGrowth(Stats baseStats, int level)
+    public Stats ApplyGrowth(Stats baseStats, uint level)
     {
         return new()
         {

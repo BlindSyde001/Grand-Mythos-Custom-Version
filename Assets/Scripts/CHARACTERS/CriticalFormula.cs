@@ -14,19 +14,6 @@ public class CriticalFormula : ScriptableObject
 
     int _previewStat;
 
-    void OnEnable()
-    {
-        if (SingletonManager.Instance.CriticalFormula == null)
-        {
-            SingletonManager.Instance.CriticalFormula = this;
-            #if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(SingletonManager.Instance);
-            #endif
-        }
-        else if (ReferenceEquals(SingletonManager.Instance.CriticalFormula, this) == false)
-            Debug.LogError($"Multiple instances of {nameof(CriticalFormula)} is not allowed");
-    }
-
     AnimationCurve DrawBigGraph(AnimationCurve value)
     {
         #if UNITY_EDITOR

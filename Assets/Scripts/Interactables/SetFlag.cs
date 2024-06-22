@@ -14,7 +14,7 @@ namespace Interactables
         [Required, HorizontalGroup, LabelText(" \u2192 ")]
         public bool NewState;
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
+        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             Flag.State = NewState;
             yield break;

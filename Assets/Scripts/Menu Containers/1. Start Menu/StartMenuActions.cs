@@ -2,18 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Sirenix.OdinInspector;
+using TMPro;
+using UnityEngine.UI;
 
 public class StartMenuActions : MenuContainer
 {
     public UIElementList<PartyContainer> PartyUI = new();
     public UIElementList<ReserveContainer> ReserveUI = new();
-    public MiscContainer miscList;
+    [Required] public MiscContainer miscList;
+    [Required] public TMP_Text HunterRank;
+    [Required] public Image HunterExpBar;
 
     ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) _lineupChange;
 
     void LateUpdate()
     {
         miscList.miscTime.text = GameManager.Instance.DurationTotal.ToString(@"hh\:mm\:ss");
+        var rank = SingletonManager.Instance.HunterRank.Amount;
+        var exp = SingletonManager.Instance.HunterExperience.Amount;
+        var nextExp = CharacterTemplate.GetAmountOfXPForLevel((uint)rank + 1);
+        var prevExp = CharacterTemplate.GetAmountOfXPForLevel((uint)rank);
+        if (int.TryParse(HunterRank.text, out var textRank) == false || textRank != rank)
+            HunterRank.text = rank.ToString();
+        HunterExpBar.fillAmount = (exp - prevExp) / ((float)(nextExp - prevExp));
     }
 
     // METHODS

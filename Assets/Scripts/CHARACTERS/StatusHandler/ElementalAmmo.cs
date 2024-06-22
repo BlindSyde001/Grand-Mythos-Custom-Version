@@ -9,7 +9,7 @@ namespace StatusHandler
     public class ElementalAmmo : ScriptableObject, IModifier
     {
         [PreviewField] public Texture Icon;
-        [Multiline] public string Description;
+        [TextArea] public string Description;
 
         public Element Element;
 

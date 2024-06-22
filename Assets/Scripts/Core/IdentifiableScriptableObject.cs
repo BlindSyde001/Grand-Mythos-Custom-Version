@@ -18,7 +18,7 @@ public class IdentifiableScriptableObject : ScriptableObject, ISerializationCall
     public guid Guid => _guid;
 
     [InfoBox(InfoBoxWarning, InfoMessageType.Warning)]
-    [SerializeField, DisplayAsString]
+    [SerializeField, DisplayAsString, ReadOnly]
     guid _guid;
 
     public void OnBeforeSerialize()

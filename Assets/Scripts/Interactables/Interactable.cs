@@ -3,6 +3,7 @@
 [AddComponentMenu(" GrandMythos/Interactable")]
 public class Interactable : UniqueInteractionSource
 {
+    [Space]
     public string Text = "Interact?";
 
     void OnDrawGizmos()

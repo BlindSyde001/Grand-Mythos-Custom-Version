@@ -4,7 +4,7 @@ namespace Nodalog
 {
     public abstract class Variable : IdentifiableScriptableObject
     {
-        [Multiline(lines:3)] public string Description = "";
+        [TextArea] public string Description = "";
 
         protected virtual void OnEnable()
         {

@@ -18,7 +18,7 @@ namespace Interactables
         [Required, HorizontalGroup, HideLabel]
         public int Value = 1;
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
+        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             Tally.Amount = Operation switch
             {

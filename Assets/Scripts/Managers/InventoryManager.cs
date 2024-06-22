@@ -17,8 +17,11 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     /// </summary>
     ItemData _first;
 
-    [FormerlySerializedAs("_credits")]
-    public int Credits = 1000;
+    public int Credits
+    {
+        get => SingletonManager.Instance.Credits.Amount;
+        set => SingletonManager.Instance.Credits.Amount = value;
+    }
 
     [SerializeField, OnValueChanged(nameof(ConsolidateItems))]
     ItemSet Items = new();
@@ -370,7 +373,6 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
 
         public void Transfer(InventoryManager source, SavingSystem.Transfer transfer)
         {
-            transfer.Value(ref Credits, ref source.Credits);
             transfer.Value(ref LastSort, ref source._lastSort);
             transfer.Identifiables<List<guid>, List<ActionCondition>, ActionCondition>(ref Conditions, ref source.ConditionsAcquired);
 

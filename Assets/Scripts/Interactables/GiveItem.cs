@@ -14,7 +14,7 @@ namespace Interactables
 
         bool ValidateCount(uint count) => count > 0;
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
+        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             InventoryManager.Instance.AddToInventory(Item, Count);
             yield break;
