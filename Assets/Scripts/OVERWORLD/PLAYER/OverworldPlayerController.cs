@@ -33,6 +33,9 @@ public class OverworldPlayerController : ReloadableBehaviour
     public ControlDisabler Disabler;
     public double UnitsWalked;
 
+    [SerializeField, Sirenix.OdinInspector.ReadOnly]
+    int _interactionStacked;
+
     public MeansOfTransport[] MeansOfTransports = new MeansOfTransport[]
     {
         new()
@@ -93,17 +96,35 @@ public class OverworldPlayerController : ReloadableBehaviour
         InputManager.PopGameState(this);
     }
 
-    public bool TryPlayInteraction(UniqueInteractionSource source)
+    public void PlayInteraction(IInteractionSource source, IInteraction interaction)
     {
-        if ((Disabler & ControlDisabler.Interacting) != 0)
-            return false;
+        _interactionStacked++;
+        Disabler |= ControlDisabler.Interacting; // Just in case a coroutine does not start immediately
+        GameManager.Instance.StartUndisablableCoroutine(this, InteractionRoutine(this, source, interaction));
 
-        if (source.TryConsumeInteraction(out var interaction) == false)
-            return false;
-
-        Disabler |= ControlDisabler.Interacting; // Just in case coroutine does not start immediately
-        GameManager.Instance.StartUndisablableCoroutine(this, InteractionRoutine(source, interaction));
-        return true;
+        static IEnumerator InteractionRoutine(OverworldPlayerController @this, IInteractionSource source, IInteraction interaction)
+        {
+            try
+            {
+                foreach (var delay in interaction.InteractEnum(source, @this))
+                {
+                    switch (delay)
+                    {
+                        case Delay.WaitTillNextFrame:
+                            yield return null;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+            finally
+            {
+                @this._interactionStacked--;
+                if (@this._interactionStacked == 0)
+                    @this.Disabler &= ~ControlDisabler.Interacting;
+            }
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -145,7 +166,7 @@ public class OverworldPlayerController : ReloadableBehaviour
             {
                 if (Prompt.TryShowInteractivePromptThisFrame(closestInteractable.transform.position, closestInteractable.Text)
                     && Interact.action.WasPressedThisFrame()
-                    && TryPlayInteraction(closestInteractable))
+                    && closestInteractable.TryConsumeAndPlayInteraction(this))
                     return;
             }
         }
@@ -285,29 +306,6 @@ public class OverworldPlayerController : ReloadableBehaviour
         finally
         {
             Disabler &= ~ControlDisabler.Jump;
-        }
-    }
-
-    IEnumerator InteractionRoutine(IInteractionSource source, IInteraction interaction)
-    {
-        Disabler |= ControlDisabler.Interacting;
-        try
-        {
-            foreach (var delay in interaction.Interact(source, this))
-            {
-                switch (delay)
-                {
-                    case Delay.WaitTillNextFrame:
-                        yield return null;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-        finally
-        {
-            Disabler &= ~ControlDisabler.Interacting;
         }
     }
 

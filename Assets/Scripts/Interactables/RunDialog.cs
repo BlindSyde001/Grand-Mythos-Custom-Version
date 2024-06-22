@@ -12,7 +12,7 @@ namespace Interactables
         [Required, Tooltip("A ScriptMachine component containing a graph which contains a Dialog Triggered Event")]
         public ScriptMachine DialogScript;
 
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
+        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             EventBus.Trigger(new EventHook(DialogTriggeredEvent.Key, DialogScript.gameObject), DialogScript.gameObject);
             #warning this is a bit flacky, should change this into something more robust

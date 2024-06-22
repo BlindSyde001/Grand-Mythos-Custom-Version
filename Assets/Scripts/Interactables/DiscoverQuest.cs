@@ -9,9 +9,9 @@ public class DiscoverQuest : IInteraction
     [Required, Tooltip("This quest will be added to the journal")]
     public Quest Quest;
 
-    public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
+    public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
     {
-        GameManager.Instance.DiscoveredQuests.Add(Quest);
+        Quest.Discovered = true;
         yield break;
     }
 

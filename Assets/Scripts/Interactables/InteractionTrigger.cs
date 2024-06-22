@@ -38,7 +38,7 @@ public class InteractionTrigger : UniqueInteractionSource
         if (other.GetComponentInParent<OverworldPlayerController>() is not { } controller)
             return;
 
-        if (controller.TryPlayInteraction(this))
+        if (this.TryConsumeAndPlayInteraction(controller))
         {
             switch (Type)
             {

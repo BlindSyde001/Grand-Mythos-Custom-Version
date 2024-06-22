@@ -1,10 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Interactables;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class QuestBoard : MonoBehaviour
 {
+    [TableList]
     public ConditionalQuest[] Quests;
     public UIElementList<QuestItem> UIItems;
 
@@ -31,10 +33,10 @@ public class QuestBoard : MonoBehaviour
                 continue;
 
             UIItems.Allocate(out var questItem);
-            questItem.Button.interactable = GameManager.Instance.DiscoveredQuests.Contains(conditionalQuest.Quest) == false;
+            questItem.Button.interactable = conditionalQuest.Quest.Discovered == false;
             questItem.Button.onClick.AddListener(() =>
             {
-                GameManager.Instance.DiscoveredQuests.Add(conditionalQuest.Quest);
+                conditionalQuest.Quest.Discovered = true;
                 RefreshDisplay();
             });
             questItem.Title.text = conditionalQuest.Quest.name;
@@ -47,6 +49,7 @@ public class QuestBoard : MonoBehaviour
         InputManager.PopGameState(this);
     }
 
+    [Serializable]
     public struct ConditionalQuest
     {
         [Required]

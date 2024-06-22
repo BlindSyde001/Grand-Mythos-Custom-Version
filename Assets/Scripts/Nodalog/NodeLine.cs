@@ -56,8 +56,18 @@ namespace Nodalog
         protected IEnumerator DialogFlow(Flow flow)
         {
             NodeStart.Starts.TryGetValue(flow, out var comp);
-            var ui = comp.ui;
-            var text = Line.RawString;
+            UIBase? ui = comp.ui;
+            string text = Line.RawString;
+            foreach (var yield in LinePresenter(ui, text, Interlocutor))
+            {
+                yield return yield;
+            }
+
+            yield return Exit;
+        }
+
+        public static IEnumerable LinePresenter(UIBase ui, string text, Interlocutor? interlocutor)
+        {
             ui.StartLineTypewriting(text);
             ui.SetTypewritingCharacter(0);
             float time = 0f;
@@ -69,10 +79,10 @@ namespace Nodalog
                 if (i + 1 == text.Length)
                     break; // Don't delay for the last character
 
-                if (Interlocutor != null && i - lastChatter >= Interlocutor.CharactersPerChatter)
-                    Chatter(ref lastChatter, i, text, Interlocutor, ui);
+                if (interlocutor != null && i - lastChatter >= interlocutor.CharactersPerChatter)
+                    Chatter(ref lastChatter, i, text, interlocutor, ui);
 
-                time += Interlocutor?.GetDuration(text[i]) ?? 0.1f;
+                time += interlocutor?.GetDuration(text[i]) ?? 0.1f;
                 for (; time > 0f; time -= Time.unscaledDeltaTime)
                 {
                     if (ui.FastForwardRequested)
@@ -85,8 +95,8 @@ namespace Nodalog
                 }
             }
 
-            if (Interlocutor != null)
-                Chatter(ref lastChatter, text.Length - 1, text, Interlocutor, ui);
+            if (interlocutor != null)
+                Chatter(ref lastChatter, text.Length - 1, text, interlocutor, ui);
 
             BREAK_TYPEWRITING:
             ui.SetTypewritingCharacter(text.Length);
@@ -102,11 +112,9 @@ namespace Nodalog
 
                 yield return null;
             }
-
-            yield return Exit;
         }
 
-        void Chatter(ref int last, int current, string text, Interlocutor interlocutor, UIBase ui)
+        static void Chatter(ref int last, int current, string text, Interlocutor interlocutor, UIBase ui)
         {
             int hash = 0;
             int processed = 0;

@@ -8,7 +8,7 @@ namespace Interactables
     public class Wait : IInteraction
     {
         public float DurationInSeconds = 1f;
-        public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
+        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             for (float f = 0; f < DurationInSeconds; f += Time.deltaTime)
             {

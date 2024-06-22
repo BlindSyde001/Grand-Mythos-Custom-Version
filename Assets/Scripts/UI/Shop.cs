@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Interactables;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [AddComponentMenu(" GrandMythos/Shop")]
-public class Shop : MonoBehaviour
+public class Shop : MonoBehaviour, IInteractionSource
 {
     [Header("Logic")]
     public Categories PlayersCanSellItemsOfType = ~Categories.Loot; // Everything but loot by default, loot is reserved to poachers
@@ -18,7 +20,7 @@ public class Shop : MonoBehaviour
     [Tooltip("Multiplier on the amount received from items the player sells to the shop, PlayerMoney += ItemCost * SellRatio")]
     public float SellRatio = 0.5f;
     [TableList]
-    public List<ItemWithCondition> Stock = new();
+    public List<Transaction> Stock = new();
 
     [Header("UI")]
     [Required] public Button BuyTab;
@@ -79,13 +81,13 @@ public class Shop : MonoBehaviour
         SellTab.gameObject.SetActive(PlayersCanSellItemsOfType != 0);
         BuyTab.gameObject.SetActive(Stock.Count > 0);
 
-        var items = new List<TradeableItem>();
+        var itemsAndCondition = new List<Transaction>();
         if (buy)
         {
             foreach (var itemWithCondition in Stock)
             {
                 if (itemWithCondition.Availability == null || itemWithCondition.Availability.Evaluate())
-                    items.Add(itemWithCondition.Item);
+                    itemsAndCondition.Add(itemWithCondition);
             }
         }
         else
@@ -96,13 +98,13 @@ public class Shop : MonoBehaviour
                     continue;
 
                 for (int i = 0; i < count; i++)
-                    items.Add(item);
+                    itemsAndCondition.Add(new(){ Item = item, Availability = null, OnTransaction = null });
             }
         }
 
         var categories = Categories.None;
-        foreach (var item in items)
-            categories |= ExtractCategory(item);
+        foreach (var transaction in itemsAndCondition)
+            categories |= ExtractCategory(transaction.Item);
 
         CategoriesContainer.Clear();
         Categories firstValidCategory = 0;
@@ -126,8 +128,9 @@ public class Shop : MonoBehaviour
 
         Action OnBuy = () => { };
         ItemsList.Clear();
-        foreach (var item in items)
+        foreach (var transaction in itemsAndCondition)
         {
+            var item = transaction.Item;
             if ((ExtractCategory(item) & _selectedCategory) == 0)
                 continue;
 
@@ -143,7 +146,40 @@ public class Shop : MonoBehaviour
             if (buy)
                 element.Button.onClick.AddListener(() =>
                 {
-                    PlayerTryBuy(item);
+                    if ((transaction.Availability is null || transaction.Availability.Evaluate()) && PlayerTryBuy(item))
+                    {
+                        var controller = OverworldPlayerController.Instances.First();
+                        if (transaction.OnTransaction is not null && item.OnPlayerSoldItem is not null)
+                        {
+                            var multi = new MultiInteraction
+                            {
+                                Array = new []{ transaction.OnTransaction, item.OnPlayerSoldItem },
+                                Execution = MultiInteraction.Mode.Sequentially,
+                            };
+                            controller.PlayInteraction(this, multi);
+                        }
+                        else if (item.OnPlayerSoldItem is not null)
+                            controller.PlayInteraction(this, item.OnPlayerSoldItem);
+                        else if (transaction.OnTransaction is not null)
+                            controller.PlayInteraction(this, transaction.OnTransaction);
+                    }
+
+                    if (transaction.Availability is not null && transaction.Availability.Evaluate() == false)
+                    {
+                        var selection = EventSystem.current.currentSelectedGameObject;
+                        if (selection == element.Button.gameObject)
+                        {
+                            // Change selection to another element
+                            var arr = ItemsList.ToArray();
+                            var i = Array.IndexOf(arr, element);
+                            if (i + 1 < arr.Length)
+                                arr[i+1].Button.Select();
+                            else if (i - 1 >= 0)
+                                arr[i-1].Button.Select();
+                        }
+                        ItemsList.Remove(element);
+                    }
+
                     // ReSharper disable once AccessToModifiedClosure
                     OnBuy();
                 });
@@ -210,12 +246,14 @@ public class Shop : MonoBehaviour
     }
 
     [Serializable]
-    public struct ItemWithCondition
+    public struct Transaction
     {
         [Required]
         public TradeableItem Item;
-        [SerializeReference, Tooltip("Condition for this item to become available, None means it is always available")]
+        [SerializeReference, Tooltip("Condition for this item to become available, None means it is always available"), MaybeNull]
         public ICondition Availability;
+        [SerializeReference, Tooltip("Interaction occuring once this item is bought"), MaybeNull]
+        public IInteraction OnTransaction;
     }
 
     [Flags]

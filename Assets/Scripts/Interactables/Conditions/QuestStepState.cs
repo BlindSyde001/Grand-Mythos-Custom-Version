@@ -13,8 +13,14 @@ namespace Interactables.Conditions
 
         public bool Evaluate()
         {
-            bool targetState = Check == State.Done;
-            return GameManager.Instance.CompletedSteps.Contains(Step) == targetState;
+            if (Check == State.InProgress)
+            {
+                int index = Array.IndexOf(Step.Quest.Steps, Step);
+                return Step.Completed == false && (index == 0 || Step.Quest.Steps[index - 1].Completed);
+            }
+
+            bool targetState = Check == State.Completed;
+            return Step.Completed == targetState;
         }
 
         public bool IsValid(out string error)
@@ -31,8 +37,11 @@ namespace Interactables.Conditions
 
         public enum State
         {
-            Done,
+            Completed,
+            [Tooltip("This step has not been completed yet, but the previous one is")]
             InProgress,
+            [Tooltip("This step has not been completed yet, a step can be both 'InProgress' and 'Incomplete'")]
+            Incomplete,
         }
     }
 }

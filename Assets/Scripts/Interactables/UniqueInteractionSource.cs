@@ -45,14 +45,14 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             if (OverworldPlayerController.Instances.Count == 0)
                 StartCoroutine(WaitForPlayerAndTriggerPersistentEffect());
             else
-                PersistentEffect?.Interact(this, OverworldPlayerController.Instances.First());
+                OverworldPlayerController.Instances.First().PlayInteraction(this, PersistentEffect);
 
             IEnumerator WaitForPlayerAndTriggerPersistentEffect()
             {
                 while (OverworldPlayerController.Instances.Count == 0)
                     yield return null;
 
-                PersistentEffect?.Interact(this, OverworldPlayerController.Instances.First());
+                OverworldPlayerController.Instances.First().PlayInteraction(this, PersistentEffect);
             }
         }
     }
@@ -73,11 +73,10 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
         return interaction == null || interaction.IsValid(out message);
     }
 
-    public bool TryConsumeInteraction(out IInteraction interaction)
+    public bool TryConsumeAndPlayInteraction(OverworldPlayerController controller)
     {
         if (_consumed && Type is TriggerType.OnceEver or TriggerType.OnceEveryLoad)
         {
-            interaction = null;
             return false;
         }
 
@@ -85,10 +84,13 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             Debug.LogError($"No interaction on this interactable ({this})", this);
 
         _consumed |= Type is TriggerType.OnceEver or TriggerType.OnceEveryLoad;
+        IInteraction interaction;
         if (PersistentEffect is null)
             interaction = OnTrigger;
         else
             interaction = new MultiInteraction { Array = new[] { OnTrigger, PersistentEffect }, Execution = MultiInteraction.Mode.Sequentially };
+
+        controller.PlayInteraction(this, interaction);
         return true;
     }
 

@@ -19,7 +19,7 @@ namespace Nodalog
         [DoNotSerialize, PortLabelHidden]
         public ReadOnlyCollection<ControlOutput> ChoiceExits = null!;
 
-        [Serialize, Inspectable, InspectorTextArea, UnitHeaderInspectable, InspectorWide]
+        [Serialize, Inspectable, InspectorTextArea(maxLines = 1000), UnitHeaderInspectable, InspectorWide]
         public string[] Choices = Array.Empty<string>();
 
         [DoNotSerialize]

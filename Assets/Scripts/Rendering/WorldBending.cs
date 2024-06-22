@@ -78,7 +78,7 @@ public class WorldBending : MonoBehaviour
             Gizmos.DrawWireCube(val.center, val.size);
     }
 
-    [Button]
+    [Button, ButtonGroup]
     void CreateMirrors()
     {
         ClearMirrors();
@@ -163,7 +163,7 @@ public class WorldBending : MonoBehaviour
 #endif
     }
 
-    [Button]
+    [Button, ButtonGroup]
     void ClearMirrors()
     {
         _bounds = default;

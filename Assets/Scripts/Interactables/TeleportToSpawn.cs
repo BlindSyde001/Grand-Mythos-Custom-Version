@@ -6,7 +6,7 @@ public class TeleportToSpawn : IInteraction
 {
     [Required] public SpawnPointReference Target;
 
-    public IEnumerable<Delay> Interact(IInteractionSource source, OverworldPlayerController player)
+    public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
     {
         Target.SwapSceneToThisSpawnPoint();
         yield break;

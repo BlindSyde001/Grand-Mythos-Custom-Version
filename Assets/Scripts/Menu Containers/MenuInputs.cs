@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +24,13 @@ public class MenuInputs : MonoBehaviour
 
     bool _busySwitching;
 
+    void Awake()
+    {
+        foreach (var menu in GetComponentsInChildren<MenuContainer>(true))
+        {
+            menu.gameObject.SetActive(false);
+        }
+    }
 
     // UPDATES
     void Start()

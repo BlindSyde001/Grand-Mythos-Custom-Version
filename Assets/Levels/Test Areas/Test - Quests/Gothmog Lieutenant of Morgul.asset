@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1188590564942983332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 843f18c3b94e45f894a0266a520645d6, type: 3}
+  m_Name: Report to Faramir
+  m_EditorClassIdentifier: 
+  Title: Report to Faramir
+  Description: Gothmog has been defeated, bring the good news to Faramir.
+  _quest: {fileID: 11400000}
+  _guid:
+    a: 4957886316845415393
+    b: 2665792662759977354
+--- !u!114 &-1181814238061795466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 843f18c3b94e45f894a0266a520645d6, type: 3}
+  m_Name: Repair Sting
+  m_EditorClassIdentifier: 
+  Title: Repair Sting
+  Description: Sting's hilt has gone missing, Celebrimbor the Master Smith likely
+    has a replacement.
+  _quest: {fileID: 11400000}
+  _guid:
+    a: 5702087489576763137
+    b: 15498573466068529836
+--- !u!114 &-4034720880787443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 843f18c3b94e45f894a0266a520645d6, type: 3}
+  m_Name: Talk to Faramir
+  m_EditorClassIdentifier: 
+  Title: Talk to Faramir
+  Description: The board mentioned Faramir, first order of business is to have a
+    talk with him.
+  _quest: {fileID: 11400000}
+  _guid:
+    a: 5082994205500361815
+    b: 238492264250677693
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0928c64675ee2a40966a3b5af018f76, type: 3}
+  m_Name: Gothmog Lieutenant of Morgul
+  m_EditorClassIdentifier: 
+  _guid:
+    a: 5205440034319889282
+    b: 10232040630243378064
+  Description: 'Attention People of Gondor, we seek courageous men willing to seek
+    and defeat the vile Gothmog.
+
+    Any person willing to take this quest must
+    get in contact with Faramir, Captain of the Rangers of Ithilien.'
+  Outcome:
+    rid: 4636652774468616232
+  Steps:
+  - {fileID: -4034720880787443}
+  - {fileID: 4980436453836444254}
+  - {fileID: -1181814238061795466}
+  - {fileID: 5658234352003188749}
+  - {fileID: -1188590564942983332}
+  references:
+    version: 2
+    RefIds:
+    - rid: 4636652774468616232
+      type: {class: SetTally, ns: Interactables, asm: Assembly-CSharp}
+      data:
+        Tally: {fileID: 11400000, guid: ce98c8c6c1bf4ad4392ff68b6989b0bf, type: 2}
+        Operation: 1
+        Value: 100
+--- !u!114 &4980436453836444254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 843f18c3b94e45f894a0266a520645d6, type: 3}
+  m_Name: Retrieve Sting
+  m_EditorClassIdentifier: 
+  Title: Retrieve Sting
+  Description: Faramir provided you with the location of Sting. The Elven short-sword
+    is in Mirkwood, Frodo lost it facing off against Shelob.
+  _quest: {fileID: 11400000}
+  _guid:
+    a: 5747482031700631952
+    b: 5454285130455923345
+--- !u!114 &5658234352003188749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 843f18c3b94e45f894a0266a520645d6, type: 3}
+  m_Name: Find and defeat Gothmog
+  m_EditorClassIdentifier: 
+  Title: Find and defeat Gothmog
+  Description: Now that Sting is whole again, use its power to find where Gothmog
+    may be hiding.
+  _quest: {fileID: 11400000}
+  _guid:
+    a: 5298511595373304543
+    b: 7286827793492214444

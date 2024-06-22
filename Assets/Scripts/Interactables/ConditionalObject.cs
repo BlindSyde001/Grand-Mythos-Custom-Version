@@ -16,9 +16,6 @@ namespace Interactables
         [HideInInspector]
         public bool LastEvaluation;
 
-        [HideLabel, NonSerialized, ReadOnly, ShowInInspector]
-        public string _debugTxt = "";
-
         bool ValidateCondition(ICondition condition, ref string error)
         {
             return condition?.IsValid(out error) ?? true;
@@ -27,8 +24,18 @@ namespace Interactables
         [Button]
         void TestCondition()
         {
+            #if UNITY_EDITOR
             bool value = Condition.Evaluate();
-            _debugTxt = $"({DateTime.Now:HH:mm:ss}) {value}; the object will be {(value ? "enabled" : "disabled")} with those conditions in the current context";
+            var debugTxt = $"({DateTime.Now:HH:mm:ss}) {value}; the object will be {(value ? "enabled" : "disabled")} with those conditions in the current context";
+            UnityEditor.EditorUtility.DisplayDialog(nameof(TestCondition), debugTxt, "Ok");
+            #endif
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            if (Condition.Evaluate() == false)
+                gameObject.SetActive(false);
         }
     }
 
@@ -40,6 +47,7 @@ namespace Interactables
 
         public void Update()
         {
+            #warning ultimately it would be better if it subscribed to changes in the condition variables
             foreach (var element in Components)
             {
                 try

@@ -18,7 +18,7 @@ public class JournalMenuActions : MenuContainer
         {
             QuestButtons.Allocate(out var button);
             button.Text.text = quest.name;
-            if (quest.Steps.Length > 0 && GameManager.CompletedSteps.Contains(quest.Steps[^1]))
+            if (quest.Completed)
                 button.Text.fontStyle = FontStyles.Strikethrough;
             button.Button.onClick.AddListener(() => SelectQuest(quest));
         }
@@ -58,8 +58,10 @@ public class JournalMenuActions : MenuContainer
     void SelectQuest(Quest quest)
     {
         QuestTitle.text = quest.name;
-        var currentStep = quest.Steps.FirstOrDefault(x => GameManager.CompletedSteps.Contains(x) == false) ?? quest.Steps.Length > 0 ? quest.Steps[^1] : null;
+        QuestTitle.fontStyle = quest.Completed ? FontStyles.Strikethrough : FontStyles.Normal;
+        var currentStep = quest.Steps.FirstOrDefault(x => x.Completed == false) ?? (quest.Steps.Length > 0 ? quest.Steps[^1] : null);
         StepTitle.text = currentStep?.name ?? "";
+        StepTitle.fontStyle = currentStep?.Completed == true ? FontStyles.Strikethrough : FontStyles.Normal;
         Description.text = currentStep?.Description ?? quest.Description;
     }
 }

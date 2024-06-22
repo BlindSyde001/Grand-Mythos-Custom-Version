@@ -7,7 +7,7 @@ public class SingletonManager : ScriptableObject
 {
     [Required] public CriticalFormula CriticalFormula;
     [Required] public InputActionAsset PlayerInput;
-    [Required] public Tally HunterRank, HunterExperience;
+    [Required] public Tally HunterRank, HunterExperience, Credits;
 
 
 
