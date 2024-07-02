@@ -386,6 +386,9 @@ public class BattleUIOperation : MonoBehaviour
 
     IEnumerable PresentAttackUI()
     {
+        if (_order.Actions.CostTotal() >= 4)
+            yield break;
+
         if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
             Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
 
@@ -397,6 +400,9 @@ public class BattleUIOperation : MonoBehaviour
 
     IEnumerable PresentSkillsUI()
     {
+        if (_order.Actions.CostTotal() >= 4)
+            yield break;
+
         AGAIN:
         SubActionSelectionContainer.gameObject.SetActive(true);
 
@@ -465,6 +471,9 @@ public class BattleUIOperation : MonoBehaviour
 
     IEnumerable PresentItemUI()
     {
+        if (_order.Actions.CostTotal() >= 4)
+            yield break;
+
         AGAIN:
         SubActionSelectionContainer.gameObject.SetActive(true);
 
