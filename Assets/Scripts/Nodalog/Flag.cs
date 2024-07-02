@@ -30,6 +30,8 @@ namespace Nodalog
         {
             if (State != _defaultValue)
                 SavingSystem.StoreAndUnregister<Flag, Save>(this);
+            else
+                SavingSystem.Unregister<Flag, Save>(this);
             State = _defaultValue;
         }
 

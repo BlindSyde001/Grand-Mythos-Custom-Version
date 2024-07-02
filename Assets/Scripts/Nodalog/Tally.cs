@@ -30,6 +30,8 @@ namespace Nodalog
         {
             if (Amount != _defaultValue)
                 SavingSystem.StoreAndUnregister<Tally, Save>(this);
+            else
+                SavingSystem.Unregister<Tally, Save>(this);
             Amount = _defaultValue;
         }
 
