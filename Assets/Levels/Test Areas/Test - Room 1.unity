@@ -3764,7 +3764,7 @@ MonoBehaviour:
     a: 5759274564165942913
     b: 4138909244758376099
   OnTrigger:
-    rid: 1925725743531950080
+    rid: 5399134383011266560
   PersistentEffect:
     rid: -2
   Type: 1
@@ -3774,11 +3774,12 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 1925725743531950080
-      type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
+    - rid: 5399134383011266560
+      type: {class: RunEvent, ns: Interactables, asm: Assembly-CSharp}
       data:
-        DialogContent: This is the Market Board, where you can accept Hunts
-        DialogAnchor: {fileID: 1424947741}
+        Event:
+          m_PersistentCalls:
+            m_Calls: []
 --- !u!1 &350963915
 GameObject:
   m_ObjectHideFlags: 0
@@ -4397,8 +4398,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _guid:
-    a: 4900377418252688270
-    b: 6342056291929957272
+    a: 4869328270937739095
+    b: 11756593571470695852
   OnTrigger:
     rid: 7439448652803211266
   PersistentEffect:
@@ -4413,14 +4414,8 @@ MonoBehaviour:
       type: {class: MultiInteraction, ns: Interactables, asm: Assembly-CSharp}
       data:
         Array:
-        - rid: 7439448652803211270
         - rid: 7439448652803211271
         Execution: 0
-    - rid: 7439448652803211270
-      type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
-      data:
-        DialogContent: Triggering Encounter
-        DialogAnchor: {fileID: 386819916}
     - rid: 7439448652803211271
       type: {class: StartEncounter, ns: Interactables, asm: Assembly-CSharp}
       data:
@@ -4430,7 +4425,7 @@ MonoBehaviour:
       type: {class: FixedEncounter, ns: , asm: Assembly-CSharp}
       data:
         Scene:
-          _path: Assets/Levels/Test Areas/Test - Battle/Test - Battle.unity
+          _path: Assets/Levels/Test Areas/Test - Battle.unity
           _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
         Formation:
         - {fileID: 485800061}
@@ -7233,155 +7228,6 @@ Transform:
   - {fileID: 1706986595}
   m_Father: {fileID: 53557369}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &656430718
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 656430723}
-  - component: {fileID: 656430722}
-  - component: {fileID: 656430721}
-  - component: {fileID: 656430720}
-  - component: {fileID: 656430719}
-  m_Layer: 0
-  m_Name: Npc Dialogue
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &656430719
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 656430718}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &656430720
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 656430718}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &656430721
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 656430718}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &656430722
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 656430718}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 893b1cd4f4c646adaf59f8f2f4d43bee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _guid:
-    a: 5507571375413666186
-    b: 14510840650619610260
-  OnTrigger:
-    rid: 7439448649709387778
-  PersistentEffect:
-    rid: -2
-  Type: 1
-  Text: Talk
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 7439448649709387778
-      type: {class: MultiInteraction, ns: Interactables, asm: Assembly-CSharp}
-      data:
-        Array:
-        - rid: 7439448652803211275
-        - rid: 7439448652803211276
-        Execution: 0
-    - rid: 7439448652803211275
-      type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
-      data:
-        DialogContent: This is a <i>very</i> basic implementation for NPC dialog
-        DialogAnchor: {fileID: 1055233248}
-    - rid: 7439448652803211276
-      type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
-      data:
-        DialogContent: This is another line
-        DialogAnchor: {fileID: 1055233248}
---- !u!4 &656430723
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 656430718}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.0200005, y: 0.7980004, z: 3.78}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1340643558}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &657302661
 GameObject:
   m_ObjectHideFlags: 0
@@ -10039,7 +9885,7 @@ MonoBehaviour:
     a: 4709092717275989327
     b: 17910909202790162074
   OnTrigger:
-    rid: 1925725743531950080
+    rid: 5399134383011266561
   PersistentEffect:
     rid: -2
   Type: 1
@@ -10049,12 +9895,12 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 1925725743531950080
-      type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
+    - rid: 5399134383011266561
+      type: {class: RunEvent, ns: Interactables, asm: Assembly-CSharp}
       data:
-        DialogContent: This is where you can buy/sell items, as well as sell Monster
-          Loot
-        DialogAnchor: {fileID: 178987236}
+        Event:
+          m_PersistentCalls:
+            m_Calls: []
 --- !u!65 &869120068
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11998,7 +11844,7 @@ MonoBehaviour:
       type: {class: FixedEncounter, ns: , asm: Assembly-CSharp}
       data:
         Scene:
-          _path: Assets/Levels/Test Areas/Test - Battle/Test - Battle.unity
+          _path: Assets/Levels/Test Areas/Test - Battle.unity
           _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
         Formation:
         - {fileID: 787370285}
@@ -13627,8 +13473,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _guid:
-    a: 5099177923563751612
-    b: 12491434985497058230
+    a: 5358798455466639176
+    b: 16190188605426992004
   OnTrigger:
     rid: 7439448649709387781
   PersistentEffect:
@@ -13645,18 +13491,12 @@ MonoBehaviour:
       data:
         Array:
         - rid: 7439448652803211273
-        - rid: 7439448652803211274
         Execution: 0
     - rid: 7439448652803211273
       type: {class: GiveItem, ns: Interactables, asm: Assembly-CSharp}
       data:
         Item: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
         Count: 1
-    - rid: 7439448652803211274
-      type: {class: TalkToNPC, ns: Interactables, asm: Assembly-CSharp}
-      data:
-        DialogContent: Got Consumable Healing 1
-        DialogAnchor: {fileID: 1167821338}
 --- !u!4 &1167821338
 Transform:
   m_ObjectHideFlags: 0
@@ -15580,7 +15420,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 656430723}
   - {fileID: 1167821338}
   - {fileID: 386819916}
   - {fileID: 1005582018}
@@ -21939,8 +21778,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _guid:
-    a: 5495532181066433562
-    b: 16606747449323713709
+    a: 5435747548655686810
+    b: 10475644426144713631
   OnTrigger:
     rid: 7439448655393456146
   PersistentEffect:
@@ -21960,7 +21799,7 @@ MonoBehaviour:
       type: {class: FixedEncounter, ns: , asm: Assembly-CSharp}
       data:
         Scene:
-          _path: Assets/Levels/Test Areas/Test - Battle/Test - Battle.unity
+          _path: Assets/Levels/Test Areas/Test - Battle.unity
           _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
         Formation:
         - {fileID: 787370285}

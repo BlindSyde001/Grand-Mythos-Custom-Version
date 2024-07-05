@@ -349,6 +349,7 @@ MonoBehaviour:
   MovementSpeed: 8
   Disabler: 0
   UnitsWalked: 0
+  _interactionStacked: 0
   MeansOfTransports:
   - PromptLabel: Walk
     NavFlags: 1
@@ -505,6 +506,10 @@ MonoBehaviour:
   - {fileID: 9187409409059822420, guid: 92b687fb083635a4c9c7da17b7111d7d, type: 3}
   - {fileID: 9187409409059822420, guid: b840bcb0ddc9d4c4bb365b9943f8b4ea, type: 3}
   ReservesLineup: []
+  CompletedSteps:
+    _backingArray: []
+  DiscoveredQuests:
+    _backingArray: []
 --- !u!114 &31797031260090698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -517,7 +522,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89c59eea08a6e524bb008ef23254d781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Credits: 1000
   Items:
     _backingArray:
     - Item: {fileID: 11400000, guid: 112d6aea410489a4896b0dc5d6b0ad3d, type: 2}
@@ -3494,20 +3498,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Control:
-    rid: 4691955921095229441
+    rid: 5399134383011266562
   references:
     version: 2
     RefIds:
-    - rid: 4691955921095229441
-      type: {class: CameraFocusSwitch, ns: , asm: Assembly-CSharp}
-      data:
-        A:
-          rid: 4691955921095229442
-        B:
-          rid: 4691955921095229464
-        SwitchInput: {fileID: -4490110422112614200, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
-        TransitionDuration: 0.5
-    - rid: 4691955921095229442
+    - rid: 5399134383011266562
       type: {class: OrbitCamera, ns: , asm: Assembly-CSharp}
       data:
         Input: {fileID: -7085994932723323525, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
@@ -3517,11 +3512,6 @@ MonoBehaviour:
         ObstructionMask:
           serializedVersion: 2
           m_Bits: 1
-    - rid: 4691955921095229464
-      type: {class: BirdsEyeView, ns: , asm: Assembly-CSharp}
-      data:
-        Distance: 10
-        WorldRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433914}
 --- !u!1 &8664870415155064655
 GameObject:
   m_ObjectHideFlags: 0
@@ -3613,9 +3603,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4688717694253108976}
     m_Modifications:
+    - target: {fileID: 981720948845173854, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3943253582011406737, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
       propertyPath: m_Name
       value: In Game Menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 4664728337299073929, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4664728337299073929, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4664728337299073929, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4664728337299073929, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4664728337299073929, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5000662787513868876, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5000662787513868876, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5990295520602198188, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7280565995402086253, guid: 9f03a07ffe38e9b4395ca5f0558bac6d, type: 3}
       propertyPath: m_Pivot.x
