@@ -5,8 +5,13 @@ using UnityEngine;
 [Serializable, InlineProperty]
 public struct SceneReference : ISerializationCallbackReceiver
 {
-    public string Path => _path;
     [SerializeField, HideInInspector] string _path;
+#if UNITY_EDITOR
+    // This is required to ensure changing the path and running the game without a domain reload happening between does not break in editor
+    public string Path => _sceneAsset != null ? UnityEditor.AssetDatabase.GetAssetPath(_sceneAsset) : _path; 
+#else
+    public string Path => _path;
+#endif
 
 #if UNITY_EDITOR
     [SerializeField, ValidateInput(nameof(SceneNotNull)), HideLabel] UnityEditor.SceneAsset _sceneAsset;
