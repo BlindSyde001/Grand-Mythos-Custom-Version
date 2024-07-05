@@ -21,14 +21,14 @@ public partial class DomainReloadHelper : MonoBehaviour
     /// Called after exiting play mode.
     /// </summary>
     public static System.Action OnEnterEditMode;
-
-#if UNITY_EDITOR
     /// <summary>
     /// When the game is not entering or exiting edit mode, and exiting play mode
     /// </summary>
-    public static LastPlayModeState LastState = LastPlayModeState.EnteredEditMode;
+    public static LastPlayModeState LastState = 
+#if UNITY_EDITOR
+        LastPlayModeState.EnteredEditMode;
 #else
-    public static LastPlayModeState IsPlaying = LastPlayModeState.EnteredPlayMode;
+        LastPlayModeState.EnteredPlayMode;
 #endif
 
 #if UNITY_EDITOR
