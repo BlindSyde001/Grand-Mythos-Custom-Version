@@ -292,8 +292,8 @@ public class BattleUIOperation : MonoBehaviour
         Skills.interactable = UnitSelected.Profile.Skills.Count > 0;
         Items.interactable = UnitSelected.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
 
-        if (_order.Actions.Length != 0 && _runningUIOperation == null && CancelInput.action.WasPerformedThisFrameUnique())
-            _order.Actions.BackingArray = _order.Actions.AsSpan()[..^1].ToArray();
+        if (_order.Actions.Length != 0 && _order.Condition == null  && _runningUIOperation == null && CancelInput.action.WasPerformedThisFrameUnique())
+            TryOrderWizard(PresentTargetSelectionUI());
 
         if (BattleManagement.Processing.TryGetValue(UnitSelected, out var progress))
         {
@@ -396,6 +396,12 @@ public class BattleUIOperation : MonoBehaviour
             yield break;
 
         _order.Actions.BackingArray[^1] = UnitSelected.Profile.BasicAttack;
+
+        if (_order.Actions.CostTotal() >= 4 && _order.Condition == null)
+        {
+            foreach (object o in PresentTargetSelectionUI())
+                yield return o;
+        }
     }
 
     IEnumerable PresentSkillsUI()
@@ -467,6 +473,12 @@ public class BattleUIOperation : MonoBehaviour
 
         if (_order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax)
             goto AGAIN;
+
+        if (_order.Actions.CostTotal() >= 4 && _order.Condition == null)
+        {
+            foreach (object o in PresentTargetSelectionUI())
+                yield return o;
+        }
     }
 
     IEnumerable PresentItemUI()
@@ -541,6 +553,12 @@ public class BattleUIOperation : MonoBehaviour
 
         if (_order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax)
             goto AGAIN;
+
+        if (_order.Actions.CostTotal() >= 4 && _order.Condition == null)
+        {
+            foreach (object o in PresentTargetSelectionUI())
+                yield return o;
+        }
     }
 
     static Button CreateButton(string name, RectTransform SkillTemplate, RectTransform SelectionContainer, ICollection<RectTransform> objects, UnityAction OnClick, [CanBeNull] UnityAction<BaseEventData> OnHoverOrSelected = null)
@@ -629,8 +647,11 @@ public class BattleUIOperation : MonoBehaviour
                 accepted = false; // Reset click
 
                 if (CancelInput.action.WasPerformedThisFrameUnique())
+                {
+                    CancelFullOrder();
                     while (true)
                         yield return new CancelRequested(); // Infinite loop to ensure we do not advance out of a cancel
+                }
 
                 yield return null;
             } while (true);
