@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd38c7e9e4d54dd59f19248625f677a0, type: 3}
+  m_Name: Target Highest Enmity
+  m_EditorClassIdentifier: 
+  _guid:
+    a: 4777652719766290402
+    b: 15897638086845834379
+  TargetFilter:
+    rid: 7439448764490973195
+  AdditionalCondition:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2969355801682509844
+      type: {class: TargetTrimming, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        Max: 1
+    - rid: 7439448764490973195
+      type: {class: And, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        Left:
+          rid: 7439448764490973235
+        Right:
+          rid: 2969355801682509844
+    - rid: 7439448764490973235
+      type: {class: IsHostile, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        State: 0

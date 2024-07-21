@@ -33,7 +33,7 @@ namespace Effects
 
         public void Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
-            CriticalFormula.GetCritModifiersBasedOnLuck(context.Profile.EffectiveStats.Luck, out var luckBasedChance, out var luckBasedMult);
+            Formulas.GetCritModifiersBasedOnLuck(context.Profile.EffectiveStats.Luck, out var luckBasedChance, out var luckBasedMult);
             float critChanceTotal = CanCrit ? AdditionalCritChance + luckBasedChance : 0f;
             float critDamageMultiplier = AdditionalCritMultiplier + luckBasedMult;
             foreach (var target in targets)
@@ -46,8 +46,8 @@ namespace Effects
                     CritDeltaMultiplier = critDamageMultiplier,
                     Scaling = Scaling,
                     VarianceBase = Variance,
-                    VarianceRolled = UnityEngine.Random.Range(-Variance, Variance+1),
-                    CritChanceRolled = UnityEngine.Random.Range(0f, 100f),
+                    VarianceRolled = context.Random.NextInt(-Variance, Variance+1),
+                    CritChanceRolled = context.Random.NextFloat(0f, 100f),
                     SourceAttackStat = context.Profile.EffectiveStats.Attack,
                     SourceMagicAttackStat = context.Profile.EffectiveStats.MagAttack,
                     Element = Element,

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd38c7e9e4d54dd59f19248625f677a0, type: 3}
+  m_Name: Not blind
+  m_EditorClassIdentifier: 
+  _guid:
+    a: 5463737230663152798
+    b: 9542425241038355891
+  TargetFilter:
+    rid: 2969355878784303110
+  AdditionalCondition:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2969355878784303110
+      type: {class: StatusApplied, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        Has: 0
+        Status: {fileID: 11400000, guid: 4e7fc7b99c39ebb4ebadeca7bda2efde, type: 2}

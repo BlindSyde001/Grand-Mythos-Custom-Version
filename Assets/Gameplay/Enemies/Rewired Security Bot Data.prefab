@@ -48,10 +48,10 @@ MonoBehaviour:
   Team: {fileID: 11400000, guid: 998822fe4b9cbd14e99fabd4b5e31caa, type: 2}
   BattlePrefab: {fileID: 5499571375476555240, guid: 1eb592d996651674d93b63d2df0729e2, type: 3}
   Portrait: {fileID: 0}
-  CurrentHP: 1250
+  CurrentHP: 12500
   CurrentMP: 5
   BaseStats:
-    HP: 1250
+    HP: 12500
     MP: 5
     Attack: 5
     MagAttack: 5
@@ -60,7 +60,7 @@ MonoBehaviour:
     Speed: 7
     Luck: 0
   _effectiveStatsPreview:
-    HP: 1250
+    HP: 12500
     MP: 5
     Attack: 5
     MagAttack: 5
@@ -90,7 +90,8 @@ MonoBehaviour:
   ActionChargeMax: 4
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
-    _backingArray: []
+    _backingArray:
+    - {fileID: 11400000, guid: 44a8205b5bf35d24a82de4ffc71ca39c, type: 2}
   SwitchSpecialHandler:
     rid: -2
   LevelUnlocks: {fileID: 0}
@@ -101,7 +102,12 @@ MonoBehaviour:
       ActionsAssets:
       - {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
   - IsOn: 1
-    Condition: {fileID: 11400000, guid: 97b02931ab499854281981eb72b1b5e1, type: 2}
+    Condition: {fileID: 11400000, guid: e94f0cb201813db43bdffc3e2318d648, type: 2}
+    Actions:
+      ActionsAssets:
+      - {fileID: 11400000, guid: 44a8205b5bf35d24a82de4ffc71ca39c, type: 2}
+  - IsOn: 1
+    Condition: {fileID: 11400000, guid: 2ef39d5e5d1ad424b84aa265c91cf9cd, type: 2}
     Actions:
       ActionsAssets:
       - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00d19563990c46f190b108ccb4d28df2, type: 3}
+  m_Name: Zap
+  m_EditorClassIdentifier: 
+  _guid:
+    a: 5306493378710948845
+    b: 2682987140524911277
+  _description: 
+  ATBCost: 1
+  ProcAttachedSkills: 0
+  Effects:
+  - rid: 2969355752103215110
+  TargetConstraint:
+    rid: 2969355752103215111
+  PreconditionToUse:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2969355752103215110
+      type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
+      data:
+        Attribute: 0
+        Amount: -10
+        Variance: 5
+        Scaling: 2
+        Element: 3
+        CanCrit: 1
+        AdditionalCritChance: 0
+        AdditionalCritMultiplier: 2.5
+    - rid: 2969355752103215111
+      type: {class: IsHostile, ns: Conditions, asm: Assembly-CSharp}
+      data:
+        State: 0

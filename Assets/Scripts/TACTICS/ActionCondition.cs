@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Conditions;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 [CreateAssetMenu]
 public class ActionCondition : IdentifiableScriptableObject
@@ -153,6 +155,7 @@ public class EvaluationContext
 
     public BattleCharacterController Controller => _controller;
     public CharacterTemplate Profile => Controller.Profile;
+    public Dictionary<CharacterTemplate, float> EnmityTowards = new();
 
     /// <summary>
     /// Reset only between evaluating full tactics,
@@ -169,6 +172,7 @@ public class EvaluationContext
     public uint Round;
 
     public uint CombatSeed;
+    public Random Random;
     [CanBeNull, NonSerialized] public IConditionEvalTracker Tracker;
 
     public EvaluationContext(BattleCharacterController controller)

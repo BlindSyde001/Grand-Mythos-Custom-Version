@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -9,4 +10,8 @@ public class Weapon : Equipment
     [BoxGroup("BASIC DATA")]
     [PropertyOrder(0)]
     public WeaponType weaponType;
+
+    [MaybeNull] public Skill AttachedSkill;
+    [Range(0,100),SuffixLabel("%")]
+    public float SkillProcChance = 50f;
 }

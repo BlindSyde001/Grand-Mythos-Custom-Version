@@ -66,6 +66,14 @@ public static class QueryPool
         return enu;
     }
 
+    public static IDisposable TemporaryCopy<T, T2>(this IDictionary<T, T2> sourceToCopy, out List<T> list)
+    {
+        RecycledEnum<T>.Borrow(out var enu, out list);
+        foreach (var kvp in sourceToCopy)
+            list.Add(kvp.Key);
+        return enu;
+    }
+
     public class RecycledEnum<T> : IEnumerable<T>, IEnumerator<T>
     {
         readonly List<T> _buffer = new();

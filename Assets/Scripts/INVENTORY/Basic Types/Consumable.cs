@@ -3,6 +3,7 @@ using Conditions;
 using Effects;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "New Consumable", menuName = "Consumables")]
 public class Consumable : TradeableItem, IAction
@@ -18,6 +19,9 @@ public class Consumable : TradeableItem, IAction
 
     [Space]
     public uint ATBCost = 1;
+
+    [SerializeField] float _enmityGenerationTarget = 4f;
+    [FormerlySerializedAs("_enmityGenerationHostiles")] [SerializeField] float _enmityGenerationNonTarget = 1f;
 
     [Space]
     [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
@@ -60,13 +64,12 @@ public class Consumable : TradeableItem, IAction
         }
     }
 
-    public void Perform(BattleCharacterController[] targets, EvaluationContext context)
-    {
-        foreach (var effect in Effects)
-        {
-            effect.Apply(targets, context);
-        }
-    }
+    public float EnmityGenerationTarget => _enmityGenerationTarget;
+    public float EnmityGenerationNonTarget => _enmityGenerationNonTarget;
+
+    public string UIDisplayText => Effects.UIDisplayText();
+    string IAction.Name => name;
+    string IAction.Description => string.IsNullOrWhiteSpace(Description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : Description;
 
     public Consumable()
     {
@@ -82,11 +85,13 @@ public class Consumable : TradeableItem, IAction
         };
     }
 
-    public string UIDisplayText => Effects.UIDisplayText();
-
-    string IAction.Name => name;
-    string IAction.Description => string.IsNullOrWhiteSpace(Description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : Description;
-
+    public void Perform(BattleCharacterController[] targets, EvaluationContext context)
+    {
+        foreach (var effect in Effects)
+        {
+            effect.Apply(targets, context);
+        }
+    }
 
     void BeginDrawEffect(int index)
     {

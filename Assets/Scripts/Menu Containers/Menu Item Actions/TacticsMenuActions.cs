@@ -188,32 +188,30 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
         void OnSetAction(IAction newAction, int actionIndex)
         {
             if (newAction is null)
-                throw new NullReferenceException(nameof(newAction));
-
-            if (actionIndex >= set.Length) // Make sure we have space for this new action
             {
-                var newActions = new IAction[actionIndex + 1];
-                set.BackingArray.CopyTo(newActions, 0);
-                set.BackingArray = newActions;
-            }
-
-            set[actionIndex] = newAction; // Insert this new action
-
-            { // Remove any actions which would go over our max amount of charge
-                var newActions = new List<IAction>();
-                uint totalCost = 0;
-                foreach (var action in set)
-                {
-                    if (totalCost + action.ActionCost > SelectedHero.ActionChargeMax)
-                    {
-                        StartCoroutine(SendLackOfSegmentsWarning());
-                        break;
-                    }
-
-                    newActions.Add(action);
-                    totalCost += action.ActionCost;
-                }
+                var newActions = new List<IAction>(set.BackingArray);
+                newActions.RemoveAt(actionIndex);
                 set.BackingArray = newActions.ToArray();
+            }
+            else
+            {
+                var newActions = new List<IAction>(set.BackingArray);
+                if (actionIndex >= newActions.Count)
+                    newActions.Add(newAction);
+                else
+                    newActions[actionIndex] = newAction;
+
+                while (newActions.CostTotal() > SelectedHero.ActionChargeMax && newActions.Count > 1)
+                {
+                    newActions.RemoveAt(newActions.Count-1);
+                    if (newActions.Count - 1 <= actionIndex)
+                        newActions[^1] = newAction;
+                }
+
+                if (newActions.CostTotal() > SelectedHero.ActionChargeMax)
+                    StartCoroutine(SendLackOfSegmentsWarning());
+                else
+                    set.BackingArray = newActions.ToArray();
             }
 
             SetupActionSet(ui, set);
@@ -245,9 +243,6 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
 
         void OnSetAction(IAction newAction, int actionIndex)
         {
-            if (newAction is null)
-                throw new NullReferenceException(nameof(newAction));
-
             if (i >= SelectedHero.Tactics.Length)
             {
                 var newTactics = new Tactics[i + 1];
@@ -257,33 +252,32 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
             SelectedHero.Tactics[i] ??= new() { IsOn = false };
 
             var tactic = SelectedHero.Tactics[i];
-            if (actionIndex >= tactic.Actions.Length) // Make sure we have space for this new action
+            var newActions = new List<IAction>(tactic.Actions.BackingArray);
+            if (newAction is null)
             {
-                IActionCollection newCollection = new()
-                {
-                    BackingArray = new IAction[actionIndex+1]
-                };
-                tactic.Actions.BackingArray.CopyTo(newCollection.BackingArray, 0);
-                tactic.Actions = newCollection;
+                newActions.RemoveAt(actionIndex);
+                tactic.Actions = new(){ BackingArray = newActions.ToArray() };
             }
-
-            tactic.Actions[actionIndex] = newAction; // Insert this new action
-
-            // Remove any actions which would go over our max amount of charge
-            var newActions = new List<IAction>();
-            uint totalCost = 0;
-            foreach (var action in tactic.Actions)
+            else
             {
-                if (totalCost + action.ActionCost > SelectedHero.ActionChargeMax)
+                if (actionIndex >= newActions.Count)
+                    newActions.Add(newAction);
+                else
+                    newActions[actionIndex] = newAction;
+
+                while (newActions.CostTotal() > SelectedHero.ActionChargeMax && newActions.Count > 1)
                 {
-                    StartCoroutine(SendLackOfSegmentsWarning());
-                    break;
+                    newActions.RemoveAt(newActions.Count-1);
+                    if (newActions.Count - 1 <= actionIndex)
+                        newActions[^1] = newAction;
                 }
-                newActions.Add(action);
-                totalCost += action.ActionCost;
+
+                if (newActions.CostTotal() > SelectedHero.ActionChargeMax)
+                    StartCoroutine(SendLackOfSegmentsWarning());
+                else
+                    tactic.Actions = new(){ BackingArray = newActions.ToArray() };
             }
 
-            tactic.Actions = new(){ BackingArray = newActions.ToArray() };
             SetupField(i);
         }
 
@@ -364,59 +358,48 @@ public class TacticsMenuActions : MenuContainerWithHeroSelection
         }
     }
 
-    public void PopulateActionList(HeroExtension selectedHero, int pageNo, Action<IAction> OnNewAction)
+    public void PopulateActionList(HeroExtension selectedHero, int pageIndex, Action<IAction> OnNewAction)
     {
         _actionsList.Clear();
+        _actionsList.Add(null);
         _actionsList.Add(selectedHero.BasicAttack);
-        foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
-            _actionsList.Add(item);
         foreach(var a in selectedHero.Skills)
             _actionsList.Add(a);
+        foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
+            _actionsList.Add(item);
 
         foreach (var component in NewComponentList)
             component.cmpButton.onClick.RemoveAllListeners();
 
         bool setSelection = false;
-        for (int i = 0; i < NewComponentList.Count; i++) // iterate through the Buttons
+        for (int i = 0, j = pageIndex * NewComponentList.Count; i < NewComponentList.Count; i++, j++) // iterate through the Buttons
         {
-            NewComponentList[i].cmpName.text = "";
-            if (_actionsList.Count <= (pageNo * 10) + i) // Set new Page up
-                continue;
+            var ui = NewComponentList[i];
+            ui.cmpButton.onClick.RemoveAllListeners();
 
-            if (_actionsList[(pageNo * 10) + i] is Skill skill
-                && (selectedHero.Skills.Contains(skill) || selectedHero.BasicAttack == skill))
+            if (j >= _actionsList.Count)
             {
-                NewComponentList[i].selectedAction = _actionsList[(pageNo * 10) + i];
-                NewComponentList[i].cmpName.text = NewComponentList[i].selectedAction.Name;
+                ui.cmpButton.interactable = false;
+                ui.cmpName.text = "";
+                continue; // Continue the loop resetting buttons appropriately
+            }
 
-                int j = i;
-                NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
-                NewComponentList[i].cmpButton.onClick.AddListener(() => SelectNewListAction(selectedHero, NewComponentList[j].selectedAction, OnNewAction));
-                if (setSelection == false && NewComponentList[i].cmpButton.interactable)
-                {
-                    setSelection = true;
-                    NewComponentList[i].cmpButton.Select();
-                }
+            if (_actionsList[j] is Skill skill)
+            {
+                ui.cmpButton.interactable = selectedHero.Skills.Contains(skill) || selectedHero.BasicAttack == skill;
             }
             else
             {
-                foreach(var (item, _) in InventoryManager.Enumerate<Consumable>())
-                {
-                    if (item.name != _actionsList[(pageNo * 10) + i].Name)
-                        continue;
+                ui.cmpButton.interactable = true;
+            }
 
-                    NewComponentList[i].selectedAction = _actionsList[(pageNo * 10) + i];
-                    NewComponentList[i].cmpName.text = NewComponentList[i].selectedAction.Name;
-
-                    int j = i;
-                    NewComponentList[i].cmpButton.onClick.RemoveAllListeners();
-                    NewComponentList[i].cmpButton.onClick.AddListener(() => SelectNewListAction(selectedHero, NewComponentList[j].selectedAction, OnNewAction));
-                    if (setSelection == false && NewComponentList[i].cmpButton.interactable)
-                    {
-                        setSelection = true;
-                        NewComponentList[i].cmpButton.Select();
-                    }
-                }
+            ui.selectedAction = _actionsList[j];
+            ui.cmpName.text = ui.selectedAction?.Name ?? "None";
+            ui.cmpButton.onClick.AddListener(() => SelectNewListAction(selectedHero, ui.selectedAction, OnNewAction));
+            if (setSelection == false && ui.cmpButton.interactable)
+            {
+                setSelection = true;
+                ui.cmpButton.Select();
             }
         }
     }

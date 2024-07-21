@@ -15,8 +15,9 @@ MonoBehaviour:
   _guid:
     a: 4727006276212836141
     b: 13005155708514743190
-  Description: 
+  _description: 
   ATBCost: 1
+  ProcAttachedSkills: 1
   Effects:
   - rid: 7439448764490973229
   TargetConstraint:
@@ -42,13 +43,15 @@ MonoBehaviour:
     - rid: 4691955925379973122
       type: {class: TargetTrimming, ns: Conditions, asm: Assembly-CSharp}
       data:
-        Amount: 1
+        Max: 1
     - rid: 7439448764490973229
       type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
       data:
         Attribute: 0
         Amount: -1
-        Scaling: 1
         Variance: 0
-        CritChance: 15
-        CritMultiplier: 2.5
+        Scaling: 1
+        Element: 0
+        CanCrit: 1
+        AdditionalCritChance: 15
+        AdditionalCritMultiplier: 2.5

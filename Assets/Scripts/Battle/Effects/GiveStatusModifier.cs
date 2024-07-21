@@ -1,0 +1,25 @@
+﻿using System;
+using Sirenix.OdinInspector;
+using StatusHandler;
+using UnityEngine;
+
+namespace Effects
+{
+    [Serializable]
+    public class GiveStatusModifier : IEffect
+    {
+        [Required] public StatusModifier Modifier;
+        [Range(0, 100), SuffixLabel("%")] public float Chance = 50f;
+        
+        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        {
+            foreach (var target in targets)
+            {
+                if (context.Random.NextFloat(0,100) <= Chance)
+                    target.Profile.Modifiers.Add(Modifier);
+            }
+        }
+
+        public string UIDisplayText => $"{Chance}% chance to apply {(Modifier == null ? "?" : Modifier.name)}";
+    }
+}

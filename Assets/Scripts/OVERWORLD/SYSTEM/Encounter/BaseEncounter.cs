@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+using Random = Unity.Mathematics.Random;
 
 [Serializable]
 public abstract class BaseEncounter : IEncounterDefinition
@@ -75,6 +76,7 @@ public abstract class BaseEncounter : IEncounterDefinition
                 var controller = model.GetComponent<BattleCharacterController>();
                 controller.Profile = template;
                 controller.Context.CombatSeed = combatSeedProvider(template);
+                controller.Context.Random = new Random(controller.Context.CombatSeed == 0 ? 1 : controller.Context.CombatSeed);
                 hostileControllers.Add(controller);
             }
 
@@ -87,6 +89,7 @@ public abstract class BaseEncounter : IEncounterDefinition
                 var controller = model.GetComponent<BattleCharacterController>();
                 controller.Profile = ally;
                 controller.Context.CombatSeed = combatSeedProvider(ally);
+                controller.Context.Random = new Random(controller.Context.CombatSeed == 0 ? 1 : controller.Context.CombatSeed);
                 alliesControllers.Add(controller);
             }
 

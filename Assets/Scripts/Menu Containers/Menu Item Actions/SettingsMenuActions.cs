@@ -1,14 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 
 public class SettingsMenuActions : MenuContainer
 {
-    public TMP_Dropdown ResolutionDropdown;
-    public TMP_Dropdown WindowModeDropdown;
-    public TMP_Dropdown BattleSpeedDropdown;
+    [Required] public TMP_Dropdown ResolutionDropdown;
+    [Required] public TMP_Dropdown WindowModeDropdown;
+    [Required] public TMP_Dropdown BattleSpeedDropdown;
+    [Required] public TMP_Dropdown BattleCommandSpeedDropdown;
     readonly Dictionary<object, Action> _scheduledChanges = new();
 
     public void ApplyChanges()
@@ -75,26 +77,44 @@ public class SettingsMenuActions : MenuContainer
             _scheduledChanges[WindowModeDropdown] = () => Screen.fullScreenMode = modes[index].value;
         });
 
-        BattleSpeedDropdown.options.Clear();
-        var speeds = new[]
         {
-            (name:"50%", value:0.5f),
-            (name:"75%", value:0.75f),
-            (name:"100%", value:1.0f),
-            (name:"125%", value:1.25f),
-            (name:"150%", value:1.5f)
-        };
-        for (int i = 0; i < speeds.Length; i++)
-        {
-            var speed = speeds[i];
-            BattleSpeedDropdown.options.Add(new(speed.name));
-            if (Settings.Current.BattleSpeed == speed.value)
-                BattleSpeedDropdown.value = i;
+            var speeds = new[]
+            {
+                (name:"50%", value:0.5f),
+                (name:"75%", value:0.75f),
+                (name:"100%", value:1.0f),
+                (name:"125%", value:1.25f),
+                (name:"150%", value:1.5f)
+            };
+            SetupDropdown(BattleSpeedDropdown, speeds, Settings.Current.BattleSpeed, f => Settings.Current.BattleSpeed = f);
         }
-        BattleSpeedDropdown.onValueChanged.RemoveAllListeners();
-        BattleSpeedDropdown.onValueChanged.AddListener(index =>
+
         {
-            _scheduledChanges[BattleSpeedDropdown] = () => Settings.Current.BattleSpeed = speeds[index].value;
+            var values = Enum.GetValues(typeof(Settings.BattleCommandSpeedType));
+            var dropdownData = new (string, Settings.BattleCommandSpeedType)[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                var val = (Settings.BattleCommandSpeedType)values.GetValue(i);
+                dropdownData[i] = (val.ToString(), val);
+            }
+            SetupDropdown(BattleCommandSpeedDropdown, dropdownData, Settings.Current.BattleCommandSpeed, f => Settings.Current.BattleCommandSpeed = f);
+        }
+    }
+
+    void SetupDropdown<T>(TMP_Dropdown dropdown, (string name, T associatedValue)[] values, T selectedValue, Action<T> onValueChanged)
+    {
+        dropdown.options.Clear();
+        for (int i = 0; i < values.Length; i++)
+        {
+            var speed = values[i];
+            dropdown.options.Add(new(speed.name));
+            if (selectedValue.Equals(speed.associatedValue))
+                dropdown.value = i;
+        }
+        dropdown.onValueChanged.RemoveAllListeners();
+        dropdown.onValueChanged.AddListener(index =>
+        {
+            _scheduledChanges[dropdown] = () => onValueChanged(values[index].associatedValue);
         });
     }
 

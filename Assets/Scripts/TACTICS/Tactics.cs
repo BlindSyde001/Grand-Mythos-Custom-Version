@@ -121,4 +121,17 @@ public static class ActionExtension
             cost += action?.ActionCost ?? 0;
         return cost;
     }
+
+    public static uint CostTotal(this IList<IAction> actions)
+    {
+        uint cost = 0;
+        for (int i = 0; i < actions.Count; i++)
+        {
+            var action = actions[i];
+            if (action != null)
+                cost += actions[i].ActionCost;
+        }
+
+        return cost;
+    }
 }

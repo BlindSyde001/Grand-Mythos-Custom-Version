@@ -1,5 +1,4 @@
-﻿using System;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace StatusHandler
@@ -10,10 +9,16 @@ namespace StatusHandler
     [CreateAssetMenu(menuName = "IModifier/Generic")]
     public class StatusModifier : IdentifiableScriptableObject, IModifier
     {
-        [PreviewField] public Texture Icon;
+        private const string IncomingDescription = "What happens to attacks that this unit receives";
+        private const string OutgoingDescription = "What happens to attacks that this unit deals";
+        
+        [PreviewField] public Sprite Icon;
         [TextArea] public string Description;
 
-        public ModifierDisplay DisplayPrefab;
+        [Required] public ModifierDisplay DisplayPrefab;
+
+        [SerializeReference, InfoBox(OutgoingDescription), BoxGroup(nameof(Outgoing)), HideLabel] public IStatusModifierLogic Outgoing;
+        [SerializeReference, InfoBox(IncomingDescription), BoxGroup(nameof(Incoming)), HideLabel] public IStatusModifierLogic Incoming;
 
         ModifierDisplay IModifier.DisplayPrefab => DisplayPrefab;
 
@@ -21,12 +26,12 @@ namespace StatusHandler
 
         public void ModifyOutgoingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
         {
-
+            Outgoing?.Modify(context, target, ref scaling);
         }
 
         public void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
         {
-
+            Incoming?.Modify(context, target, ref scaling);
         }
     }
 }

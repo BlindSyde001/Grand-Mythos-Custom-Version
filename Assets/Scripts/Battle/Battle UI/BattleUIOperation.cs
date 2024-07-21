@@ -24,10 +24,10 @@ public class BattleUIOperation : MonoBehaviour
     [Header("Selected Character")]
     [Required] public InputActionReference SwitchSpecialInput;
     [Required] public InputActionReference SwitchCharacter;
-    [Required] public HeroPrefabUIData SelectedUI;
     [ReadOnly, CanBeNull] public BattleCharacterController UnitSelected;
 
     [Header("UI Info")]
+    [Required] public Image SelectedUnitPicture, SelectedUnitBorder;
     public List<HeroPrefabUIData> HeroUIData;
     [ReadOnly, SerializeField] public List<HeroExtension> HeroData;
 
@@ -48,8 +48,6 @@ public class BattleUIOperation : MonoBehaviour
     [Required] public Button Skills;
     [Required] public Button Items;
     [Required] public Button Tactics;
-    [Required] public Button Schedule;
-    [Required] public Button Discard;
 
     [Header("Sub-Action Selection")]
     [Required] public InputActionReference CancelInput;
@@ -83,6 +81,7 @@ public class BattleUIOperation : MonoBehaviour
     IAction _lastActionCursor;
     BattleCharacterController _waitingForScheduledUnit;
     [MaybeNull] IAction[] _lastActions;
+    Color _initialBorderColor;
 
     public BattleUIOperation()
     {
@@ -97,6 +96,9 @@ public class BattleUIOperation : MonoBehaviour
 
     void OnEnable()
     {
+        if (_initialBorderColor == default)
+            _initialBorderColor = SelectedUnitBorder.color;
+
         ResetNavigation();
         if (_listenerBound == false)
         {
@@ -109,9 +111,6 @@ public class BattleUIOperation : MonoBehaviour
             Skills.onClick.AddListener(() => TryOrderWizard(PresentSkillsUI()));
             Items.onClick.AddListener(() => TryOrderWizard(PresentItemUI()));
             Tactics.onClick.AddListener(TacticsPressed);
-
-            Schedule.onClick.AddListener(() => TryOrderWizard(PresentTargetSelectionUI()));
-            Discard.onClick.AddListener(CancelFullOrder);
 
             for (int i = ModifierContainer.transform.childCount - 1; i >= 0; i--)
                 Destroy(ModifierContainer.transform.GetChild(i).gameObject);
@@ -166,14 +165,14 @@ public class BattleUIOperation : MonoBehaviour
         _lastActions = null;
         UpdateTacticsButtonColor();
 
-        if (UnitSelected == null)
-            return;
-
         foreach (var (mod, display) in ModifierDisplays)
         {
             display.RemoveDisplay();
         }
         ModifierDisplays.Clear();
+
+        if (UnitSelected == null)
+            return;
 
         foreach (var modifier in UnitSelected.Profile.Modifiers)
         {
@@ -184,6 +183,15 @@ public class BattleUIOperation : MonoBehaviour
             ModifierDisplays[modifier] = display;
             display.OnDisplayed(UnitSelected, this, modifier);
         }
+        
+        if (UnitSelected.Profile is HeroExtension hero)
+        {
+            var c = _initialBorderColor;
+            hero.SwitchSpecialHandler?.OnSelectedUnitChanged(UnitSelected, ref c);
+            SelectedUnitBorder.color = c;
+        }
+
+        SelectedUnitPicture.sprite = UnitSelected.Profile.Portrait;
     }
 
     void FillWithActions(IEnumerable<IAction> actions)
@@ -221,8 +229,12 @@ public class BattleUIOperation : MonoBehaviour
             if (UnitSelected.Profile is HeroExtension hero)
                 FillWithActions(hero.Actionset2);
 
-        if (SwitchSpecialInput.action.WasPerformedThisFrameUnique())
-            UnitSelected.Profile.SwitchSpecialHandler?.OnSwitch(UnitSelected);
+        if (SwitchSpecialInput.action.WasPerformedThisFrameUnique() && BattleManagement.Processing.ContainsKey(UnitSelected) == false)
+        {
+            var color = SelectedUnitBorder.color;
+            UnitSelected.Profile.SwitchSpecialHandler?.OnSwitch(UnitSelected, ref color);
+            SelectedUnitBorder.color = color;
+        }
 
         { // MODIFIERS
             foreach (var modifier in UnitSelected.Profile.Modifiers)
@@ -280,7 +292,6 @@ public class BattleUIOperation : MonoBehaviour
                 CancelFullOrder();
                 ResetNavigation();
                 BattleManagement.Blocked |= BlockBattleFlags.PreparingOrders;
-                Discard.gameObject.SetActive(true);
             }
         }
         else if (_waitingForScheduledUnit)
@@ -330,6 +341,18 @@ public class BattleUIOperation : MonoBehaviour
             UpdatePreview(tacticsPreviewed, actions, PreviewType.Tactics);
         }
 
+        foreach (var unit in BattleManagement.PartyLineup)
+        {
+            if (!ProcessedUnits.Add(unit))
+                continue;
+
+            if (unit.Profile is HeroExtension hero)
+            {
+                hero.SwitchSpecialHandler?.OnBattleStart(unit);
+                HeroData.Add(hero);
+            }
+        }
+
         foreach (var unit in BattleManagement.Units)
         {
             if (!ProcessedUnits.Add(unit))
@@ -359,24 +382,25 @@ public class BattleUIOperation : MonoBehaviour
             }
         }
 
-        SelectedUI.nameLabel.text = UnitSelected.Profile.Name;
-        SelectedUI.characterIcon.sprite = UnitSelected.Profile.Portrait;
-        SelectedUI.atbBar.fillAmount = UnitSelected.Profile.ActionsCharged / UnitSelected.Profile.ActionChargeMax;
-        SelectedUI.healthBar.fillAmount = (float)UnitSelected.Profile.CurrentHP / UnitSelected.Profile.EffectiveStats.HP;
-        SelectedUI.health.text = UnitSelected.Profile.CurrentHP.ToString();
-        int j = 0;
         for (int i = 0; i < HeroData.Count; i++)
         {
-            if (HeroData[i] != UnitSelected.Profile)
-            {
-                HeroUIData[j].gameObject.SetActive(true);
-                HeroUIData[j].characterIcon.sprite = HeroData[i].Portrait;
-                HeroUIData[j].atbBar.fillAmount = HeroData[i].ActionsCharged / HeroData[i].ActionChargeMax;
-                HeroUIData[j].healthBar.fillAmount = (float)HeroData[i].CurrentHP / HeroData[i].EffectiveStats.HP;
-                HeroUIData[j].health.text = HeroData[i].CurrentHP.ToString();
-                j++;
-            }
+            var ui = HeroUIData[i];
+            var hero = HeroData[i];
+            var localPos = ui.transform.localPosition;
+            if (hero == UnitSelected.Profile)
+                localPos.x = -100;
+            else
+                localPos.x = 0;
+            
+            ui.transform.localPosition = localPos;
+            ui.gameObject.SetActive(true);
+            ui.CharacterIcon.sprite = hero.Portrait;
+            ui.AtbBar.fillAmount = hero.ActionsCharged / hero.ActionChargeMax;
+            ui.HealthBar.fillAmount = (float)hero.CurrentHP / hero.EffectiveStats.HP;
+            ui.Health.text = hero.CurrentHP.ToString();
+            ui.NameLabel.text = hero.Name;
         }
+
         for (int i = 0; i < EnemyData.Count; i++)
         {
             EnemyUIData[i].healthBar.fillAmount = (float)EnemyData[i].CurrentHP / EnemyData[i].EffectiveStats.HP;
@@ -736,18 +760,10 @@ public class BattleUIOperation : MonoBehaviour
         HideNavigation();
 
         ActionSelectionContainer.gameObject.SetActive(true);
-
-        if (_order.Actions.Length > 0)
-        {
-            Schedule.gameObject.SetActive(true);
-            Discard.gameObject.SetActive(true);
-        }
     }
 
     void HideNavigation()
     {
-        Schedule.gameObject.SetActive(false);
-        Discard.gameObject.SetActive(false);
         ItemTemplate.gameObject.SetActive(false);
         SkillTemplate.gameObject.SetActive(false);
         Targets.AlliesTargetTemplate.gameObject.SetActive(false);

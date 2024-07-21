@@ -90,7 +90,8 @@ MonoBehaviour:
   ActionChargeMax: 4
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
-    _backingArray: []
+    _backingArray:
+    - {fileID: 11400000, guid: fef754235cc77ec4eb70d70fed16fd68, type: 2}
   SwitchSpecialHandler:
     rid: -2
   LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
@@ -145,6 +146,10 @@ MonoBehaviour:
     _backingArray: []
   SkillModifiers:
     _backingArray: []
+  Actionset1:
+    ActionsAssets: []
+  Actionset2:
+    ActionsAssets: []
   _guid:
     a: 5052209774049475975
     b: 3919714855663956155
