@@ -9,7 +9,7 @@ namespace SwitchSpecial
         public Graphic Background;
         [ReadOnly] public ElementalAmmo Modifier;
 
-        public override void OnDisplayed(BattleCharacterController character, BattleUIOperation battleUI, IModifier modifier)
+        public override void OnDisplayed(CharacterTemplate character, BattleUIOperation battleUI, IModifier modifier)
         {
             Modifier = (ElementalAmmo)modifier;
         }

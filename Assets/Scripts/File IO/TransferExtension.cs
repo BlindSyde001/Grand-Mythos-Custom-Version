@@ -48,27 +48,6 @@ public static class TransferExtension
         }
     }
 
-    public static void Collection(this SavingSystem.Transfer type, ref List<guid> handler, ref IActionCollection source)
-    {
-        if (type.TryTransferAsNull(ref handler, ref source))
-            return;
-
-        type.EnsureNotNull(ref handler, ref source);
-        if (type == SavingSystem.Transfer.PullFromSource)
-        {
-            handler.Clear();
-            foreach (var item in source)
-                handler.Add(item.Guid);
-        }
-        else
-        {
-            source.BackingArray = handler
-                .Select(x => IdentifiableDatabase.TryGet(x, out IdentifiableScriptableObject item) ? item as IAction : null)
-                .Where(x => x != null)
-                .ToArray();
-        }
-    }
-
     public static void Collection<T>(this SavingSystem.Transfer type, ref T handler, ref T source) where T : ICollection<string>, new()
     {
         if (type.TryTransferAsNull(ref handler, ref source))

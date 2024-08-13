@@ -1724,15 +1724,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Hero Switch",
-                    "type": "Button",
-                    "id": "68ca2ffc-5b55-4ade-b915-799288450e95",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Toggle Additional Info",
                     "type": "Button",
                     "id": "f0fd7044-f76c-4c7c-906e-4e6a41794943",
@@ -2196,72 +2187,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Navigate",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Gamepad Shoulders",
-                    "id": "858aadc8-1c2c-4437-8cb0-62319b048948",
-                    "path": "1DAxis",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hero Switch",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "c2f85ca6-a129-4af2-9391-5905206f51cd",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "ANY",
-                    "action": "Hero Switch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "4f40139c-0d21-4acb-867f-eef9d3f4de72",
-                    "path": "<Gamepad>/rightShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "ANY",
-                    "action": "Hero Switch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Keyboard R/F",
-                    "id": "6324137c-b827-4cda-baf3-5865bfd0cb50",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hero Switch",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "1746bc51-3d98-41c4-aab1-a3a3b06f172d",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "ANY",
-                    "action": "Hero Switch",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "7540514b-8cd0-4154-a668-d6b140c3f99d",
-                    "path": "<Keyboard>/r",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "ANY",
-                    "action": "Hero Switch",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },

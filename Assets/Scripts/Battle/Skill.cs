@@ -18,9 +18,6 @@ public class Skill : IdentifiableScriptableObject, IAction
     [FormerlySerializedAs("Description"), SerializeField, TextArea]
     string _description = "";
 
-    [Space]
-    public uint ATBCost = 1;
-
     [SerializeField] float _enmityGenerationTarget = 4f;
     [FormerlySerializedAs("_enmityGenerationHostiles")] [SerializeField] float _enmityGenerationNonTarget = 1f;
 
@@ -45,7 +42,6 @@ public class Skill : IdentifiableScriptableObject, IAction
     [SerializeReference]
     public Condition PreconditionToUse;
 
-    uint IAction.ActionCost => ATBCost;
     Condition IAction.TargetFilter => TargetConstraint;
     Condition IAction.Precondition => PreconditionToUse;
 

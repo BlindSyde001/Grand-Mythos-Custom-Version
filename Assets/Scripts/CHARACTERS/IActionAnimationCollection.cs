@@ -47,9 +47,7 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
         {
             if (tactic == null)
                 continue;
-
-            foreach (var action in tactic.Actions)
-                actions.TryAdd(action, nameof(template.Tactics));
+            actions.TryAdd(tactic.Action, nameof(template.Tactics));
         }
 
         if (template.LevelUnlocks != null)

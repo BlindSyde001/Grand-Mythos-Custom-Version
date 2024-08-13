@@ -15,7 +15,7 @@ public class BattleCamera : MonoBehaviour
 
     void Update()
     {
-        if (BattleController.UnitSelected == null || BattleController.BattleManagement.enabled == false)
+        if (BattleController.BattleManagement.enabled == false)
             return;
 
         Vector3 aggregatePosition = default;

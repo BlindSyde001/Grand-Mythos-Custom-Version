@@ -44,7 +44,6 @@ public class Consumable : TradeableItem, IAction
     [NonSerialized] And _basePrecondition;
     [NonSerialized] And _fullPrecondition;
 
-    uint IAction.ActionCost => ATBCost;
     Condition IAction.TargetFilter => TargetConstraint;
 
     /// <summary>

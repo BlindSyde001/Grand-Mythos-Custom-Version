@@ -2,7 +2,6 @@
 
 public interface IAction : IIdentifiable
 {
-    uint ActionCost { get; }
     [MaybeNull] Condition TargetFilter { get; }
     [MaybeNull] Condition Precondition { get; }
     void Perform(BattleCharacterController[] targets, EvaluationContext context);

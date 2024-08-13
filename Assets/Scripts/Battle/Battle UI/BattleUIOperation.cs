@@ -12,7 +12,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class BattleUIOperation : MonoBehaviour
@@ -23,11 +22,9 @@ public class BattleUIOperation : MonoBehaviour
 
     [Header("Selected Character")]
     [Required] public InputActionReference SwitchSpecialInput;
-    [Required] public InputActionReference SwitchCharacter;
     [ReadOnly, CanBeNull] public BattleCharacterController UnitSelected;
 
     [Header("UI Info")]
-    [Required] public Image SelectedUnitPicture, SelectedUnitBorder;
     public List<HeroPrefabUIData> HeroUIData;
     [ReadOnly, SerializeField] public List<HeroExtension> HeroData;
 
@@ -37,29 +34,22 @@ public class BattleUIOperation : MonoBehaviour
 
     [Required] public BattleTooltipUI TooltipUI;
 
-    [Header("Modifier Display")]
-    [Required] public RectTransform ModifierContainer;
-    [ReadOnly] public Dictionary<IModifier, ModifierDisplay> ModifierDisplays = new();
-
     [Header("Action Selection")]
     [Required] public RectTransform ActionSelectionContainer;
     [Required] public Button Attack;
     [Required] public Button Repeat;
     [Required] public Button Skills;
     [Required] public Button Items;
-    [Required] public Button Tactics;
 
     [Header("Sub-Action Selection")]
     [Required] public InputActionReference CancelInput;
-    [FormerlySerializedAs("SelectionContainer"), Required] public RectTransform SubActionSelectionContainer;
+    [Required] public RectTransform SubActionSelectionContainer;
     [Required] public Button AcceptSelection;
     [ValidateInput(nameof(HasButton), "Must have a button")] public RectTransform ItemTemplate;
     [ValidateInput(nameof(HasButton), "Must have a button")] public RectTransform SkillTemplate;
     public TargetList Targets = new();
-    [Required] public InputActionReference SelectActionSet1, SelectActionSet2;
 
     [Header("Previews")]
-    [Required] public UIActionPreview ActionPreviewTemplate;
     [Required] public GameObject TargetCursorTemplate;
 
     [Required] public DamageText DamageTextTemplate;
@@ -68,20 +58,17 @@ public class BattleUIOperation : MonoBehaviour
 
     (Coroutine coroutine, IDisposable disposable)? _runningUIOperation;
     bool _listenerBound;
-    Color _initialTacticsColor, _disabledTacticsColor;
 
-    List<GameObject> _targetCursors = new();
+    List<(GameObject cursor, BattleCharacterController? unit)> _targetCursors = new();
     Queue<(float availableAfter, DamageText component)> _damageTextCache = new();
     Tactics _order = new();
 
-    (IAction action, UIActionPreview ui, PreviewType type)[] _existingPreviews = Array.Empty<(IAction, UIActionPreview, PreviewType)>();
-    PreviewType _previewType;
     GroupSelection _groupSelection;
     TargetSelection _targetSelection;
     IAction _lastActionCursor;
-    BattleCharacterController _waitingForScheduledUnit;
-    [MaybeNull] IAction[] _lastActions;
-    Color _initialBorderColor;
+    Dictionary<BattleCharacterController, IAction> _lastAction = new();
+
+    Dictionary<(IModifier, CharacterTemplate), ModifierDisplay> _modifierDisplays = new();
 
     public BattleUIOperation()
     {
@@ -96,27 +83,23 @@ public class BattleUIOperation : MonoBehaviour
 
     void OnEnable()
     {
-        if (_initialBorderColor == default)
-            _initialBorderColor = SelectedUnitBorder.color;
-
         ResetNavigation();
+        HideNavigation();
         if (_listenerBound == false)
         {
             _listenerBound = true;
-            _initialTacticsColor = Tactics.colors.normalColor;
-            _disabledTacticsColor = Tactics.colors.disabledColor;
-            UpdateTacticsButtonColor();
             Attack.onClick.AddListener(() => TryOrderWizard(PresentAttackUI()));
-            Repeat.onClick.AddListener(() => FillWithActions(_lastActions));
+            Repeat.onClick.AddListener(() => TryOrderWizard(PresentTargetSelectionUI(_lastAction[UnitSelected!])));
             Skills.onClick.AddListener(() => TryOrderWizard(PresentSkillsUI()));
             Items.onClick.AddListener(() => TryOrderWizard(PresentItemUI()));
-            Tactics.onClick.AddListener(TacticsPressed);
 
-            for (int i = ModifierContainer.transform.childCount - 1; i >= 0; i--)
-                Destroy(ModifierContainer.transform.GetChild(i).gameObject);
+            foreach (var ui in HeroUIData)
+            {
+                for (int i = ui.ModifierContainer.childCount - 1; i >= 0; i--)
+                    Destroy(ui.ModifierContainer.transform.GetChild(i).gameObject);
+            }
         }
 
-        ActionPreviewTemplate.gameObject.SetActive(false);
         AttributeAdd.OnApplied += DamageHandler;
     }
 
@@ -160,187 +143,14 @@ public class BattleUIOperation : MonoBehaviour
         _damageTextCache.Enqueue((Time.time + damageText.Lifetime, damageText));
     }
 
-    void OnSwappedSelectedUnit()
-    {
-        _lastActions = null;
-        UpdateTacticsButtonColor();
-
-        foreach (var (mod, display) in ModifierDisplays)
-        {
-            display.RemoveDisplay();
-        }
-        ModifierDisplays.Clear();
-
-        if (UnitSelected == null)
-            return;
-
-        foreach (var modifier in UnitSelected.Profile.Modifiers)
-        {
-            if (ModifierDisplays.TryGetValue(modifier, out _) || modifier.DisplayPrefab == null)
-                continue;
-
-            var display = Instantiate(modifier.DisplayPrefab, ModifierContainer);
-            ModifierDisplays[modifier] = display;
-            display.OnDisplayed(UnitSelected, this, modifier);
-        }
-        
-        if (UnitSelected.Profile is HeroExtension hero)
-        {
-            var c = _initialBorderColor;
-            hero.SwitchSpecialHandler?.OnSelectedUnitChanged(UnitSelected, ref c);
-            SelectedUnitBorder.color = c;
-        }
-
-        SelectedUnitPicture.sprite = UnitSelected.Profile.Portrait;
-    }
-
-    void FillWithActions(IEnumerable<IAction> actions)
-    {
-        if (actions.Any() == false)
-            return;
-
-        _order.Actions.BackingArray = actions.ToArray();
-        _order.Condition = null;
-        ResetNavigation();
-        TryOrderWizard(PresentTargetSelectionUI());
-    }
-
     void Update()
     {
-        Repeat.interactable = _lastActions != null;
+        UpdateScene();
+        UpdateSelected();
+    }
 
-        if (SwitchCharacter.action.WasPerformedThisFrameUnique())
-            SwitchToNextHero(SwitchCharacter.action.ReadValue<float>() >= 0 ? 1 : -1);
-
-        if (UnitSelected == null && BattleManagement.PartyLineup.Count != 0)
-        {
-            UnitSelected = BattleManagement.PartyLineup[0];
-            OnSwappedSelectedUnit();
-        }
-
-        if (UnitSelected == null)
-            return;
-
-        if (SelectActionSet1.action.WasPerformedThisFrameUnique())
-            if (UnitSelected.Profile is HeroExtension hero)
-                FillWithActions(hero.Actionset1);
-
-        if (SelectActionSet2.action.WasPerformedThisFrameUnique())
-            if (UnitSelected.Profile is HeroExtension hero)
-                FillWithActions(hero.Actionset2);
-
-        if (SwitchSpecialInput.action.WasPerformedThisFrameUnique() && BattleManagement.Processing.ContainsKey(UnitSelected) == false)
-        {
-            var color = SelectedUnitBorder.color;
-            UnitSelected.Profile.SwitchSpecialHandler?.OnSwitch(UnitSelected, ref color);
-            SelectedUnitBorder.color = color;
-        }
-
-        { // MODIFIERS
-            foreach (var modifier in UnitSelected.Profile.Modifiers)
-            {
-                if (ModifierDisplays.TryGetValue(modifier, out _) || modifier.DisplayPrefab == null)
-                    continue;
-
-                var display = Instantiate(modifier.DisplayPrefab, ModifierContainer);
-                ModifierDisplays[modifier] = display;
-                display.OnDisplayed(UnitSelected, this, modifier);
-                display.OnNewModifier();
-            }
-
-            List<IModifier> modifiersToRemove = null;
-            foreach (var (mod, display) in ModifierDisplays)
-            {
-                foreach (var modifier in UnitSelected.Profile.Modifiers)
-                {
-                    if (ReferenceEquals(modifier, mod))
-                        goto FoundMatch;
-                }
-
-                try
-                {
-                    display.RemoveDisplay();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogException(e);
-                }
-
-                modifiersToRemove ??= new();
-                modifiersToRemove.Add(mod);
-
-                FoundMatch:{}
-            }
-
-            if (modifiersToRemove is not null)
-            {
-                foreach (var modifier in modifiersToRemove)
-                {
-                    ModifierDisplays.Remove(modifier);
-                }
-            }
-        }
-
-        if (_waitingForScheduledUnit != null && (BattleManagement.Orders.TryGetValue(_waitingForScheduledUnit, out _) || BattleManagement.Processing.TryGetValue(_waitingForScheduledUnit, out _)))
-        {
-            if (CancelInput.action.WasPerformedThisFrameUnique())
-            {
-                BattleManagement.Orders.Remove(_waitingForScheduledUnit);
-                BattleManagement.Interrupt(_waitingForScheduledUnit);
-                _waitingForScheduledUnit = null;
-                // Put the battle on pause, the player likely wants to schedule something
-                CancelFullOrder();
-                ResetNavigation();
-                BattleManagement.Blocked |= BlockBattleFlags.PreparingOrders;
-            }
-        }
-        else if (_waitingForScheduledUnit)
-        {
-            ResetNavigation();
-            _waitingForScheduledUnit = null;
-        }
-
-        Skills.interactable = UnitSelected.Profile.Skills.Count > 0;
-        Items.interactable = UnitSelected.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
-
-        if (_order.Actions.Length != 0 && _order.Condition == null  && _runningUIOperation == null && CancelInput.action.WasPerformedThisFrameUnique())
-            TryOrderWizard(PresentTargetSelectionUI());
-
-        if (BattleManagement.Processing.TryGetValue(UnitSelected, out var progress))
-        {
-            var span = progress.chosenTactic.Actions.AsSpan()[progress.actionI..];
-            UpdatePreview(progress.chosenTactic, span, PreviewType.Execution);
-        }
-        else if (_order.Actions.Length != 0) // Order being composed by the player right now
-        {
-            UpdatePreview(_order, _order.Actions, PreviewType.Order);
-        }
-        else if (BattleManagement.Orders.TryGetValue(UnitSelected, out var order)) // Order scheduled
-        {
-            UpdatePreview(order, order.Actions, PreviewType.Order);
-        }
-        else if (BattleManagement.TacticsDisabled.Contains(UnitSelected))
-        {
-            UpdatePreview(null, default, PreviewType.Order);
-        }
-        else // No orders, find the first tactics that can run
-        {
-            Tactics tacticsPreviewed = null;
-            using (BattleManagement.Units.TemporaryCopy(out var unitsCopy))
-            {
-                foreach (var tactic in UnitSelected.Profile.Tactics)
-                {
-                    if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, new TargetCollection(unitsCopy), UnitSelected.Context, out _, accountForCost:false))
-                    {
-                        tacticsPreviewed = tactic;
-                        break;
-                    }
-                }
-            }
-            ReadOnlySpan<IAction> actions = tacticsPreviewed != null ? tacticsPreviewed.Actions.AsSpan() : default;
-            UpdatePreview(tacticsPreviewed, actions, PreviewType.Tactics);
-        }
-
+    void UpdateScene()
+    {
         foreach (var unit in BattleManagement.PartyLineup)
         {
             if (!ProcessedUnits.Add(unit))
@@ -386,16 +196,9 @@ public class BattleUIOperation : MonoBehaviour
         {
             var ui = HeroUIData[i];
             var hero = HeroData[i];
-            var localPos = ui.transform.localPosition;
-            if (hero == UnitSelected.Profile)
-                localPos.x = -100;
-            else
-                localPos.x = 0;
-            
-            ui.transform.localPosition = localPos;
             ui.gameObject.SetActive(true);
             ui.CharacterIcon.sprite = hero.Portrait;
-            ui.AtbBar.fillAmount = hero.ActionsCharged / hero.ActionChargeMax;
+            ui.AtbBar.fillAmount = 1f - hero.Pause;
             ui.HealthBar.fillAmount = (float)hero.CurrentHP / hero.EffectiveStats.HP;
             ui.Health.text = hero.CurrentHP.ToString();
             ui.NameLabel.text = hero.Name;
@@ -406,34 +209,100 @@ public class BattleUIOperation : MonoBehaviour
             EnemyUIData[i].healthBar.fillAmount = (float)EnemyData[i].CurrentHP / EnemyData[i].EffectiveStats.HP;
             EnemyUIData[i].health.text = EnemyData[i].CurrentHP.ToString();
         }
+
+        { // MODIFIERS
+            for (int i = 0; i < HeroData.Count; i++)
+            {
+                var ui = HeroUIData[i];
+                var unit = HeroData[i];
+            
+                foreach (var modifier in unit.Modifiers)
+                {
+                    if (_modifierDisplays.TryGetValue((modifier, unit), out _) || modifier.DisplayPrefab == null)
+                        continue;
+
+                    var display = Instantiate(modifier.DisplayPrefab, ui.ModifierContainer);
+                    _modifierDisplays[(modifier, unit)] = display;
+                    display.OnDisplayed(unit, this, modifier);
+                    display.OnNewModifier();
+                }
+            }
+
+            List<(IModifier, CharacterTemplate)> modifiersToRemove = null;
+            foreach (var ((mod, unit), display) in _modifierDisplays)
+            {
+                foreach (var modifier in unit.Modifiers)
+                {
+                    if (ReferenceEquals(modifier, mod))
+                        goto FoundMatch;
+                }
+
+                try
+                {
+                    display.RemoveDisplay();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+
+                modifiersToRemove ??= new();
+                modifiersToRemove.Add((mod, unit));
+
+                FoundMatch:{}
+            }
+
+            if (modifiersToRemove is not null)
+            {
+                foreach (var modifier in modifiersToRemove)
+                {
+                    _modifierDisplays.Remove(modifier);
+                }
+            }
+        }
+    }
+
+    private void UpdateSelected()
+    {
+        Repeat.interactable = UnitSelected != null && _lastAction.ContainsKey(UnitSelected);
+
+        var characterReady = BattleManagement.Queue.FirstOrDefault(x => x.Profile.Team == BattleManagement.PlayerTeam);
+        if (characterReady != UnitSelected)
+        {
+            if (UnitSelected != null)
+                HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].transform.localPosition += new Vector3(100, 0, 0);
+            
+            UnitSelected = characterReady;
+            ResetNavigation();
+            if (UnitSelected is null)
+                HideNavigation();
+
+            foreach (var (mod, display) in _modifierDisplays)
+                display.RemoveDisplay();
+            _modifierDisplays.Clear();
+
+            if (UnitSelected != null)
+                HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].transform.localPosition -= new Vector3(100, 0, 0);
+        }
+
+        if (UnitSelected == null)
+            return;
+
+        Skills.interactable = UnitSelected.Profile.Skills.Count > 0;
+        Items.interactable = UnitSelected.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
     }
 
     IEnumerable PresentAttackUI()
     {
-        if (_order.Actions.CostTotal() >= 4)
-            yield break;
-
-        if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
-            Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
-
         if (UnitSelected == null)
             yield break;
 
-        _order.Actions.BackingArray[^1] = UnitSelected.Profile.BasicAttack;
-
-        if (_order.Actions.CostTotal() >= 4 && _order.Condition == null)
-        {
-            foreach (object o in PresentTargetSelectionUI())
-                yield return o;
-        }
+        foreach (object o in PresentTargetSelectionUI(UnitSelected.Profile.BasicAttack))
+            yield return o;
     }
 
     IEnumerable PresentSkillsUI()
     {
-        if (_order.Actions.CostTotal() >= 4)
-            yield break;
-
-        AGAIN:
         SubActionSelectionContainer.gameObject.SetActive(true);
 
         Skill selectedSkill = null;
@@ -457,11 +326,8 @@ public class BattleUIOperation : MonoBehaviour
                 if (ReferenceEquals(previousCursor, skill))
                     button.Select();
 
-                if (_order.Actions.CostTotal() + skill.ATBCost > UnitSelected.Profile.ActionChargeMax)
-                {
-                    button.interactable = false;
-                }
-                else if (first)
+                button.interactable = true;
+                if (first)
                 {
                     button.Select();
                     first = false;
@@ -490,27 +356,12 @@ public class BattleUIOperation : MonoBehaviour
             SubActionSelectionContainer.gameObject.SetActive(false);
         }
 
-        if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
-            Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
-
-        _order.Actions.BackingArray[^1] = selectedSkill;
-
-        if (_order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax)
-            goto AGAIN;
-
-        if (_order.Actions.CostTotal() >= 4 && _order.Condition == null)
-        {
-            foreach (object o in PresentTargetSelectionUI())
-                yield return o;
-        }
+        foreach (object o in PresentTargetSelectionUI(selectedSkill))
+            yield return o;
     }
 
     IEnumerable PresentItemUI()
     {
-        if (_order.Actions.CostTotal() >= 4)
-            yield break;
-
-        AGAIN:
         SubActionSelectionContainer.gameObject.SetActive(true);
 
         Consumable selectedConsumable = null;
@@ -537,11 +388,7 @@ public class BattleUIOperation : MonoBehaviour
                 if (ReferenceEquals(previousCursor, consumable))
                     button.Select();
 
-                if (_order.Actions.CostTotal() + consumable.ATBCost > UnitSelected.Profile.ActionChargeMax)
-                {
-                    button.interactable = false;
-                }
-                else if (first)
+                if (first)
                 {
                     button.Select();
                     first = false;
@@ -570,41 +417,30 @@ public class BattleUIOperation : MonoBehaviour
             SubActionSelectionContainer.gameObject.SetActive(false);
         }
 
-        if (_order.Actions.Length == 0 || _order.Actions.BackingArray[^1] != null)
-            Array.Resize(ref _order.Actions.BackingArray, _order.Actions.BackingArray.Length + 1);
-
-        _order.Actions.BackingArray[^1] = selectedConsumable;
-
-        if (_order.Actions.CostTotal() < UnitSelected.Profile.ActionChargeMax)
-            goto AGAIN;
-
-        if (_order.Actions.CostTotal() >= 4 && _order.Condition == null)
-        {
-            foreach (object o in PresentTargetSelectionUI())
-                yield return o;
-        }
+        foreach (object o in PresentTargetSelectionUI(selectedConsumable))
+            yield return o;
     }
 
-    static Button CreateButton(string name, RectTransform SkillTemplate, RectTransform SelectionContainer, ICollection<RectTransform> objects, UnityAction OnClick, [CanBeNull] UnityAction<BaseEventData> OnHoverOrSelected = null)
+    static Button CreateButton(string name, RectTransform skillTemplate, RectTransform selectionContainer, ICollection<RectTransform> objects, UnityAction onClick, [CanBeNull] UnityAction<BaseEventData> onHoverOrSelected = null)
     {
-        var uiElem = Instantiate(SkillTemplate, SelectionContainer, false);
+        var uiElem = Instantiate(skillTemplate, selectionContainer, false);
         uiElem.gameObject.SetActive(true);
         objects.Add(uiElem);
         if (uiElem.GetComponentInChildren<Text>() is { } text && text != null)
             text.text = name;
-        if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmp_text && tmp_text != null)
-            tmp_text.text = name;
+        if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText != null)
+            tmpText.text = name;
 
 
         var button = uiElem.GetComponent<Button>();
-        button.onClick.AddListener(OnClick);
+        button.onClick.AddListener(onClick);
 
-        if (OnHoverOrSelected is not null)
+        if (onHoverOrSelected is not null)
         {
             var onHover = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-            onHover.callback.AddListener(OnHoverOrSelected);
+            onHover.callback.AddListener(onHoverOrSelected);
             var onSelect = new EventTrigger.Entry { eventID = EventTriggerType.Select };
-            onSelect.callback.AddListener(OnHoverOrSelected);
+            onSelect.callback.AddListener(onHoverOrSelected);
 
             if (button.gameObject.TryGetComponent(out EventTrigger trigger) == false)
                 trigger = button.gameObject.AddComponent<EventTrigger>();
@@ -617,22 +453,12 @@ public class BattleUIOperation : MonoBehaviour
         return button;
     }
 
-    void TacticsPressed()
+    IEnumerable PresentTargetSelectionUI(IAction action)
     {
-        if (BattleManagement.TacticsDisabled.Remove(UnitSelected) == false)
-            BattleManagement.TacticsDisabled.Add(UnitSelected);
-        UpdateTacticsButtonColor();
-    }
+        if (UnitSelected == null)
+            yield break;
 
-    void UpdateTacticsButtonColor()
-    {
-        var cols = Tactics.colors;
-        cols.normalColor = BattleManagement.TacticsDisabled.Contains(UnitSelected) ? _disabledTacticsColor : _initialTacticsColor;
-        Tactics.colors = cols;
-    }
-
-    IEnumerable PresentTargetSelectionUI()
-    {
+        _order.Action = action;
         SubActionSelectionContainer.gameObject.SetActive(true);
 
         bool accepted = false;
@@ -646,13 +472,13 @@ public class BattleUIOperation : MonoBehaviour
         IUIElementSelection<HashSet<BattleCharacterController>> selector = null;
         try
         {
-            if (_groupSelection.ValidAndPrepared(UnitSelected, _order.Actions, BattleManagement.Units))
+            if (_groupSelection.ValidAndPrepared(UnitSelected, _order.Action, BattleManagement.Units))
             {
                 selector = _groupSelection;
             }
             else // Fallback to generic handler if no groups could be found
             {
-                _targetSelection.Prepare(UnitSelected, _order.Actions, BattleManagement.Units);
+                _targetSelection.Prepare(UnitSelected, _order.Action, BattleManagement.Units);
                 selector = _targetSelection;
             }
 
@@ -672,7 +498,6 @@ public class BattleUIOperation : MonoBehaviour
 
                 if (CancelInput.action.WasPerformedThisFrameUnique())
                 {
-                    CancelFullOrder();
                     while (true)
                         yield return new CancelRequested(); // Infinite loop to ensure we do not advance out of a cancel
                 }
@@ -697,55 +522,21 @@ public class BattleUIOperation : MonoBehaviour
         ScheduleOrder(_order);
     }
 
-    void SwitchToNextHero(int dir)
-    {
-        int partyCount = BattleManagement.PartyLineup.Count;
-        int indexOfOldSelection = BattleManagement.PartyLineup.IndexOf(UnitSelected);
-        // Search for the next unit forward or backwards in the list
-        for (int k = Mod(indexOfOldSelection + dir, partyCount); k != indexOfOldSelection; k = Mod(k + dir, partyCount))
-        {
-            if (BattleManagement.PartyLineup[k].Profile.CurrentHP == 0)
-                continue;
-
-            UnitSelected = BattleManagement.PartyLineup[k];
-            OnSwappedSelectedUnit();
-            break;
-        }
-
-        static int Mod(int x, int y)
-        {
-            // Make sure the result is positive when x is negative
-            // i.e.: -1%10 == -1, we want == 9 instead
-            return x < 0 ? y + (x % y) : x % y;
-        }
-    }
-
     void ScheduleOrder(Tactics tactics)
     {
-        if (tactics.Actions.Length == 0 || tactics.Condition == null)
+        if (tactics.Action == null || tactics.Condition == null)
         {
             Debug.LogWarning("Tried to schedule an incomplete order");
             return;
         }
 
-        _lastActions = tactics.Actions.ToArray();
         _order = new();
         ResetNavigation();
         if (UnitSelected != null)
         {
+            _lastAction[UnitSelected] = tactics.Action;
             BattleManagement.Orders[UnitSelected] = tactics;
-            _waitingForScheduledUnit = UnitSelected;
-            HideNavigation();
         }
-
-        BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
-    }
-
-    void CancelFullOrder()
-    {
-        _order = new();
-        ResetNavigation();
-        BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
     }
 
     void ResetNavigation()
@@ -807,144 +598,9 @@ public class BattleUIOperation : MonoBehaviour
                 _runningUIOperation = null;
 
                 ResetNavigation();
-
-                if (_order.Actions.Length == 0) // Order was cancelled
-                    CancelFullOrder();
+                BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
             }
         }
-    }
-
-
-    public void UpdatePreview([CanBeNull] Tactics tactics, ReadOnlySpan<IAction> actionsSubset, PreviewType type)
-    {
-        using var _temp = BattleManagement.Units.TemporaryCopy(out var _unitsCopy);
-        if (tactics != null && tactics.Condition != null && tactics.Condition.CanExecute(tactics.Actions, new TargetCollection(_unitsCopy), UnitSelected!.Context, out var selection, accountForCost:false))
-        {
-            int i = 0;
-            foreach (var controller in selection)
-            {
-                if (i >= _targetCursors.Count)
-                    _targetCursors.Add(Instantiate(TargetCursorTemplate));
-
-                var position = controller.transform.position;
-                foreach (var renderer in controller.PooledGetInChildren<Renderer>())
-                    position.y = Mathf.Max(renderer.bounds.max.y, position.y);
-
-                _targetCursors[i++].transform.SetPositionAndRotation(position, Camera.main!.transform.rotation);
-            }
-
-            for (; i < _targetCursors.Count; i++)
-                _targetCursors[i].SetActive(false);
-        }
-        else
-        {
-            foreach (var cursor in _targetCursors)
-                cursor.SetActive(false);
-        }
-
-        var current = _existingPreviews.AsSpan();
-        int minLength = Math.Min(current.Length, actionsSubset.Length);
-        int leftMatches = 0;
-        int rightMatches = 0;
-        for (int i = 0; i < minLength; i++)
-        {
-            if (current[i].action == actionsSubset[i])
-                leftMatches++;
-            else
-                break;
-        }
-
-        for (int i = 1; i <= minLength; i++)
-        {
-            if (current[^i].action == actionsSubset[^i])
-                rightMatches++;
-            else
-                break;
-        }
-
-        System.Range matchRange = rightMatches > leftMatches ? ^rightMatches.. : ..leftMatches;
-        System.Range nonmatchRange = rightMatches > leftMatches ? ..^rightMatches : leftMatches..;
-
-        var toKeep = current[matchRange];
-        var toDiscard = current[nonmatchRange];
-        var toAdd = actionsSubset[nonmatchRange];
-
-        if (toDiscard.Length == 0 && toAdd.Length == 0)
-        {
-            for (int i = 0; i < current.Length; i++)
-            {
-                if (current[i].type != type)
-                {
-                    current[i].type = type;
-                    CallPreviewTypeMethod(type, current[i].ui);
-                }
-            }
-            return;
-        }
-
-        foreach (var (action, ui, _) in toDiscard)
-            ui.Discarded?.Invoke();
-
-        if (rightMatches > leftMatches)
-        {
-            for (int i = 0; i < toKeep.Length; i++)
-            {
-                var (action, ui, _) = toKeep[i];
-                int newPosition = toAdd.Length + i;
-                ui.Moved?.Invoke();
-            }
-        }
-
-        _existingPreviews = new (IAction action, UIActionPreview ui, PreviewType type)[toKeep.Length + toAdd.Length];
-        var newAsSpan = _existingPreviews.AsSpan();
-        toKeep.CopyTo(newAsSpan[matchRange]);
-        var newAsSpanAddRange = newAsSpan[nonmatchRange];
-        for (int i = 0; i < toAdd.Length; i++)
-        {
-            var newElement = Instantiate(ActionPreviewTemplate.gameObject, ActionPreviewTemplate.transform.parent);
-            newElement.SetActive(true);
-            var ui = newElement.GetComponent<UIActionPreview>();
-            var rect = (RectTransform)ui.transform;
-            var size = rect.sizeDelta;
-            size.x *= toAdd[i].ActionCost;
-            rect.sizeDelta = size;
-            ui.Created?.Invoke(toAdd[i].Name);
-            CallPreviewTypeMethod(type, ui);
-            newAsSpanAddRange[i] = (toAdd[i], ui, type);
-        }
-
-        if (toAdd.Length != 0)
-        {
-            for (int i = 0; i < _existingPreviews.Length; i++)
-                _existingPreviews[i].ui.transform.SetSiblingIndex(i);
-        }
-
-        if (_previewType != type)
-        {
-            _previewType = type;
-            for (int i = 0; i < _existingPreviews.Length; i++)
-                CallPreviewTypeMethod(type, _existingPreviews[i].ui);
-        }
-
-        static void CallPreviewTypeMethod(PreviewType type, UIActionPreview ui)
-        {
-            var invoker = type switch
-            {
-                PreviewType.Tactics => ui.IsTactics,
-                PreviewType.Order => ui.IsOrder,
-                PreviewType.Execution => ui.IsExecution,
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };
-            invoker?.Invoke();
-        }
-    }
-
-
-    public enum PreviewType
-    {
-        Tactics,
-        Order,
-        Execution
     }
 
     [Serializable]
@@ -967,16 +623,16 @@ public class BattleUIOperation : MonoBehaviour
         [ItemCanBeNull] readonly HashSet<BattleCharacterController> _selection = new();
         BattleCharacterController _unitSelected;
         BattleCharacterController _lastCursor;
-        IActionCollection _actions;
+        IAction _action;
         List<BattleCharacterController> _units;
 
         public TargetSelection(BattleUIOperation battleUIParam) : base(battleUIParam) { }
 
-        public void Prepare(BattleCharacterController unitSelected, IActionCollection actions, List<BattleCharacterController> units)
+        public void Prepare(BattleCharacterController unitSelected, IAction action, List<BattleCharacterController> units)
         {
             _selection.Clear();
             _unitSelected = unitSelected;
-            _actions = actions;
+            _action = action;
             _units = units;
 
             Clear();
@@ -1046,20 +702,21 @@ public class BattleUIOperation : MonoBehaviour
 
         protected override IEnumerable<BattleCharacterController> GetItems()
         {
-            return _units.Where(x => IsFiltered(x, _actions, _unitSelected.Context, _units) == false).OrderByDescending(x => x.IsHostileTo(_unitSelected));
+            return _units.Where(x => IsFiltered(x, _action, _unitSelected.Context, _units) == false).OrderByDescending(x => x.IsHostileTo(_unitSelected));
         }
 
         protected override void OnHoverOrSelected(BattleCharacterController unit)
         {
             _lastCursor = unit;
             TooltipUI.OnPresentNewTooltip?.Invoke($"Level {unit.Profile.Level}\n{unit.Profile.EffectiveStats.ToStringOneStatPerLine()}");
+            UpdateSelectionArrow(Enumerable.Empty<BattleCharacterController>().Append(unit));
         }
 
         protected override void OnRemoved(BattleCharacterController unit, bool fromClearAction)
         {
             _selection.Remove(unit);
 
-            Filter(_actions, _unitSelected.Context, _selection);
+            Filter(_action, _unitSelected.Context, _selection);
 
             foreach (var (otherUnit, (_, toggle)) in Toggles)
                 toggle.SetIsOnWithoutNotify(_selection.Contains(otherUnit));
@@ -1079,7 +736,7 @@ public class BattleUIOperation : MonoBehaviour
             else
                 _selection.Remove(unit);
 
-            if (Filtered(_actions, _unitSelected.Context, _selection, out var newSelection) == false)
+            if (Filtered(_action, _unitSelected.Context, _selection, out var newSelection) == false)
                 return;
 
             // Some of the units were filtered out:
@@ -1092,7 +749,7 @@ public class BattleUIOperation : MonoBehaviour
                 else // This unit was filtered out
                 {
                     // Try again with just this unit selected
-                    if (Filtered(_actions, _unitSelected.Context, new() { unit }, out var newSelectionWithOnlyIt) == false)
+                    if (Filtered(_action, _unitSelected.Context, new() { unit }, out var newSelectionWithOnlyIt) == false)
                         ReplaceSelection(_selection, newSelectionWithOnlyIt, Toggles);
                     // Else, don't add it, this unit is likely not compatible with this action
                 }
@@ -1119,12 +776,11 @@ public class BattleUIOperation : MonoBehaviour
             }
         }
 
-        static bool Filtered(IActionCollection actions, EvaluationContext context, HashSet<BattleCharacterController> input, out HashSet<BattleCharacterController> output)
+        static bool Filtered(IAction action, EvaluationContext context, HashSet<BattleCharacterController> input, out HashSet<BattleCharacterController> output)
         {
             var collection = new TargetCollection(input.ToList());
             var filtered = collection;
-            foreach (var action in actions)
-                action.TargetFilter?.Filter(ref filtered, context);
+            action.TargetFilter?.Filter(ref filtered, context);
 
             if (collection != filtered)
             {
@@ -1138,12 +794,11 @@ public class BattleUIOperation : MonoBehaviour
             }
         }
 
-        static bool Filter(IActionCollection actions, EvaluationContext context, HashSet<BattleCharacterController> input)
+        static bool Filter(IAction action, EvaluationContext context, HashSet<BattleCharacterController> input)
         {
             var collection = new TargetCollection(input.ToList());
             var filtered = collection;
-            foreach (var action in actions)
-                action.TargetFilter?.Filter(ref filtered, context);
+            action.TargetFilter?.Filter(ref filtered, context);
 
             if (collection != filtered)
             {
@@ -1156,14 +811,13 @@ public class BattleUIOperation : MonoBehaviour
             return false;
         }
 
-        bool IsFiltered(BattleCharacterController x, IActionCollection actions, EvaluationContext context, List<BattleCharacterController> units)
+        bool IsFiltered(BattleCharacterController x, IAction action, EvaluationContext context, List<BattleCharacterController> units)
         {
             var alone = new TargetCollection(units);
             alone.Empty();
             alone.SetAt(units.IndexOf(x));
 
-            foreach (var action in actions)
-                action.TargetFilter?.Filter(ref alone, context);
+            action.TargetFilter?.Filter(ref alone, context);
 
             return alone.IsEmpty;
         }
@@ -1176,7 +830,7 @@ public class BattleUIOperation : MonoBehaviour
         readonly TargetGroupNonAlloc[] _targetGroups;
         TargetGroupNonAlloc _lastCursor;
         BattleCharacterController _unitSelected;
-        IActionCollection _actions;
+        IAction _action;
         List<BattleCharacterController> _units;
 
         public GroupSelection(BattleUIOperation battleUIParam) : base(battleUIParam)
@@ -1188,16 +842,16 @@ public class BattleUIOperation : MonoBehaviour
             };
         }
 
-        public bool ValidAndPrepared(BattleCharacterController unitSelectedParam, IActionCollection actions, List<BattleCharacterController> units)
+        public bool ValidAndPrepared(BattleCharacterController unitSelectedParam, IAction action, List<BattleCharacterController> units)
         {
             _unitSelected = unitSelectedParam;
-            _actions = actions;
+            _action = action;
             _units = units;
 
             bool valid = false;
             foreach (var groupNonAlloc in _targetGroups)
             {
-                if (EvaluateGroupFilter(groupNonAlloc, _units, _actions, unitSelectedParam.Context, out _, out _))
+                if (EvaluateGroupFilter(groupNonAlloc, _units, _action, unitSelectedParam.Context, out _, out _))
                 {
                     valid = true;
                     break;
@@ -1265,7 +919,7 @@ public class BattleUIOperation : MonoBehaviour
             units = new();
             foreach (var group in _selectedTargetGroups)
             {
-                EvaluateGroupFilter(group, _units, _actions, _unitSelected.Context, out _, out var selection);
+                EvaluateGroupFilter(group, _units, _action, _unitSelected.Context, out _, out var selection);
                 foreach (var unit in selection)
                     units.Add(unit);
             }
@@ -1275,14 +929,15 @@ public class BattleUIOperation : MonoBehaviour
 
         protected override IEnumerable<TargetGroupNonAlloc> GetItems()
         {
-            return _targetGroups.Where(x => EvaluateGroupFilter(x, _units, _actions, _unitSelected.Context, out _, out _));
+            return _targetGroups.Where(x => EvaluateGroupFilter(x, _units, _action, _unitSelected.Context, out _, out _));
         }
 
         protected override void OnHoverOrSelected(TargetGroupNonAlloc group)
         {
             _lastCursor = group;
-            EvaluateGroupFilter(group, _units, _actions, _unitSelected.Context, out _, out var selection);
+            EvaluateGroupFilter(group, _units, _action, _unitSelected.Context, out _, out var selection);
             TooltipUI.OnPresentNewTooltip?.Invoke($"Targets: {string.Join(", ", selection.Select(x => x.Profile.Name))}");
+            UpdateSelectionArrow(selection);
         }
 
         protected override void OnRemoved(TargetGroupNonAlloc group, bool fromClearAction)
@@ -1316,7 +971,7 @@ public class BattleUIOperation : MonoBehaviour
             }
         }
 
-        bool EvaluateGroupFilter(TargetGroupNonAlloc group, List<BattleCharacterController> allUnits, IActionCollection actions, EvaluationContext context, out string specificName, out TargetCollection selection)
+        bool EvaluateGroupFilter(TargetGroupNonAlloc group, List<BattleCharacterController> allUnits, IAction action, EvaluationContext context, out string specificName, out TargetCollection selection)
         {
             int initiallyValidCount = 0;
             selection = new(allUnits);
@@ -1329,8 +984,7 @@ public class BattleUIOperation : MonoBehaviour
                     initiallyValidCount++;
             }
 
-            foreach (var action in actions)
-                action.TargetFilter?.Filter(ref selection, context);
+            action.TargetFilter?.Filter(ref selection, context);
 
             var count = selection.CountSlow();
             if (count == 0 || count == 1 && initiallyValidCount != 1)
@@ -1371,17 +1025,17 @@ public class BattleUIOperation : MonoBehaviour
 
     abstract class UIElementSelection<T, T2> : IUIElementSelection<T2>
     {
-        readonly BattleUIOperation battleUI;
+        readonly BattleUIOperation _battleUI;
         readonly List<T> _temp = new();
 
         protected readonly Dictionary<T, (RectTransform parent, Toggle toggle)> Toggles = new();
-        protected BattleTooltipUI TooltipUI => battleUI.TooltipUI;
+        protected BattleTooltipUI TooltipUI => _battleUI.TooltipUI;
 
-        TargetList _targetList => battleUI.Targets;
+        TargetList _targetList => _battleUI.Targets;
 
         protected UIElementSelection(BattleUIOperation battleUIParam)
         {
-            battleUI = battleUIParam;
+            _battleUI = battleUIParam;
         }
 
         public abstract bool HasAnythingSelected();
@@ -1391,6 +1045,28 @@ public class BattleUIOperation : MonoBehaviour
         protected abstract void OnRemoved(T obj, bool fromClearAction);
         protected abstract void OnNew(T obj, out string label, out bool isOn, out bool inHostileList);
         protected abstract void OnToggled(T obj, bool isOn);
+
+        protected void UpdateSelectionArrow(IEnumerable<BattleCharacterController> units)
+        {
+            int i = 0;
+            foreach (var controller in units)
+            {
+                if (i >= _battleUI._targetCursors.Count)
+                    _battleUI._targetCursors.Add((Instantiate(_battleUI.TargetCursorTemplate), controller));
+                else
+                    _battleUI._targetCursors[i] = (_battleUI._targetCursors[i].cursor, controller);
+
+                var position = controller.transform.position;
+                foreach (var renderer in controller.PooledGetInChildren<Renderer>())
+                    position.y = Mathf.Max(renderer.bounds.max.y, position.y);
+
+                _battleUI._targetCursors[i].cursor.SetActive(true);
+                _battleUI._targetCursors[i++].cursor.transform.SetPositionAndRotation(position, Camera.main!.transform.rotation);
+            }
+
+            for (; i < _battleUI._targetCursors.Count; i++)
+                _battleUI._targetCursors[i].cursor.SetActive(false);
+        }
 
 
         public void UpdateRenderingAndSelection()
@@ -1410,8 +1086,8 @@ public class BattleUIOperation : MonoBehaviour
                 uiElem.gameObject.SetActive(true);
                 if (uiElem.GetComponentInChildren<Text>() is { } text && text != null)
                     text.text = label;
-                if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmp_text && tmp_text != null)
-                    tmp_text.text = label;
+                if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText != null)
+                    tmpText.text = label;
 
                 var toggle = uiElem.GetComponent<Toggle>();
 
@@ -1452,6 +1128,16 @@ public class BattleUIOperation : MonoBehaviour
                 OnRemoved(item, false);
 
             _temp.Clear();
+            foreach (var (cursor, unit) in _battleUI._targetCursors)
+            {
+                if (cursor.activeSelf == false)
+                    return;
+
+                var position = unit.transform.position;
+                foreach (var renderer in unit.PooledGetInChildren<Renderer>())
+                    position.y = Mathf.Max(renderer.bounds.max.y, position.y);
+                cursor.transform.SetPositionAndRotation(position, Camera.main!.transform.rotation);
+            }
         }
 
         protected void Clear()
@@ -1464,6 +1150,9 @@ public class BattleUIOperation : MonoBehaviour
 
             foreach (var v in cpy)
                 OnRemoved(v.Key, true);
+            
+            foreach (var obj in _battleUI._targetCursors)
+                obj.cursor.SetActive(false);
         }
 
         public virtual void Close() => Clear();

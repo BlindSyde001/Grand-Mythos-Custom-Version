@@ -14,6 +14,7 @@ public class BattleStateMachine : MonoBehaviour
     static BattleStateMachine _instance;
 
     public bool TurnBased;
+    public bool AllowHostileActionWhilePlayerIdles = true;
     [NonSerialized]
     public BlockBattleFlags Blocked;
 
@@ -30,16 +31,15 @@ public class BattleStateMachine : MonoBehaviour
 
     [ReadOnly] public List<BattleCharacterController> PartyLineup = new();
     [ReadOnly] public List<BattleCharacterController> Units = new();
-    [ReadOnly] public SerializableHashSet<BattleCharacterController> TacticsDisabled = new();
 
     /// <summary>
     /// The player-defined orders scheduled to run whenever the unit has the ability to do so
     /// </summary>
     public readonly Dictionary<BattleCharacterController, Tactics> Orders = new();
 
-    public readonly Dictionary<BattleCharacterController, (Tactics chosenTactic, int actionI)> Processing = new();
+    public readonly HashSet<BattleCharacterController> Processing = new();
 
-    HashSet<BattleCharacterController> _busy = new();
+    public readonly List<BattleCharacterController> Queue = new();
 
     // UPDATES
     void Awake()
@@ -72,7 +72,7 @@ public class BattleStateMachine : MonoBehaviour
 
             if (Units.Contains(target) == false)
             {
-                target.Profile.ActionsCharged = Random.Range(0, target.Profile.ActionChargeMax);
+                target.Profile.Pause = Random.Range(0, 1);
                 Units.Add(target);
             }
         }
@@ -106,28 +106,40 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
 
-            foreach (var unit in Units)
+            while (Queue.Count > 0)
             {
-                if (unit.Profile.CurrentHP == 0 || _busy.Contains(unit))
-                    continue;
-
-                bool processUnit = false;
-                processUnit |= unit.Profile.ActionsCharged >= unit.Profile.ActionChargeMax && TacticsDisabled.Contains(unit) == false;
-                processUnit |= Orders.TryGetValue(unit, out var chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, new TargetCollection(Units), unit.Context, out _, accountForCost: true);
-
-                // This unit has its ATB full or the manual order can be executed given the current amount of charge
-                if (processUnit)
+                var unit = Queue[0];
+                if (unit.Profile.CurrentHP == 0 || unit.Profile.Pause > 0) // Remove any invalid units
                 {
-                    _busy.Add(unit);
-                    if (TurnBased)
+                    Queue.RemoveAt(0);
+                    continue;
+                }
+
+                if (unit.Profile.Team == PlayerTeam && Orders.TryGetValue(unit, out _) == false)
+                {
+                    if (AllowHostileActionWhilePlayerIdles && Queue.FirstOrDefault(x => x.Profile.Team != PlayerTeam) is { } hostile)
                     {
-                        for (var enumerator = CatchException(ProcessUnit(unit)); enumerator.MoveNext(); )
-                            yield return enumerator.Current;
+                        Queue.Remove(hostile);
+                        Queue.Insert(0, hostile);
+                        continue;
                     }
                     else
                     {
-                        StartCoroutine(CatchException(ProcessUnit(unit)));
+                        break; // just wait while the player idles
                     }
+                }
+
+                Queue.RemoveAt(0);
+
+                Processing.Add(unit);
+                if (TurnBased)
+                {
+                    for (var enumerator = CatchException(ProcessUnit(unit)); enumerator.MoveNext(); )
+                        yield return enumerator.Current;
+                }
+                else
+                {
+                    StartCoroutine(CatchException(ProcessUnit(unit)));
                 }
             }
 
@@ -135,11 +147,12 @@ public class BattleStateMachine : MonoBehaviour
             battleDeltaTime = Time.deltaTime * battleDeltaTime * Settings.Current.BattleSpeed / 100f;
             foreach (var unit in Units)
             {
-                if (unit.Profile.CurrentHP != 0 && _busy.Contains(unit) == false)
-                    unit.Profile.ActionsCharged += unit.Profile.ActionRechargeSpeed * unit.Profile.ActionChargeMax * battleDeltaTime;
-
-                if (unit.Profile.ActionsCharged > unit.Profile.ActionChargeMax)
-                    unit.Profile.ActionsCharged = unit.Profile.ActionChargeMax;
+                if (Processing.Contains(unit) == false && unit.Profile.CurrentHP != 0)
+                {
+                    unit.Profile.Pause = MathF.Max(unit.Profile.Pause - unit.Profile.ActionRechargeSpeed * battleDeltaTime, 0f);
+                    if (unit.Profile.Pause == 0f && Queue.Contains(unit) == false)
+                        Queue.Add(unit);
+                }
 
                 using (unit.Context.EnmityTowards.TemporaryCopy(out var copy))
                 {
@@ -238,19 +251,15 @@ public class BattleStateMachine : MonoBehaviour
             Tactics chosenTactic;
             TargetCollection selection = default;
             var allUnits = new TargetCollection(unitsCopy);
-            if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Actions, allUnits, unit.Context, out selection, true))
+            if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out selection))
             {
                 // We're taking care of this explicit order
-            }
-            else if (TacticsDisabled.Contains(unit))
-            {
-                yield break;
             }
             else
             {
                 foreach (var tactic in unit.Profile.Tactics)
                 {
-                    if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Actions, allUnits, unit.Context, out selection, true))
+                    if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Action, allUnits, unit.Context, out selection))
                     {
                         chosenTactic = tactic;
                         break;
@@ -258,28 +267,14 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
             Orders.Remove(unit);
-            Processing[unit] = (chosenTactic, 0);
+            Processing.Add(unit);
 
             if (chosenTactic == null) 
                 yield break;
 
             var combinedSelection = selection;
-            for (int i = 0; i < chosenTactic.Actions.Length; i++)
             {
-                var action = chosenTactic.Actions[i];
-
-                if (unit.Profile.ActionsCharged < action.ActionCost || Processing.ContainsKey(unit) == false/* Check if something interrupted us*/)
-                    break;
-
-                if (i != 0)
-                {
-                    // Check that our selection is still valid, may not be after running the previous action
-                    if (false == chosenTactic.Condition.CanExecute(chosenTactic.Actions.AsSpan()[i..], allUnits, unit.Context, out selection, true))
-                        break;
-                    combinedSelection |= selection;
-                }
-
-                Processing[unit] = (chosenTactic, i);
+                var action = chosenTactic.Action;
 
                 if (unit.Profile.ActionAnimations.TryGet(action, out var animation) == false)
                 {
@@ -295,7 +290,7 @@ public class BattleStateMachine : MonoBehaviour
                 }
 
                 // Check AGAIN that our selection is still valid, may not be after playing the animation
-                if (chosenTactic.Condition.CanExecute(chosenTactic.Actions.AsSpan()[i..], allUnits, unit.Context, out var newSelection, true))
+                if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out var newSelection))
                 {
                     selection = newSelection;
                     combinedSelection |= selection;
@@ -303,14 +298,14 @@ public class BattleStateMachine : MonoBehaviour
                 else
                 {
                     if (PlayerTeam != unit.Profile.Team)
-                        break;
+                        yield break;
 
                     // Log to screen/user what went wrong here by re-evaluating with the tracker connected
                     try
                     {
-                        var failureTracker = new FailureTracker(chosenTactic.Actions.AsSpan()[i..].ToArray());
+                        var failureTracker = new FailureTracker(chosenTactic.Action);
                         unit.Context.Tracker = failureTracker;
-                        chosenTactic.Condition.CanExecute(chosenTactic.Actions.AsSpan()[i..], allUnits, unit.Context, out _, true);
+                        chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out _);
                         StartCoroutine(ShowFailureReason(failureTracker.FailureMessage));
 
                         IEnumerator ShowFailureReason(string text)
@@ -326,7 +321,7 @@ public class BattleStateMachine : MonoBehaviour
                         unit.Context.Tracker = null;
                     }
 
-                    break;
+                    yield break;
                 }
                 action.Perform(selection.ToArray(), unit.Context);
 
@@ -336,34 +331,26 @@ public class BattleStateMachine : MonoBehaviour
                 {
                     if (controller.IsHostileTo(unit) == false)
                         continue;
-                        
+
                     controller.Context.EnmityTowards.TryGetValue(unit.Profile, out var val);
                     controller.Context.EnmityTowards[unit.Profile] = val + (selection.Contains(controller) ? enmityGain : enmityGainNonTargets);
                 }
 
-                unit.Profile.ActionsCharged -= action.ActionCost;
-
-                if (Units.Contains(unit) == false)
-                    break;
+                unit.Profile.Pause += 1f;
             }
 
             chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(combinedSelection, unit.Context);
             chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(combinedSelection, unit.Context);
-            foreach (var action in chosenTactic.Actions)
-            {
-                action.TargetFilter?.NotifyUsedCondition(combinedSelection, unit.Context);
-                action.Precondition?.NotifyUsedCondition(combinedSelection, unit.Context);
-            }
-
-            unit.Context.Round++;
+            chosenTactic.Action.TargetFilter?.NotifyUsedCondition(combinedSelection, unit.Context);
+            chosenTactic.Action.Precondition?.NotifyUsedCondition(combinedSelection, unit.Context);
         }
         finally
         {
+            unit.Context.Round++;
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.UnlockReloadAssemblies();
 #endif
             Processing.Remove(unit);
-            _busy.Remove(unit);
         }
     }
 
@@ -410,16 +397,14 @@ public class BattleStateMachine : MonoBehaviour
         PartyLineup.Remove(unit);
     }
 
-    public bool Interrupt(BattleCharacterController controller) => Processing.Remove(controller);
-
     class FailureTracker : IConditionEvalTracker
     {
         int _stackDepth;
         int _failureDepth = 0;
         public string FailureMessage;
-        IAction[] _associatedAction;
+        IAction _associatedAction;
 
-        public FailureTracker(IAction[] associatedAction)
+        public FailureTracker(IAction associatedAction)
         {
             _associatedAction = associatedAction;
         }
@@ -435,7 +420,7 @@ public class BattleStateMachine : MonoBehaviour
             if (targetsAfter.CountSlow() == 0 && targetsBefore.CountSlow() != 0 && _stackDepth > _failureDepth)
             {
                 _failureDepth = _stackDepth;
-                FailureMessage = $"Condition {condition.UIDisplayText} prevented {context.Profile.Name} to use {string.Join(',', _associatedAction.Select(x => x.Name))}";
+                FailureMessage = $"Condition {condition.UIDisplayText} prevented {context.Profile.Name} to use {string.Join(',', _associatedAction.Name)}";
             }
 
             _stackDepth--;

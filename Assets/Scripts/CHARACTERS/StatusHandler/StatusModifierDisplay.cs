@@ -11,7 +11,7 @@ namespace SwitchSpecial
         public TMP_Text Text;
         [ReadOnly] public StatusModifier Modifier;
 
-        public override void OnDisplayed(BattleCharacterController character, BattleUIOperation battleUI, IModifier modifier)
+        public override void OnDisplayed(CharacterTemplate character, BattleUIOperation battleUI, IModifier modifier)
         {
             Modifier = (StatusModifier)modifier;
         }

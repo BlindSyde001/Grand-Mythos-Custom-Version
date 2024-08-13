@@ -42,7 +42,7 @@ public class ActionCondition : IdentifiableScriptableObject
         return true;
     }
 
-    public bool CanExecute(ReadOnlySpan<IAction> actions, TargetCollection allTargets, EvaluationContext context, out TargetCollection selection, bool accountForCost)
+    public bool CanExecute(IAction action, TargetCollection allTargets, EvaluationContext context, out TargetCollection selection)
     {
         selection = default;
 
@@ -54,17 +54,9 @@ public class ActionCondition : IdentifiableScriptableObject
             return false;
         }
 
-        if (accountForCost && actions.CostTotal() > context.Controller.Profile.ActionsCharged)
+        
+        if (action.Precondition != null)
         {
-            context.Tracker?.PostTooCostly(context.Controller.Profile, actions);
-            return false;
-        }
-
-        foreach (var action in actions)
-        {
-            if (action.Precondition == null)
-                continue;
-
             var allTargetsCopy = allTargets;
             try
             {
@@ -101,11 +93,8 @@ public class ActionCondition : IdentifiableScriptableObject
             }
         }
 
-        foreach (var action in actions)
+        if (action.TargetFilter != null)
         {
-            if (action.TargetFilter == null)
-                continue;
-
             var previousTargets = selectedTargets;
             try
             {

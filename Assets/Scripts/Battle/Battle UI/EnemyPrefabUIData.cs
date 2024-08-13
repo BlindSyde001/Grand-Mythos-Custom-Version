@@ -8,4 +8,5 @@ public class EnemyPrefabUIData : MonoBehaviour
     public TextMeshProUGUI identity;
     public TextMeshProUGUI health;
     public Image healthBar;
+    public GameObject Cursor;
 }

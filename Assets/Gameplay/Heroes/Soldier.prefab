@@ -86,28 +86,14 @@ MonoBehaviour:
   Modifiers:
     _refs: []
     _objects: []
-  ActionsCharged: 0
-  ActionChargeMax: 4
+  Pause: 0
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
     _backingArray: []
   SwitchSpecialHandler:
     rid: -2
   LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
-  Tactics:
-  - IsOn: 1
-    Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
-    Actions:
-      ActionsAssets:
-      - {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
-  - IsOn: 1
-    Condition: {fileID: 11400000, guid: 97b02931ab499854281981eb72b1b5e1, type: 2}
-    Actions:
-      ActionsAssets:
-      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
-      - {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  Tactics: []
   ActionAnimations:
     _backingArray:
     - Action: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
