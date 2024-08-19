@@ -8,14 +8,12 @@ using UnityEngine;
 using Conditions;
 using Sirenix.OdinInspector;
 using TMPro;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class BattleStateMachine : MonoBehaviour
 {
     static BattleStateMachine _instance;
 
-    public bool TurnBased;
     public bool AllowHostileActionWhilePlayerIdles = true;
     [NonSerialized]
     public BlockBattleFlags Blocked;
@@ -145,7 +143,7 @@ public class BattleStateMachine : MonoBehaviour
                 Queue.RemoveAt(0);
 
                 Processing.Add(unit);
-                if (TurnBased)
+                if (Settings.Current.BattleTurnType == BattleTurnType.Sequential)
                 {
                     for (var enumerator = CatchException(ProcessUnit(unit)); enumerator.MoveNext(); )
                         yield return enumerator.Current;
@@ -241,7 +239,7 @@ public class BattleStateMachine : MonoBehaviour
         {
             using var __ = Units.TemporaryCopy(out var unitsCopy);
             
-            if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is var taunt)
+            if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is { Modifier: not null } taunt)
                 unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
 
             Tactics chosenTactic;
@@ -440,7 +438,8 @@ public class BattleStateMachine : MonoBehaviour
 public partial class Settings
 {
     public float BattleSpeed = 1f;
-    [FormerlySerializedAs("BattleMenuBehavior")] public BattleMenuMode BattleMenuMode = BattleMenuMode.PauseBattle;
+    public BattleMenuMode BattleMenuMode = BattleMenuMode.PauseBattle;
+    public BattleTurnType BattleTurnType = BattleTurnType.Sequential;
 }
 
 [Flags]
@@ -454,4 +453,10 @@ public enum BattleMenuMode
     PauseBattle,
     SlowdownBattle,
     NoChange,
+}
+
+public enum BattleTurnType
+{
+    Sequential,
+    Concurrent,
 }

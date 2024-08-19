@@ -11,6 +11,7 @@ public class SettingsMenuActions : MenuContainer
     [Required] public TMP_Dropdown WindowModeDropdown;
     [Required] public TMP_Dropdown BattleSpeedDropdown;
     [Required] public TMP_Dropdown BattleCommandSpeedDropdown;
+    [Required] public TMP_Dropdown BattleTurnTypeDropdown;
     readonly Dictionary<object, Action> _scheduledChanges = new();
 
     public void ApplyChanges()
@@ -98,6 +99,18 @@ public class SettingsMenuActions : MenuContainer
                 dropdownData[i] = (val.ToString(), val);
             }
             SetupDropdown(BattleCommandSpeedDropdown, dropdownData, Settings.Current.BattleMenuMode, f => Settings.Current.BattleMenuMode = f);
+        }
+
+        {
+            
+            var values = Enum.GetValues(typeof(BattleTurnType));
+            var dropdownData = new (string, BattleTurnType)[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                var val = (BattleTurnType)values.GetValue(i);
+                dropdownData[i] = (val.ToString(), val);
+            }
+            SetupDropdown(BattleTurnTypeDropdown, dropdownData, Settings.Current.BattleTurnType, f => Settings.Current.BattleTurnType = f);
         }
     }
 
