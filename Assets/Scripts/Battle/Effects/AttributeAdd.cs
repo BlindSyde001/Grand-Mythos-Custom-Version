@@ -61,10 +61,10 @@ namespace Effects
                 int currentValue = initialAttributeValue;
 
                 foreach (var modifierOfSource in context.Profile.Modifiers)
-                    modifierOfSource.ModifyOutgoingDelta(context, target, ref damageScaling);
+                    modifierOfSource.Modifier.ModifyOutgoingDelta(context, target, ref damageScaling);
 
                 foreach (var modifierOfTarget in target.Profile.Modifiers)
-                    modifierOfTarget.ModifyIncomingDelta(context, target, ref damageScaling);
+                    modifierOfTarget.Modifier.ModifyIncomingDelta(context, target, ref damageScaling);
 
                 damageScaling.ApplyDelta(ref currentValue);
                 target.Profile.SetAttribute(Attribute, currentValue);

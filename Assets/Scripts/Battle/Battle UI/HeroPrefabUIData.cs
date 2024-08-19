@@ -2,7 +2,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Serialization;
 
 [AddComponentMenu(" GrandMythos/UIBinding/HeroPrefabUIData")]
 public class HeroPrefabUIData : MonoBehaviour
@@ -13,4 +12,5 @@ public class HeroPrefabUIData : MonoBehaviour
     [Required] public Image HealthBar;
     [Required] public TextMeshProUGUI NameLabel;
     [Required] public RectTransform ModifierContainer;
+    [Required] public RectTransform Highlight;
 }

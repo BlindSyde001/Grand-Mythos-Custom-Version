@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Characters;
+using UnityEngine;
 
 public class ModifierUnlock : IUnlock
 {
@@ -8,12 +9,17 @@ public class ModifierUnlock : IUnlock
     public void OnUnlock(HeroExtension hero, guid guid)
     {
         hero.SkillModifiers.Add(guid, Modifier);
-        hero.Modifiers.Add(Modifier);
+        AppliedModifier mod = default;
+        mod.CreationTimeStamp = 0d;
+        mod.Modifier = Modifier;
+        hero.Modifiers.Add(mod);
     }
 
     public void OnLock(HeroExtension hero, guid guid)
     {
         if (hero.SkillModifiers.Remove(guid, out var modifier))
-            hero.Modifiers.Remove(modifier);
+        {
+            hero.Modifiers.RemoveAll(x => x.Modifier == modifier);
+        }
     }
 }

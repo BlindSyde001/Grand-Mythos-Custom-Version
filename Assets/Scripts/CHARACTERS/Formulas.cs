@@ -5,11 +5,6 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(menuName = "Gameplay")]
 public class Formulas : ScriptableObject
 {
-    [BoxGroup("Enmity"), Tooltip("Every increase of enmity generated when using skills and consumables is raised to this power, i.e.: enmity += x^this")]
-    public float EnmityGainScaling = 1f;
-    [BoxGroup("Enmity"), Tooltip("Natural reduction of enmity over time")]
-    public float EnmityDecay = 1f;
-    
     [FormerlySerializedAs("PercentChancePerStat")]
     [InfoBox("Height is the percent chance, width is the amount of stats required to attain this percentage")]
     [HideLabel, CustomValueDrawer(nameof(DrawBigGraph)), HorizontalGroup("Crit/HZ"), BoxGroup("Crit")]

@@ -8,8 +8,7 @@ public enum Element
     Ice,
     Lighting,
     Water,
-    [InspectorName(null)] Last = Water,
-    [InspectorName(null)] First = Neutral
+    [InspectorName(null)] Last = Water
 }
 
 public static class ElementExtension

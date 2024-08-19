@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Characters;
+using Characters.Special;
 using JetBrains.Annotations;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using StatusHandler;
-using SwitchSpecial;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
 [AddComponentMenu(" GrandMythos/CharacterTemplate")]
@@ -49,10 +51,10 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("ELEMENTAL RESISTANCES")] public ElementalResistance ResistanceWater = ElementalResistance.Neutral;
 
     [HorizontalGroup("STATUS"), VerticalGroup("STATUS/Left"), BoxGroup("STATUS/Left/MODIFIERS-STATUS")]
-    public ListOfMixed<IModifier> Modifiers = new();
+    public List<AppliedModifier> Modifiers = new();
 
-    [HorizontalGroup("STATUS"), VerticalGroup("STATUS/Right"), BoxGroup("STATUS/Right/STATUS RESISTANCE"), PropertyRange(-100, 100)]
-    public Dictionary<StatusModifier, int> StatusResistances = new();
+    [HorizontalGroup("STATUS"), VerticalGroup("STATUS/Right"), BoxGroup("STATUS/Right/STATUS RESISTANCE")]
+    public SerializedDictionary<StatusModifier, int> StatusResistances = new();
 
     public float ActionRechargeSpeed => EffectiveStats.Speed;
 
@@ -66,7 +68,7 @@ public class CharacterTemplate : MonoBehaviour
     public SerializableHashSet<Skill> Skills;
 
     [BoxGroup("SKILLS"), CanBeNull, SerializeReference]
-    public ISwitchSpecialHandler SwitchSpecialHandler;
+    public ISpecial Special;
 
     [BoxGroup("SKILLS"), CanBeNull]
     public LevelUnlocks LevelUnlocks;

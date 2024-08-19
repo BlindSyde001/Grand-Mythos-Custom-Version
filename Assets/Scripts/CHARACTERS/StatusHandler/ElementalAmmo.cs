@@ -1,4 +1,5 @@
 ﻿using System;
+using Characters;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -28,5 +29,8 @@ namespace StatusHandler
         {
 
         }
+
+        public bool Temporary => true;
+        public bool IsStillValid(AppliedModifier data, EvaluationContext context) => true;
     }
 }

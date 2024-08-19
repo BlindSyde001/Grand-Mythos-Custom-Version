@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Characters.StatusHandler;
 using UnityEngine;
 using Conditions;
 using Sirenix.OdinInspector;
 using TMPro;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class BattleStateMachine : MonoBehaviour
@@ -82,10 +84,21 @@ public class BattleStateMachine : MonoBehaviour
 
         yield return new WaitForSeconds(5);
 
+        double timestamp = 0;
         do
         {
             if (IsBattleFinished(out bool win))
             {
+                foreach (var unit in PartyLineup)
+                {
+                    for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
+                    {
+                        var m = unit.Profile.Modifiers[i];
+                        if (m.Modifier.Temporary == false)
+                            unit.Profile.Modifiers.RemoveAt(i);
+                    }
+                }
+                
                 enabled = false;
                 yield return new WaitForSeconds(1f);
                 foreach (var yields in BattleResolution.ResolveBattle(win, this))
@@ -95,7 +108,7 @@ public class BattleStateMachine : MonoBehaviour
             
             if (Blocked != 0)
             {
-                if (Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleCommandSpeed != Settings.BattleCommandSpeedType.Pause)
+                if (Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleMenuMode != BattleMenuMode.PauseBattle)
                 {
                     
                 }
@@ -143,8 +156,9 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
 
-            var battleDeltaTime = Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleCommandSpeed == Settings.BattleCommandSpeedType.Slow ? 0.5f : 1f;
+            var battleDeltaTime = Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleMenuMode == BattleMenuMode.SlowdownBattle ? 0.5f : 1f;
             battleDeltaTime = Time.deltaTime * battleDeltaTime * Settings.Current.BattleSpeed / 100f;
+            timestamp += battleDeltaTime;
             foreach (var unit in Units)
             {
                 if (Processing.Contains(unit) == false && unit.Profile.CurrentHP != 0)
@@ -154,15 +168,13 @@ public class BattleStateMachine : MonoBehaviour
                         Queue.Add(unit);
                 }
 
-                using (unit.Context.EnmityTowards.TemporaryCopy(out var copy))
+                unit.Context.CombatTimestamp = timestamp;
+
+                for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
                 {
-                    foreach (var character in copy)
-                    {
-                        var baseValue = unit.Context.EnmityTowards[character];
-                        baseValue -= battleDeltaTime * SingletonManager.Instance.Formulas.EnmityDecay;
-                        baseValue = baseValue < 0 ? 0 : baseValue;
-                        unit.Context.EnmityTowards[character] = baseValue;
-                    }
+                    var m = unit.Profile.Modifiers[i];
+                    if (m.Modifier.IsStillValid(m, unit.Context) == false)
+                        unit.Profile.Modifiers.RemoveAt(i);
                 }
             }
 
@@ -218,22 +230,6 @@ public class BattleStateMachine : MonoBehaviour
         return hostilesLeft == 0 || alliesLeft == 0;
     }
 
-    class SortBasedOnEnmity : IComparer<BattleCharacterController>
-    {
-        private Dictionary<CharacterTemplate, float> _enmity;
-        public SortBasedOnEnmity(Dictionary<CharacterTemplate, float> enmity)
-        {
-            _enmity = enmity;
-        }
-
-        public int Compare(BattleCharacterController x, BattleCharacterController y)
-        {
-            _enmity.TryGetValue(x.Profile, out float enmityX);
-            _enmity.TryGetValue(y.Profile, out float enmityY);
-            return -enmityX.CompareTo(enmityY);
-        }
-    }
-
     IEnumerable ProcessUnit(BattleCharacterController unit)
     {
         #if UNITY_EDITOR
@@ -245,8 +241,8 @@ public class BattleStateMachine : MonoBehaviour
         {
             using var __ = Units.TemporaryCopy(out var unitsCopy);
             
-            if (unit.Profile is HeroExtension == false)
-                unitsCopy.Sort(new SortBasedOnEnmity(unit.Context.EnmityTowards));
+            if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is var taunt)
+                unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
 
             Tactics chosenTactic;
             TargetCollection selection = default;
@@ -324,17 +320,6 @@ public class BattleStateMachine : MonoBehaviour
                     yield break;
                 }
                 action.Perform(selection.ToArray(), unit.Context);
-
-                float enmityGain = Mathf.Pow(action.EnmityGenerationTarget, SingletonManager.Instance.Formulas.EnmityGainScaling);
-                float enmityGainNonTargets = Mathf.Pow(action.EnmityGenerationNonTarget, SingletonManager.Instance.Formulas.EnmityGainScaling);
-                foreach (var controller in Units)
-                {
-                    if (controller.IsHostileTo(unit) == false)
-                        continue;
-
-                    controller.Context.EnmityTowards.TryGetValue(unit.Profile, out var val);
-                    controller.Context.EnmityTowards[unit.Profile] = val + (selection.Contains(controller) ? enmityGain : enmityGainNonTargets);
-                }
 
                 unit.Profile.Pause += 1f;
             }
@@ -455,18 +440,18 @@ public class BattleStateMachine : MonoBehaviour
 public partial class Settings
 {
     public float BattleSpeed = 1f;
-    public BattleCommandSpeedType BattleCommandSpeed = BattleCommandSpeedType.Pause;
-
-    public enum BattleCommandSpeedType
-    {
-        Pause,
-        Slow,
-        Active,
-    }
+    [FormerlySerializedAs("BattleMenuBehavior")] public BattleMenuMode BattleMenuMode = BattleMenuMode.PauseBattle;
 }
 
 [Flags]
 public enum BlockBattleFlags
 {
     PreparingOrders = 0b0001,
+}
+
+public enum BattleMenuMode
+{
+    PauseBattle,
+    SlowdownBattle,
+    NoChange,
 }

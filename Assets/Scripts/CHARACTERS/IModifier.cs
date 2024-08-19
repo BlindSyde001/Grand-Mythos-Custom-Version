@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Characters;
 
 public interface IModifier
 {
@@ -14,4 +15,7 @@ public interface IModifier
     /// You can retrieve the reference to the caster by fetching <see cref="EvaluationContext.Controller"/>.
     /// </summary>
     void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling);
+
+    bool Temporary { get; }
+    bool IsStillValid(AppliedModifier data, EvaluationContext context);
 }

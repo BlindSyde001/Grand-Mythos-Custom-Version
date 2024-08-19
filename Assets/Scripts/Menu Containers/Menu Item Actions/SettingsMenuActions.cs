@@ -90,14 +90,14 @@ public class SettingsMenuActions : MenuContainer
         }
 
         {
-            var values = Enum.GetValues(typeof(Settings.BattleCommandSpeedType));
-            var dropdownData = new (string, Settings.BattleCommandSpeedType)[values.Length];
+            var values = Enum.GetValues(typeof(BattleMenuMode));
+            var dropdownData = new (string, BattleMenuMode)[values.Length];
             for (int i = 0; i < values.Length; i++)
             {
-                var val = (Settings.BattleCommandSpeedType)values.GetValue(i);
+                var val = (BattleMenuMode)values.GetValue(i);
                 dropdownData[i] = (val.ToString(), val);
             }
-            SetupDropdown(BattleCommandSpeedDropdown, dropdownData, Settings.Current.BattleCommandSpeed, f => Settings.Current.BattleCommandSpeed = f);
+            SetupDropdown(BattleCommandSpeedDropdown, dropdownData, Settings.Current.BattleMenuMode, f => Settings.Current.BattleMenuMode = f);
         }
     }
 

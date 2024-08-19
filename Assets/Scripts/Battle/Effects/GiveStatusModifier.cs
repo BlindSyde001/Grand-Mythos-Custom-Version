@@ -1,4 +1,5 @@
 ﻿using System;
+using Characters;
 using Sirenix.OdinInspector;
 using StatusHandler;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace Effects
             foreach (var target in targets)
             {
                 if (context.Random.NextFloat(0,100) <= Chance)
-                    target.Profile.Modifiers.Add(Modifier);
+                    target.Profile.Modifiers.Add(new AppliedModifier(target.Context, Modifier, context.Profile));
             }
         }
 

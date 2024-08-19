@@ -1,5 +1,7 @@
-﻿using Sirenix.OdinInspector;
+﻿using Characters;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace StatusHandler
 {
@@ -20,6 +22,11 @@ namespace StatusHandler
         [SerializeReference, InfoBox(OutgoingDescription), BoxGroup(nameof(Outgoing)), HideLabel] public IStatusModifierLogic Outgoing;
         [SerializeReference, InfoBox(IncomingDescription), BoxGroup(nameof(Incoming)), HideLabel] public IStatusModifierLogic Incoming;
 
+        [InfoBox("Is this status only effective during the encounter were it was applied, or carried between each encounter")]
+        public bool Temporary = true;
+
+        public float Duration = float.PositiveInfinity;
+
         ModifierDisplay IModifier.DisplayPrefab => DisplayPrefab;
 
         public void ModifyStats(ref Stats stats) { }
@@ -32,6 +39,12 @@ namespace StatusHandler
         public void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
         {
             Incoming?.Modify(context, target, ref scaling);
+        }
+
+        bool IModifier.Temporary => Temporary;
+        public bool IsStillValid(AppliedModifier data, EvaluationContext context)
+        {
+            return context.CombatTimestamp - data.CreationTimeStamp < Duration;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Characters;
 
 [Serializable]
 public class StatModifier : IModifier
@@ -29,6 +30,9 @@ public class StatModifier : IModifier
     {
 
     }
+
+    public bool Temporary => false;
+    public bool IsStillValid(AppliedModifier data, EvaluationContext context) => true;
 
     [Serializable]
     public struct Mod

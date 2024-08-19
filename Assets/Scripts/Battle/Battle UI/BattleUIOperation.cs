@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Characters.Special;
 using Conditions;
 using Effects;
 using JetBrains.Annotations;
@@ -13,15 +14,15 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
-public class BattleUIOperation : MonoBehaviour
+public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
 {
     const bool MultiSelection = false;
 
     public BattleStateMachine BattleManagement;
 
     [Header("Selected Character")]
-    [Required] public InputActionReference SwitchSpecialInput;
     [ReadOnly, CanBeNull] public BattleCharacterController UnitSelected;
 
     [Header("UI Info")]
@@ -38,6 +39,7 @@ public class BattleUIOperation : MonoBehaviour
     [Required] public RectTransform ActionSelectionContainer;
     [Required] public Button Attack;
     [Required] public Button Repeat;
+    [Required] public Button Special;
     [Required] public Button Skills;
     [Required] public Button Items;
 
@@ -61,7 +63,6 @@ public class BattleUIOperation : MonoBehaviour
 
     List<(GameObject cursor, BattleCharacterController? unit)> _targetCursors = new();
     Queue<(float availableAfter, DamageText component)> _damageTextCache = new();
-    Tactics _order = new();
 
     GroupSelection _groupSelection;
     TargetSelection _targetSelection;
@@ -158,7 +159,7 @@ public class BattleUIOperation : MonoBehaviour
 
             if (unit.Profile is HeroExtension hero)
             {
-                hero.SwitchSpecialHandler?.OnBattleStart(unit);
+                hero.Special?.OnBattleStart(unit);
                 HeroData.Add(hero);
             }
         }
@@ -216,8 +217,9 @@ public class BattleUIOperation : MonoBehaviour
                 var ui = HeroUIData[i];
                 var unit = HeroData[i];
             
-                foreach (var modifier in unit.Modifiers)
+                foreach (var appliedModifier in unit.Modifiers)
                 {
+                    var modifier = appliedModifier.Modifier;
                     if (_modifierDisplays.TryGetValue((modifier, unit), out _) || modifier.DisplayPrefab == null)
                         continue;
 
@@ -233,7 +235,7 @@ public class BattleUIOperation : MonoBehaviour
             {
                 foreach (var modifier in unit.Modifiers)
                 {
-                    if (ReferenceEquals(modifier, mod))
+                    if (ReferenceEquals(modifier.Modifier, mod))
                         goto FoundMatch;
                 }
 
@@ -270,7 +272,7 @@ public class BattleUIOperation : MonoBehaviour
         if (characterReady != UnitSelected)
         {
             if (UnitSelected != null)
-                HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].transform.localPosition += new Vector3(100, 0, 0);
+                HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].Highlight.gameObject.SetActive(false);
             
             UnitSelected = characterReady;
             ResetNavigation();
@@ -282,7 +284,17 @@ public class BattleUIOperation : MonoBehaviour
             _modifierDisplays.Clear();
 
             if (UnitSelected != null)
-                HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].transform.localPosition -= new Vector3(100, 0, 0);
+            {
+                Special.interactable = UnitSelected.Profile.Special is not null;
+                Special.GetComponentInChildren<TMP_Text>().text = UnitSelected.Profile.Special?.ButtonLabel ?? "Special";
+                Special.onClick.RemoveAllListeners();
+                Special.onClick.AddListener(() =>
+                {
+                    if (UnitSelected.Profile.Special is not null)
+                        TryOrderWizard(UnitSelected.Profile.Special.OnButtonClicked(UnitSelected, CancelInput.action, this, PresentTargetSelectionUI));
+                });
+                HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].Highlight.gameObject.SetActive(true);
+            }
         }
 
         if (UnitSelected == null)
@@ -458,7 +470,6 @@ public class BattleUIOperation : MonoBehaviour
         if (UnitSelected == null)
             yield break;
 
-        _order.Action = action;
         SubActionSelectionContainer.gameObject.SetActive(true);
 
         bool accepted = false;
@@ -470,15 +481,16 @@ public class BattleUIOperation : MonoBehaviour
         }
 
         IUIElementSelection<HashSet<BattleCharacterController>> selector = null;
+        var tactic = new Tactics();
         try
         {
-            if (_groupSelection.ValidAndPrepared(UnitSelected, _order.Action, BattleManagement.Units))
+            if (_groupSelection.ValidAndPrepared(UnitSelected, action, BattleManagement.Units))
             {
                 selector = _groupSelection;
             }
             else // Fallback to generic handler if no groups could be found
             {
-                _targetSelection.Prepare(UnitSelected, _order.Action, BattleManagement.Units);
+                _targetSelection.Prepare(UnitSelected, action, BattleManagement.Units);
                 selector = _targetSelection;
             }
 
@@ -498,15 +510,15 @@ public class BattleUIOperation : MonoBehaviour
 
                 if (CancelInput.action.WasPerformedThisFrameUnique())
                 {
-                    while (true)
-                        yield return new CancelRequested(); // Infinite loop to ensure we do not advance out of a cancel
+                    yield break;
                 }
 
                 yield return null;
             } while (true);
 
-            _order.Condition = ScriptableObject.CreateInstance<ActionCondition>();
-            _order.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection.ToHashSet() };
+            tactic.Condition = ScriptableObject.CreateInstance<ActionCondition>();
+            tactic.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection.ToHashSet() };
+            tactic.Action = action;
         }
         finally
         {
@@ -519,7 +531,7 @@ public class BattleUIOperation : MonoBehaviour
             SubActionSelectionContainer.gameObject.SetActive(false);
         }
 
-        ScheduleOrder(_order);
+        ScheduleOrder(tactic);
     }
 
     void ScheduleOrder(Tactics tactics)
@@ -530,7 +542,6 @@ public class BattleUIOperation : MonoBehaviour
             return;
         }
 
-        _order = new();
         ResetNavigation();
         if (UnitSelected != null)
         {
@@ -587,11 +598,7 @@ public class BattleUIOperation : MonoBehaviour
                 ActionSelectionContainer.gameObject.SetActive(false);
 
                 foreach (var yield in inner)
-                {
-                    if (yield is CancelRequested)
-                        break;
                     yield return yield;
-                }
             }
             finally
             {
@@ -722,11 +729,12 @@ public class BattleUIOperation : MonoBehaviour
                 toggle.SetIsOnWithoutNotify(_selection.Contains(otherUnit));
         }
 
-        protected override void OnNew(BattleCharacterController unit, out string label, out bool isOn, out bool inHostileList)
+        protected override void OnNew(BattleCharacterController unit, out string label, out string[] subSelections, out bool isOn, out bool inHostileList)
         {
             isOn = _selection.Contains(unit);
             label = unit.Profile.Name;
             inHostileList = unit.IsHostileTo(_unitSelected);
+            subSelections = Array.Empty<string>();
         }
 
         protected override void OnToggled(BattleCharacterController unit, bool isOn)
@@ -945,11 +953,16 @@ public class BattleUIOperation : MonoBehaviour
             _selectedTargetGroups.Remove(group);
         }
 
-        protected override void OnNew(TargetGroupNonAlloc obj, out string label, out bool isOn, out bool inHostileList)
+        protected override void OnNew(TargetGroupNonAlloc obj, out string label, out string[] subSelections, out bool isOn, out bool inHostileList)
         {
             label = obj.GenericName;
             isOn = _selectedTargetGroups.Contains(obj);
             inHostileList = obj.ConsideredHostile;
+            
+            EvaluateGroupFilter(obj, _units, _action, _unitSelected.Context, out _, out var selection);
+            subSelections = selection.Select(x => x.Profile.Name).ToArray();
+            if (subSelections.Length > 0)
+                label = "";
         }
 
         protected override void OnToggled(TargetGroupNonAlloc group, bool isOn)
@@ -1043,29 +1056,30 @@ public class BattleUIOperation : MonoBehaviour
         protected abstract IEnumerable<T> GetItems();
         protected abstract void OnHoverOrSelected(T obj);
         protected abstract void OnRemoved(T obj, bool fromClearAction);
-        protected abstract void OnNew(T obj, out string label, out bool isOn, out bool inHostileList);
+        protected abstract void OnNew(T obj, out string label, out string[] subSelections, out bool isOn, out bool inHostileList);
         protected abstract void OnToggled(T obj, bool isOn);
 
         protected void UpdateSelectionArrow(IEnumerable<BattleCharacterController> units)
         {
             int i = 0;
+            var targetCursors = _battleUI._targetCursors;
             foreach (var controller in units)
             {
-                if (i >= _battleUI._targetCursors.Count)
-                    _battleUI._targetCursors.Add((Instantiate(_battleUI.TargetCursorTemplate), controller));
+                if (i >= targetCursors.Count)
+                    targetCursors.Add((Instantiate(_battleUI.TargetCursorTemplate), controller));
                 else
-                    _battleUI._targetCursors[i] = (_battleUI._targetCursors[i].cursor, controller);
+                    targetCursors[i] = (targetCursors[i].cursor, controller);
 
                 var position = controller.transform.position;
                 foreach (var renderer in controller.PooledGetInChildren<Renderer>())
                     position.y = Mathf.Max(renderer.bounds.max.y, position.y);
 
-                _battleUI._targetCursors[i].cursor.SetActive(true);
-                _battleUI._targetCursors[i++].cursor.transform.SetPositionAndRotation(position, Camera.main!.transform.rotation);
+                targetCursors[i].cursor.SetActive(true);
+                targetCursors[i++].cursor.transform.SetPositionAndRotation(position, Camera.main!.transform.rotation);
             }
 
-            for (; i < _battleUI._targetCursors.Count; i++)
-                _battleUI._targetCursors[i].cursor.SetActive(false);
+            for (; i < targetCursors.Count; i++)
+                targetCursors[i].cursor.SetActive(false);
         }
 
 
@@ -1078,7 +1092,7 @@ public class BattleUIOperation : MonoBehaviour
                 if (Toggles.TryGetValue(item, out _))
                     continue;
 
-                OnNew(item, out var label, out var isOn, out var inHostileList);
+                OnNew(item, out var label, out var subSelections, out var isOn, out var inHostileList);
 
                 RectTransform uiElem;
                 var template = inHostileList ? _targetList.HostileTargetTemplate : _targetList.AlliesTargetTemplate;
@@ -1108,6 +1122,30 @@ public class BattleUIOperation : MonoBehaviour
                 toggle.onValueChanged.AddListener(b => OnToggled(item, b));
                 Toggles.Add(item, (uiElem, toggle));
                 template.transform.parent.gameObject.SetActive(true);
+
+                int index = 0;
+                foreach (string s in subSelections)
+                {
+                    var uiElem2 = Instantiate(template, uiElem, false);
+                    uiElem2.gameObject.SetActive(true);
+                    uiElem2.anchorMin = new Vector2(0f, (float)index/subSelections.Length);
+                    uiElem2.anchorMax = new Vector2(1f, (float)(index+1)/subSelections.Length);
+                    uiElem2.offsetMin = new Vector2(5,5);
+                    uiElem2.offsetMax = new Vector2(-5,-5);
+                    if (uiElem2.GetComponentInChildren<Text>() is { } text2 && text2 != null)
+                        text2.text = s;
+                    if (uiElem2.GetComponentInChildren<TMP_Text>() is { } tmpText2 && tmpText2 != null)
+                        tmpText2.text = s;
+                    if (uiElem2.GetComponent<Image>() is { } img && img != null)
+                        img.color = new Color(img.color.r, img.color.g, img.color.b, img.color.a * 0.1f);
+                    var toggle2 = uiElem2.GetComponent<Toggle>();
+                    Destroy(toggle2.graphic);
+                    Destroy(toggle2);
+                    index++;
+                }
+
+                if (subSelections.Length > 0)
+                    uiElem.offsetMin *= new Vector2(1, subSelections.Length + 1);
             }
 
             foreach (var (t, rect) in Toggles) // Mark all items that are no longer in the list and put them in temp
@@ -1166,5 +1204,19 @@ public class BattleUIOperation : MonoBehaviour
         void Close();
     }
 
-    class CancelRequested{ }
+    void ISpecialButtonProvider.SetButtons(IEnumerable<(string Label, Action OnClick)> buttons)
+    {
+        SubActionSelectionContainer.gameObject.SetActive(true);
+        var buttonElements = new List<RectTransform>();
+        foreach ((string label, Action onClick) in buttons)
+        {
+            CreateButton(label, SkillTemplate, SubActionSelectionContainer, buttonElements, () =>
+            {
+                SubActionSelectionContainer.gameObject.SetActive(false);
+                foreach (var element in buttonElements)
+                    Destroy(element.gameObject);
+                onClick();
+            });
+        } 
+    }
 }

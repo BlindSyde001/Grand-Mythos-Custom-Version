@@ -144,7 +144,6 @@ public class EvaluationContext
 
     public BattleCharacterController Controller => _controller;
     public CharacterTemplate Profile => Controller.Profile;
-    public Dictionary<CharacterTemplate, float> EnmityTowards = new();
 
     /// <summary>
     /// Reset only between evaluating full tactics,
@@ -162,6 +161,7 @@ public class EvaluationContext
 
     public uint CombatSeed;
     public Random Random;
+    public double CombatTimestamp;
     [CanBeNull, NonSerialized] public IConditionEvalTracker Tracker;
 
     public EvaluationContext(BattleCharacterController controller)

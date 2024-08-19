@@ -83,16 +83,17 @@ MonoBehaviour:
   ResistanceIce: 100
   ResistanceLightning: 100
   ResistanceWater: 100
-  Modifiers:
-    _refs: []
-    _objects: []
+  Modifiers: []
+  StatusResistances:
+    m_Keys: []
+    m_Values: 
   Pause: 0
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
     _backingArray:
     - {fileID: 11400000, guid: fd54cf86c02aac7488137cc169e65908, type: 2}
-  SwitchSpecialHandler:
-    rid: 6231890249175007260
+  Special:
+    rid: 6655646579991773188
   LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
   Tactics: []
   ActionAnimations:
@@ -138,8 +139,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6231890249175007260
-      type: {class: ElementalAmmoHandler, ns: SwitchSpecial, asm: Assembly-CSharp}
+    - rid: 6655646579991773188
+      type: {class: ElementalAmmoSpecial, ns: Characters.Special, asm: Assembly-CSharp}
       data:
         AssociatedStatus: {fileID: 11400000, guid: d4d5d8459cb4d9e44b93492eb7897dda, type: 2}
     - rid: 7380285029310791778

@@ -60,7 +60,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
             stats.MagDefense += equipMagDefense;
             stats.Speed += equipSpeed;
             foreach (var modifier in Modifiers)
-                modifier.ModifyStats(ref stats);
+                modifier.Modifier.ModifyStats(ref stats);
             return stats;
         }
     }
