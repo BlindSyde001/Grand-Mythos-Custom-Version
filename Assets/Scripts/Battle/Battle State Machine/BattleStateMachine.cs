@@ -80,8 +80,6 @@ public class BattleStateMachine : MonoBehaviour
         // Sort them in the order they are setup in the party
         PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
 
-        yield return new WaitForSeconds(5);
-
         double timestamp = 0;
         do
         {
@@ -446,6 +444,7 @@ public partial class Settings
 public enum BlockBattleFlags
 {
     PreparingOrders = 0b0001,
+    DetailedInfoOpen = 0b0010,
 }
 
 public enum BattleMenuMode

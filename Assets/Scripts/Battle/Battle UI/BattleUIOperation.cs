@@ -34,6 +34,8 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
     [ReadOnly, SerializeField] List<EnemyPrefabUIData> EnemyUIData;
 
     [Required] public BattleTooltipUI TooltipUI;
+    [Required] public DetailedInfoPanel DetailedInfoPanel;
+    [Required] public InputActionReference DetailedInfoPanelOpen;
 
     [Header("Action Selection")]
     [Required] public RectTransform ActionSelectionContainer;
@@ -144,8 +146,36 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
         _damageTextCache.Enqueue((Time.time + damageText.Lifetime, damageText));
     }
 
+    [MaybeNull] private IEnumerable _infoPanelRunning;
+
     void Update()
     {
+        if (_infoPanelRunning is not null)
+            return;
+
+        if (DetailedInfoPanelOpen.action.WasPerformedThisFrameUnique())
+        {
+            _infoPanelRunning = DetailedInfoPanel.OpenAndAwaitClose(BattleManagement.Units.Select(x => x.Profile).ToArray());
+            BattleManagement.Blocked |= BlockBattleFlags.DetailedInfoOpen;
+            StartCoroutine(RunningPanelWatcher());
+
+            IEnumerator RunningPanelWatcher()
+            {
+                try
+                {
+                    foreach (var yield in _infoPanelRunning)
+                    {
+                        yield return yield;
+                    }
+                }
+                finally
+                {
+                    BattleManagement.Blocked &= ~BlockBattleFlags.DetailedInfoOpen;
+                    _infoPanelRunning = null;
+                }
+            }
+        }
+        
         UpdateScene();
         UpdateSelected();
     }
