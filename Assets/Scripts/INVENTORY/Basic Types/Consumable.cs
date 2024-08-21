@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Battle;
 using Conditions;
 using Effects;
 using Sirenix.OdinInspector;
@@ -19,6 +21,8 @@ public class Consumable : TradeableItem, IAction
 
     [Tooltip("How long the character has to charge the action before it can be executed")]
     public float ChargeDuration = 0f;
+
+    [SerializeReference, MaybeNull] public Channeling Channeling;
 
     [Space]
     [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
@@ -42,6 +46,7 @@ public class Consumable : TradeableItem, IAction
     [NonSerialized] And _fullPrecondition;
 
     float IAction.ChargeDuration => ChargeDuration;
+    Channeling IAction.Channeling => Channeling;
     Condition IAction.TargetFilter => TargetConstraint;
 
     /// <summary>

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Battle;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -23,6 +25,8 @@ public class Skill : IdentifiableScriptableObject, IAction
     [Tooltip("How long the character has to charge the action before it can be executed")]
     public float ChargeDuration = 0f;
 
+    [SerializeReference, MaybeNull] public Channeling Channeling;
+
     [Space]
     [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
     [LabelText(@"@""Effects:   "" + this.UIDisplayText")]
@@ -41,7 +45,9 @@ public class Skill : IdentifiableScriptableObject, IAction
     [SerializeReference]
     public Condition PreconditionToUse;
 
+
     float IAction.ChargeDuration => ChargeDuration;
+    Channeling IAction.Channeling => Channeling;
     Condition IAction.TargetFilter => TargetConstraint;
     Condition IAction.Precondition => PreconditionToUse;
 

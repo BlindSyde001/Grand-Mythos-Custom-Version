@@ -42,6 +42,7 @@ public class BattleStateMachine : MonoBehaviour
     public readonly List<BattleCharacterController> Queue = new();
 
     private Random _random = new Random(10);
+    private double _timestamp = 0;
 
     // UPDATES
     void Awake()
@@ -74,7 +75,6 @@ public class BattleStateMachine : MonoBehaviour
         PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
 
         var chargingUnits = new List<(BattleCharacterController unit, Tactics tactic, List<BattleCharacterController> targets)>();
-        double timestamp = 0;
         do
         {
             if (IsBattleFinished(out bool win))
@@ -111,7 +111,7 @@ public class BattleStateMachine : MonoBehaviour
 
             for (int i = 0; i < chargingUnits.Count; i++)
             {
-                var unit = chargingUnits[i].unit;
+                var (unit, tactic, targets) = chargingUnits[i];
                 if (unit.Profile.CurrentHP == 0)
                 {
                     unit.Profile.ChargeLeft = 0f;
@@ -123,9 +123,9 @@ public class BattleStateMachine : MonoBehaviour
 
                 unit.Profile.ChargeTotal = 0f;
                 Processing.Add(unit);
-                var enumerator = CatchException(ProcessUnit(unit, chargingUnits[i].tactic, chargingUnits[i].targets));
+                var enumerator = CatchException(ProcessUnit(unit, tactic, targets));
                 
-                if (Settings.Current.BattleTurnType == BattleTurnType.Sequential)
+                if (Settings.Current.BattleTurnType == BattleTurnType.Sequential && tactic.Action.Channeling is null)
                 {
                     while (enumerator.MoveNext())
                         yield return enumerator.Current;
@@ -206,7 +206,7 @@ public class BattleStateMachine : MonoBehaviour
                 Processing.Add(unit);
                 var enumerator = CatchException(ProcessUnit(unit, chosenTactic, selection));
                 
-                if (Settings.Current.BattleTurnType == BattleTurnType.Sequential)
+                if (Settings.Current.BattleTurnType == BattleTurnType.Sequential && chosenTactic.Action.Channeling is null)
                 {
                     while (enumerator.MoveNext())
                         yield return enumerator.Current;
@@ -219,7 +219,7 @@ public class BattleStateMachine : MonoBehaviour
 
             var battleDeltaTime = Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleMenuMode == BattleMenuMode.SlowdownBattle ? 0.5f : 1f;
             battleDeltaTime = Time.deltaTime * battleDeltaTime * Settings.Current.BattleSpeed;
-            timestamp += battleDeltaTime;
+            _timestamp += battleDeltaTime;
 
             foreach (var (unit, _, _) in chargingUnits)
             {
@@ -235,7 +235,7 @@ public class BattleStateMachine : MonoBehaviour
                         Queue.Add(unit);
                 }
 
-                unit.Context.CombatTimestamp = timestamp;
+                unit.Context.CombatTimestamp = _timestamp;
 
                 for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
                 {
@@ -312,50 +312,76 @@ public class BattleStateMachine : MonoBehaviour
                 Debug.LogWarning($"No animations setup for action '{chosenTactic.Action}' on unit {unit}. Using fallback animation.", unit);
             }
 
+            double startingTimestamp = _timestamp;
+            int execCount = 0;
+
+            {
+                if (chosenTactic.Action.Channeling is { } channeling2)
+                    unit.Profile.ChargeLeft = unit.Profile.ChargeTotal = channeling2.Duration;
+            }
+            AGAIN:
+
             foreach (var yield in animation.Play(chosenTactic.Action, unit, preselection.ToArray()))
             {
                 yield return yield;
+                unit.Profile.ChargeLeft = (float)(_timestamp - startingTimestamp);
                 if (unit.Profile.EffectiveStats.HP == 0)
                     break;
             }
-
-            using var __ = Units.TemporaryCopy(out var unitsCopy);
-            var allUnits = new TargetCollection(unitsCopy);
-            // Check AGAIN that our selection is still valid, may not be after playing the animation
-            if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out var selection) == false)
+            
+            using (Units.TemporaryCopy(out var unitsCopy))
             {
-                if (PlayerTeam != unit.Profile.Team)
-                    yield break;
-
-                // Log to screen/user what went wrong here by re-evaluating with the tracker connected
-                try
+                var allUnits = new TargetCollection(unitsCopy);
+                // Check AGAIN that our selection is still valid, may not be after playing the animation
+                if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out var selection) == false)
                 {
-                    var failureTracker = new FailureTracker(chosenTactic.Action);
-                    unit.Context.Tracker = failureTracker;
-                    chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out _);
-                    StartCoroutine(ShowFailureReason(failureTracker.FailureMessage));
+                    if (PlayerTeam != unit.Profile.Team)
+                        yield break;
 
-                    IEnumerator ShowFailureReason(string text)
+                    // Log to screen/user what went wrong here by re-evaluating with the tracker connected
+                    try
                     {
-                        DebugNotificationText.gameObject.SetActive(true);
-                        DebugNotificationText.text = text;
-                        yield return new WaitForSeconds(10f);
-                        DebugNotificationText.gameObject.SetActive(false);
+                        var failureTracker = new FailureTracker(chosenTactic.Action);
+                        unit.Context.Tracker = failureTracker;
+                        chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out _);
+                        StartCoroutine(ShowFailureReason(failureTracker.FailureMessage));
+
+                        IEnumerator ShowFailureReason(string text)
+                        {
+                            DebugNotificationText.gameObject.SetActive(true);
+                            DebugNotificationText.text = text;
+                            yield return new WaitForSeconds(10f);
+                            DebugNotificationText.gameObject.SetActive(false);
+                        }
                     }
-                }
-                finally
-                {
-                    unit.Context.Tracker = null;
-                }
+                    finally
+                    {
+                        unit.Context.Tracker = null;
+                    }
 
-                yield break;
+                    yield break;
+                }
+                chosenTactic.Action.Perform(selection.ToArray(), unit.Context);
+
+                chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
+                chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
+                chosenTactic.Action.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
+                chosenTactic.Action.Precondition?.NotifyUsedCondition(selection, unit.Context);
             }
-            chosenTactic.Action.Perform(selection.ToArray(), unit.Context);
 
-            chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
-            chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
-            chosenTactic.Action.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
-            chosenTactic.Action.Precondition?.NotifyUsedCondition(selection, unit.Context);
+            if (chosenTactic.Action.Channeling is {} channeling && ++execCount < channeling.Ticks)
+            {
+                double deltaBetweenTicks = channeling.Duration / channeling.Ticks;
+                double nextTick = startingTimestamp + execCount * deltaBetweenTicks;
+                unit.Profile.ChargeLeft = (float)(_timestamp - startingTimestamp);
+                while (_timestamp < nextTick)
+                {
+                    yield return null;
+                    unit.Profile.ChargeLeft = (float)(_timestamp - startingTimestamp);
+                }
+
+                goto AGAIN;
+            }
 
             unit.Profile.PauseLeft += 1f;
         }
@@ -366,6 +392,7 @@ public class BattleStateMachine : MonoBehaviour
             UnityEditor.EditorApplication.UnlockReloadAssemblies();
 #endif
             Processing.Remove(unit);
+            unit.Profile.ChargeTotal = unit.Profile.ChargeLeft = 0f;
         }
     }
 
