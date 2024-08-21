@@ -8,7 +8,7 @@ using UnityEngine;
 using Conditions;
 using Sirenix.OdinInspector;
 using TMPro;
-using Random = UnityEngine.Random;
+using Random = Unity.Mathematics.Random;
 
 public class BattleStateMachine : MonoBehaviour
 {
@@ -41,6 +41,8 @@ public class BattleStateMachine : MonoBehaviour
 
     public readonly List<BattleCharacterController> Queue = new();
 
+    private Random _random = new Random(10);
+
     // UPDATES
     void Awake()
     {
@@ -66,20 +68,12 @@ public class BattleStateMachine : MonoBehaviour
     IEnumerator Start()
     {
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
-        {
-            if (target.Profile is HeroExtension hero && GameManager.Instance.PartyLineup.Contains(hero))
-                PartyLineup.Add(target);
-
-            if (Units.Contains(target) == false)
-            {
-                target.Profile.Pause = Random.Range(0, 1);
-                Units.Add(target);
-            }
-        }
+            Include(target);
 
         // Sort them in the order they are setup in the party
         PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
 
+        var chargingUnits = new List<(BattleCharacterController unit, Tactics tactic, List<BattleCharacterController> targets)>();
         double timestamp = 0;
         do
         {
@@ -115,15 +109,46 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
 
+            for (int i = 0; i < chargingUnits.Count; i++)
+            {
+                var unit = chargingUnits[i].unit;
+                if (unit.Profile.CurrentHP == 0)
+                {
+                    unit.Profile.ChargeLeft = 0f;
+                    chargingUnits.RemoveAt(i--);
+                    continue;
+                }
+                if (unit.Profile.ChargeLeft != 0)
+                    continue;
+
+                unit.Profile.ChargeTotal = 0f;
+                Processing.Add(unit);
+                var enumerator = CatchException(ProcessUnit(unit, chargingUnits[i].tactic, chargingUnits[i].targets));
+                
+                if (Settings.Current.BattleTurnType == BattleTurnType.Sequential)
+                {
+                    while (enumerator.MoveNext())
+                        yield return enumerator.Current;
+                }
+                else
+                {
+                    StartCoroutine(enumerator);
+                }
+
+                chargingUnits.RemoveAt(i--);
+            }
+
             while (Queue.Count > 0)
             {
                 var unit = Queue[0];
-                if (unit.Profile.CurrentHP == 0 || unit.Profile.Pause > 0) // Remove any invalid units
+                if (unit.Profile.CurrentHP == 0 || unit.Profile.PauseLeft > 0) // Remove any invalid units
                 {
                     Queue.RemoveAt(0);
                     continue;
                 }
 
+                Tactics chosenTactic;
+                List<BattleCharacterController> selection;
                 if (unit.Profile.Team == PlayerTeam && Orders.TryGetValue(unit, out _) == false)
                 {
                     if (AllowHostileActionWhilePlayerIdles && Queue.FirstOrDefault(x => x.Profile.Team != PlayerTeam) is { } hostile)
@@ -139,28 +164,74 @@ public class BattleStateMachine : MonoBehaviour
                 }
 
                 Queue.RemoveAt(0);
+                    
+                TargetCollection selectionAsTargetCollection = default;
+                // Find the right tactic and targets to use for this unit
+                using (Units.TemporaryCopy(out var unitsCopy))
+                {
+                    if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is { Modifier: not null } taunt)
+                        unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
+
+                    var allUnits = new TargetCollection(unitsCopy);
+                    if (Orders.Remove(unit, out chosenTactic))
+                    {
+                        if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out selectionAsTargetCollection) == false)
+                            continue; // This order is no longer actionable, skip this unit
+                    }
+                    else
+                    {
+                        foreach (var tactic in unit.Profile.Tactics)
+                        {
+                            if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Action, allUnits, unit.Context, out selectionAsTargetCollection))
+                            {
+                                chosenTactic = tactic;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                selection = selectionAsTargetCollection.ToList();
+
+                if (chosenTactic.Action.ChargeDuration > 0)
+                {
+                    unit.Profile.ChargeLeft = unit.Profile.ChargeTotal = chosenTactic.Action.ChargeDuration;
+                    chargingUnits.Add((unit, chosenTactic, selection));
+                    continue;
+                }
+
+                if (chosenTactic == null) 
+                    continue;
 
                 Processing.Add(unit);
+                var enumerator = CatchException(ProcessUnit(unit, chosenTactic, selection));
+                
                 if (Settings.Current.BattleTurnType == BattleTurnType.Sequential)
                 {
-                    for (var enumerator = CatchException(ProcessUnit(unit)); enumerator.MoveNext(); )
+                    while (enumerator.MoveNext())
                         yield return enumerator.Current;
                 }
                 else
                 {
-                    StartCoroutine(CatchException(ProcessUnit(unit)));
+                    StartCoroutine(enumerator);
                 }
             }
 
             var battleDeltaTime = Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleMenuMode == BattleMenuMode.SlowdownBattle ? 0.5f : 1f;
-            battleDeltaTime = Time.deltaTime * battleDeltaTime * Settings.Current.BattleSpeed / 100f;
+            battleDeltaTime = Time.deltaTime * battleDeltaTime * Settings.Current.BattleSpeed;
             timestamp += battleDeltaTime;
+
+            foreach (var (unit, _, _) in chargingUnits)
+            {
+                unit.Profile.ChargeLeft = MathF.Max(unit.Profile.ChargeLeft - battleDeltaTime, 0f);
+            }
+
             foreach (var unit in Units)
             {
                 if (Processing.Contains(unit) == false && unit.Profile.CurrentHP != 0)
                 {
-                    unit.Profile.Pause = MathF.Max(unit.Profile.Pause - unit.Profile.ActionRechargeSpeed * battleDeltaTime, 0f);
-                    if (unit.Profile.Pause == 0f && Queue.Contains(unit) == false)
+                    unit.Profile.PauseLeft = MathF.Max(unit.Profile.PauseLeft - unit.Profile.ActionRechargeSpeed * battleDeltaTime / 100f, 0f);
+                    if (unit.Profile.PauseLeft == 0f && Queue.Contains(unit) == false && chargingUnits.Exists( x => x.unit == unit) == false)
                         Queue.Add(unit);
                 }
 
@@ -226,7 +297,7 @@ public class BattleStateMachine : MonoBehaviour
         return hostilesLeft == 0 || alliesLeft == 0;
     }
 
-    IEnumerable ProcessUnit(BattleCharacterController unit)
+    IEnumerable ProcessUnit(BattleCharacterController unit, Tactics chosenTactic, List<BattleCharacterController> preselection)
     {
         #if UNITY_EDITOR
         // Halting execution to reload assemblies while this enumerator is running
@@ -235,95 +306,58 @@ public class BattleStateMachine : MonoBehaviour
         #endif
         try
         {
+            if (unit.Profile.ActionAnimations.TryGet(chosenTactic.Action, out var animation) == false)
+            {
+                animation = unit.Profile.FallbackAnimation;
+                Debug.LogWarning($"No animations setup for action '{chosenTactic.Action}' on unit {unit}. Using fallback animation.", unit);
+            }
+
+            foreach (var yield in animation.Play(chosenTactic.Action, unit, preselection.ToArray()))
+            {
+                yield return yield;
+                if (unit.Profile.EffectiveStats.HP == 0)
+                    break;
+            }
+
             using var __ = Units.TemporaryCopy(out var unitsCopy);
-            
-            if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is { Modifier: not null } taunt)
-                unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
-
-            Tactics chosenTactic;
-            TargetCollection selection = default;
             var allUnits = new TargetCollection(unitsCopy);
-            if (Orders.TryGetValue(unit, out chosenTactic) && chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out selection))
+            // Check AGAIN that our selection is still valid, may not be after playing the animation
+            if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out var selection) == false)
             {
-                // We're taking care of this explicit order
-            }
-            else
-            {
-                foreach (var tactic in unit.Profile.Tactics)
-                {
-                    if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Action, allUnits, unit.Context, out selection))
-                    {
-                        chosenTactic = tactic;
-                        break;
-                    }
-                }
-            }
-            Orders.Remove(unit);
-            Processing.Add(unit);
-
-            if (chosenTactic == null) 
-                yield break;
-
-            var combinedSelection = selection;
-            {
-                var action = chosenTactic.Action;
-
-                if (unit.Profile.ActionAnimations.TryGet(action, out var animation) == false)
-                {
-                    animation = unit.Profile.FallbackAnimation;
-                    Debug.LogWarning($"No animations setup for action '{action}' on unit {unit}. Using fallback animation.", unit);
-                }
-
-                foreach (var yield in animation.Play(action, unit, selection.ToArray()))
-                {
-                    yield return yield;
-                    if (unit.Profile.EffectiveStats.HP == 0)
-                        break;
-                }
-
-                // Check AGAIN that our selection is still valid, may not be after playing the animation
-                if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out var newSelection))
-                {
-                    selection = newSelection;
-                    combinedSelection |= selection;
-                }
-                else
-                {
-                    if (PlayerTeam != unit.Profile.Team)
-                        yield break;
-
-                    // Log to screen/user what went wrong here by re-evaluating with the tracker connected
-                    try
-                    {
-                        var failureTracker = new FailureTracker(chosenTactic.Action);
-                        unit.Context.Tracker = failureTracker;
-                        chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out _);
-                        StartCoroutine(ShowFailureReason(failureTracker.FailureMessage));
-
-                        IEnumerator ShowFailureReason(string text)
-                        {
-                            DebugNotificationText.gameObject.SetActive(true);
-                            DebugNotificationText.text = text;
-                            yield return new WaitForSeconds(10f);
-                            DebugNotificationText.gameObject.SetActive(false);
-                        }
-                    }
-                    finally
-                    {
-                        unit.Context.Tracker = null;
-                    }
-
+                if (PlayerTeam != unit.Profile.Team)
                     yield break;
+
+                // Log to screen/user what went wrong here by re-evaluating with the tracker connected
+                try
+                {
+                    var failureTracker = new FailureTracker(chosenTactic.Action);
+                    unit.Context.Tracker = failureTracker;
+                    chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out _);
+                    StartCoroutine(ShowFailureReason(failureTracker.FailureMessage));
+
+                    IEnumerator ShowFailureReason(string text)
+                    {
+                        DebugNotificationText.gameObject.SetActive(true);
+                        DebugNotificationText.text = text;
+                        yield return new WaitForSeconds(10f);
+                        DebugNotificationText.gameObject.SetActive(false);
+                    }
                 }
-                action.Perform(selection.ToArray(), unit.Context);
+                finally
+                {
+                    unit.Context.Tracker = null;
+                }
 
-                unit.Profile.Pause += 1f;
+                yield break;
             }
+            chosenTactic.Action.Perform(selection.ToArray(), unit.Context);
 
-            chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(combinedSelection, unit.Context);
-            chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(combinedSelection, unit.Context);
-            chosenTactic.Action.TargetFilter?.NotifyUsedCondition(combinedSelection, unit.Context);
-            chosenTactic.Action.Precondition?.NotifyUsedCondition(combinedSelection, unit.Context);
+            chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
+            chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
+            chosenTactic.Action.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
+            chosenTactic.Action.Precondition?.NotifyUsedCondition(selection, unit.Context);
+
+            unit.Profile.PauseLeft += 1f;
         }
         finally
         {
@@ -353,7 +387,10 @@ public class BattleStateMachine : MonoBehaviour
             throw new NullReferenceException(nameof(unit));
 
         if (Units.Contains(unit) == false)
+        {
             Units.Add(unit);
+            unit.Profile.PauseLeft = _random.NextFloat(0, 1);
+        }
 
 #warning clean this up
         PartyLineup.Clear();

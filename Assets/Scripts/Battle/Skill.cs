@@ -2,7 +2,6 @@
 using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu] 
 public class Skill : IdentifiableScriptableObject, IAction
@@ -15,14 +14,14 @@ public class Skill : IdentifiableScriptableObject, IAction
     const string PreconditionInfoText = "What MUST ABSOLUTELY be true to be able to use this action.\n" +
                                         "This is more for skills that should NEVER be used in a specific context. Eg: skills requiring mana to be used when self doesn't have enough mana";
 
-    [FormerlySerializedAs("Description"), SerializeField, TextArea]
+    [SerializeField, TextArea]
     string _description = "";
 
-    [SerializeField] float _enmityGenerationTarget = 4f;
-    [FormerlySerializedAs("_enmityGenerationHostiles")] [SerializeField] float _enmityGenerationNonTarget = 1f;
-
-    [Tooltip("When this action is used, skills attached to the unit's weapon can proc")]
+    [Tooltip("When this action is used, should the skill attached to the unit's weapon proc")]
     public bool ProcAttachedSkills = false;
+
+    [Tooltip("How long the character has to charge the action before it can be executed")]
+    public float ChargeDuration = 0f;
 
     [Space]
     [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
@@ -42,8 +41,13 @@ public class Skill : IdentifiableScriptableObject, IAction
     [SerializeReference]
     public Condition PreconditionToUse;
 
+    float IAction.ChargeDuration => ChargeDuration;
     Condition IAction.TargetFilter => TargetConstraint;
     Condition IAction.Precondition => PreconditionToUse;
+
+    public string UIDisplayText => Effects.UIDisplayText();
+    string IAction.Name => name;
+    public string Description => string.IsNullOrWhiteSpace(_description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : _description;
 
     public void Perform(BattleCharacterController[] targets, EvaluationContext context)
     {
@@ -101,13 +105,6 @@ public class Skill : IdentifiableScriptableObject, IAction
         attachedSkill.TargetConstraint?.NotifyUsedCondition(attachmentTargets, context);
         attachedSkill.PreconditionToUse?.NotifyUsedCondition(attachmentTargets, context);
     }
-
-    public string UIDisplayText => Effects.UIDisplayText();
-
-    string IAction.Name => name;
-    public string Description => string.IsNullOrWhiteSpace(_description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : _description;
-    public float EnmityGenerationTarget => _enmityGenerationTarget;
-    public float EnmityGenerationNonTarget => _enmityGenerationNonTarget;
 
 
     void BeginDrawEffect(int index)

@@ -17,11 +17,8 @@ public class Consumable : TradeableItem, IAction
                                         "Do not check if the person has one instance of this consumable, this is always checked.\n" +
                                         "This is more for items that should NEVER be used in a specific context. Eg: Items requiring mana to be used when self doesn't have enough mana";
 
-    [Space]
-    public uint ATBCost = 1;
-
-    [SerializeField] float _enmityGenerationTarget = 4f;
-    [FormerlySerializedAs("_enmityGenerationHostiles")] [SerializeField] float _enmityGenerationNonTarget = 1f;
+    [Tooltip("How long the character has to charge the action before it can be executed")]
+    public float ChargeDuration = 0f;
 
     [Space]
     [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
@@ -44,6 +41,7 @@ public class Consumable : TradeableItem, IAction
     [NonSerialized] And _basePrecondition;
     [NonSerialized] And _fullPrecondition;
 
+    float IAction.ChargeDuration => ChargeDuration;
     Condition IAction.TargetFilter => TargetConstraint;
 
     /// <summary>
@@ -62,9 +60,6 @@ public class Consumable : TradeableItem, IAction
             return _fullPrecondition;
         }
     }
-
-    public float EnmityGenerationTarget => _enmityGenerationTarget;
-    public float EnmityGenerationNonTarget => _enmityGenerationNonTarget;
 
     public string UIDisplayText => Effects.UIDisplayText();
     string IAction.Name => name;

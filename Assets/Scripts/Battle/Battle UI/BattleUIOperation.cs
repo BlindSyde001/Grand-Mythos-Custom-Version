@@ -229,7 +229,8 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
             var hero = HeroData[i];
             ui.gameObject.SetActive(true);
             ui.CharacterIcon.sprite = hero.Portrait;
-            ui.AtbBar.fillAmount = 1f - hero.Pause;
+            ui.ChargeBar.fillAmount = hero.ChargeTotal == 0 ? 0 : 1f - hero.ChargeLeft / hero.ChargeTotal;
+            ui.AtbBar.fillAmount = 1f - hero.PauseLeft;
             ui.HealthBar.fillAmount = (float)hero.CurrentHP / hero.EffectiveStats.HP;
             ui.Health.text = hero.CurrentHP.ToString();
             ui.NameLabel.text = hero.Name;
@@ -298,7 +299,7 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
     {
         Repeat.interactable = UnitSelected != null && _lastAction.ContainsKey(UnitSelected);
 
-        var characterReady = BattleManagement.Queue.FirstOrDefault(x => x.Profile.Team == BattleManagement.PlayerTeam);
+        var characterReady = BattleManagement.Queue.FirstOrDefault(x => x.Profile.Team == BattleManagement.PlayerTeam && BattleManagement.Orders.ContainsKey(x) == false);
         if (characterReady != UnitSelected)
         {
             if (UnitSelected != null)

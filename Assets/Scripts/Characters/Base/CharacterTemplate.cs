@@ -58,8 +58,11 @@ public class CharacterTemplate : MonoBehaviour
 
     public float ActionRechargeSpeed => EffectiveStats.Speed;
 
-    [BoxGroup("ATB"), PropertyRange(0, 1)]
-    public float Pause;
+    [BoxGroup("ATB"), PropertyRange(0, 1), ReadOnly]
+    public float PauseLeft;
+
+    [BoxGroup("ATB"), ReadOnly]
+    public float ChargeLeft, ChargeTotal;
 
     [BoxGroup("SKILLS"), Required]
     public Skill BasicAttack;
