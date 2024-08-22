@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SettingsMenuActions : MenuContainer
 {
     [Required] public TMP_Dropdown ResolutionDropdown;
     [Required] public TMP_Dropdown WindowModeDropdown;
     [Required] public TMP_Dropdown BattleSpeedDropdown;
-    [Required] public TMP_Dropdown BattleCommandSpeedDropdown;
+    [FormerlySerializedAs("BattleCommandSpeedDropdown")] [Required] public TMP_Dropdown BattleSelectionTypeDropdown;
     [Required] public TMP_Dropdown BattleTurnTypeDropdown;
     readonly Dictionary<object, Action> _scheduledChanges = new();
 
@@ -91,14 +92,14 @@ public class SettingsMenuActions : MenuContainer
         }
 
         {
-            var values = Enum.GetValues(typeof(BattleMenuMode));
-            var dropdownData = new (string, BattleMenuMode)[values.Length];
+            var values = Enum.GetValues(typeof(BattleSelectionType));
+            var dropdownData = new (string, BattleSelectionType)[values.Length];
             for (int i = 0; i < values.Length; i++)
             {
-                var val = (BattleMenuMode)values.GetValue(i);
+                var val = (BattleSelectionType)values.GetValue(i);
                 dropdownData[i] = (val.ToString(), val);
             }
-            SetupDropdown(BattleCommandSpeedDropdown, dropdownData, Settings.Current.BattleMenuMode, f => Settings.Current.BattleMenuMode = f);
+            SetupDropdown(BattleSelectionTypeDropdown, dropdownData, Settings.Current.BattleSelectionType, f => Settings.Current.BattleSelectionType = f);
         }
 
         {

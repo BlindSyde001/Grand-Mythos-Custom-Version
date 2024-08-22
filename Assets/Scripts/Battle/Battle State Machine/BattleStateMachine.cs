@@ -8,6 +8,7 @@ using UnityEngine;
 using Conditions;
 using Sirenix.OdinInspector;
 using TMPro;
+using UnityEngine.Serialization;
 using Random = Unity.Mathematics.Random;
 
 public class BattleStateMachine : MonoBehaviour
@@ -98,7 +99,7 @@ public class BattleStateMachine : MonoBehaviour
             
             if (Blocked != 0)
             {
-                if (Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleMenuMode != BattleMenuMode.PauseBattle)
+                if (Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleSelectionType != BattleSelectionType.PauseBattle)
                 {
                     
                 }
@@ -217,7 +218,7 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
 
-            var battleDeltaTime = Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleMenuMode == BattleMenuMode.SlowdownBattle ? 0.5f : 1f;
+            var battleDeltaTime = Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleSelectionType == BattleSelectionType.SlowdownBattle ? 0.5f : 1f;
             battleDeltaTime = Time.deltaTime * battleDeltaTime * Settings.Current.BattleSpeed;
             _timestamp += battleDeltaTime;
 
@@ -500,7 +501,7 @@ public class BattleStateMachine : MonoBehaviour
 public partial class Settings
 {
     public float BattleSpeed = 1f;
-    public BattleMenuMode BattleMenuMode = BattleMenuMode.PauseBattle;
+    [FormerlySerializedAs("BattleMenuMode")] public BattleSelectionType BattleSelectionType = BattleSelectionType.PauseBattle;
     public BattleTurnType BattleTurnType = BattleTurnType.Sequential;
 }
 
@@ -511,7 +512,7 @@ public enum BlockBattleFlags
     DetailedInfoOpen = 0b0010,
 }
 
-public enum BattleMenuMode
+public enum BattleSelectionType
 {
     PauseBattle,
     SlowdownBattle,
