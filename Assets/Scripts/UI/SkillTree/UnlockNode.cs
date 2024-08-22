@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Sirenix.OdinInspector;
+using UI.SkillTree;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -10,13 +11,14 @@ using UnityEngine.UI;
 public class UnlockNode : MonoBehaviour, ISerializationCallbackReceiver
 {
     [SerializeReference, Required, BoxGroup("UNLOCKS"), HideLabel]
-    public IUnlock Unlock;
+    public IUnlock[] Unlocks;
 
     [FormerlySerializedAs("Requirements"), ListDrawerSettings(ShowFoldout = false)]
     public UnlockNode[] LinkedTo = Array.Empty<UnlockNode>();
 
     [BoxGroup("VISUALS"), Required] public Button Button;
-    [BoxGroup("VISUALS")] public UnityEvent OnUnlock, OnLock, OnReachable, OnUnreachable;
+    [BoxGroup("VISUALS")] public UnityEvent OnReachable, OnUnreachable;
+    [BoxGroup("VISUALS")] public Subnode[] Subnodes = new Subnode[6];
     UnlockNode[] _previousLinks = Array.Empty<UnlockNode>();
 
     protected void OnTransformParentChanged()
@@ -27,6 +29,10 @@ public class UnlockNode : MonoBehaviour, ISerializationCallbackReceiver
     void OnValidate()
     {
         ForceValidateLinks();
+        for (int i = 0; i < Subnodes.Length; i++)
+            Subnodes[i].OnDisabled.Invoke();
+        for (int i = 0; i < Unlocks.Length; i++)
+            Subnodes[Unlocks.Length - 1 - i].OnEnabled.Invoke();
     }
 
     void ISerializationCallbackReceiver.OnBeforeSerialize()

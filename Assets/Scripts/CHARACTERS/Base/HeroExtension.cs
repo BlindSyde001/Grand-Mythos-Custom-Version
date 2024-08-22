@@ -41,11 +41,19 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
 
     [Required, BoxGroup("SKILLS")] public SkillTree SkillTree;
 
-    [BoxGroup("SKILLS")] public SerializableHashSet<guid> UnlockedTreeNodes = new();
+    [BoxGroup("SKILLS")] public SerializableDictionary<guid, uint> UnlockedTreeNodes = new();
 
-    [ReadOnly, BoxGroup("SKILLS")] public SerializableDictionary<guid, IModifier> SkillModifiers = new();
-
-    public uint SkillPointsTotal => Level;
+    public uint SkillPointsAllocated
+    {
+        get
+        {
+            uint total = 0;
+            foreach (var node in UnlockedTreeNodes)
+                total += node.Value;
+            return total;
+        }
+    }
+    public uint SkillPointsMax => Level;
 
     public override Stats EffectiveStats
     {
@@ -85,18 +93,30 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     {
         LevelUpCheck();
         var nodes = SkillTree.GetNodes();
-        foreach (guid guid in UnlockedTreeNodes)
-        {
-            if (nodes.TryGetValue(guid, out var node))
-                node.Unlock.OnUnlock(this, guid);
-            else
-                MessageModal.Show($"Failed to find node '{guid}'", $"Could not find node '{guid}', this is likely because the skill tree for character '{Name}' has changed, you will have to re-assign some of your points", MessageModal.Type.Warning);
-        }
 
-        var matchesOnly = UnlockedTreeNodes.Where(x => nodes.ContainsKey(x)).ToArray();
-        UnlockedTreeNodes.Clear();
-        foreach (var guid in matchesOnly)
-            UnlockedTreeNodes.Add(guid);
+        foreach (var (guid, count) in UnlockedTreeNodes.ToArray())
+        {
+            if (nodes.TryGetValue(guid, out var node) == false)
+            {
+                UnlockedTreeNodes.Remove(guid);
+                MessageModal.Show($"Failed to find node '{guid}'", $"Could not find node '{guid}', this is likely because the skill tree for character '{Name}' has changed, you will have to re-assign some of your points", MessageModal.Type.Warning);
+                continue;
+            }
+
+            uint rectifiedCount;
+            if (count > node.Unlocks.Length)
+            {
+                rectifiedCount = (uint)node.Unlocks.Length;
+                UnlockedTreeNodes[guid] = count;
+            }
+            else
+            {
+                rectifiedCount = count;
+            }
+
+            for (int i = 0; i < rectifiedCount; i++)
+                node.Unlocks[i].OnUnlock(this);
+        }
     }
     #endregion
     #region Stats & Levelling Up
@@ -169,7 +189,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         public guid Armour;
         public guid AccessoryOne;
         public guid AccessoryTwo;
-        public SerializableHashSet<guid> AllocatedTreeNodes;
+        public SerializableDictionary<guid, uint> AllocatedTreeNodes;
 
         public void Transfer(HeroExtension source, SavingSystem.Transfer transfer)
         {
@@ -180,7 +200,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
             transfer.Identifiable(ref Armour, ref source._Armour);
             transfer.Identifiable(ref AccessoryOne, ref source._AccessoryOne);
             transfer.Identifiable(ref AccessoryTwo, ref source._AccessoryTwo);
-            transfer.Collection<SerializableHashSet<guid>, guid>(ref AllocatedTreeNodes, ref source.UnlockedTreeNodes);
+            transfer.Collection<SerializableDictionary<guid, uint>, KeyValuePair<guid, uint>>(ref AllocatedTreeNodes, ref source.UnlockedTreeNodes);
         }
 
         public void UpgradeFromPrevious(SaveV1 old)

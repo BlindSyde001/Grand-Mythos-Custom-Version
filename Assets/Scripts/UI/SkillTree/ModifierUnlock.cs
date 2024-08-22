@@ -1,25 +1,21 @@
-﻿using Characters;
+﻿using System;
+using Characters;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
+[Serializable]
 public class ModifierUnlock : IUnlock
 {
-    [SerializeReference]
+    [SerializeReference, InlineProperty]
     public IModifier Modifier;
 
-    public void OnUnlock(HeroExtension hero, guid guid)
+    public void OnUnlock(HeroExtension hero)
     {
-        hero.SkillModifiers.Add(guid, Modifier);
         AppliedModifier mod = default;
         mod.CreationTimeStamp = 0d;
         mod.Modifier = Modifier;
         hero.Modifiers.Add(mod);
     }
 
-    public void OnLock(HeroExtension hero, guid guid)
-    {
-        if (hero.SkillModifiers.Remove(guid, out var modifier))
-        {
-            hero.Modifiers.RemoveAll(x => x.Modifier == modifier);
-        }
-    }
+    public void OnLock(HeroExtension hero) { }
 }

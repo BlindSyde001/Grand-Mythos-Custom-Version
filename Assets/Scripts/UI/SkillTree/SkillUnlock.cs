@@ -1,8 +1,10 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using Sirenix.OdinInspector;
 
+[Serializable]
 public class SkillUnlock : IUnlock
 {
     [Required] public Skill Skill;
-    public void OnUnlock(HeroExtension hero, guid guid) => hero.Skills.Add(Skill);
-    public void OnLock(HeroExtension hero, guid guid) => hero.Skills.Remove(Skill);
+    public void OnUnlock(HeroExtension hero) => hero.Skills.Add(Skill);
+    public void OnLock(HeroExtension hero) => hero.Skills.Remove(Skill);
 }

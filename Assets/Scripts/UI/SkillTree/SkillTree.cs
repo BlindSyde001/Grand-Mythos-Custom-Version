@@ -18,7 +18,13 @@ public class SkillTree : MonoBehaviour
         foreach (var (node, guid) in _nodeToGuid)
         {
             node.Button.onClick.AddListener(() => TryUnlock(node));
-            (SelectedHero.UnlockedTreeNodes.Contains(guid) ? node.OnUnlock : node.OnLock)?.Invoke();
+            if (SelectedHero.UnlockedTreeNodes.TryGetValue(guid, out var count))
+            {
+                for (int i = 0; i < node.Unlocks.Length; i++)
+                    node.Subnodes[i].OnLock.Invoke();
+                for (int i = 0; i < count && i < node.Unlocks.Length; i++)
+                    node.Subnodes[node.Unlocks.Length - 1 - i].OnUnlock.Invoke();
+            }
         }
         _reachableNodes.Clear();
         UpdateReachableNodes();
@@ -34,7 +40,7 @@ public class SkillTree : MonoBehaviour
 
         foreach (var (node, guid) in _nodeToGuid)
         {
-            if (SelectedHero.UnlockedTreeNodes.Contains(guid) == false)
+            if (SelectedHero.UnlockedTreeNodes.ContainsKey(guid) == false)
                 continue;
 
             if (_reachableNodes.Add(node))
@@ -68,19 +74,20 @@ public class SkillTree : MonoBehaviour
 
     public void TryUnlock(UnlockNode node)
     {
-        var unlockedNodes = SelectedHero.UnlockedTreeNodes;
-        if (unlockedNodes.Count >= SelectedHero.SkillPointsTotal)
+        if (SelectedHero.SkillPointsAllocated >= SelectedHero.SkillPointsMax)
             return;
 
         if (node != Root && _reachableNodes.Contains(node) == false)
             return;
 
         var guid = _nodeToGuid[node];
-        if (unlockedNodes.Add(guid) == false)
+        var unlockedNodes = SelectedHero.UnlockedTreeNodes;
+        if (unlockedNodes.TryGetValue(guid, out var count) && count >= node.Unlocks.Length)
             return;
 
-        node.Unlock.OnUnlock(SelectedHero, guid);
-        node.OnUnlock?.Invoke();
+        unlockedNodes[guid] = count + 1;
+        node.Unlocks[count].OnUnlock(SelectedHero);
+        node.Subnodes[node.Unlocks.Length - 1 - count].OnUnlock.Invoke();
         UpdateReachableNodes();
     }
 }

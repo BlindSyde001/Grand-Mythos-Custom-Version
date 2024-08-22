@@ -7,7 +7,7 @@ namespace Editor
 {
     [CustomEditor(typeof(UnlockNodeRenderer), true)]
     [CanEditMultipleObjects]
-    public class UnlockNodeRendererEditor : GraphicEditor
+    public class UnlockNodeRendererEditor : ImageEditor
     {
         UnlockNode _node;
         protected SerializedProperty LineColor;

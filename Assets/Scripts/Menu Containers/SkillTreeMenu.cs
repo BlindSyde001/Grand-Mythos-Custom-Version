@@ -124,7 +124,7 @@ public class SkillTreeMenu : MenuContainerWithHeroSelection
             _activeTree.transform.position += worldCenter - selectionCenter;
         }
 
-        uint pointsLeft = SelectedHero.SkillPointsTotal - (uint)SelectedHero.UnlockedTreeNodes.Count;
+        uint pointsLeft = SelectedHero.SkillPointsMax - SelectedHero.SkillPointsAllocated;
         if (uint.TryParse(PointsLeft.text, out uint result) == false || result != pointsLeft)
             PointsLeft.text = pointsLeft.ToString();
     }

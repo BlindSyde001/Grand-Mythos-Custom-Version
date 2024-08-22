@@ -35,7 +35,7 @@ public class UnlockNodeRenderer : Image
     protected override void OnPopulateMesh(VertexHelper vbo)
     {
         vbo.Clear();
-        base.OnPopulateMesh(vbo);
+        //base.OnPopulateMesh(vbo); // If we want to use the base mesh, which we don't as it is pretty useless sharing the sprite between the two ...
 
         var matrix = transform.worldToLocalMatrix;
         Span<Vector2> points = stackalloc Vector2[2];
