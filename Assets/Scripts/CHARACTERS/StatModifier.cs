@@ -1,9 +1,11 @@
 ﻿using System;
 using Characters;
+using Sirenix.OdinInspector;
 
 [Serializable]
 public class StatModifier : IModifier
 {
+    [ListDrawerSettings(DefaultExpandedState = true, ShowFoldout = false)]
     public Mod[] Mods =
     {
         new()
