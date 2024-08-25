@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00d19563990c46f190b108ccb4d28df2, type: 3}
-  m_Name: Attack
+  m_Name: Multi Attack
   m_EditorClassIdentifier: 
   _guid:
-    a: 4727006276212836141
-    b: 13005155708514743190
+    a: 5118678312777066308
+    b: 889528505543547041
   _description: 
   ProcAttachedSkills: 1
-  ChargeDuration: 0
+  ChargeDuration: 1
   Channeling:
-    rid: -2
+    rid: 6655646729883090953
   Effects:
   - rid: 7439448764490973229
   TargetConstraint:
@@ -46,6 +46,11 @@ MonoBehaviour:
       type: {class: TargetTrimming, ns: Conditions, asm: Assembly-CSharp}
       data:
         Max: 1
+    - rid: 6655646729883090953
+      type: {class: Channeling, ns: Battle, asm: Assembly-CSharp}
+      data:
+        Duration: 5
+        Ticks: 4
     - rid: 7439448764490973229
       type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
       data:

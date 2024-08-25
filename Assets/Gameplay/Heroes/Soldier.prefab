@@ -87,10 +87,13 @@ MonoBehaviour:
   StatusResistances:
     m_Keys: []
     m_Values: 
-  Pause: 0
+  PauseLeft: 0
+  ChargeLeft: 0
+  ChargeTotal: 0
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
-    _backingArray: []
+    _backingArray:
+    - {fileID: 11400000, guid: 447a2983ec2390741a8d18e767d385c0, type: 2}
   Special:
     rid: -2
   LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
@@ -106,6 +109,9 @@ MonoBehaviour:
     - Action: {fileID: 11400000, guid: 565824b87e5b38b4f81e0b21ba8eaceb, type: 2}
       Animation:
         rid: 7380285029310791828
+    - Action: {fileID: 11400000, guid: 447a2983ec2390741a8d18e767d385c0, type: 2}
+      Animation:
+        rid: 6655646821564809245
   FallbackAnimation:
     rid: 7380285059924230150
   Inventory:
@@ -130,8 +136,6 @@ MonoBehaviour:
   SkillTree: {fileID: 248158881564659840, guid: 1fcb273e1da81064c90f4559082510e8, type: 3}
   UnlockedTreeNodes:
     _backingArray: []
-  SkillModifiers:
-    _backingArray: []
   _guid:
     a: 4777245746610999588
     b: 3856103926585565839
@@ -140,6 +144,11 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 6655646821564809245
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
+      data:
+        StateName: Attack
+        Layer: 0
     - rid: 7380285029310791784
       type: {class: PlayerInventory, ns: , asm: Assembly-CSharp}
       data: 
