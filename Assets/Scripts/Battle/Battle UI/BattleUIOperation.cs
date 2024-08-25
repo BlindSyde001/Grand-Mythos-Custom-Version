@@ -327,6 +327,11 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
                 HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].Highlight.gameObject.SetActive(true);
             }
         }
+        
+        if (characterReady)
+            BattleManagement.Blocked |= BlockBattleFlags.PreparingOrders;
+        else
+            BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
 
         if (UnitSelected == null)
             return;
@@ -623,7 +628,6 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
 
         IEnumerable BattleUICoroutine()
         {
-            BattleManagement.Blocked |= BlockBattleFlags.PreparingOrders;
             try
             {
                 ActionSelectionContainer.gameObject.SetActive(false);
@@ -636,7 +640,6 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
                 _runningUIOperation = null;
 
                 ResetNavigation();
-                BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
             }
         }
     }
