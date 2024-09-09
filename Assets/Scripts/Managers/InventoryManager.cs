@@ -378,6 +378,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
 
             if (transfer == SavingSystem.Transfer.PullFromSource)
             {
+                Credits = source.Credits;
                 Items = source.Items.Select(x => new SavedItemData
                 {
                     Item = x.Item.Guid,
@@ -387,6 +388,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
             }
             else
             {
+                source.Credits = Credits;
                 source.Items = new();
                 foreach (var x in Items)
                 {
