@@ -39,6 +39,17 @@ public class RandomEncounterZone : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer != OverworldPlayerController.CharacterLayer)
+            return;
+
+        if (other.GetComponentInParent<OverworldPlayerController>() is not OverworldPlayerController controller)
+            return;
+        
+        lastMetersTraversed = controller.UnitsWalked;
+    }
+
     void OnTriggerStay(Collider other)
     {
         if (other.gameObject.layer != OverworldPlayerController.CharacterLayer)
@@ -47,12 +58,7 @@ public class RandomEncounterZone : MonoBehaviour
         if (other.GetComponentInParent<OverworldPlayerController>() is not OverworldPlayerController controller)
             return;
 
-        double walkDelta;
-        if (lastMetersTraversed != 0)
-            walkDelta = controller.UnitsWalked - lastMetersTraversed;
-        else
-            walkDelta = 0;
-
+        double walkDelta = controller.UnitsWalked - lastMetersTraversed;
         lastMetersTraversed = controller.UnitsWalked;
         metersLeftToTraverse -= walkDelta;
         if (metersLeftToTraverse <= 0)
