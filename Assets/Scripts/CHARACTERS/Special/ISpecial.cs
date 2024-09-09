@@ -1,6 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace Characters.Special
 {
@@ -8,11 +10,12 @@ namespace Characters.Special
     {
         string ButtonLabel { get; }
         void OnBattleStart(BattleCharacterController character);
-        IEnumerable OnButtonClicked(BattleCharacterController character, InputAction cancelInput, ISpecialButtonProvider submenu, System.Func<IAction, IEnumerable> presentTargetUI);
+        IEnumerable OnButtonClicked(BattleCharacterController character, InputAction cancelInput, ISpecialButtonProvider submenu, Func<IAction, IEnumerable> presentTargetUI);
     }
 
     public interface ISpecialButtonProvider
     {
-        public void SetButtons(IEnumerable<(string Label, System.Action OnClick)> buttons);
+        Button NewButton(string label, Action onClick, [MaybeNull] Func<string> onHover = null);
+        void Clear();
     }
 }

@@ -73,6 +73,8 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
 
     Dictionary<(IModifier, CharacterTemplate), ModifierDisplay> _modifierDisplays = new();
 
+    List<RectTransform> _submenuItems = new();
+
     public BattleUIOperation()
     {
         _groupSelection = new(this);
@@ -354,8 +356,6 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
         SubActionSelectionContainer.gameObject.SetActive(true);
 
         Skill selectedSkill = null;
-        bool cancel = false;
-        var objects = new List<RectTransform>();
         try
         {
             if (UnitSelected == null)
@@ -365,11 +365,12 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
             var previousCursor = _lastActionCursor;
             foreach (var skill in UnitSelected.Profile.Skills)
             {
-                var button = CreateButton(skill.name, SkillTemplate, SubActionSelectionContainer, objects, () => selectedSkill = skill, _ =>
-                {
-                    _lastActionCursor = skill;
-                    TooltipUI.OnPresentNewTooltip?.Invoke(skill.Description);
-                });
+                var button = ((ISpecialButtonProvider)this).NewButton(skill.name, () => selectedSkill = skill,
+                    () =>
+                    {
+                        _lastActionCursor = skill;
+                        return skill.Description;
+                    });
 
                 if (ReferenceEquals(previousCursor, skill))
                     button.Select();
@@ -382,26 +383,17 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
                 }
             }
 
-            CreateButton("<<-", SkillTemplate, SubActionSelectionContainer, objects, () => cancel = true);
-
-            while (selectedSkill == null && cancel == false)
+            while (selectedSkill == null)
             {
                 if (CancelInput.action.WasPerformedThisFrameUnique())
                     yield break;
 
                 yield return null;
             }
-
-            if (cancel)
-                yield break;
         }
         finally
         {
-            TooltipUI.OnHideTooltip?.Invoke();
-            foreach (var o in objects)
-                Destroy(o.gameObject);
-
-            SubActionSelectionContainer.gameObject.SetActive(false);
+            ((ISpecialButtonProvider)this).Clear();
         }
 
         foreach (object o in PresentTargetSelectionUI(selectedSkill))
@@ -413,8 +405,6 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
         SubActionSelectionContainer.gameObject.SetActive(true);
 
         Consumable selectedConsumable = null;
-        var cancel = false;
-        var objects = new List<RectTransform>();
         try
         {
             if (UnitSelected == null)
@@ -427,11 +417,12 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
                 if (item is not Consumable consumable)
                     continue;
 
-                var button = CreateButton(($"{consumable.name} (x{count})"), SkillTemplate, SubActionSelectionContainer, objects, () => selectedConsumable = consumable, _ =>
-                {
-                    _lastActionCursor = consumable;
-                    TooltipUI.OnPresentNewTooltip?.Invoke(consumable.Description);
-                });
+                var button = ((ISpecialButtonProvider)this).NewButton($"{consumable.name} (x{count})", () => selectedConsumable = consumable,
+                    () =>
+                    {
+                        _lastActionCursor = consumable;
+                        return consumable.Description;
+                    });
 
                 if (ReferenceEquals(previousCursor, consumable))
                     button.Select();
@@ -443,62 +434,21 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
                 }
             }
 
-            CreateButton("<<-", SkillTemplate, SubActionSelectionContainer, objects, () => cancel = true);
-
-            while (selectedConsumable == null && cancel == false)
+            while (selectedConsumable == null)
             {
                 if (CancelInput.action.WasPerformedThisFrameUnique())
                     yield break;
 
                 yield return null;
             }
-
-            if (cancel)
-                yield break;
         }
         finally
         {
-            TooltipUI.OnHideTooltip?.Invoke();
-            foreach (var o in objects)
-                Destroy(o.gameObject);
-
-            SubActionSelectionContainer.gameObject.SetActive(false);
+            ((ISpecialButtonProvider)this).Clear();
         }
 
         foreach (object o in PresentTargetSelectionUI(selectedConsumable))
             yield return o;
-    }
-
-    static Button CreateButton(string name, RectTransform skillTemplate, RectTransform selectionContainer, ICollection<RectTransform> objects, UnityAction onClick, [CanBeNull] UnityAction<BaseEventData> onHoverOrSelected = null)
-    {
-        var uiElem = Instantiate(skillTemplate, selectionContainer, false);
-        uiElem.gameObject.SetActive(true);
-        objects.Add(uiElem);
-        if (uiElem.GetComponentInChildren<Text>() is { } text && text != null)
-            text.text = name;
-        if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText != null)
-            tmpText.text = name;
-
-
-        var button = uiElem.GetComponent<Button>();
-        button.onClick.AddListener(onClick);
-
-        if (onHoverOrSelected is not null)
-        {
-            var onHover = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-            onHover.callback.AddListener(onHoverOrSelected);
-            var onSelect = new EventTrigger.Entry { eventID = EventTriggerType.Select };
-            onSelect.callback.AddListener(onHoverOrSelected);
-
-            if (button.gameObject.TryGetComponent(out EventTrigger trigger) == false)
-                trigger = button.gameObject.AddComponent<EventTrigger>();
-
-            trigger.triggers.Clear();
-            trigger.triggers.Add(onHover);
-            trigger.triggers.Add(onSelect);
-        }
-
-        return button;
     }
 
     IEnumerable PresentTargetSelectionUI(IAction action)
@@ -1238,19 +1188,48 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
         void Close();
     }
 
-    void ISpecialButtonProvider.SetButtons(IEnumerable<(string Label, Action OnClick)> buttons)
+    Button ISpecialButtonProvider.NewButton(string label, Action onClick, [MaybeNull] Func<string> onHover)
     {
         SubActionSelectionContainer.gameObject.SetActive(true);
-        var buttonElements = new List<RectTransform>();
-        foreach ((string label, Action onClick) in buttons)
+        var uiElem = Instantiate(SkillTemplate, SubActionSelectionContainer, false);
+        uiElem.gameObject.SetActive(true);
+        _submenuItems.Add(uiElem);
+        if (uiElem.GetComponentInChildren<Text>() is { } text && text)
+            text.text = label;
+        if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText)
+            tmpText.text = label;
+
+        var button = uiElem.GetComponent<Button>();
+        button.onClick.AddListener(() =>
         {
-            CreateButton(label, SkillTemplate, SubActionSelectionContainer, buttonElements, () =>
-            {
-                SubActionSelectionContainer.gameObject.SetActive(false);
-                foreach (var element in buttonElements)
-                    Destroy(element.gameObject);
-                onClick();
-            });
-        } 
+            ((ISpecialButtonProvider)this).Clear();
+            onClick();
+        });
+
+        if (onHover is not null)
+        {
+            var onHover1 = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+            onHover1.callback.AddListener(_ => TooltipUI.OnPresentNewTooltip?.Invoke(onHover()));
+            var onSelect = new EventTrigger.Entry { eventID = EventTriggerType.Select };
+            onSelect.callback.AddListener(_ => TooltipUI.OnPresentNewTooltip?.Invoke(onHover()));
+
+            if (button.gameObject.TryGetComponent(out EventTrigger trigger) == false)
+                trigger = button.gameObject.AddComponent<EventTrigger>();
+
+            trigger.triggers.Clear();
+            trigger.triggers.Add(onHover1);
+            trigger.triggers.Add(onSelect);
+        }
+
+        return button;
+    }
+
+    void ISpecialButtonProvider.Clear()
+    {
+        SubActionSelectionContainer.gameObject.SetActive(false);
+        foreach (var element in _submenuItems)
+            Destroy(element.gameObject);
+        _submenuItems.Clear();
+        TooltipUI.OnHideTooltip?.Invoke();
     }
 }

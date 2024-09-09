@@ -17,20 +17,26 @@ namespace Characters.Special
 
         public IEnumerable OnButtonClicked(BattleCharacterController character, InputAction cancelInput, ISpecialButtonProvider submenu, Func<IAction, IEnumerable> presentTargetUI)
         {
-            var buttons = new List<(string, Action)>();
             Element chosenElement = default;
             bool chosen = false;
             for (Element v = default; v <= Element.Last; v++)
             {
                 var v2 = v;
-                buttons.Add((v.ToString(), () => { chosenElement = v2; chosen = true; }));
+                submenu.NewButton(v.ToString(), () =>
+                {
+                    chosenElement = v2;
+                    chosen = true;
+                }, null);
             }
-            submenu.SetButtons(buttons);
 
             while (chosen == false)
             {
                 if (cancelInput.WasPerformedThisFrame())
+                {
+                    submenu.Clear();
                     yield break;
+                }
+
                 yield return null;
             }
 
