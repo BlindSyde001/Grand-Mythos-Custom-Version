@@ -15,35 +15,23 @@ namespace Characters.Special
 
         public string ButtonLabel => "Elemental Ammo";
 
-        public IEnumerable OnButtonClicked(BattleCharacterController character, InputAction cancelInput, ISpecialButtonProvider submenu, Func<IAction, IEnumerable> presentTargetUI)
+        public IEnumerable OnButtonClicked(BattleCharacterController character, IDisposableMenuProvider menuProvider, Func<IAction, IEnumerable> presentTargetUI)
         {
-            Element chosenElement = default;
-            bool chosen = false;
+            var elementMenu = menuProvider.NewMenuOf<Element>(nameof(ElementalAmmoSpecial));
             for (Element v = default; v <= Element.Last; v++)
-            {
-                var v2 = v;
-                submenu.NewButton(v.ToString(), () =>
-                {
-                    chosenElement = v2;
-                    chosen = true;
-                }, null);
-            }
+                elementMenu.NewButton(v.ToString(), v);
 
-            while (chosen == false)
-            {
-                if (cancelInput.WasPerformedThisFrame())
-                {
-                    submenu.Clear();
-                    yield break;
-                }
-
+            var task = elementMenu.SelectedItem();
+            while (task.IsCompleted == false)
                 yield return null;
-            }
+
+            if (task.IsCanceled)
+                yield break;
 
             if (character.Profile.Modifiers.FirstOrDefault(x => x.Modifier is ElementalAmmo) is not {Modifier: ElementalAmmo ammo})
                 character.Profile.Modifiers.Add(new AppliedModifier(character.Context, ammo = UnityEngine.Object.Instantiate(AssociatedStatus), null));
 
-            ammo.Element = chosenElement;
+            ammo.Element = task.Result;
         }
 
         public void OnBattleStart(BattleCharacterController character)

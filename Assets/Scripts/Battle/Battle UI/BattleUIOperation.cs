@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Characters.Special;
+using System.Threading.Tasks;
 using Conditions;
 using Effects;
 using JetBrains.Annotations;
@@ -16,7 +16,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
+public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 {
     const bool MultiSelection = false;
 
@@ -68,12 +68,9 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
 
     GroupSelection _groupSelection;
     TargetSelection _targetSelection;
-    IAction _lastActionCursor;
     Dictionary<BattleCharacterController, IAction> _lastAction = new();
 
     Dictionary<(IModifier, CharacterTemplate), ModifierDisplay> _modifierDisplays = new();
-
-    List<RectTransform> _submenuItems = new();
 
     public BattleUIOperation()
     {
@@ -324,7 +321,7 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
                 Special.onClick.AddListener(() =>
                 {
                     if (UnitSelected.Profile.Special is not null)
-                        TryOrderWizard(UnitSelected.Profile.Special.OnButtonClicked(UnitSelected, CancelInput.action, this, PresentTargetSelectionUI));
+                        TryOrderWizard(UnitSelected.Profile.Special.OnButtonClicked(UnitSelected, this, PresentTargetSelectionUI));
                 });
                 HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].Highlight.gameObject.SetActive(true);
             }
@@ -353,101 +350,46 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
 
     IEnumerable PresentSkillsUI()
     {
-        SubActionSelectionContainer.gameObject.SetActive(true);
+        if (UnitSelected == null)
+            yield break;
 
-        Skill selectedSkill = null;
-        try
-        {
-            if (UnitSelected == null)
-                yield break;
+        var menu = NewMenuOf<Skill>(nameof(PresentSkillsUI));
+        foreach (var skill in UnitSelected.Profile.Skills)
+            menu.NewButton(skill.name, skill, skill.Description);
 
-            bool first = true;
-            var previousCursor = _lastActionCursor;
-            foreach (var skill in UnitSelected.Profile.Skills)
-            {
-                var button = ((ISpecialButtonProvider)this).NewButton(skill.name, () => selectedSkill = skill,
-                    () =>
-                    {
-                        _lastActionCursor = skill;
-                        return skill.Description;
-                    });
+        var selectionTask = menu.SelectedItem();
+        while (selectionTask.IsCompleted == false)
+            yield return null;
+            
+        if (selectionTask.IsCanceled)
+            yield break;
 
-                if (ReferenceEquals(previousCursor, skill))
-                    button.Select();
-
-                button.interactable = true;
-                if (first)
-                {
-                    button.Select();
-                    first = false;
-                }
-            }
-
-            while (selectedSkill == null)
-            {
-                if (CancelInput.action.WasPerformedThisFrameUnique())
-                    yield break;
-
-                yield return null;
-            }
-        }
-        finally
-        {
-            ((ISpecialButtonProvider)this).Clear();
-        }
-
-        foreach (object o in PresentTargetSelectionUI(selectedSkill))
+        foreach (object o in PresentTargetSelectionUI(selectionTask.Result))
             yield return o;
     }
 
     IEnumerable PresentItemUI()
     {
-        SubActionSelectionContainer.gameObject.SetActive(true);
+        if (UnitSelected == null)
+            yield break;
 
-        Consumable selectedConsumable = null;
-        try
+        var menu = NewMenuOf<Consumable>(nameof(PresentItemUI));
+        foreach ((BaseItem item, uint count) in UnitSelected.Profile.Inventory.Items())
         {
-            if (UnitSelected == null)
-                yield break;
+            if (item is not Consumable consumable)
+                continue;
 
-            bool first = true;
-            var previousCursor = _lastActionCursor;
-            foreach ((BaseItem item, uint count) in UnitSelected.Profile.Inventory.Items())
-            {
-                if (item is not Consumable consumable)
-                    continue;
-
-                var button = ((ISpecialButtonProvider)this).NewButton($"{consumable.name} (x{count})", () => selectedConsumable = consumable,
-                    () =>
-                    {
-                        _lastActionCursor = consumable;
-                        return consumable.Description;
-                    });
-
-                if (ReferenceEquals(previousCursor, consumable))
-                    button.Select();
-
-                if (first)
-                {
-                    button.Select();
-                    first = false;
-                }
-            }
-
-            while (selectedConsumable == null)
-            {
-                if (CancelInput.action.WasPerformedThisFrameUnique())
-                    yield break;
-
-                yield return null;
-            }
-        }
-        finally
-        {
-            ((ISpecialButtonProvider)this).Clear();
+            menu.NewButton($"{consumable.name} (x{count})", consumable, consumable.Description);
         }
 
-        foreach (object o in PresentTargetSelectionUI(selectedConsumable))
+        var selectionTask = menu.SelectedItem();
+        while (selectionTask.IsCompleted == false)
+            yield return null;
+            
+        if (selectionTask.IsCanceled)
+            yield break;
+
+        foreach (object o in PresentTargetSelectionUI(selectionTask.Result))
             yield return o;
     }
 
@@ -1188,30 +1130,56 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
         void Close();
     }
 
-    Button ISpecialButtonProvider.NewButton(string label, Action onClick, [MaybeNull] Func<string> onHover)
+    public IDisposableMenu<T> NewMenuOf<T>(string seed)
     {
-        SubActionSelectionContainer.gameObject.SetActive(true);
-        var uiElem = Instantiate(SkillTemplate, SubActionSelectionContainer, false);
-        uiElem.gameObject.SetActive(true);
-        _submenuItems.Add(uiElem);
-        if (uiElem.GetComponentInChildren<Text>() is { } text && text)
-            text.text = label;
-        if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText)
-            tmpText.text = label;
+        return new DisposableMenu<T> { UI = this, Seed = seed };
+    }
 
-        var button = uiElem.GetComponent<Button>();
-        button.onClick.AddListener(() =>
-        {
-            ((ISpecialButtonProvider)this).Clear();
-            onClick();
-        });
+    class DisposableMenu<T> : IDisposableMenu<T>
+    {
+        public BattleUIOperation UI;
+        public string Seed;
 
-        if (onHover is not null)
+        readonly List<RectTransform> _submenuItems = new();
+        readonly TaskCompletionSource<T> _tcs = new();
+        Coroutine _cancellation;
+
+
+        static Dictionary<string, T> _lastSelected = new();
+
+        public Button NewButton(string label, T item, string onHover = null, bool interactable = true)
         {
+            var uiElem = Instantiate(UI.SkillTemplate, UI.SubActionSelectionContainer, false);
+            uiElem.gameObject.SetActive(true);
+            _submenuItems.Add(uiElem);
+            if (uiElem.GetComponentInChildren<Text>() is { } text && text)
+                text.text = label;
+            if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText)
+                tmpText.text = label;
+
+            var button = uiElem.GetComponent<Button>();
+            button.onClick.AddListener(() =>
+            {
+                Clear();
+                _tcs.TrySetResult(item);
+            });
+            button.interactable = interactable;
+
+            if (_lastSelected.TryGetValue(Seed, out var previouslySelected) && previouslySelected.Equals(item))
+                button.Select();
+
+            UI.SubActionSelectionContainer.gameObject.SetActive(true); // Enable afterward that way selection trackers can trigger and select this button
+
+            UnityAction<BaseEventData> onHoverOrSelect = _ =>
+            {
+                if (onHover is not null)
+                    UI.TooltipUI.OnPresentNewTooltip?.Invoke(onHover);
+                _lastSelected[Seed] = item;
+            };
             var onHover1 = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
-            onHover1.callback.AddListener(_ => TooltipUI.OnPresentNewTooltip?.Invoke(onHover()));
             var onSelect = new EventTrigger.Entry { eventID = EventTriggerType.Select };
-            onSelect.callback.AddListener(_ => TooltipUI.OnPresentNewTooltip?.Invoke(onHover()));
+            onHover1.callback.AddListener(onHoverOrSelect);
+            onSelect.callback.AddListener(onHoverOrSelect);
 
             if (button.gameObject.TryGetComponent(out EventTrigger trigger) == false)
                 trigger = button.gameObject.AddComponent<EventTrigger>();
@@ -1219,17 +1187,38 @@ public class BattleUIOperation : MonoBehaviour, ISpecialButtonProvider
             trigger.triggers.Clear();
             trigger.triggers.Add(onHover1);
             trigger.triggers.Add(onSelect);
+
+            return button;
         }
 
-        return button;
-    }
+        public Task<T> SelectedItem()
+        {
+            _cancellation = UI.StartCoroutine(AwaitCancellation());
+            return _tcs.Task;
 
-    void ISpecialButtonProvider.Clear()
-    {
-        SubActionSelectionContainer.gameObject.SetActive(false);
-        foreach (var element in _submenuItems)
-            Destroy(element.gameObject);
-        _submenuItems.Clear();
-        TooltipUI.OnHideTooltip?.Invoke();
+            IEnumerator AwaitCancellation()
+            {
+                do
+                {
+                    if (UI.CancelInput.action.WasPerformedThisFrameUnique())
+                    {
+                        Clear();
+                        _tcs.SetCanceled();
+                    }
+
+                    yield return null;
+                } while (true);
+            }
+        }
+
+        void Clear()
+        {
+            UI.SubActionSelectionContainer.gameObject.SetActive(false);
+            foreach (var element in _submenuItems)
+                Destroy(element.gameObject);
+            _submenuItems.Clear();
+            UI.TooltipUI.OnHideTooltip?.Invoke();
+            UI.StopCoroutine(_cancellation);
+        }
     }
 }
