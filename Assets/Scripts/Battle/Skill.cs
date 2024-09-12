@@ -45,11 +45,14 @@ public class Skill : IdentifiableScriptableObject, IAction
     [SerializeReference]
     public Condition PreconditionToUse;
 
+    public AnimationClip CameraAnimation;
+
 
     float IAction.ChargeDuration => ChargeDuration;
     Channeling IAction.Channeling => Channeling;
     Condition IAction.TargetFilter => TargetConstraint;
     Condition IAction.Precondition => PreconditionToUse;
+    AnimationClip IAction.CameraAnimation => CameraAnimation;
 
     public string UIDisplayText => Effects.UIDisplayText();
     string IAction.Name => name;

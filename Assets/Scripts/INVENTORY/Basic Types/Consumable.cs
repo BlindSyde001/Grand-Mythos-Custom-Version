@@ -42,12 +42,15 @@ public class Consumable : TradeableItem, IAction
     [SerializeReference]
     public Condition InnerPrecondition;
 
+    public AnimationClip CameraAnimation;
+
     [NonSerialized] And _basePrecondition;
     [NonSerialized] And _fullPrecondition;
 
     float IAction.ChargeDuration => ChargeDuration;
     Channeling IAction.Channeling => Channeling;
     Condition IAction.TargetFilter => TargetConstraint;
+    AnimationClip IAction.CameraAnimation => CameraAnimation;
 
     /// <summary>
     /// This one contains both the has item test and the additional precondition specific to this consumable

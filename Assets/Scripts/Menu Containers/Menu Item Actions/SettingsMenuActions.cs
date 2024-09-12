@@ -1,6 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using Menu_Containers.Menu_Item_Actions;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -8,11 +12,13 @@ using UnityEngine.Serialization;
 
 public class SettingsMenuActions : MenuContainer
 {
+    [Required] public SettingsMenuDropdownTemplate DropdownTemplate;
+    [Required] public RectTransform DefaultDropdownParent;
+    public SerializableDictionary<string, SettingsMenuDropdownTemplate> Dropdowns = new();
+
     [Required] public TMP_Dropdown ResolutionDropdown;
-    [Required] public TMP_Dropdown WindowModeDropdown;
     [Required] public TMP_Dropdown BattleSpeedDropdown;
-    [FormerlySerializedAs("BattleCommandSpeedDropdown")] [Required] public TMP_Dropdown BattleSelectionTypeDropdown;
-    [Required] public TMP_Dropdown BattleTurnTypeDropdown;
+
     readonly Dictionary<object, Action> _scheduledChanges = new();
 
     public void ApplyChanges()
@@ -58,25 +64,34 @@ public class SettingsMenuActions : MenuContainer
             };
         });
 
-        WindowModeDropdown.options.Clear();
-        var modes = new[]
+        var regex = new Regex("([A-Z]+)");
+        
+        var fields = typeof(Settings).GetFields(BindingFlags.Instance | BindingFlags.Public).ToDictionary(x => x.Name, x => x);
+        foreach (var (name, data) in Dropdowns)
         {
-            (name:"Exclusive FullScreen", value:FullScreenMode.ExclusiveFullScreen),
-            (name:"FullScreen Window", value:FullScreenMode.FullScreenWindow),
-            (name:"Maximized Window", value:FullScreenMode.MaximizedWindow),
-            (name:"Windowed", value:FullScreenMode.Windowed)
-        };
-        for (int i = 0; i < modes.Length; i++)
-        {
-            var fullScreenMode = modes[i];
-            WindowModeDropdown.options.Add(new(fullScreenMode.name));
-            if (Screen.fullScreenMode == fullScreenMode.value)
-                WindowModeDropdown.value = i;
+            data.Dropdown.options.Clear();
+            data.Dropdown.onValueChanged.RemoveAllListeners();
+
+            var field = fields[name];
+            var current = field.GetValue(Settings.Current);
+            var values = Enum.GetValues(field.FieldType);
+            foreach (var value in values)
+            {
+                var str = value.ToString();
+                str = regex.Replace(str, " $1").TrimStart();
+
+                data.Dropdown.options.Add(new(str));
+                if (value == current)
+                    data.Dropdown.value = data.Dropdown.options.Count - 1;
+            }
+            data.Dropdown.onValueChanged.AddListener(i => { field.SetValue(Settings.Current, values.GetValue(i)); });
         }
-        WindowModeDropdown.onValueChanged.RemoveAllListeners();
-        WindowModeDropdown.onValueChanged.AddListener(index =>
+
+        // Special handling for WindowMode
+        var windowModeDropdown = Dropdowns[nameof(Settings.WindowMode)].Dropdown;
+        windowModeDropdown.onValueChanged.AddListener(index =>
         {
-            _scheduledChanges[WindowModeDropdown] = () => Screen.fullScreenMode = modes[index].value;
+            _scheduledChanges[windowModeDropdown] = () => Screen.fullScreenMode = Settings.Current.WindowMode;
         });
 
         {
@@ -91,46 +106,24 @@ public class SettingsMenuActions : MenuContainer
             SetupDropdown(BattleSpeedDropdown, speeds, Settings.Current.BattleSpeed, f => Settings.Current.BattleSpeed = f);
         }
 
+        void SetupDropdown<T>(TMP_Dropdown dropdown, (string name, T associatedValue)[] values, T selectedValue, Action<T> onValueChanged)
         {
-            var values = Enum.GetValues(typeof(BattleSelectionType));
-            var dropdownData = new (string, BattleSelectionType)[values.Length];
+            dropdown.options.Clear();
             for (int i = 0; i < values.Length; i++)
             {
-                var val = (BattleSelectionType)values.GetValue(i);
-                dropdownData[i] = (val.ToString(), val);
+                var speed = values[i];
+                dropdown.options.Add(new(speed.name));
+                if (selectedValue.Equals(speed.associatedValue))
+                    dropdown.value = i;
             }
-            SetupDropdown(BattleSelectionTypeDropdown, dropdownData, Settings.Current.BattleSelectionType, f => Settings.Current.BattleSelectionType = f);
-        }
-
-        {
-            
-            var values = Enum.GetValues(typeof(BattleTurnType));
-            var dropdownData = new (string, BattleTurnType)[values.Length];
-            for (int i = 0; i < values.Length; i++)
+            dropdown.onValueChanged.RemoveAllListeners();
+            dropdown.onValueChanged.AddListener(index =>
             {
-                var val = (BattleTurnType)values.GetValue(i);
-                dropdownData[i] = (val.ToString(), val);
-            }
-            SetupDropdown(BattleTurnTypeDropdown, dropdownData, Settings.Current.BattleTurnType, f => Settings.Current.BattleTurnType = f);
+                _scheduledChanges[dropdown] = () => onValueChanged(values[index].associatedValue);
+            });
         }
     }
 
-    void SetupDropdown<T>(TMP_Dropdown dropdown, (string name, T associatedValue)[] values, T selectedValue, Action<T> onValueChanged)
-    {
-        dropdown.options.Clear();
-        for (int i = 0; i < values.Length; i++)
-        {
-            var speed = values[i];
-            dropdown.options.Add(new(speed.name));
-            if (selectedValue.Equals(speed.associatedValue))
-                dropdown.value = i;
-        }
-        dropdown.onValueChanged.RemoveAllListeners();
-        dropdown.onValueChanged.AddListener(index =>
-        {
-            _scheduledChanges[dropdown] = () => onValueChanged(values[index].associatedValue);
-        });
-    }
 
     static bool ResolutionMatch(Resolution a, Resolution b)
     {
@@ -157,6 +150,25 @@ public class SettingsMenuActions : MenuContainer
         yield return new WaitForSeconds(menuInputs.Speed);
         gameObject.SetActive(false);
     }
+
+    #if UNITY_EDITOR
+    [Button]
+    void Regenerate()
+    {
+        foreach (var fieldInfo in typeof(Settings).GetFields(BindingFlags.Instance | BindingFlags.Public))
+        {
+            if (fieldInfo.FieldType.IsEnum == false)
+                continue;
+
+            if (Dropdowns.ContainsKey(fieldInfo.Name))
+                continue;
+
+            var template = (SettingsMenuDropdownTemplate)UnityEditor.PrefabUtility.InstantiatePrefab(DropdownTemplate, DefaultDropdownParent);
+            template.name = template.Label.text = UnityEditor.ObjectNames.NicifyVariableName(fieldInfo.Name);
+            Dropdowns[fieldInfo.Name] = template;
+        }
+    }
+    #endif
 }
 
 public partial class Settings

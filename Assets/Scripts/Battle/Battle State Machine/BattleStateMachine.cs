@@ -21,10 +21,11 @@ public class BattleStateMachine : MonoBehaviour
 
     public Team PlayerTeam;
 
+    public AnimationClip Intro, Outro;
+    
     [Required]
     public BattleResolution BattleResolution;
 
-    // VARIABLES
     public List<Transform> HeroSpawns;
     public List<Transform> EnemySpawns;
 
@@ -72,31 +73,20 @@ public class BattleStateMachine : MonoBehaviour
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
             Include(target);
 
+        if (Intro)
+        {
+            BattleCamera.Instance.PlayUninterruptible(Intro);
+            for (float f = 0; f < Intro.length; f += Time.deltaTime)
+                yield return null;
+        }
+
         // Sort them in the order they are setup in the party
         PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
 
         var chargingUnits = new List<(BattleCharacterController unit, Tactics tactic, List<BattleCharacterController> targets)>();
-        do
+        bool win;
+        while(IsBattleFinished(out win) == false)
         {
-            if (IsBattleFinished(out bool win))
-            {
-                foreach (var unit in PartyLineup)
-                {
-                    for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
-                    {
-                        var m = unit.Profile.Modifiers[i];
-                        if (m.Modifier.Temporary == false)
-                            unit.Profile.Modifiers.RemoveAt(i);
-                    }
-                }
-                
-                enabled = false;
-                yield return new WaitForSeconds(1f);
-                foreach (var yields in BattleResolution.ResolveBattle(win, this))
-                    yield return yields;
-                yield break;
-            }
-            
             if (Blocked != 0)
             {
                 if (Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleSelectionType != BattleSelectionType.PauseBattle)
@@ -190,9 +180,9 @@ public class BattleStateMachine : MonoBehaviour
                             }
                         }
                     }
-                }
 
-                selection = selectionAsTargetCollection.ToList();
+                    selection = selectionAsTargetCollection.ToList();
+                }
 
                 if (chosenTactic.Action.ChargeDuration > 0)
                 {
@@ -247,7 +237,30 @@ public class BattleStateMachine : MonoBehaviour
             }
 
             yield return null; // Wait for next frame
-        } while (true);
+        }
+        
+        foreach (var unit in PartyLineup)
+        {
+            for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
+            {
+                var m = unit.Profile.Modifiers[i];
+                if (m.Modifier.Temporary == false)
+                    unit.Profile.Modifiers.RemoveAt(i);
+            }
+        }
+                
+        enabled = false;
+
+        if (Outro)
+        {
+            BattleCamera.Instance.PlayUninterruptible(Outro, false);
+            for (float f = 0; f < Outro.length; f += Time.deltaTime)
+                yield return null;
+            BattleCamera.Instance.enabled = false;
+        }
+        
+        foreach (var yields in BattleResolution.ResolveBattle(win, this))
+            yield return yields;
     }
 
     IEnumerator CatchException(IEnumerable enumerable)
@@ -321,6 +334,11 @@ public class BattleStateMachine : MonoBehaviour
                     unit.Profile.ChargeLeft = unit.Profile.ChargeTotal = channeling2.Duration;
             }
             AGAIN:
+
+            if (chosenTactic.Action.CameraAnimation)
+            {
+                BattleCamera.Instance.TryPlayAnimation(unit, chosenTactic.Action.CameraAnimation);
+            }
 
             foreach (var yield in animation.Play(chosenTactic.Action, unit, preselection.ToArray()))
             {
@@ -441,6 +459,15 @@ public class BattleStateMachine : MonoBehaviour
             return;
         Units.Remove(unit);
         PartyLineup.Remove(unit);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(1, 1, 1, 0.25f);
+        foreach (var spawn in HeroSpawns)
+            Gizmos.DrawCube(spawn.position + Vector3.up, new Vector3(1, 2, 1));
+        foreach (var spawn in EnemySpawns)
+            Gizmos.DrawCube(spawn.position + Vector3.up, new Vector3(1, 2, 1));
     }
 
     class FailureTracker : IConditionEvalTracker
