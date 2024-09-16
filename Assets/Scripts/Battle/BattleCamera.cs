@@ -47,7 +47,7 @@ public class BattleCamera : MonoBehaviour
 
         if (Settings.Current.BattleCameraType == CameraType.Dynamic)
         {
-            _timeBeforeNextCam -= Time.deltaTime;
+            _timeBeforeNextCam -= Time.unscaledDeltaTime;
             if (_timeBeforeNextCam <= 0f)
             {
                 _timeBeforeNextCam += TimeBetweenNewPOV;
@@ -81,7 +81,7 @@ public class BattleCamera : MonoBehaviour
             {
                 Vector3 initPosition = transform.position;
                 Quaternion initRotation = transform.rotation;
-                for (float f = 0; f < 1f; f += Time.deltaTime / TransitionDuration)
+                for (float f = 0; f < 1f; f += Time.unscaledDeltaTime / TransitionDuration)
                 {
                     var fs = Mathf.SmoothStep(0, 1, f);
                     fs = Mathf.SmoothStep(0, 1, fs);
@@ -128,7 +128,7 @@ public class BattleCamera : MonoBehaviour
 
                 var initialPos = transform.position;
                 var initialRot = transform.rotation;
-                for (float f = 0; f < clip.length; f += Time.deltaTime)
+                for (float f = 0; f < clip.length; f += Time.unscaledDeltaTime)
                 {
                     playableClip.SetTime(f);
                     graph.Evaluate();
@@ -181,7 +181,7 @@ public class BattleCamera : MonoBehaviour
 
                 var initialPos = transform.position;
                 var initialRot = transform.rotation;
-                for (float f = 0; f < clip.length; f += Time.deltaTime)
+                for (float f = 0; f < clip.length; f += Time.unscaledDeltaTime)
                 {
                     playableClip.SetTime(f);
                     graph.Evaluate();

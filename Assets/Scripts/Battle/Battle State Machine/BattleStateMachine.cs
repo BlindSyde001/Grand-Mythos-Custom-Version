@@ -70,6 +70,8 @@ public class BattleStateMachine : MonoBehaviour
 
     IEnumerator Start()
     {
+        const float SlowdownFactor = 0.25f;
+
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
             Include(target);
 
@@ -85,22 +87,32 @@ public class BattleStateMachine : MonoBehaviour
 
         var chargingUnits = new List<(BattleCharacterController unit, Tactics tactic, List<BattleCharacterController> targets)>();
         bool win;
+        IEnumerator busy = null;
         while(IsBattleFinished(out win) == false)
         {
+            Time.timeScale = 1f;
+
             if (Blocked != 0)
             {
-                if (Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleSelectionType != BattleSelectionType.PauseBattle)
+                if (Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleSelectionType != BattleSelectionType.Pause)
                 {
                     
                 }
                 else
                 {
+                    Time.timeScale = SlowdownFactor;
                     yield return null; // Wait for next frame
                     continue;
                 }
             }
 
-            for (int i = 0; i < chargingUnits.Count; i++)
+            if (busy is not null)
+            {
+                if (busy.MoveNext() == false)
+                    busy = null;
+            }
+
+            for (int i = 0; i < chargingUnits.Count && busy is null; i++)
             {
                 var (unit, tactic, targets) = chargingUnits[i];
                 if (unit.Profile.CurrentHP == 0)
@@ -118,8 +130,7 @@ public class BattleStateMachine : MonoBehaviour
                 
                 if (Settings.Current.BattleTurnType == BattleTurnType.Sequential && tactic.Action.Channeling is null)
                 {
-                    while (enumerator.MoveNext())
-                        yield return enumerator.Current;
+                    busy = enumerator;
                 }
                 else
                 {
@@ -129,7 +140,7 @@ public class BattleStateMachine : MonoBehaviour
                 chargingUnits.RemoveAt(i--);
             }
 
-            while (Queue.Count > 0)
+            while (busy is null && Queue.Count > 0)
             {
                 var unit = Queue[0];
                 if (unit.Profile.CurrentHP == 0 || unit.Profile.PauseLeft > 0) // Remove any invalid units
@@ -196,11 +207,9 @@ public class BattleStateMachine : MonoBehaviour
 
                 Processing.Add(unit);
                 var enumerator = CatchException(ProcessUnit(unit, chosenTactic, selection));
-                
                 if (Settings.Current.BattleTurnType == BattleTurnType.Sequential && chosenTactic.Action.Channeling is null)
                 {
-                    while (enumerator.MoveNext())
-                        yield return enumerator.Current;
+                    busy = enumerator;
                 }
                 else
                 {
@@ -208,8 +217,17 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
 
-            var battleDeltaTime = Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleSelectionType == BattleSelectionType.SlowdownBattle ? 0.5f : 1f;
-            battleDeltaTime = Time.deltaTime * battleDeltaTime * Settings.Current.BattleSpeed;
+            if (busy is null
+                && Blocked == BlockBattleFlags.PreparingOrders
+                && Settings.Current.BattleSelectionType == BattleSelectionType.Slow)
+            {
+                Time.timeScale = SlowdownFactor;
+            }
+            else
+            {
+                Time.timeScale = 1f;
+            }
+            float battleDeltaTime = Time.deltaTime * Settings.Current.BattleSpeed;
             _timestamp += battleDeltaTime;
 
             foreach (var (unit, _, _) in chargingUnits)
@@ -244,7 +262,7 @@ public class BattleStateMachine : MonoBehaviour
             for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
             {
                 var m = unit.Profile.Modifiers[i];
-                if (m.Modifier.Temporary == false)
+                if (m.Modifier.Temporary && Settings.Current.ModifiersBehavior == ModifiersBehavior.RemovedAfterBattle)
                     unit.Profile.Modifiers.RemoveAt(i);
             }
         }
@@ -528,8 +546,9 @@ public class BattleStateMachine : MonoBehaviour
 public partial class Settings
 {
     public float BattleSpeed = 1f;
-    [FormerlySerializedAs("BattleMenuMode")] public BattleSelectionType BattleSelectionType = BattleSelectionType.PauseBattle;
+    [FormerlySerializedAs("BattleMenuMode")] public BattleSelectionType BattleSelectionType = BattleSelectionType.Pause;
     public BattleTurnType BattleTurnType = BattleTurnType.Sequential;
+    public ModifiersBehavior ModifiersBehavior = ModifiersBehavior.RemovedAfterBattle;
 }
 
 [Flags]
@@ -541,13 +560,19 @@ public enum BlockBattleFlags
 
 public enum BattleSelectionType
 {
-    PauseBattle,
-    SlowdownBattle,
-    NoChange,
+    Pause,
+    Slow,
+    FullSpeed,
 }
 
 public enum BattleTurnType
 {
     Sequential,
     Concurrent,
+}
+
+public enum ModifiersBehavior
+{
+    RemovedAfterBattle,
+    CarriedBetweenBattles
 }

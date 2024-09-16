@@ -141,7 +141,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         int delta = finalAttributeValue - initialAttributeValue;
 
         damageText.ElementColorTarget.color = computeDamage.Element == Element.Neutral ? Color.red : computeDamage.Element.GetAssociatedColor();
-        (delta > 0 ? damageText.OnHeal : damageText.OnDamage)?.Invoke(Math.Abs(delta).ToString());
+        string text = computeDamage.Missed ? "Miss" : Math.Abs(delta).ToString();
+        (delta > 0 ? damageText.OnHeal : damageText.OnDamage)?.Invoke(text);
         _damageTextCache.Enqueue((Time.time + damageText.Lifetime, damageText));
     }
 

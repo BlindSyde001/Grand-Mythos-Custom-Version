@@ -21,8 +21,13 @@ public struct ComputableDamageScaling
     public ElementalResistance ResistanceLightning;
     public ElementalResistance ResistanceWater;
 
+    public bool Missed;
+
     public void ApplyDelta(ref int currentValue)
     {
+        if (Missed)
+            return;
+
         float delta = BaseValue + VarianceRolled;
         delta *= CritChanceRolled < CritChanceTotal ? CritDeltaMultiplier : 1f;
         delta = Scaling switch
@@ -44,7 +49,7 @@ public struct ComputableDamageScaling
         };
 
         delta *= (float)resistance / 100f;
-        currentValue = Mathf.RoundToInt(currentValue + delta);
+        currentValue = Mathf.RoundToInt(currentValue + delta); 
     }
 
     public enum ScalingType

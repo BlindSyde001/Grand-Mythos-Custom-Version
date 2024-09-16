@@ -14,8 +14,7 @@ namespace StatusHandler
         {
             if (context.Random.NextFloat(0, 100) < Chance)
             {
-                scaling.BaseValue = 0f;
-                scaling.VarianceRolled = 0;
+                scaling.Missed = true;
             }
         }
     }

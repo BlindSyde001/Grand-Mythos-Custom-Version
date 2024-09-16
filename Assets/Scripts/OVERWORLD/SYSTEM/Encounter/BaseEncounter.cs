@@ -125,8 +125,10 @@ public abstract class BaseEncounter : IEncounterDefinition
                 (Vector3 pos, Quaternion rot)[] alliesSpawns;
                 if (rootGameobjects.Select(x => x.GetComponentInChildren<BattleStateMachine>()).FirstOrDefault(x => x != null) is { } bsm && bsm != null)
                 {
-                    bsm.Intro = IntroCamera;
-                    bsm.Outro = OutroCamera;
+                    if (IntroCamera)
+                        bsm.Intro = IntroCamera;
+                    if (OutroCamera)
+                        bsm.Outro = OutroCamera;
                     hostileSpawns = bsm.EnemySpawns.Select(x => (x.position, x.rotation)).ToArray();
                     alliesSpawns = bsm.HeroSpawns.Select(x => (x.position, x.rotation)).ToArray();
                 }
