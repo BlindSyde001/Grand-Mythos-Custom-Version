@@ -5,6 +5,13 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(menuName = "Gameplay")]
 public class Formulas : ScriptableObject
 {
+    [BoxGroup("Flow"), InfoBox("The amount of flow gained per points of damage the unit deals")]
+    public float SourceFlowScaler = 1f;
+    [BoxGroup("Flow"), InfoBox("The amount of flow gained per points of damage the unit receives")]
+    public float TargetFlowScaler = 1f;
+    [BoxGroup("Flow"), InfoBox("The amount of flow lost per seconds of battle time for a unit in flow state")]
+    public float FlowDepletionRate = 0f;
+
     [FormerlySerializedAs("PercentChancePerStat")]
     [InfoBox("Height is the percent chance, width is the amount of stats required to attain this percentage")]
     [HideLabel, CustomValueDrawer(nameof(DrawBigGraph)), HorizontalGroup("Crit/HZ"), BoxGroup("Crit")]

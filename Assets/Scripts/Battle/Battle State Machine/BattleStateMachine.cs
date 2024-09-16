@@ -244,6 +244,16 @@ public class BattleStateMachine : MonoBehaviour
                         Queue.Add(unit);
                 }
 
+                if (unit.Profile.InFlowState)
+                {
+                    unit.Profile.CurrentFlow -= battleDeltaTime * SingletonManager.Instance.Formulas.FlowDepletionRate;
+                    if (unit.Profile.CurrentFlow <= 0f)
+                    {
+                        unit.Profile.InFlowState = false;
+                        unit.Profile.CurrentFlow = 0f;
+                    }
+                }
+
                 unit.Context.CombatTimestamp = _timestamp;
 
                 for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
@@ -522,13 +532,14 @@ public class BattleStateMachine : MonoBehaviour
             // Should be obvious enough not to mention it ?
         }
 
-        public void PostTooCostly(CharacterTemplate source, ReadOnlySpan<IAction> actions)
+        public void PostNotEnoughMana(CharacterTemplate source)
         {
-            string names = null;
-            foreach (var action in actions)
-                names = names is not null ? $", {action.Name}" : action.Name;
+            FailureMessage = $"{source.Name} does not have enough mana to perform this action";
+        }
 
-            FailureMessage = $"{source.Name} does not have enough charges to execute '{names}'";
+        public void PostNotEnoughFlow(CharacterTemplate source)
+        {
+            FailureMessage = $"{source.Name} does not have enough flow to perform this action";
         }
 
         public void PostActionPrecondition(CharacterTemplate source, IAction action, TargetCollection allTargets) { }

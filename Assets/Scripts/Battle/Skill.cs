@@ -15,9 +15,14 @@ public class Skill : IdentifiableScriptableObject, IAction
     const string PreconditionInfoTextShort = "What MUST ABSOLUTELY be true to be able to use this action.";
     const string PreconditionInfoText = "What MUST ABSOLUTELY be true to be able to use this action.\n" +
                                         "This is more for skills that should NEVER be used in a specific context. Eg: skills requiring mana to be used when self doesn't have enough mana";
-
+    
     [SerializeField, TextArea]
     string _description = "";
+
+    public int ManaCost;
+
+    [Range(0f,100f)]
+    public float FlowCost;
 
     [Tooltip("When this action is used, should the skill attached to the unit's weapon proc")]
     public bool ProcAttachedSkills = false;
@@ -53,6 +58,8 @@ public class Skill : IdentifiableScriptableObject, IAction
     Condition IAction.TargetFilter => TargetConstraint;
     Condition IAction.Precondition => PreconditionToUse;
     AnimationClip IAction.CameraAnimation => CameraAnimation;
+    int IAction.ManaCost => ManaCost;
+    float IAction.FlowCost => FlowCost;
 
     public string UIDisplayText => Effects.UIDisplayText();
     string IAction.Name => name;
@@ -60,6 +67,8 @@ public class Skill : IdentifiableScriptableObject, IAction
 
     public void Perform(BattleCharacterController[] targets, EvaluationContext context)
     {
+        context.Profile.CurrentMP -= ManaCost;
+        
         foreach (var effect in Effects)
         {
             effect.Apply(targets, context);

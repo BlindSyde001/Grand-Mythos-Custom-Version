@@ -36,6 +36,8 @@ namespace Effects
             Formulas.GetCritModifiersBasedOnLuck(context.Profile.EffectiveStats.Luck, out var luckBasedChance, out var luckBasedMult);
             float critChanceTotal = CanCrit ? AdditionalCritChance + luckBasedChance : 0f;
             float critDamageMultiplier = AdditionalCritMultiplier + luckBasedMult;
+            float sourceFlowScaler = SingletonManager.Instance.Formulas.SourceFlowScaler;
+            float targetFlowScaler = SingletonManager.Instance.Formulas.TargetFlowScaler;
             foreach (var target in targets)
             {
                 var damageScaling = new ComputableDamageScaling
@@ -66,7 +68,32 @@ namespace Effects
                 foreach (var modifierOfTarget in target.Profile.Modifiers)
                     modifierOfTarget.Modifier.ModifyIncomingDelta(context, target, ref damageScaling);
 
+                int initialValue = currentValue;
                 damageScaling.ApplyDelta(ref currentValue);
+
+                int delta = currentValue - initialValue;
+                if (delta < 0)
+                {
+                    if (context.Profile.InFlowState == false)
+                    {
+                        context.Profile.CurrentFlow += -delta * sourceFlowScaler;
+                        if (context.Profile.CurrentFlow >= 100f)
+                        {
+                            context.Profile.InFlowState = true;
+                            context.Profile.CurrentFlow = 100f;
+                        }
+                    }
+                    if (target.Profile.InFlowState == false)
+                    {
+                        target.Profile.CurrentFlow += -delta * targetFlowScaler;
+                        if (target.Profile.CurrentFlow >= 100f)
+                        {
+                            target.Profile.InFlowState = true;
+                            target.Profile.CurrentFlow = 100f;
+                        }
+                    }
+                }
+
                 target.Profile.SetAttribute(Attribute, currentValue);
                 OnApplied?.Invoke(target, initialAttributeValue, damageScaling);
             }

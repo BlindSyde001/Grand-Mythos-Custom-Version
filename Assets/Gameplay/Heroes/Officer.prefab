@@ -50,6 +50,7 @@ MonoBehaviour:
   Portrait: {fileID: 21300000, guid: 1504392ba83117944800db42c21f3bd6, type: 3}
   CurrentHP: 154
   CurrentMP: 70
+  CurrentFlow: 0
   BaseStats:
     HP: 22
     MP: 10
@@ -77,6 +78,15 @@ MonoBehaviour:
     MagDefense: 2
     Speed: 0
     Luck: 0
+  FlowStatGrowth:
+    HP: 4
+    MP: 4
+    Attack: 4
+    MagAttack: 4
+    Defense: 4
+    MagDefense: 4
+    Speed: 4
+    Luck: 4
   Experience: 982
   Level: 5
   ResistanceFire: 100
@@ -87,7 +97,9 @@ MonoBehaviour:
   StatusResistances:
     m_Keys: []
     m_Values: 
-  Pause: 0
+  PauseLeft: 0
+  ChargeLeft: 0
+  ChargeTotal: 0
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
     _backingArray: []
@@ -129,8 +141,6 @@ MonoBehaviour:
   Banner: {fileID: 21300000, guid: 5749c16871850b741b2df5d84042a0a5, type: 3}
   SkillTree: {fileID: 248158881564659840, guid: 1fcb273e1da81064c90f4559082510e8, type: 3}
   UnlockedTreeNodes:
-    _backingArray: []
-  SkillModifiers:
     _backingArray: []
   _guid:
     a: 5400633407571730473

@@ -54,7 +54,18 @@ public class ActionCondition : IdentifiableScriptableObject
             return false;
         }
 
-        
+        if (action.ManaCost > context.Profile.CurrentMP)
+        {
+            context.Tracker?.PostNotEnoughMana(context.Controller.Profile);
+            return false;
+        }
+
+        if (action.FlowCost > context.Profile.CurrentFlow)
+        {
+            context.Tracker?.PostNotEnoughFlow(context.Controller.Profile);
+            return false;
+        }
+
         if (action.Precondition != null)
         {
             var allTargetsCopy = allTargets;

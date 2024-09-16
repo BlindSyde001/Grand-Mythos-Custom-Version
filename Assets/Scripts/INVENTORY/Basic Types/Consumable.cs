@@ -19,10 +19,17 @@ public class Consumable : TradeableItem, IAction
                                         "Do not check if the person has one instance of this consumable, this is always checked.\n" +
                                         "This is more for items that should NEVER be used in a specific context. Eg: Items requiring mana to be used when self doesn't have enough mana";
 
+    public int ManaCost = 0;
+
+    [Range(0f,100f)]
+    public float FlowCost;
+    
     [Tooltip("How long the character has to charge the action before it can be executed")]
     public float ChargeDuration = 0f;
 
-    [SerializeReference, MaybeNull] public Channeling Channeling;
+    [SerializeReference]
+    [MaybeNull]
+    public Channeling Channeling;
 
     [Space]
     [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
@@ -51,6 +58,8 @@ public class Consumable : TradeableItem, IAction
     Channeling IAction.Channeling => Channeling;
     Condition IAction.TargetFilter => TargetConstraint;
     AnimationClip IAction.CameraAnimation => CameraAnimation;
+    int IAction.ManaCost => ManaCost;
+    float IAction.FlowCost => FlowCost;
 
     /// <summary>
     /// This one contains both the has item test and the additional precondition specific to this consumable
@@ -89,6 +98,8 @@ public class Consumable : TradeableItem, IAction
 
     public void Perform(BattleCharacterController[] targets, EvaluationContext context)
     {
+        context.Profile.CurrentMP -= ManaCost;
+
         foreach (var effect in Effects)
         {
             effect.Apply(targets, context);

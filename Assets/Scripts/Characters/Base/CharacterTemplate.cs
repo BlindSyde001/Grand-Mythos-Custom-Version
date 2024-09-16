@@ -30,6 +30,9 @@ public class CharacterTemplate : MonoBehaviour
     [HorizontalGroup("STATS/POINTS"), GUIColor(0.5f, 0.5f, 0.9f)]
     public int CurrentMP;
 
+    [HorizontalGroup("STATS/POINTS"), GUIColor(0.9f, 0.5f, 0.5f)]
+    public float CurrentFlow;
+
     [BoxGroup("STATS"), OnValueChanged(nameof(UpdateDummyStats))]
     public Stats BaseStats = new(){ HP = 22, MP = 10, Attack = 8, MagAttack = 8, Defense = 8, MagDefense = 8, Speed = 20 };
 
@@ -38,6 +41,19 @@ public class CharacterTemplate : MonoBehaviour
 
     [BoxGroup("STATS"), OnValueChanged(nameof(UpdateDummyStats))]
     public StatGrowth StatGrowth;
+
+    [BoxGroup("STATS"), OnValueChanged(nameof(UpdateDummyStats))]
+    public StatGrowth FlowStatGrowth = new()
+    {
+        HP = StatGrowth.GrowthRate.Hyper,
+        MP = StatGrowth.GrowthRate.Hyper,
+        Attack = StatGrowth.GrowthRate.Hyper,
+        MagAttack = StatGrowth.GrowthRate.Hyper,
+        Defense = StatGrowth.GrowthRate.Hyper,
+        MagDefense = StatGrowth.GrowthRate.Hyper,
+        Speed = StatGrowth.GrowthRate.Hyper,
+        Luck = StatGrowth.GrowthRate.Hyper,
+    };
 
     [BoxGroup("STATS"), OnValueChanged(nameof(UpdateLevelFromExperience))]
     public uint Experience;
@@ -109,10 +125,13 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("DROP")]
     public List<Drop> DropItems;
 
+    [NonSerialized]
+    public bool InFlowState;
+
     /// <summary>
     /// Stats after all mods, like level, equipment and status effects, have been applied
     /// </summary>
-    public virtual Stats EffectiveStats => StatGrowth.ApplyGrowth(BaseStats, Level);
+    public virtual Stats EffectiveStats => InFlowState ? FlowStatGrowth.ApplyGrowth(StatGrowth.ApplyGrowth(BaseStats, Level), 1) : StatGrowth.ApplyGrowth(BaseStats, Level);
 
     public uint ExperienceToNextLevel => ExperienceThreshold - Experience; // How Much (Relative) you need
     public uint ExperienceThreshold => GetAmountOfXPForLevel(Level); // How Much (Total) you need

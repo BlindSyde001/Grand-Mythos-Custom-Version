@@ -232,6 +232,9 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             ui.ChargeBar.fillAmount = hero.ChargeTotal == 0 ? 0 : 1f - hero.ChargeLeft / hero.ChargeTotal;
             ui.AtbBar.fillAmount = 1f - hero.PauseLeft;
             ui.HealthBar.fillAmount = (float)hero.CurrentHP / hero.EffectiveStats.HP;
+            ui.ManaBar.fillAmount = (float)hero.CurrentMP / hero.EffectiveStats.MP;
+            ui.FlowBar.fillAmount = hero.CurrentFlow / 100f;
+            ui.ManaLabel.text = hero.CurrentMP.ToString();
             ui.Health.text = hero.CurrentHP.ToString();
             ui.NameLabel.text = hero.Name;
         }
@@ -356,7 +359,11 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
         var menu = NewMenuOf<Skill>(nameof(PresentSkillsUI));
         foreach (var skill in UnitSelected.Profile.Skills)
-            menu.NewButton(skill.name, skill, skill.Description);
+        {
+            var button = menu.NewButton(skill.name, skill, skill.Description);
+            button.interactable = skill.ManaCost <= UnitSelected.Profile.CurrentMP;
+            button.interactable = skill.FlowCost <= UnitSelected.Profile.CurrentFlow;
+        }
 
         var selectionTask = menu.SelectedItem();
         while (selectionTask.IsCompleted == false)
@@ -380,7 +387,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             if (item is not Consumable consumable)
                 continue;
 
-            menu.NewButton($"{consumable.name} (x{count})", consumable, consumable.Description);
+            var button = menu.NewButton($"{consumable.name} (x{count})", consumable, consumable.Description);
+            button.interactable = consumable.ManaCost <= UnitSelected.Profile.CurrentMP;
         }
 
         var selectionTask = menu.SelectedItem();
