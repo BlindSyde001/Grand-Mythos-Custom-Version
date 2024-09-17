@@ -248,6 +248,22 @@ public class CharacterTemplate : MonoBehaviour
         _ => throw new ArgumentOutOfRangeException(nameof(attribute), attribute, null)
     };
 
+    public int GetAttributeMax(Attribute attribute) => attribute switch
+    {
+        Attribute.Health => EffectiveStats.HP,
+        Attribute.Mana => EffectiveStats.MP,
+        Attribute.HealthPercent => 100,
+        Attribute.ManaPercent => 100,
+        Attribute.MaxHealth => EffectiveStats.HP,
+        Attribute.MaxMana => EffectiveStats.MP,
+        Attribute.Attack => EffectiveStats.Attack,
+        Attribute.MagicAttack => EffectiveStats.MagAttack,
+        Attribute.Defense => EffectiveStats.Defense,
+        Attribute.MagicDefense => EffectiveStats.MagDefense,
+        Attribute.Speed => EffectiveStats.Speed,
+        _ => throw new ArgumentOutOfRangeException(nameof(attribute), attribute, null)
+    };
+
     public void SetAttribute(Attribute attribute, int value)
     {
         switch(attribute)

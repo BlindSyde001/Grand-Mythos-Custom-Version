@@ -362,7 +362,6 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         {
             var button = menu.NewButton(skill.name, skill, skill.Description);
             button.interactable = skill.ManaCost <= UnitSelected.Profile.CurrentMP;
-            button.interactable = skill.FlowCost <= UnitSelected.Profile.CurrentFlow;
         }
 
         var selectionTask = menu.SelectedItem();

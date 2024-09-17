@@ -537,11 +537,6 @@ public class BattleStateMachine : MonoBehaviour
             FailureMessage = $"{source.Name} does not have enough mana to perform this action";
         }
 
-        public void PostNotEnoughFlow(CharacterTemplate source)
-        {
-            FailureMessage = $"{source.Name} does not have enough flow to perform this action";
-        }
-
         public void PostActionPrecondition(CharacterTemplate source, IAction action, TargetCollection allTargets) { }
 
         public void PostActionTargetFilter(CharacterTemplate source, IAction action, TargetCollection previousTargets) { }

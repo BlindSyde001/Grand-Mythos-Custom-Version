@@ -60,6 +60,7 @@ namespace Effects
                 };
 
                 int initialAttributeValue = target.Profile.GetAttribute(Attribute);
+                int maxAttributeValue = target.Profile.GetAttributeMax(Attribute);
                 int currentValue = initialAttributeValue;
 
                 foreach (var modifierOfSource in context.Profile.Modifiers)
@@ -71,7 +72,7 @@ namespace Effects
                 int initialValue = currentValue;
                 damageScaling.ApplyDelta(ref currentValue);
 
-                int delta = currentValue - initialValue;
+                float delta = (float)(currentValue - initialValue) / maxAttributeValue;
                 if (delta < 0)
                 {
                     if (context.Profile.InFlowState == false)

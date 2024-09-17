@@ -21,9 +21,6 @@ public class Skill : IdentifiableScriptableObject, IAction
 
     public int ManaCost;
 
-    [Range(0f,100f)]
-    public float FlowCost;
-
     [Tooltip("When this action is used, should the skill attached to the unit's weapon proc")]
     public bool ProcAttachedSkills = false;
 
@@ -59,7 +56,6 @@ public class Skill : IdentifiableScriptableObject, IAction
     Condition IAction.Precondition => PreconditionToUse;
     AnimationClip IAction.CameraAnimation => CameraAnimation;
     int IAction.ManaCost => ManaCost;
-    float IAction.FlowCost => FlowCost;
 
     public string UIDisplayText => Effects.UIDisplayText();
     string IAction.Name => name;

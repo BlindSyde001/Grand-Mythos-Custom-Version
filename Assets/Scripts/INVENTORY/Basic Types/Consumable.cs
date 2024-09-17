@@ -59,7 +59,6 @@ public class Consumable : TradeableItem, IAction
     Condition IAction.TargetFilter => TargetConstraint;
     AnimationClip IAction.CameraAnimation => CameraAnimation;
     int IAction.ManaCost => ManaCost;
-    float IAction.FlowCost => FlowCost;
 
     /// <summary>
     /// This one contains both the has item test and the additional precondition specific to this consumable
