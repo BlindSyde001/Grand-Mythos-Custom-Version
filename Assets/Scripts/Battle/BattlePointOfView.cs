@@ -8,7 +8,7 @@ namespace Battle
     [AddComponentMenu(" GrandMythos/BattlePointOfView")]
     public class BattlePointOfView : MonoBehaviour
     {
-        private const float FieldOfView = 60f;
+        private const float FieldOfView = 50f;
         private const float Ratio = 16f / 9f;
         private const float NearPlane = 0.1f;
         public static Dictionary<BattlePointOfViewReference, BattlePointOfView> Instances = new();
