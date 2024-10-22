@@ -231,8 +231,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             ui.CharacterIcon.sprite = hero.Portrait;
             ui.ChargeBar.fillAmount = hero.ChargeTotal == 0 ? 0 : 1f - hero.ChargeLeft / hero.ChargeTotal;
             ui.AtbBar.fillAmount = 1f - hero.PauseLeft;
-            ui.HealthBar.fillAmount = (float)hero.CurrentHP / hero.EffectiveStats.HP;
-            ui.ManaBar.fillAmount = (float)hero.CurrentMP / hero.EffectiveStats.MP;
+            //ui.HealthBar.fillAmount = (float)hero.CurrentHP / hero.EffectiveStats.HP;
+            //ui.ManaBar.fillAmount = (float)hero.CurrentMP / hero.EffectiveStats.MP;
             ui.FlowBar.fillAmount = hero.CurrentFlow / 100f;
             ui.ManaLabel.text = hero.CurrentMP.ToString();
             ui.Health.text = hero.CurrentHP.ToString();

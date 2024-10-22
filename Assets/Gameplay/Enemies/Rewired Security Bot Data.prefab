@@ -50,6 +50,7 @@ MonoBehaviour:
   Portrait: {fileID: 0}
   CurrentHP: 1250
   CurrentMP: 5
+  CurrentFlow: 0
   BaseStats:
     HP: 1250
     MP: 5
@@ -77,17 +78,28 @@ MonoBehaviour:
     MagDefense: 0
     Speed: 0
     Luck: 0
-  Experience: 0
-  Level: 1
+  FlowStatGrowth:
+    HP: 4
+    MP: 4
+    Attack: 4
+    MagAttack: 4
+    Defense: 4
+    MagDefense: 4
+    Speed: 4
+    Luck: 4
+  Experience: 2496
+  Level: 7
   ResistanceFire: 100
   ResistanceIce: 100
-  ResistanceLightning: 100
+  ResistanceLightning: 200
   ResistanceWater: 100
   Modifiers: []
   StatusResistances:
     m_Keys: []
     m_Values: 
-  Pause: 0
+  PauseLeft: 0
+  ChargeLeft: 0
+  ChargeTotal: 0
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
     _backingArray:
@@ -96,9 +108,6 @@ MonoBehaviour:
     rid: -2
   LevelUnlocks: {fileID: 0}
   Tactics:
-  - IsOn: 1
-    Condition: {fileID: 11400000, guid: c9062f14b35d5154fb7b6be9495b877f, type: 2}
-    ActionsAsset: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
   - IsOn: 1
     Condition: {fileID: 11400000, guid: e94f0cb201813db43bdffc3e2318d648, type: 2}
     ActionsAsset: {fileID: 11400000, guid: 44a8205b5bf35d24a82de4ffc71ca39c, type: 2}
@@ -110,9 +119,9 @@ MonoBehaviour:
     - Action: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       Animation:
         rid: 7380285029310791834
-    - Action: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
+    - Action: {fileID: 11400000, guid: 44a8205b5bf35d24a82de4ffc71ca39c, type: 2}
       Animation:
-        rid: 7380285029310791835
+        rid: 3270155579363164169
   FallbackAnimation:
     rid: 7380285059924230152
   Inventory:
@@ -131,15 +140,15 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 3270155579363164169
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
+      data:
+        StateName: Reload
+        Layer: 0
     - rid: 7380285029310791834
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
       data:
         StateName: Attack
-        Layer: 0
-    - rid: 7380285029310791835
-      type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
-      data:
-        StateName: Reload
         Layer: 0
     - rid: 7380285059924230152
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Assembly-CSharp}
@@ -150,6 +159,4 @@ MonoBehaviour:
       type: {class: InlineInventory, ns: , asm: Assembly-CSharp}
       data:
         Items:
-          _backingArray:
-          - Key: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
-            Value: 1
+          _backingArray: []

@@ -50,6 +50,7 @@ MonoBehaviour:
   Portrait: {fileID: 0}
   CurrentHP: 1000
   CurrentMP: 10
+  CurrentFlow: 0
   BaseStats:
     HP: 1000
     MP: 10
@@ -77,9 +78,18 @@ MonoBehaviour:
     MagDefense: 0
     Speed: 0
     Luck: 0
-  Experience: 0
-  Level: 1
-  ResistanceFire: 100
+  FlowStatGrowth:
+    HP: 4
+    MP: 4
+    Attack: 4
+    MagAttack: 4
+    Defense: 4
+    MagDefense: 4
+    Speed: 4
+    Luck: 4
+  Experience: 982
+  Level: 5
+  ResistanceFire: 200
   ResistanceIce: 100
   ResistanceLightning: 100
   ResistanceWater: 100
@@ -87,7 +97,9 @@ MonoBehaviour:
   StatusResistances:
     m_Keys: []
     m_Values: 
-  Pause: 0
+  PauseLeft: 0
+  ChargeLeft: 0
+  ChargeTotal: 0
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
     _backingArray: []
