@@ -70,8 +70,6 @@ public class BattleStateMachine : MonoBehaviour
 
     IEnumerator Start()
     {
-        const float SlowdownFactor = 0.25f;
-
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
             Include(target);
 
@@ -90,8 +88,6 @@ public class BattleStateMachine : MonoBehaviour
         IEnumerator busy = null;
         while(IsBattleFinished(out win) == false)
         {
-            Time.timeScale = 1f;
-
             if (Blocked != 0)
             {
                 if (Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleSelectionType != BattleSelectionType.Pause)
@@ -100,7 +96,6 @@ public class BattleStateMachine : MonoBehaviour
                 }
                 else
                 {
-                    Time.timeScale = SlowdownFactor;
                     yield return null; // Wait for next frame
                     continue;
                 }
@@ -217,17 +212,8 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
 
-            if (busy is null
-                && Blocked == BlockBattleFlags.PreparingOrders
-                && Settings.Current.BattleSelectionType == BattleSelectionType.Slow)
-            {
-                Time.timeScale = SlowdownFactor;
-            }
-            else
-            {
-                Time.timeScale = 1f;
-            }
-            float battleDeltaTime = Time.deltaTime * Settings.Current.BattleSpeed;
+            var battleDeltaTime = Blocked == BlockBattleFlags.PreparingOrders && Settings.Current.BattleSelectionType == BattleSelectionType.Slow ? 0.5f : 1f;
+            battleDeltaTime *= Time.deltaTime * Settings.Current.BattleSpeed;
             _timestamp += battleDeltaTime;
 
             foreach (var (unit, _, _) in chargingUnits)
