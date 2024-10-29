@@ -1,1 +1,0 @@
-﻿public enum GameState { Battle, Overworld, Cutscene, Menu, Pause }
