@@ -1,7 +1,6 @@
 ﻿using Characters;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace StatusHandler
 {
@@ -14,7 +13,6 @@ namespace StatusHandler
         private const string IncomingDescription = "What happens to attacks that this unit receives";
         private const string OutgoingDescription = "What happens to attacks that this unit deals";
         
-        [PreviewField] public Sprite Icon;
         [TextArea] public string Description;
 
         [Required] public ModifierDisplay DisplayPrefab;
