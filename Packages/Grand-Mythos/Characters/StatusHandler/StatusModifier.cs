@@ -40,6 +40,8 @@ namespace StatusHandler
         }
 
         bool IModifier.Temporary => Temporary;
+        public bool DisplayOnRightSide => false;
+
         public bool IsStillValid(AppliedModifier data, EvaluationContext context)
         {
             return context.CombatTimestamp - data.CreationTimeStamp < Duration;

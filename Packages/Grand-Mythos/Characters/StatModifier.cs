@@ -34,6 +34,7 @@ public class StatModifier : IModifier
     }
 
     public bool Temporary => false;
+    public bool DisplayOnRightSide => false;
     public bool IsStillValid(AppliedModifier data, EvaluationContext context) => true;
 
     [Serializable]

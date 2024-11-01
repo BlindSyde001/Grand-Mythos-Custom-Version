@@ -31,6 +31,7 @@ namespace StatusHandler
         }
 
         public bool Temporary => true;
+        public bool DisplayOnRightSide => true;
         public bool IsStillValid(AppliedModifier data, EvaluationContext context) => true;
     }
 }

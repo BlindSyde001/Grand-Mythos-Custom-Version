@@ -14,5 +14,6 @@ public class HeroPrefabUIData : MonoBehaviour
     [Required] public TextMeshProUGUI ManaLabel;
     [Required] public TextMeshProUGUI NameLabel;
     [Required] public RectTransform ModifierContainer;
+    [Required] public RectTransform ModifierContainer2;
     [Required] public RectTransform Highlight;
 }

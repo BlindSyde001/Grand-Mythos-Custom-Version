@@ -24,6 +24,7 @@ namespace Characters.StatusHandler
         public void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling) { }
 
         public bool Temporary => true;
+        public bool DisplayOnRightSide => false;
 
         public bool IsStillValid(AppliedModifier data, EvaluationContext context)
         {

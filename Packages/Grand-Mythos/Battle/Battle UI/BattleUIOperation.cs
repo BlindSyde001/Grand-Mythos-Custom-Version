@@ -100,6 +100,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             {
                 for (int i = ui.ModifierContainer.childCount - 1; i >= 0; i--)
                     Destroy(ui.ModifierContainer.transform.GetChild(i).gameObject);
+                for (int i = ui.ModifierContainer2.childCount - 1; i >= 0; i--)
+                    Destroy(ui.ModifierContainer2.transform.GetChild(i).gameObject);
             }
         }
 
@@ -260,7 +262,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                     if (_modifierDisplays.TryGetValue((modifier, unit), out _) || modifier.DisplayPrefab == null)
                         continue;
 
-                    var display = Instantiate(modifier.DisplayPrefab, ui.ModifierContainer);
+                    
+                    var display = Instantiate(modifier.DisplayPrefab, modifier.DisplayOnRightSide ? ui.ModifierContainer2 : ui.ModifierContainer);
                     _modifierDisplays[(modifier, unit)] = display;
                     display.OnDisplayed(unit, this, modifier);
                     display.OnNewModifier();
@@ -1040,13 +1043,18 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText != null)
                     tmpText.text = label;
 
-                var toggle = uiElem.GetComponent<Toggle>();
+                if (uiElem.GetComponent<Image>() is {} i)
+                {
+                    i.sprite = null;
+                    i.color = new Color(1, 1, 1, 0.25f);
+                }
 
                 var onHover = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
                 onHover.callback.AddListener(evt => OnHoverOrSelected(item));
                 var onSelect = new EventTrigger.Entry { eventID = EventTriggerType.Select };
                 onSelect.callback.AddListener(evt => OnHoverOrSelected(item));
 
+                var toggle = uiElem.GetComponent<Toggle>();
                 if (toggle.gameObject.TryGetComponent(out EventTrigger trigger) == false)
                     trigger = toggle.gameObject.AddComponent<EventTrigger>();
 
@@ -1067,14 +1075,12 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                     uiElem2.gameObject.SetActive(true);
                     uiElem2.anchorMin = new Vector2(0f, (float)index/subSelections.Length);
                     uiElem2.anchorMax = new Vector2(1f, (float)(index+1)/subSelections.Length);
-                    uiElem2.offsetMin = new Vector2(5,5);
-                    uiElem2.offsetMax = new Vector2(-5,-5);
+                    uiElem2.offsetMin = new Vector2(5,-30);
+                    uiElem2.offsetMax = new Vector2(-5,30);
                     if (uiElem2.GetComponentInChildren<Text>() is { } text2 && text2 != null)
                         text2.text = s;
                     if (uiElem2.GetComponentInChildren<TMP_Text>() is { } tmpText2 && tmpText2 != null)
                         tmpText2.text = s;
-                    if (uiElem2.GetComponent<Image>() is { } img && img != null)
-                        img.color = new Color(img.color.r, img.color.g, img.color.b, img.color.a * 0.1f);
                     var toggle2 = uiElem2.GetComponent<Toggle>();
                     Destroy(toggle2.graphic);
                     Destroy(toggle2);
@@ -1082,7 +1088,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 }
 
                 if (subSelections.Length > 0)
-                    uiElem.offsetMin *= new Vector2(1, subSelections.Length + 1);
+                    uiElem.offsetMin *= new Vector2(1, (subSelections.Length + 1) * 0.75f);
             }
 
             foreach (var (t, rect) in Toggles) // Mark all items that are no longer in the list and put them in temp

@@ -17,5 +17,6 @@ public interface IModifier
     void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling);
 
     bool Temporary { get; }
+    bool DisplayOnRightSide { get; }
     bool IsStillValid(AppliedModifier data, EvaluationContext context);
 }
