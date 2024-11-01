@@ -29,22 +29,22 @@ MonoBehaviour:
     - rid: -2
       type: {class: , ns: , asm: }
     - rid: 2969355752103215104
-      type: {class: GiveStatusModifier, ns: Effects, asm: Assembly-CSharp}
+      type: {class: GiveStatusModifier, ns: Effects, asm: Grand-Mythos}
       data:
         Modifier: {fileID: 11400000, guid: 4e7fc7b99c39ebb4ebadeca7bda2efde, type: 2}
         Chance: 50
     - rid: 4691955925379973120
-      type: {class: And, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: And, ns: Conditions, asm: Grand-Mythos}
       data:
         Left:
           rid: 4691955925379973121
         Right:
           rid: 4691955925379973122
     - rid: 4691955925379973121
-      type: {class: IsHostile, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: IsHostile, ns: Conditions, asm: Grand-Mythos}
       data:
         State: 0
     - rid: 4691955925379973122
-      type: {class: TargetTrimming, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: TargetTrimming, ns: Conditions, asm: Grand-Mythos}
       data:
         Max: 1

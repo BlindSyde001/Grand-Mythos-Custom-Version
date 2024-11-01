@@ -29,7 +29,7 @@ MonoBehaviour:
     - rid: -2
       type: {class: , ns: , asm: }
     - rid: 7439448773025857549
-      type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
+      type: {class: AttributeAdd, ns: Effects, asm: Grand-Mythos}
       data:
         Attribute: 0
         Amount: 1000
@@ -38,12 +38,12 @@ MonoBehaviour:
         CritChance: 50
         CritMultiplier: 2.5
     - rid: 7439448773025857550
-      type: {class: ApplyOnCaster, ns: Effects, asm: Assembly-CSharp}
+      type: {class: ApplyOnCaster, ns: Effects, asm: Grand-Mythos}
       data:
         Effects:
         - rid: 7439448773025857552
     - rid: 7439448773025857552
-      type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
+      type: {class: AttributeAdd, ns: Effects, asm: Grand-Mythos}
       data:
         Attribute: 1
         Amount: -10
@@ -52,17 +52,17 @@ MonoBehaviour:
         CritChance: 0
         CritMultiplier: 2.5
     - rid: 7439448773025857553
-      type: {class: And, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: And, ns: Conditions, asm: Grand-Mythos}
       data:
         Left:
           rid: 7439448773025857554
         Right:
           rid: 7439448773025857555
     - rid: 7439448773025857554
-      type: {class: IsSelf, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: IsSelf, ns: Conditions, asm: Grand-Mythos}
       data: 
     - rid: 7439448773025857555
-      type: {class: AttributeFilter, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: AttributeFilter, ns: Conditions, asm: Grand-Mythos}
       data:
         TargetAttribute: 1
         Comparison: 4

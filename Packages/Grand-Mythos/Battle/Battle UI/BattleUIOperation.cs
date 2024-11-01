@@ -27,6 +27,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     [Header("UI Info")]
     public List<HeroPrefabUIData> HeroUIData;
+    public Gradient HealthLabelColorPercent = new(), ManaLabelColorPercent = new();
     [ReadOnly, SerializeField] public List<HeroExtension> HeroData;
 
     [Required] public GameObject EnemyUIPrefab;
@@ -236,6 +237,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             ui.FlowBar.fillAmount = hero.CurrentFlow / 100f;
             ui.ManaLabel.text = hero.CurrentMP.ToString();
             ui.Health.text = hero.CurrentHP.ToString();
+            ui.Health.color = HealthLabelColorPercent.Evaluate((float)hero.CurrentHP / hero.EffectiveStats.HP);
+            ui.ManaLabel.color = HealthLabelColorPercent.Evaluate((float)hero.CurrentMP / hero.EffectiveStats.MP);
             ui.NameLabel.text = hero.Name;
         }
 

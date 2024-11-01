@@ -31,24 +31,24 @@ MonoBehaviour:
     - rid: -2
       type: {class: , ns: , asm: }
     - rid: 7439448747336007692
-      type: {class: ApplyOnCaster, ns: Effects, asm: Assembly-CSharp}
+      type: {class: ApplyOnCaster, ns: Effects, asm: Grand-Mythos}
       data:
         Effects:
         - rid: 7439448747336007693
     - rid: 7439448747336007693
-      type: {class: RemoveItem, ns: Effects, asm: Assembly-CSharp}
+      type: {class: RemoveItem, ns: Effects, asm: Grand-Mythos}
       data:
         Item: {fileID: 11400000}
         Amount: 1
     - rid: 7439448764490973222
-      type: {class: ConditionalEffect, ns: Effects, asm: Assembly-CSharp}
+      type: {class: ConditionalEffect, ns: Effects, asm: Grand-Mythos}
       data:
         Condition:
           rid: 7439448773025857548
         Effects:
         - rid: 7439448764490973224
     - rid: 7439448764490973224
-      type: {class: AttributeAdd, ns: Effects, asm: Assembly-CSharp}
+      type: {class: AttributeAdd, ns: Effects, asm: Grand-Mythos}
       data:
         Attribute: 0
         Amount: 2000
@@ -57,5 +57,5 @@ MonoBehaviour:
         CritChance: 0
         CritMultiplier: 2.5
     - rid: 7439448773025857548
-      type: {class: IsAlive, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: IsAlive, ns: Conditions, asm: Grand-Mythos}
       data: 

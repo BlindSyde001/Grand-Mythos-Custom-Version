@@ -23,33 +23,33 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 7439448773025857559
-      type: {class: And, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: And, ns: Conditions, asm: Grand-Mythos}
       data:
         Left:
           rid: 7439448773025857560
         Right:
           rid: 7439448773025857561
     - rid: 7439448773025857560
-      type: {class: IsHostile, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: IsHostile, ns: Conditions, asm: Grand-Mythos}
       data:
         State: 0
     - rid: 7439448773025857561
-      type: {class: TargetRequired, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: TargetRequired, ns: Conditions, asm: Grand-Mythos}
       data:
         Comparison: 4
         Amount: 4
     - rid: 7439448773025857563
-      type: {class: And, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: And, ns: Conditions, asm: Grand-Mythos}
       data:
         Left:
           rid: 7439448773025857564
         Right:
           rid: 7439448773025857565
     - rid: 7439448773025857564
-      type: {class: IsSelf, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: IsSelf, ns: Conditions, asm: Grand-Mythos}
       data: 
     - rid: 7439448773025857565
-      type: {class: AttributeFilter, ns: Conditions, asm: Assembly-CSharp}
+      type: {class: AttributeFilter, ns: Conditions, asm: Grand-Mythos}
       data:
         TargetAttribute: 2
         Comparison: 0
