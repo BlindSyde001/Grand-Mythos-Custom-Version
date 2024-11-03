@@ -1043,7 +1043,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText != null)
                     tmpText.text = label;
 
-                if (uiElem.GetComponent<Image>() is {} i)
+                if (subSelections.Length > 0 && uiElem.GetComponent<Image>() is {} i)
                 {
                     i.sprite = null;
                     i.color = new Color(1, 1, 1, 0.25f);
@@ -1073,10 +1073,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 {
                     var uiElem2 = Instantiate(template, uiElem, false);
                     uiElem2.gameObject.SetActive(true);
-                    uiElem2.anchorMin = new Vector2(0f, (float)index/subSelections.Length);
-                    uiElem2.anchorMax = new Vector2(1f, (float)(index+1)/subSelections.Length);
-                    uiElem2.offsetMin = new Vector2(5,-30);
-                    uiElem2.offsetMax = new Vector2(-5,30);
+                    uiElem2.anchoredPosition -= (uiElem2.sizeDelta + new Vector2(0, -30)) * index * Vector2.up;
                     if (uiElem2.GetComponentInChildren<Text>() is { } text2 && text2 != null)
                         text2.text = s;
                     if (uiElem2.GetComponentInChildren<TMP_Text>() is { } tmpText2 && tmpText2 != null)
