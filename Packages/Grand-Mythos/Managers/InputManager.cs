@@ -106,9 +106,9 @@ public static class InputManager
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void InitInputManager()
     {
-        var go = new GameObject("InputManager");
-        go.AddComponent<EventSystem>();
-        Module = go.AddComponent<InputSystemUIInputModule>();
+        var eventSystem = SingletonManager.Instance.DefaultEventSystem.gameObject;
+        var go = Object.Instantiate(eventSystem);
+        Module = go.GetComponent<InputSystemUIInputModule>();
         go.AddComponent<InputManagement>();
         Object.DontDestroyOnLoad(go);
         SetGameState(GameState.Menu);

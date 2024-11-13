@@ -64,7 +64,7 @@ public class RandomEncounterZone : MonoBehaviour
         if (metersLeftToTraverse <= 0)
         {
             metersLeftToTraverse += Random.NextFloat(MetersPerEncounter.Min, MetersPerEncounter.Max);
-            Encounter.Start(transform, controller);
+            Encounter.Start(controller);
         }
     }
 }

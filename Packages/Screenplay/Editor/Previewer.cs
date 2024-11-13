@@ -15,7 +15,7 @@ namespace Source.Screenplay.Editor
         private Stack<System.Action> _rollbacksRegistered = new();
         private List<(object key, IEnumerator<Signal> enumerator)> _players = new();
         private bool _loopPreview;
-        private DialogUIComponent? _dialogUIComponentPrefab, _dialogUI;
+        private UIBase? _dialogUIComponentPrefab, _dialogUI;
 
         public ScreenplayGraph Source { get; }
         public bool Loop => _loopPreview;
@@ -23,7 +23,7 @@ namespace Source.Screenplay.Editor
         public UIBase? GetDialogUI()
         {
             if (_dialogUIComponentPrefab == null)
-                    return null;
+                return null;
 
             if (_dialogUI == null)
             {
@@ -36,7 +36,7 @@ namespace Source.Screenplay.Editor
 
         public HashSet<IPrerequisite> Visited { get; } = new();
 
-        public Previewer(bool loopPreview, DialogUIComponent? dialogUIComponentPrefab, ScreenplayGraph sourceParam)
+        public Previewer(bool loopPreview, UIBase? dialogUIComponentPrefab, ScreenplayGraph sourceParam)
         {
             _loopPreview = loopPreview;
             _dialogUIComponentPrefab = dialogUIComponentPrefab;

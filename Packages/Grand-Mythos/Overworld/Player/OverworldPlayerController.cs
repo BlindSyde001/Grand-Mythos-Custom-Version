@@ -145,6 +145,28 @@ public class OverworldPlayerController : ReloadableBehaviour
             return;
 
         {
+            InteractionComp closestInteraction = null;
+            float closestDist = InteractDistance;
+            foreach (var interactionComp in InteractionComp.Instances)
+            {
+                var closestOnBounds = interactionComp.transform.position;
+                var distToBounds = Vector3.Distance(closestOnBounds, transform.position);
+                if (distToBounds < closestDist)
+                {
+                    closestDist = distToBounds;
+                    closestInteraction = interactionComp;
+                }
+            }
+
+            if (closestInteraction)
+            {
+                if (Prompt.TryShowInteractivePromptThisFrame(closestInteraction.transform.position, closestInteraction.Label)
+                    && Interact.action.WasPressedThisFrame())
+                    closestInteraction.Trigger();
+            }
+        }
+
+        {
             Interactable closestInteractable = null;
             float closestDist = float.PositiveInfinity;
             for (int i = Physics.OverlapSphereNonAlloc(transform.position, InteractDistance, _sphereCastUtility, ~CharacterLayerMask, QueryTriggerInteraction.Collide) - 1; i >= 0; i--)

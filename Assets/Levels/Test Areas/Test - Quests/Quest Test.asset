@@ -1,0 +1,797 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f280a14fbcd4a8eb855b9acb1471d1e, type: 3}
+  m_Name: Quest Test
+  m_EditorClassIdentifier: 
+  Nodes:
+  - rid: 5987214906623262768
+  - rid: 5987214906623262771
+  - rid: 5987214906623262774
+  - rid: 5987214906623262777
+  - rid: 5987214906623262787
+  - rid: 5987214906623262789
+  - rid: 5987214906623262793
+  - rid: 5987214906623262796
+  - rid: 5987214906623262798
+  - rid: 5987214906623262801
+  - rid: 5987214906623262804
+  - rid: 5987214906623262806
+  - rid: 5987214906623262808
+  - rid: 5987214906623262811
+  - rid: 5987214906623262813
+  - rid: 5987214906623263043
+  - rid: 5987214906623263053
+  - rid: 5987214906623263296
+  - rid: 5987214906623263300
+  - rid: 5987214906623263306
+  - rid: 5987214906623263308
+  - rid: 5987214906623263311
+  - rid: 5987214906623263525
+  - rid: 5987214906623263636
+  - rid: 5987214906623263638
+  - rid: 5987214909154525326
+  - rid: 5987214909154525565
+  - rid: 5987214909154525570
+  - rid: 5987214909154525575
+  - rid: 5987214909154525577
+  - rid: 5987214909154525579
+  - rid: 5987214909154525581
+  - rid: 5987214909154525584
+  - rid: 5987214909154525586
+  - rid: 5987214909154525589
+  - rid: 5987214909154525592
+  - rid: 5987214909154525596
+  - rid: 5987214909154525599
+  - rid: 5987214951661961380
+  - rid: 5987214951661962189
+  - rid: 5987214951661962192
+  - rid: 5987214951661962195
+  - rid: 5987214951661962198
+  - rid: 5987214952037352085
+  - rid: 5987214952037352087
+  - rid: 5987214952037352097
+  - rid: 5987214952037352100
+  - rid: 5987214952037352104
+  - rid: 5987214952037352113
+  - rid: 5987214952037352116
+  - rid: 5987214952212201717
+  - rid: 5987214952212201719
+  - rid: 5987214952212201721
+  - rid: 5987214952212201730
+  - rid: 5987214952212202123
+  - rid: 5987214953439560114
+  - rid: 5987214953439560317
+  - rid: 5987214953883369496
+  - rid: 5987214953964372274
+  - rid: 5987214953964372277
+  - rid: 5987214953964372280
+  - rid: 5987214953964372289
+  - rid: 5987214953964372294
+  - rid: 5987214953964372301
+  DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
+  DebugRetainProgressInEditor: 0
+  __visitedSerializationProxy: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 5987214906623262768
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -40, y: -104}
+        Name: Faramir
+        Action:
+          rid: 5987214906623262771
+        Repeatable: 1
+        Prerequisite:
+          rid: -2
+        TriggerSource:
+          rid: 5987214951661962189
+    - rid: 5987214906623262771
+      type: {class: Choice, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 424, y: -8}
+        Choices:
+        - Prerequisite:
+            rid: 5987214906623263300
+          Action:
+            rid: 5987214906623262774
+          Text:
+            Content: Hey, Sounds like you need help chasing after this Gothmog person
+              ?
+            _guid:
+              a: 5380813155517726304
+              b: 8909332600629005961
+        - Prerequisite:
+            rid: 5987214906623263043
+          Action:
+            rid: 5987214906623262777
+          Text:
+            Content: Remind me again about that Gothmog guy ?
+            _guid:
+              a: 5504466958080700367
+              b: 14808762938506529716
+        - Prerequisite:
+            rid: 5987214906623263296
+          Action:
+            rid: 5987214906623262787
+          Text:
+            Content: Gothmog has been defeated !
+            _guid:
+              a: 5094490879286652420
+              b: 11952959209150862245
+        - Prerequisite:
+            rid: -2
+          Action:
+            rid: -2
+          Text:
+            Content: Sorry, wrong person !
+            _guid:
+              a: 5102282314940673283
+              b: 11813992677537914543
+    - rid: 5987214906623262774
+      type: {class: SetQuestStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: 792, y: -8}
+        Next:
+          rid: 5987214906623262793
+        Step: {fileID: -4034720880787443, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+        Completed: 1
+    - rid: 5987214906623262777
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 792, y: 120}
+        Next:
+          rid: 5987214906623262793
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Uh ...
+          _guid:
+            a: 4894024612462625054
+            b: 14779133439577142917
+    - rid: 5987214906623262787
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 808, y: 280}
+        Next:
+          rid: 5987214906623262789
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: 'Congratulations are in order ! '
+          _guid:
+            a: 4838644638664040673
+            b: 14672904693861793180
+    - rid: 5987214906623262789
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1176, y: 248}
+        Next:
+          rid: 5987214906623262808
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Here is your reward for a job well done.
+          _guid:
+            a: 5644194760290412350
+            b: 6923428691925044667
+    - rid: 5987214906623262793
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1128, y: 40}
+        Next:
+          rid: 5987214906623262796
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Ah yes, Gothmog has been evading our sentries for the past few
+            weeks.
+          _guid:
+            a: 5621000392060788761
+            b: 17694728269986610360
+    - rid: 5987214906623262796
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1368, y: 40}
+        Next:
+          rid: 5987214906623262798
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: We know he is still hiding to the north somewhere ...
+          _guid:
+            a: 5647151792896793297
+            b: 13990058478943975357
+    - rid: 5987214906623262798
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1608, y: 40}
+        Next:
+          rid: 5987214906623262801
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Frodo shared with me that his old blade, Sting he calls it, could
+            detect nearby Orcs.
+          _guid:
+            a: 4647642514155954249
+            b: 1829069584076930977
+    - rid: 5987214906623262801
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1848, y: 40}
+        Next:
+          rid: 5987214906623262804
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Sadly he lost it while fighting off Shelob, but it must still
+            be there, in Mirkwood.
+          _guid:
+            a: 4665738369652941682
+            b: 13295034527575928503
+    - rid: 5987214906623262804
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 2088, y: 40}
+        Next:
+          rid: 5987214906623262806
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: You might be able to use it to find where Gothmog may be hiding.
+          _guid:
+            a: 4612721924373226615
+            b: 12399892318264904341
+    - rid: 5987214906623262806
+      type: {class: Choice, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 2344, y: 40}
+        Choices:
+        - Prerequisite:
+            rid: -2
+          Action:
+            rid: -2
+          Text:
+            Content: Thanks, off to mirkwood then.
+            _guid:
+              a: 5366433706666542161
+              b: 16378972244328702868
+    - rid: 5987214906623262808
+      type: {class: SetQuestStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: 1416, y: 248}
+        Next:
+          rid: 5987214906623262811
+        Step: {fileID: -1188590564942983332, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+        Completed: 1
+    - rid: 5987214906623262811
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1656, y: 248}
+        Next:
+          rid: 5987214906623262813
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Oh, and you better not get caught brandishing Sting around
+          _guid:
+            a: 5741616332397120195
+            b: 14579190935721735329
+    - rid: 5987214906623262813
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1896, y: 248}
+        Next:
+          rid: -2
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Frodo might want to get it back !
+          _guid:
+            a: 4742306231487306395
+            b: 12966233390063351186
+    - rid: 5987214906623263043
+      type: {class: And, ns: Screenplay.Nodes.Logic, asm: Screenplay}
+      data:
+        _position: {x: 232, y: 168}
+        A:
+          rid: 5987214951661961380
+        B:
+          rid: 5987214906623263053
+    - rid: 5987214906623263053
+      type: {class: Not, ns: Screenplay.Nodes.Logic, asm: Screenplay}
+      data:
+        _position: {x: 104, y: 232}
+        A:
+          rid: 5987214906623263308
+    - rid: 5987214906623263296
+      type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -136, y: 344}
+        Step: {fileID: -1188590564942983332, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214906623263300
+      type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: 8, y: 40}
+        Step: {fileID: -4034720880787443, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214906623263306
+      type: {class: Notes, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 408, y: -328}
+        Content: FARAMIR'S DIALOG
+        Color: {r: 0.9, g: 0.87, b: 0.7, a: 1}
+        Size: 6
+    - rid: 5987214906623263308
+      type: {class: QuestStepCompleted, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -136, y: 248}
+        Step: {fileID: 5658234352003188749, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214906623263311
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 104, y: -888}
+        Name: Celebrimbor
+        Action:
+          rid: 5987214906623263525
+        Repeatable: 1
+        Prerequisite:
+          rid: -2
+        TriggerSource:
+          rid: 5987214951661962192
+    - rid: 5987214906623263525
+      type: {class: Branch, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 424, y: -840}
+        True:
+          rid: 5987214909154525565
+        False:
+          rid: 5987214906623263636
+        Prerequisite:
+          rid: 5987214909154525570
+    - rid: 5987214906623263636
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 840, y: -680}
+        Next:
+          rid: 5987214906623263638
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Not too sure what I can do for ya ...
+          _guid:
+            a: 4691092411055958932
+            b: 15422833305466597539
+    - rid: 5987214906623263638
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1096, y: -680}
+        Next:
+          rid: -2
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Let me know when you are in need of a blacksmith though !
+          _guid:
+            a: 4889416739829331611
+            b: 14981111834959509925
+    - rid: 5987214909154525326
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: 1080, y: -968}
+        Next:
+          rid: -2
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 5481695724524426382
+              b: 4206462400526382736
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Active: 1
+    - rid: 5987214909154525565
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 840, y: -968}
+        Next:
+          rid: 5987214909154525326
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Looks like yer blade is in a sorry state, give it here, I'll see
+            what I can do ...
+          _guid:
+            a: 4914027371270396454
+            b: 5188133437415049862
+    - rid: 5987214909154525570
+      type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: 104, y: -728}
+        Step: {fileID: -1181814238061795466, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214909154525575
+      type: {class: Notes, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 312, y: -1160}
+        Content: CELEBRIMBOR
+        Color: {r: 0.9, g: 0.87, b: 0.7, a: 1}
+        Size: 6
+    - rid: 5987214909154525577
+      type: {class: Notes, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 328, y: -1912}
+        Content: STING
+        Color: {r: 0.9, g: 0.87, b: 0.7, a: 1}
+        Size: 6
+    - rid: 5987214909154525579
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 72, y: -1720}
+        Name: Sting
+        Action:
+          rid: 5987214909154525581
+        Repeatable: 0
+        Prerequisite:
+          rid: 5987214951661962198
+        TriggerSource:
+          rid: 5987214951661962195
+    - rid: 5987214909154525581
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 376, y: -1720}
+        Next:
+          rid: 5987214909154525584
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: Sting lays there, on the ground, stuck betwixt the arachnid's
+            webs.
+          _guid:
+            a: 5354555780128106656
+            b: 12469907304607489694
+    - rid: 5987214909154525584
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 664, y: -1720}
+        Next:
+          rid: 5987214909154525586
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: The blade is still radiant, but its hilt as all but vanished.
+          _guid:
+            a: 5519927029783645102
+            b: 1388928446296175039
+    - rid: 5987214909154525586
+      type: {class: Choice, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 968, y: -1720}
+        Choices:
+        - Prerequisite:
+            rid: -2
+          Action:
+            rid: 5987214909154525589
+          Text:
+            Content: Take the blade in hand
+            _guid:
+              a: 5450300110104400618
+              b: 5399433722477760696
+        - Prerequisite:
+            rid: -2
+          Action:
+            rid: 5987214909154525592
+          Text:
+            Content: Pack Sting in your bag.
+            _guid:
+              a: 5247857187537955316
+              b: 11627690533676105910
+    - rid: 5987214909154525589
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1272, y: -1816}
+        Next:
+          rid: 5987214909154525592
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: You try and grasp at it, the spine searing through your glove.
+          _guid:
+            a: 4744245633326944506
+            b: 7171431774581565879
+    - rid: 5987214909154525592
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1576, y: -1672}
+        Next:
+          rid: 5987214909154525596
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: You won't be able to use it in this state, Celebrimbor should
+            be able to create a new hilt for you.
+          _guid:
+            a: 4802227048977420392
+            b: 16789496165333862075
+    - rid: 5987214909154525596
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1864, y: -1672}
+        Next:
+          rid: 5987214909154525599
+        Interlocutor: {fileID: 0}
+        Line:
+          Content: You quickly wrap the blade in one of your duvet and pack it in
+            your bag before Shelob finds you.
+          _guid:
+            a: 4788815069545379502
+            b: 18364105220324857520
+    - rid: 5987214909154525599
+      type: {class: SetQuestStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: 2136, y: -1672}
+        Next:
+          rid: 5987214952037352087
+        Step: {fileID: 4980436453836444254, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+        Completed: 1
+    - rid: 5987214951661961380
+      type: {class: QuestStepCompleted, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -136, y: 136}
+        Step: {fileID: -4034720880787443, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214951661962189
+      type: {class: Interaction, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: -344, y: -72}
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 4797533574841619915
+              b: 12592591845004752016
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Label: Talk to Faramir
+    - rid: 5987214951661962192
+      type: {class: Interaction, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: -216, y: -856}
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 5072025142244550892
+              b: 5565431516612477628
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Label: Talk to Celebrimbor
+    - rid: 5987214951661962195
+      type: {class: Interaction, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: -216, y: -1624}
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 5642555961003901542
+              b: 17853713174197990583
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Label: Take Sting
+    - rid: 5987214951661962198
+      type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -216, y: -1736}
+        Step: {fileID: 4980436453836444254, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214952037352085
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 72, y: -1544}
+        Name: Sting Invisible
+        Action:
+          rid: 5987214952037352100
+        Repeatable: 0
+        Prerequisite:
+          rid: 5987214952037352097
+        TriggerSource:
+          rid: -2
+    - rid: 5987214952037352087
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: 2376, y: -1672}
+        Next:
+          rid: -2
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 5642555961003901542
+              b: 17853713174197990583
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Active: 0
+    - rid: 5987214952037352097
+      type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -216, y: -1496}
+        Step: {fileID: -4034720880787443, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214952037352100
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: 376, y: -1528}
+        Next:
+          rid: -2
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 5642555961003901542
+              b: 17853713174197990583
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Active: 0
+    - rid: 5987214952037352104
+      type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -216, y: -1368}
+        Step: {fileID: 4980436453836444254, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214952037352113
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 72, y: -1416}
+        Name: Sting Visible
+        Action:
+          rid: 5987214952037352116
+        Repeatable: 0
+        Prerequisite:
+          rid: 5987214952037352104
+        TriggerSource:
+          rid: -2
+    - rid: 5987214952037352116
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: 376, y: -1400}
+        Next:
+          rid: -2
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 5642555961003901542
+              b: 17853713174197990583
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Active: 1
+    - rid: 5987214952212201717
+      type: {class: Notes, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 296, y: -2680}
+        Content: GOTHMOG
+        Color: {r: 0.9, g: 0.87, b: 0.7, a: 1}
+        Size: 6
+    - rid: 5987214952212201719
+      type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -56, y: -2536}
+        Step: {fileID: 5658234352003188749, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214952212201721
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 328, y: -2552}
+        Name: Gothmog
+        Action:
+          rid: 5987214952212202123
+        Repeatable: 1
+        Prerequisite:
+          rid: 5987214952212201719
+        TriggerSource:
+          rid: 5987214952212201730
+    - rid: 5987214952212201730
+      type: {class: TriggerZone, ns: Screenplay.Nodes.Triggers, asm: Screenplay}
+      data:
+        _position: {x: -56, y: -2440}
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 4966276607102907297
+              b: 14157658774059562926
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        LayerMask:
+          serializedVersion: 2
+          m_Bits: 8
+    - rid: 5987214952212202123
+      type: {class: StartEncounter, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: 632, y: -2552}
+        DuringEncounter:
+          rid: 5987214953439560114
+        Definition:
+          rid: 5987214952212202126
+    - rid: 5987214952212202126
+      type: {class: FixedEncounter, ns: , asm: Grand-Mythos}
+      data:
+        Scene:
+          _path: Assets/Levels/Test Areas/Test - Battle.unity
+          _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
+        PointOfView: {fileID: 0}
+        IntroCamera: {fileID: 0}
+        OutroCamera: {fileID: 0}
+        Formation:
+        - {fileID: 4298728654131661726, guid: 95b17ca1544aeb047bcaddce9004d5c2, type: 3}
+        - {fileID: 9115676008236007249, guid: 98a278fbb427a4d4687934919c8a3a01, type: 3}
+        Seed: 2269318893
+    - rid: 5987214953439560114
+      type: {class: AwaitEndOfEncounter, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: 968, y: -2552}
+        Victory:
+          rid: 5987214953439560317
+        Defeat:
+          rid: -2
+    - rid: 5987214953439560317
+      type: {class: SetQuestStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: 1224, y: -2552}
+        Next:
+          rid: 5987214953883369496
+        Step: {fileID: 5658234352003188749, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+        Completed: 1
+    - rid: 5987214953883369496
+      type: {class: ManageItem, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: 1480, y: -2552}
+        Next:
+          rid: -2
+        Op: 0
+        Count: 1
+        Item: {fileID: 11400000, guid: 5b8d5a068b1956b439823508c15ee968, type: 2}
+    - rid: 5987214953964372274
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 312, y: -2344}
+        Name: Gothmog Visible
+        Action:
+          rid: 5987214953964372277
+        Repeatable: 0
+        Prerequisite:
+          rid: 5987214953964372294
+        TriggerSource:
+          rid: -2
+    - rid: 5987214953964372277
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: 632, y: -2296}
+        Next:
+          rid: -2
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 5551650575009075414
+              b: 9110074068865265809
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Active: 1
+    - rid: 5987214953964372280
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: 632, y: -2200}
+        Next:
+          rid: -2
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _objId:
+              a: 5551650575009075414
+              b: 9110074068865265809
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Active: 0
+    - rid: 5987214953964372289
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 312, y: -2216}
+        Name: Gothmog Invisible
+        Action:
+          rid: 5987214953964372280
+        Repeatable: 0
+        Prerequisite:
+          rid: 5987214953964372301
+        TriggerSource:
+          rid: -2
+    - rid: 5987214953964372294
+      type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -216, y: -2264}
+        Step: {fileID: 5658234352003188749, guid: 283fb31b1207d3840934505ddb28ffd8, type: 2}
+    - rid: 5987214953964372301
+      type: {class: Not, ns: Screenplay.Nodes.Logic, asm: Screenplay}
+      data:
+        _position: {x: 72, y: -2200}
+        A:
+          rid: 5987214953964372294

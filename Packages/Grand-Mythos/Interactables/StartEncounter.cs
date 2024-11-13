@@ -12,7 +12,7 @@ namespace Interactables
 
         public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
-            Encounter.Start(source.transform, player);
+            Encounter.Start(player);
             #warning this is a bit flacky, should change this into something more robust
             while (InputManager.CurrentState != GameState.Battle) // Wait for transition into battle
                 yield return Delay.WaitTillNextFrame;

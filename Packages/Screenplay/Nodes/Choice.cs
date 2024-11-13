@@ -57,9 +57,11 @@ namespace Screenplay.Nodes
                 yield break;
             }
 
+            ui.StartDialogPresentation();
             var choice = ui.ChoicePresentation(choicesThin);
             while (choice.Selection is null)
                 yield return Signal.NextFrame;
+            ui.EndDialogPresentation();
 
             var index = Array.IndexOf(choicesThin, choice.Selection);
 

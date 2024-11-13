@@ -17,10 +17,10 @@ public abstract class BaseEncounter : IEncounterDefinition
     public BattlePointOfViewReference PointOfView;
     public AnimationClip IntroCamera, OutroCamera;
 
-    public void Start(Transform hintSource, OverworldPlayerController player)
+    public Signal<BattleStateMachine> Start(OverworldPlayerController player)
     {
         if (startingEncounter)
-            return;
+            return null;
 
         startingEncounter = true;
         var battleTransition = new GameObject(nameof(EncounterState));
@@ -28,10 +28,12 @@ public abstract class BaseEncounter : IEncounterDefinition
         var encounterState = battleTransition.AddComponent<EncounterState>();
         foreach (var reserve in GameManager.Instance.ReservesLineup)
             reserve.gameObject.SetActive(false);
-        encounterState.StartCoroutine(OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup));
+        var signal = new Signal<BattleStateMachine>();
+        encounterState.StartCoroutine(OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup, signal));
+        return signal;
     }
 
-    IEnumerator OverworldToBattleTransition(SceneReference Scene, IEnumerable<CharacterTemplate> allies)
+    IEnumerator OverworldToBattleTransition(SceneReference Scene, IEnumerable<CharacterTemplate> allies, Signal<BattleStateMachine> signal)
     {
         var opponents = FormationToSpawn();
         var gameObjectsToReEnable = new List<GameObject>();
@@ -125,6 +127,7 @@ public abstract class BaseEncounter : IEncounterDefinition
                 (Vector3 pos, Quaternion rot)[] alliesSpawns;
                 if (rootGameobjects.Select(x => x.GetComponentInChildren<BattleStateMachine>()).FirstOrDefault(x => x != null) is { } bsm && bsm != null)
                 {
+                    signal.Set(bsm);
                     if (IntroCamera)
                         bsm.Intro = IntroCamera;
                     if (OutroCamera)

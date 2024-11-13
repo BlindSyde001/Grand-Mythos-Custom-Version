@@ -263,7 +263,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6682547390018484471}
   - component: {fileID: 7552042468115476871}
-  - component: {fileID: 3963425310535644935}
+  - component: {fileID: 95448640817651799}
   - component: {fileID: 2888054888757496249}
   - component: {fileID: 2115556514991222893}
   - component: {fileID: 1818130606926756856}
@@ -308,7 +308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1b10a868e3304d468640aa616518f3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3963425310535644935
+--- !u!114 &95448640817651799
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -317,14 +317,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2680674816035063547}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a65ebc7c71a747e69a59b694d426502e, type: 3}
+  m_Script: {fileID: 11500000, guid: e92033f8627c69c49aeba77820a741c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   MixerGroup: {fileID: 0}
   AdvancesAutomatically: 0
   FastForward:
-    rid: 5697826941710106624
-  DialogChoiceTemplate: {fileID: 4349369608552166022}
+    rid: 5987214954364141789
+  DialogChoiceTemplate: {fileID: 3903608433695122877}
   OnNewLine:
     m_PersistentCalls:
       m_Calls:
@@ -360,7 +360,7 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
-          m_FloatArgument: 0.5
+          m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
@@ -375,7 +375,7 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
-          m_FloatArgument: 1
+          m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
@@ -397,7 +397,7 @@ MonoBehaviour:
   OnStart:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2700201824167283195}
+      - m_Target: {fileID: 2680674816035063547}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -409,22 +409,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 4740775549840659345}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   OnEnd:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2700201824167283195}
+      - m_Target: {fileID: 2680674816035063547}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
@@ -438,39 +426,15 @@ MonoBehaviour:
         m_CallState: 2
   OnChoicePresented:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 795019527465393914}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
   OnChoiceClosed:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 795019527465393914}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   references:
     version: 2
     RefIds:
-    - rid: 5697826941710106624
-      type: {class: DialogUIComponent/InputFastForward, ns: Nodalog, asm: Grand-Mythos}
+    - rid: 5987214954364141789
+      type: {class: DialogUIComponent/InputFastForward, ns: Screenplay.Component, asm: Screenplay}
       data:
         Input: {fileID: 4537649827939660774, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
 --- !u!223 &2888054888757496249
@@ -1317,7 +1281,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9062113031183495538}
   - component: {fileID: 4712061461300314173}
-  - component: {fileID: 4349369608552166022}
+  - component: {fileID: 3903608433695122877}
   - component: {fileID: 1808251351412786416}
   - component: {fileID: 2091145466699740555}
   - component: {fileID: 660268099654757829}
@@ -1357,7 +1321,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5741131028128705213}
   m_CullTransparentMesh: 1
---- !u!114 &4349369608552166022
+--- !u!114 &3903608433695122877
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1366,7 +1330,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5741131028128705213}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d21b5928c074299a7f787a981a8a3d3, type: 3}
+  m_Script: {fileID: 11500000, guid: e5b8f2d337f8b294a9a4d87fcbcbdf8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Label: {fileID: 2465922428728679536}

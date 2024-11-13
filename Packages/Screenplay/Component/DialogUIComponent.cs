@@ -38,6 +38,9 @@ namespace Screenplay.Component
             var choiceGameObjects = new List<GameObject>();
             foreach (var choice in choices)
             {
+                if (choice.Enabled == false)
+                    continue;
+
                 var uiChoice = Instantiate(DialogChoiceTemplate, DialogChoiceTemplate.transform.parent);
                 choiceGameObjects.Add(uiChoice.gameObject);
                 uiChoice.gameObject.SetActive(true);

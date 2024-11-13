@@ -47,7 +47,13 @@ namespace Screenplay.Nodes.Triggers
 
             private void OnTriggerStay(Collider collider)
             {
-                if ((LayerMask & 1 << collider.attachedRigidbody.gameObject.layer) != 0)
+                GameObject go;
+                if (collider is CharacterController cc)
+                    go = cc.gameObject;
+                else
+                    go = collider.attachedRigidbody.gameObject;
+
+                if ((LayerMask & 1 << go.layer) != 0)
                     Trigger();
             }
 

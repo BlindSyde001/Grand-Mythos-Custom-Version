@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using Characters.StatusHandler;
 using UnityEngine;
 using Conditions;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine.Serialization;
@@ -45,6 +47,9 @@ public class BattleStateMachine : MonoBehaviour
 
     private Random _random = new Random(10);
     private double _timestamp = 0;
+    [CanBeNull] private TaskCompletionSource<bool> _finishedTcs;
+
+    public Task<bool> Finished => (_finishedTcs ??= new()).Task;
 
     // UPDATES
     void Awake()
@@ -86,7 +91,7 @@ public class BattleStateMachine : MonoBehaviour
         var chargingUnits = new List<(BattleCharacterController unit, Tactics tactic, List<BattleCharacterController> targets)>();
         bool win;
         IEnumerator busy = null;
-        while(IsBattleFinished(out win) == false)
+        while (IsBattleFinished(out win) == false)
         {
             if (Blocked != 0)
             {
@@ -252,6 +257,8 @@ public class BattleStateMachine : MonoBehaviour
 
             yield return null; // Wait for next frame
         }
+        
+        _finishedTcs?.SetResult(win);
         
         foreach (var unit in PartyLineup)
         {

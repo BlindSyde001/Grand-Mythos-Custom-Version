@@ -4,6 +4,7 @@ using UnityEngine;
 using YNode;
 using Screenplay.Nodes;
 using Screenplay.Nodes.Triggers;
+using Sirenix.OdinInspector;
 using Event = Screenplay.Nodes.Event;
 
 namespace Screenplay
@@ -11,7 +12,8 @@ namespace Screenplay
     [CreateAssetMenu(menuName = "Screenplay/Screenplay")]
     public class ScreenplayGraph : NodeGraph, ISerializationCallbackReceiver
     {
-        public Component.DialogUIComponent? DialogUIPrefab;
+        [Required]
+        public Component.UIBase? DialogUIPrefab;
         public bool DebugRetainProgressInEditor;
         private HashSet<IPrerequisite> _visited = new();
         private HashSet<Event> _visitedEvents = new();
@@ -249,7 +251,7 @@ namespace Screenplay
         private record DefaultContext(ScreenplayGraph Source) : IContext, IDisposable
         {
             private List<(object, IEnumerator<Signal>)> _asynchronousRunner = new();
-            private Component.DialogUIComponent? _dialogUI;
+            private Component.UIBase? _dialogUI;
 
             public ScreenplayGraph Source { get; } = Source;
 

@@ -1,7 +1,5 @@
-﻿using UnityEngine;
-
-public interface IEncounterDefinition
+﻿public interface IEncounterDefinition
 {
-    void Start(Transform hintSource, OverworldPlayerController player);
+    Signal<BattleStateMachine> Start(OverworldPlayerController player);
     bool IsValid(out string error);
 }
