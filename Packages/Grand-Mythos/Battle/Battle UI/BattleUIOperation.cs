@@ -86,6 +86,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     void OnEnable()
     {
+        TooltipUI.OnHideTooltip.Invoke();
         ResetNavigation();
         HideNavigation();
         if (_listenerBound == false)
@@ -1163,9 +1164,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
         public Button NewButton(string label, T item, string onHover = null, bool interactable = true)
         {
-            var uiElem = Instantiate(UI.SkillTemplate, UI.SubActionSelectionContainer, false);
-            uiElem.gameObject.SetActive(true);
-            _submenuItems.Add(uiElem);
+            var uiElem = Instantiate(UI.SkillTemplate);
             if (uiElem.GetComponentInChildren<Text>() is { } text && text)
                 text.text = label;
             if (uiElem.GetComponentInChildren<TMP_Text>() is { } tmpText && tmpText)
@@ -1178,11 +1177,6 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 _tcs.TrySetResult(item);
             });
             button.interactable = interactable;
-
-            if (_lastSelected.TryGetValue(Seed, out var previouslySelected) && previouslySelected.Equals(item))
-                button.Select();
-
-            UI.SubActionSelectionContainer.gameObject.SetActive(true); // Enable afterward that way selection trackers can trigger and select this button
 
             UnityAction<BaseEventData> onHoverOrSelect = _ =>
             {
@@ -1202,6 +1196,16 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             trigger.triggers.Add(onHover1);
             trigger.triggers.Add(onSelect);
 
+            // Moving all of this bellow to ensure the tooltip hover/selection logic is set up before default selection can select one of the buttons
+            // ReSharper disable once Unity.InstantiateWithoutParent
+            uiElem.transform.SetParent(UI.SubActionSelectionContainer, false);
+            uiElem.gameObject.SetActive(true);
+            _submenuItems.Add(uiElem);
+            UI.SubActionSelectionContainer.gameObject.SetActive(true); // Enable afterward that way selection trackers can trigger and select this button
+
+            if (_lastSelected.TryGetValue(Seed, out var previouslySelected) && previouslySelected.Equals(item))
+                button.Select();
+            
             return button;
         }
 
