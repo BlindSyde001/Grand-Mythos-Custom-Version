@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using DG.Tweening;
 using Menu_Containers.Menu_Item_Actions;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -143,11 +144,23 @@ public class SettingsMenuActions : MenuContainer
     public override IEnumerable Open(MenuInputs menuInputs)
     {
         gameObject.SetActive(true);
+
+        if (gameObject.TryGetComponent<CanvasGroup>(out var canvas) == false)
+            canvas = gameObject.AddComponent<CanvasGroup>();
+        canvas.alpha = 0f;
+        canvas.DOFade(1f, menuInputs.Speed);
+
         yield return new WaitForSeconds(menuInputs.Speed);
     }
     public override IEnumerable Close(MenuInputs menuInputs)
     {
+        if (gameObject.TryGetComponent<CanvasGroup>(out var canvas) == false)
+            canvas = gameObject.AddComponent<CanvasGroup>();
+        canvas.alpha = 1f;
+        canvas.DOFade(0f, menuInputs.Speed);
+
         yield return new WaitForSeconds(menuInputs.Speed);
+
         gameObject.SetActive(false);
     }
 

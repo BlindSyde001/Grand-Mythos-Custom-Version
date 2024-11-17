@@ -37,9 +37,7 @@ public class BattleCharacterController : MonoBehaviour
 
     void Update()
     {
-        if (Profile.CurrentHP == 0 && Animator.IsPlaying(DeathAnimation) == false)
-            Animator.Play(DeathAnimation);
-        else if (Profile.CurrentHP != 0 && Animator.IsPlaying(DeathAnimation))
+        if (Profile.CurrentHP != 0 && Animator.IsPlaying(DeathAnimation))
             Animator.Play(IdleAnimation);
     }
 

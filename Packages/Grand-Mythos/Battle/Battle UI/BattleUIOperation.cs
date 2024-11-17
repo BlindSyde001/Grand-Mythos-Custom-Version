@@ -221,7 +221,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
                 EnemyPrefabUIData data = enemyUI.GetComponent<EnemyPrefabUIData>();
                 data.identity.text = unit.Profile.Name;
-                data.healthBar.fillAmount = unit.Profile.EffectiveStats.HP;
+                data.healthBar.fillAmount = (float)unit.Profile.CurrentHP / unit.Profile.EffectiveStats.HP;
 
                 EnemyUIData.Add(data);
             }

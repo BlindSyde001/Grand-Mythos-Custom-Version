@@ -16,6 +16,7 @@ namespace ActionAnimation
 
         public IEnumerable Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets)
         {
+            var initialRotation = controller.transform.rotation;
             Vector3 averagePos = default;
             int count = 0;
             foreach (var target in targets)
@@ -47,7 +48,14 @@ namespace ActionAnimation
                 yield break;
             }
 
-            yield return new WaitForSeconds(GetTimeLeft(current));
+            var timeLeft = GetTimeLeft(current);
+            yield return new WaitForSeconds(timeLeft);
+
+            if (count != 0)
+            {
+                controller.transform.DOLookAt(controller.transform.position + initialRotation * Vector3.forward, 0.25f);
+                yield return new WaitForSeconds(0.25f);
+            }
         }
 
         static float GetTimeLeft(in AnimatorStateInfo info)

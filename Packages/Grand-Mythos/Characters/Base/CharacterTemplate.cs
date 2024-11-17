@@ -98,10 +98,20 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("ANIMATIONS")]
     [ValidateInput(nameof(ValidateActionAnimation)), InlineProperty, HideLabel]
     public IActionAnimationCollection ActionAnimations = new();
+    
+    [BoxGroup("ANIMATIONS/Hurt")]
+    [Tooltip("When this unit is hit by something")]
+    [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
+    public IActionAnimation Hurt;
+    
+    [BoxGroup("ANIMATIONS/Death")]
+    [Tooltip("When this unit dies")]
+    [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
+    public IActionAnimation Death;
 
     [BoxGroup("ANIMATIONS/Fallback Animation")]
     [Tooltip("When this unit performs an action that hasn't been added to the list above, this animation will run to ensure the unit doesn't look idle")]
-    [SerializeReference, ValidateInput(nameof(ValidateFallbackAnimation)), InlineProperty, HideLabel]
+    [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
     public IActionAnimation FallbackAnimation;
 
     [Required, SerializeReference, BoxGroup("INVENTORY"), InlineProperty, HideLabel]
@@ -153,7 +163,7 @@ public class CharacterTemplate : MonoBehaviour
         return actionAnimation.Validate(this, ref errorMessage);
     }
 
-    bool ValidateFallbackAnimation(IActionAnimation actionAnimation, ref string errorMessage)
+    bool ValidateSingleAnimation(IActionAnimation actionAnimation, ref string errorMessage)
     {
         if (actionAnimation == null)
         {

@@ -90,7 +90,7 @@ public class BattleStateMachine : MonoBehaviour
 
         var chargingUnits = new List<(BattleCharacterController unit, Tactics tactic, List<BattleCharacterController> targets)>();
         bool win;
-        IEnumerator busy = null;
+        BetterCoroutine busy = null;
         while (IsBattleFinished(out win) == false)
         {
             if (Blocked != 0)
@@ -104,12 +104,6 @@ public class BattleStateMachine : MonoBehaviour
                     yield return null; // Wait for next frame
                     continue;
                 }
-            }
-
-            if (busy is not null)
-            {
-                if (busy.MoveNext() == false)
-                    busy = null;
             }
 
             for (int i = 0; i < chargingUnits.Count && busy is null; i++)
@@ -126,21 +120,21 @@ public class BattleStateMachine : MonoBehaviour
 
                 unit.Profile.ChargeTotal = 0f;
                 Processing.Add(unit);
-                var enumerator = CatchException(ProcessUnit(unit, tactic, targets));
+                var enumerator = ProcessUnit(unit, tactic, targets);
                 
                 if (Settings.Current.BattleTurnType == BattleTurnType.Sequential && tactic.Action.Channeling is null)
                 {
-                    busy = enumerator;
+                    busy = new BetterCoroutine(this, enumerator);
                 }
                 else
                 {
-                    StartCoroutine(enumerator);
+                    StartCoroutine(CatchException(enumerator));
                 }
 
                 chargingUnits.RemoveAt(i--);
             }
 
-            while (busy is null && Queue.Count > 0)
+            while ((busy is null || busy.Done) && Queue.Count > 0)
             {
                 var unit = Queue[0];
                 if (unit.Profile.CurrentHP == 0 || unit.Profile.PauseLeft > 0) // Remove any invalid units
@@ -206,14 +200,14 @@ public class BattleStateMachine : MonoBehaviour
                     continue;
 
                 Processing.Add(unit);
-                var enumerator = CatchException(ProcessUnit(unit, chosenTactic, selection));
+                var enumerator = ProcessUnit(unit, chosenTactic, selection);
                 if (Settings.Current.BattleTurnType == BattleTurnType.Sequential && chosenTactic.Action.Channeling is null)
                 {
-                    busy = enumerator;
+                    busy = new BetterCoroutine(this, enumerator);
                 }
                 else
                 {
-                    StartCoroutine(enumerator);
+                    StartCoroutine(CatchException(enumerator));
                 }
             }
 
@@ -256,6 +250,11 @@ public class BattleStateMachine : MonoBehaviour
             }
 
             yield return null; // Wait for next frame
+        }
+
+        while (busy?.Done == false) // Finish whatever animation/effect is currently playing
+        {
+            yield return null;
         }
         
         _finishedTcs?.SetResult(win);
@@ -365,7 +364,7 @@ public class BattleStateMachine : MonoBehaviour
             {
                 yield return yield;
                 unit.Profile.ChargeLeft = (float)(_timestamp - startingTimestamp);
-                if (unit.Profile.EffectiveStats.HP == 0)
+                if (unit.Profile.CurrentHP == 0)
                     break;
             }
             
@@ -407,6 +406,20 @@ public class BattleStateMachine : MonoBehaviour
                 chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
                 chosenTactic.Action.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
                 chosenTactic.Action.Precondition?.NotifyUsedCondition(selection, unit.Context);
+
+                int animationsPlaying = 0;
+                foreach (var controller in selection)
+                {
+                    animationsPlaying++;
+                    var anim = controller.Profile.CurrentHP > 0 ? controller.Profile.Hurt : controller.Profile.Death;
+                    // ReSharper disable once AccessToModifiedClosure
+                    controller.StartCoroutine(TrackingCoroutine(anim.Play(null, controller, Array.Empty<BattleCharacterController>()), () => animationsPlaying--));
+                }
+
+                do
+                {
+                    yield return null;
+                } while (animationsPlaying > 0);
             }
 
             if (chosenTactic.Action.Channeling is {} channeling && ++execCount < channeling.Ticks)
@@ -433,6 +446,15 @@ public class BattleStateMachine : MonoBehaviour
 #endif
             Processing.Remove(unit);
             unit.Profile.ChargeTotal = unit.Profile.ChargeLeft = 0f;
+        }
+
+        static IEnumerator TrackingCoroutine(IEnumerable enumerator, Action onEnd)
+        {
+            foreach (var yield in enumerator)
+            {
+                yield return yield;
+            }
+            onEnd.Invoke();
         }
     }
 

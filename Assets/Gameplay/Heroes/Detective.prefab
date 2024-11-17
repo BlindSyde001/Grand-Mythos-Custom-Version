@@ -119,6 +119,10 @@ MonoBehaviour:
     - Action: {fileID: 11400000, guid: 565824b87e5b38b4f81e0b21ba8eaceb, type: 2}
       Animation:
         rid: 7380285029310791803
+  Hurt:
+    rid: 5987214973894131728
+  Death:
+    rid: 5987214973894131730
   FallbackAnimation:
     rid: 7380285059924230144
   Inventory:
@@ -149,6 +153,16 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 5987214973894131728
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
+      data:
+        StateName: Hurt
+        Layer: 0
+    - rid: 5987214973894131730
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
+      data:
+        StateName: Die
+        Layer: 0
     - rid: 6655646579991773188
       type: {class: ElementalAmmoSpecial, ns: Characters.Special, asm: Grand-Mythos}
       data:

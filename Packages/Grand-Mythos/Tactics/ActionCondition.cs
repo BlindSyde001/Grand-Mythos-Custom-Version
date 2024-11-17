@@ -48,7 +48,7 @@ public class ActionCondition : IdentifiableScriptableObject
 
         context.ExecutionFlags.Clear();
 
-        if (context.Profile.EffectiveStats.HP == 0)
+        if (context.Profile.CurrentHP == 0)
         {
             context.Tracker?.PostDead(context.Controller.Profile);
             return false;
