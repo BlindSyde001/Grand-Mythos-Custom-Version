@@ -317,113 +317,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 2680674816035063547}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e92033f8627c69c49aeba77820a741c8, type: 3}
+  m_Script: {fileID: 11500000, guid: a65ebc7c71a747e69a59b694d426502e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   MixerGroup: {fileID: 0}
   AdvancesAutomatically: 0
   FastForward:
-    rid: 5987214954364141789
-  DialogChoiceTemplate: {fileID: 3903608433695122877}
+    rid: 4236399064818122752
+  DialogChoiceTemplate: {fileID: 0}
   OnNewLine:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4740775549840659345}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 7414985942904326936}
-        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-        m_MethodName: set_text
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1546717455469476336}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnLineFullyVisible:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1546717455469476336}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
   SetHowManyCharactersAreVisible:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7414985942904326936}
-        m_TargetAssemblyTypeName: TMPro.TMP_Text, Unity.TextMeshPro
-        m_MethodName: set_maxVisibleCharacters
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnStart:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2680674816035063547}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
   OnEnd:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2680674816035063547}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnChoicePresented:
     m_PersistentCalls:
       m_Calls: []
@@ -433,10 +349,10 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 5987214954364141789
+    - rid: 4236399064818122752
       type: {class: DialogUIComponent/InputFastForward, ns: Screenplay.Component, asm: Screenplay}
       data:
-        Input: {fileID: 4537649827939660774, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
+        Input: {fileID: 0}
 --- !u!223 &2888054888757496249
 Canvas:
   m_ObjectHideFlags: 0
@@ -986,7 +902,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
+  m_fontSize: 36.2
   m_fontSizeBase: 29.37
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1330,7 +1246,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5741131028128705213}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5b8f2d337f8b294a9a4d87fcbcbdf8a, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d21b5928c074299a7f787a981a8a3d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Label: {fileID: 2465922428728679536}
