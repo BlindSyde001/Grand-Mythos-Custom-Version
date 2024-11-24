@@ -90,7 +90,7 @@ public class BattleStateMachine : MonoBehaviour
 
         var chargingUnits = new List<(BattleCharacterController unit, Tactics tactic, List<BattleCharacterController> targets)>();
         bool win;
-        BetterCoroutine busy = null;
+        BetterCoroutine busy = BetterCoroutine.Empty;
         while (IsBattleFinished(out win) == false)
         {
             if (Blocked != 0)
@@ -106,7 +106,7 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
 
-            for (int i = 0; i < chargingUnits.Count && busy is null; i++)
+            for (int i = 0; i < chargingUnits.Count && busy.Done; i++)
             {
                 var (unit, tactic, targets) = chargingUnits[i];
                 if (unit.Profile.CurrentHP == 0)
@@ -134,7 +134,7 @@ public class BattleStateMachine : MonoBehaviour
                 chargingUnits.RemoveAt(i--);
             }
 
-            while ((busy is null || busy.Done) && Queue.Count > 0)
+            while (busy.Done && Queue.Count > 0)
             {
                 var unit = Queue[0];
                 if (unit.Profile.CurrentHP == 0 || unit.Profile.PauseLeft > 0) // Remove any invalid units
@@ -252,10 +252,12 @@ public class BattleStateMachine : MonoBehaviour
             yield return null; // Wait for next frame
         }
 
-        while (busy?.Done == false) // Finish whatever animation/effect is currently playing
+        while (busy.Done == false) // Finish whatever animation/effect is currently playing
         {
             yield return null;
         }
+
+        yield return new WaitForSeconds(1.0f);
         
         _finishedTcs?.SetResult(win);
         
