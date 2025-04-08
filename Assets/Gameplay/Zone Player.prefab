@@ -3498,20 +3498,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Control:
-    rid: 5399134383011266562
+    rid: 8872251971614539781
   references:
     version: 2
     RefIds:
-    - rid: 5399134383011266562
-      type: {class: OrbitCamera, ns: , asm: Grand-Mythos}
-      data:
-        Input: {fileID: -7085994932723323525, guid: b8e66e33629bdc0468bff427f3a45405, type: 3}
-        Distance: 3
-        MinimumAngle: -90
-        MaximumAngle: 90
-        ObstructionMask:
-          serializedVersion: 2
-          m_Bits: 1
+    - rid: 8872251971614539781
+      type: {class: PointOfViewPicker, ns: , asm: Grand-Mythos}
+      data: 
 --- !u!1 &8664870415155064655
 GameObject:
   m_ObjectHideFlags: 0
