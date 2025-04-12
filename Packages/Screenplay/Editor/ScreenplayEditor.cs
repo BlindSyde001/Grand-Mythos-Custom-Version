@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Screenplay.Component;
 using Source.Screenplay.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -62,6 +63,12 @@ namespace Screenplay.Editor
                 TryGetEditorFromValue(value)!.InPreviewPath = false;
 
             TryPreview();
+
+            var dispatcher = FindObjectOfType<ScreenplayDispatcher>();
+            if (dispatcher == null)
+                EditorGUILayout.HelpBox("Add a ScreenplayDispatcher to the scene to run this screenplay", MessageType.Warning);
+            else if (dispatcher.Screenplay != Graph)
+                EditorGUILayout.HelpBox("The existing ScreenplayDispatcher doesn't run with this screenplay, you might want to assign it to this screenplay", MessageType.Warning);
         }
 
         [ThreadStatic]
