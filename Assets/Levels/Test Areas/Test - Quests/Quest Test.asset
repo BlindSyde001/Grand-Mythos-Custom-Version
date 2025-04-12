@@ -77,6 +77,8 @@ MonoBehaviour:
   - rid: 5987214953964372289
   - rid: 5987214953964372294
   - rid: 5987214953964372301
+  - rid: 8872252081481188294
+  - rid: 8872252081620124036
   DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
   DebugRetainProgressInEditor: 0
   __visitedSerializationProxy: []
@@ -382,7 +384,7 @@ MonoBehaviour:
           rid: -2
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 5481695724524426382
               b: 4206462400526382736
@@ -537,7 +539,7 @@ MonoBehaviour:
         _position: {x: -344, y: -72}
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 4797533574841619915
               b: 12592591845004752016
@@ -549,7 +551,7 @@ MonoBehaviour:
         _position: {x: -216, y: -856}
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 5072025142244550892
               b: 5565431516612477628
@@ -561,7 +563,7 @@ MonoBehaviour:
         _position: {x: -216, y: -1624}
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 5642555961003901542
               b: 17853713174197990583
@@ -592,7 +594,7 @@ MonoBehaviour:
           rid: -2
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 5642555961003901542
               b: 17853713174197990583
@@ -611,7 +613,7 @@ MonoBehaviour:
           rid: -2
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 5642555961003901542
               b: 17853713174197990583
@@ -642,7 +644,7 @@ MonoBehaviour:
           rid: -2
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 5642555961003901542
               b: 17853713174197990583
@@ -678,7 +680,7 @@ MonoBehaviour:
         _position: {x: -56, y: -2440}
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 4966276607102907297
               b: 14157658774059562926
@@ -752,7 +754,7 @@ MonoBehaviour:
           rid: -2
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 5551650575009075414
               b: 9110074068865265809
@@ -766,7 +768,7 @@ MonoBehaviour:
           rid: -2
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test Quests.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
             _objId:
               a: 5551650575009075414
               b: 9110074068865265809
@@ -795,3 +797,31 @@ MonoBehaviour:
         _position: {x: 72, y: -2200}
         A:
           rid: 5987214953964372294
+    - rid: 8872252081481188294
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 56, y: -3000}
+        Name: My Unnamed Event
+        Action:
+          rid: 8872252081620124036
+        Repeatable: 0
+        Prerequisite:
+          rid: -2
+        TriggerSource:
+          rid: -2
+    - rid: 8872252081620124036
+      type: {class: Navigate, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 408, y: -3000}
+        Next:
+          rid: -2
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test - Quests.unity
+            _objId:
+              a: 5339318991742213551
+              b: 11497939517449922692
+            _sceneAsset: {fileID: 102900000, guid: c525c951fdd115240a8953764cf1dbc6, type: 3}
+        Destination: {x: -0.3141184, y: 0.037213586, z: -14.826731}
+        Rotation: {x: 0, y: -0.01897806, z: 0, w: -0.99981993}
+        RotationDuration: 0.5

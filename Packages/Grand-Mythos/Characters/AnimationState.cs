@@ -13,13 +13,13 @@ public struct AnimationState
     {
         if (animator is null)
         {
-            message = $"{nameof(animator)} does not have any {nameof(Animator)}";
+            message = $"{nameof(animator)} is null";
             return false;
         }
 
         if (animator.runtimeAnimatorController == null)
         {
-            message = $"The {nameof(animator)} {nameof(Animator)}'s controller is null";
+            message = $"{animator}'s controller is null";
             return false;
         }
 
