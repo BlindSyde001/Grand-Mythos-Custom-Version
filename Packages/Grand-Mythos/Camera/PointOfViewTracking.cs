@@ -1,16 +1,18 @@
 ﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class PointOfViewFixed : PointOfViewBase
+public class PointOfViewTracking : PointOfViewBase
 {
     public Vector3 FixedPosition = Vector3.one;
-    public Quaternion FixedRotation = Quaternion.Euler(45f, 45f, 45f);
 
     public override void ComputeWorldTransform(Vector3 worldPosFocus, out Vector3 position, out Quaternion rotation)
     {
-        var matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one) * Matrix4x4.TRS(FixedPosition, FixedRotation, Vector3.one);
-        rotation = matrix.rotation;
+        var matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one) * Matrix4x4.Translate(FixedPosition);
         position = matrix.GetPosition();
+        var dir = Vector3.Normalize(worldPosFocus - position);
+        if (dir == Vector3.zero)
+            dir = Vector3.Normalize(transform.position - position);
+        rotation = Quaternion.LookRotation(dir, transform.up);
     }
 
 #if UNITY_EDITOR
@@ -18,8 +20,7 @@ public class PointOfViewFixed : PointOfViewBase
     {
         var matrix = UnityEditor.Handles.matrix;
         UnityEditor.Handles.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
-        FixedPosition = UnityEditor.Handles.PositionHandle(FixedPosition, FixedRotation);
-        FixedRotation = UnityEditor.Handles.RotationHandle(FixedRotation, FixedPosition);
+        FixedPosition = UnityEditor.Handles.PositionHandle(FixedPosition, Quaternion.identity);
         UnityEditor.Handles.matrix = matrix;
     }
 
@@ -27,7 +28,7 @@ public class PointOfViewFixed : PointOfViewBase
     {
         base.OnDrawGizmosSelected();
         
-        ComputeWorldTransform(default, out var position, out var rotation);
+        ComputeWorldTransform(transform.position, out var position, out var rotation);
         
         var matrix = Gizmos.matrix;
         Gizmos.matrix = Matrix4x4.TRS(position, rotation, Vector3.one);
@@ -51,7 +52,6 @@ public class PointOfViewFixed : PointOfViewBase
 
             var invQ = Quaternion.Inverse(transform.rotation);
             FixedPosition = invQ * (viewTransform.position - transform.position);
-            FixedRotation = invQ * viewTransform.rotation;
         }
     }
 #endif
