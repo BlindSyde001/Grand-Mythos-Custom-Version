@@ -1,4 +1,5 @@
 ﻿using System;
+using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -31,7 +32,7 @@ namespace Effects
         [HorizontalGroup("Crit"), SuffixLabel("x added crit damage"), HideLabel, FormerlySerializedAs("CritMultiplier")]
         public float AdditionalCritMultiplier = 2.5f;
 
-        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(BattleCharacterController[] targets, QTEResult result, EvaluationContext context)
         {
             Formulas.GetCritModifiersBasedOnLuck(context.Profile.EffectiveStats.Luck, out var luckBasedChance, out var luckBasedMult);
             float critChanceTotal = CanCrit ? AdditionalCritChance + luckBasedChance : 0f;
@@ -40,24 +41,24 @@ namespace Effects
             float targetFlowScaler = SingletonManager.Instance.Formulas.TargetFlowScaler;
             foreach (var target in targets)
             {
-                var damageScaling = new ComputableDamageScaling
-                {
-                    Attribute = Attribute,
-                    BaseValue = Amount,
-                    CritChanceTotal = critChanceTotal,
-                    CritDeltaMultiplier = critDamageMultiplier,
-                    Scaling = Scaling,
-                    VarianceBase = Variance,
-                    VarianceRolled = context.Random.NextInt(-Variance, Variance+1),
-                    CritChanceRolled = context.Random.NextFloat(0f, 100f),
-                    SourceAttackStat = context.Profile.EffectiveStats.Attack,
-                    SourceMagicAttackStat = context.Profile.EffectiveStats.MagAttack,
-                    Element = Element,
-                    ResistanceFire = target.Profile.ResistanceFire,
-                    ResistanceIce = target.Profile.ResistanceIce,
-                    ResistanceLightning = target.Profile.ResistanceLightning,
-                    ResistanceWater = target.Profile.ResistanceWater,
-                };
+                ComputableDamageScaling damageScaling; 
+                damageScaling.Attribute = Attribute;
+                damageScaling.BaseValue = Amount;
+                damageScaling.CritChanceTotal = critChanceTotal;
+                damageScaling.CritDeltaMultiplier = critDamageMultiplier;
+                damageScaling.Scaling = Scaling;
+                damageScaling.VarianceBase = Variance;
+                damageScaling.VarianceRolled = context.Random.NextInt(-Variance, Variance+1);
+                damageScaling.CritChanceRolled = context.Random.NextFloat(0f, 100f);
+                damageScaling.QTEScaler = result;
+                damageScaling.SourceAttackStat = context.Profile.EffectiveStats.Attack;
+                damageScaling.SourceMagicAttackStat = context.Profile.EffectiveStats.MagAttack;
+                damageScaling.Element = Element;
+                damageScaling.ResistanceFire = target.Profile.ResistanceFire;
+                damageScaling.ResistanceIce = target.Profile.ResistanceIce;
+                damageScaling.ResistanceLightning = target.Profile.ResistanceLightning;
+                damageScaling.ResistanceWater = target.Profile.ResistanceWater;
+                damageScaling.Missed = false;
 
                 int initialAttributeValue = target.Profile.GetAttribute(Attribute);
                 int maxAttributeValue = target.Profile.GetAttributeMax(Attribute);

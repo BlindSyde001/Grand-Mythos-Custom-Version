@@ -2336,6 +2336,7 @@ GameObject:
   - component: {fileID: 5499571375476056520}
   - component: {fileID: 8219100651902672282}
   - component: {fileID: 5499571376176062029}
+  - component: {fileID: 6997613595630548625}
   m_Layer: 0
   m_Name: Battle - Enemy Model
   m_TagString: Untagged
@@ -2379,11 +2380,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Profile: {fileID: 0}
-  DeathAnimation:
-    StateName: Die
-    Layer: 0
   IdleAnimation:
     StateName: Stance
+    Layer: 0
+  DeathAnimation:
+    StateName: Die
     Layer: 0
   Animator: {fileID: 5499571376176062029}
 --- !u!95 &5499571376176062029
@@ -2407,6 +2408,26 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6997613595630548625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5499571375476555240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aac28e5caee4aef9e95e57320ffd035, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OutlineMaterial: {fileID: 2100000, guid: 91cdef6983a5daa42b98d6a7759d75c6, type: 2}
+  OutlineObjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &5499571375476555242
 GameObject:
   m_ObjectHideFlags: 0

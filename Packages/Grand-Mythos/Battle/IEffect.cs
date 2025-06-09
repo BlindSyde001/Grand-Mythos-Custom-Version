@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
+using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 [InlineProperty]
 public interface IEffect
 {
-    void Apply(BattleCharacterController[] targets, EvaluationContext context);
+    void Apply(BattleCharacterController[] targets, QTEResult result, EvaluationContext context);
     /// <summary> Describes the effect in a human-readable format </summary>
     string UIDisplayText { get; }
 

@@ -1,6 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using UnityEngine.InputSystem;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine.UI;
 
 
@@ -11,6 +10,6 @@ public interface IDisposableMenuProvider
 
 public interface IDisposableMenu<T>
 {
-    Button NewButton(string label, T item, [MaybeNull] string onHover = null, bool interactable = true);
-    Task<T> SelectedItem();
+    Button NewButton(string label, T item, string? onHover = null, bool interactable = true);
+    UniTask<T?> SelectedItem(CancellationToken cancellation);
 }

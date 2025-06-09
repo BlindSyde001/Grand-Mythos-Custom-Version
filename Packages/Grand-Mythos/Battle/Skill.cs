@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Battle;
+using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -21,13 +20,10 @@ public class Skill : IdentifiableScriptableObject, IAction
 
     public int ManaCost;
 
+    public IAction.Delay DelayToNextTurn = IAction.Delay.Base;
+
     [Tooltip("When this action is used, should the skill attached to the unit's weapon proc")]
     public bool ProcAttachedSkills = false;
-
-    [Tooltip("How long the character has to charge the action before it can be executed")]
-    public float ChargeDuration = 0f;
-
-    [SerializeReference, MaybeNull] public Channeling Channeling;
 
     [Space]
     [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
@@ -49,11 +45,9 @@ public class Skill : IdentifiableScriptableObject, IAction
 
     public AnimationClip CameraAnimation;
 
-
-    float IAction.ChargeDuration => ChargeDuration;
-    Channeling IAction.Channeling => Channeling;
     Condition IAction.TargetFilter => TargetConstraint;
     Condition IAction.Precondition => PreconditionToUse;
+    IAction.Delay IAction.DelayToNextTurn => DelayToNextTurn;
     AnimationClip IAction.CameraAnimation => CameraAnimation;
     int IAction.ManaCost => ManaCost;
 
@@ -61,13 +55,13 @@ public class Skill : IdentifiableScriptableObject, IAction
     string IAction.Name => name;
     public string Description => string.IsNullOrWhiteSpace(_description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : _description;
 
-    public void Perform(BattleCharacterController[] targets, EvaluationContext context)
+    public void Perform(BattleCharacterController[] targets, QTEResult result, EvaluationContext context)
     {
         context.Profile.CurrentMP -= ManaCost;
         
         foreach (var effect in Effects)
         {
-            effect.Apply(targets, context);
+            effect.Apply(targets, result, context);
         }
 
         if (!ProcAttachedSkills
@@ -113,7 +107,7 @@ public class Skill : IdentifiableScriptableObject, IAction
 
         foreach (var effect in attachedSkill.Effects)
         {
-            effect.Apply(attachmentFilteredTargets, context);
+            effect.Apply(attachmentFilteredTargets, result, context);
         }
 
         attachedSkill.TargetConstraint?.NotifyUsedCondition(attachmentTargets, context);

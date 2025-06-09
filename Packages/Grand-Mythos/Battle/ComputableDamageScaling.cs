@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using QTE;
 
 public struct ComputableDamageScaling
 {
@@ -11,6 +11,8 @@ public struct ComputableDamageScaling
     public int VarianceBase;
     public int VarianceRolled;
     public float CritChanceRolled;
+
+    public QTEResult QTEScaler;
 
     public int SourceAttackStat;
     public int SourceMagicAttackStat;
@@ -28,7 +30,7 @@ public struct ComputableDamageScaling
         if (Missed)
             return;
 
-        float delta = BaseValue + VarianceRolled;
+        double delta = BaseValue + VarianceRolled;
         delta *= CritChanceRolled < CritChanceTotal ? CritDeltaMultiplier : 1f;
         delta = Scaling switch
         {
@@ -48,8 +50,15 @@ public struct ComputableDamageScaling
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        delta *= (float)resistance / 100f;
-        currentValue = Mathf.RoundToInt(currentValue + delta); 
+        delta *= (double)resistance / 100.0;
+        delta *= QTEScaler switch
+        {
+            QTEResult.Failure => 0,
+            QTEResult.Correct => 1,
+            QTEResult.Success => 2,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        currentValue = currentValue + (int)delta; 
     }
 
     public enum ScalingType

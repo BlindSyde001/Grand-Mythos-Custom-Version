@@ -1,4 +1,5 @@
 ﻿using System;
+using QTE;
 using Sirenix.OdinInspector;
 
 namespace Effects
@@ -12,12 +13,13 @@ namespace Effects
         public int Value = 100;
         public int Variance = 0;
 
-        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(BattleCharacterController[] targets, QTEResult result, EvaluationContext context)
         {
             foreach (var target in targets)
             {
                 int val = Value + UnityEngine.Random.Range(-Variance, Variance+1);
-                target.Profile.SetAttribute(Attribute, val);
+                if (result is QTEResult.Correct or QTEResult.Success)
+                    target.Profile.SetAttribute(Attribute, val);
             }
         }
 

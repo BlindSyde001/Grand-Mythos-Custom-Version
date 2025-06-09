@@ -3,6 +3,6 @@ using UnityEngine.Events;
 
 public class BattleTooltipUI : MonoBehaviour
 {
-    public UnityEvent<string> OnPresentNewTooltip;
-    public UnityEvent OnHideTooltip;
+    public UnityEvent<string>? OnPresentNewTooltip;
+    public UnityEvent? OnHideTooltip;
 }

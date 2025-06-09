@@ -9,11 +9,11 @@ namespace Characters
     public struct AppliedModifier
     {
         [ConstrainedType(typeof(IModifier)), ValidateInput(nameof(IsIModifier), "Must be an IAction, skill or consumable")]
-        [SerializeField] ScriptableObject _object;
-        [SerializeReference, ReadOnly] private IModifier _modRef;
+        [SerializeField] ScriptableObject? _object;
+        [SerializeReference, ReadOnly] private IModifier? _modRef;
 
         public double CreationTimeStamp;
-        [MaybeNull] public CharacterTemplate Source;
+        [MaybeNull] public CharacterTemplate? Source;
 
         public IModifier Modifier
         {
@@ -40,7 +40,7 @@ namespace Characters
             return obj is IModifier;
         }
 
-        public AppliedModifier(EvaluationContext context, IModifier modifier, [MaybeNull] CharacterTemplate source)
+        public AppliedModifier(EvaluationContext context, IModifier modifier, [MaybeNull] CharacterTemplate? source)
         {
             _object = null;
             _modRef = null;

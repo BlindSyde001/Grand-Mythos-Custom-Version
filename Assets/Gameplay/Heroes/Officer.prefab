@@ -97,9 +97,6 @@ MonoBehaviour:
   StatusResistances:
     m_Keys: []
     m_Values: 
-  PauseLeft: 0
-  ChargeLeft: 0
-  ChargeTotal: 0
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
     _backingArray: []
@@ -122,6 +119,12 @@ MonoBehaviour:
     rid: 5987214973894131741
   Death:
     rid: 5987214973894131738
+  Shield:
+    rid: 1936692569947504884
+  Dodge:
+    rid: 1936692569947504883
+  Parry:
+    rid: 1936692569947504882
   FallbackAnimation:
     rid: 7380285059924230148
   Inventory:
@@ -154,6 +157,21 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 1936692569947504882
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
+      data:
+        StateName: Jump
+        Layer: 0
+    - rid: 1936692569947504883
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
+      data:
+        StateName: Jump
+        Layer: 0
+    - rid: 1936692569947504884
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
+      data:
+        StateName: Jump
+        Layer: 0
     - rid: 5987214973894131738
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:

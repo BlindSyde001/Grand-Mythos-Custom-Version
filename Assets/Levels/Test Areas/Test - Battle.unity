@@ -733,10 +733,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa24ba1c24a87f344b4dab225a2a25e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AllowHostileActionWhilePlayerIdles: 1
   PlayerTeam: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
   Intro: {fileID: 7400000, guid: e5e2c1a45a8123e4c833ee188f9c4e6b, type: 2}
   Outro: {fileID: 7400000, guid: 159f46b855920184eadf28b9950f68ee, type: 2}
+  UIOperation: {fileID: 155364975}
   BattleResolution: {fileID: 155364970}
   HeroSpawns:
   - {fileID: 1829077270}
@@ -833,7 +833,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BattleManagement: {fileID: 155364969}
-  UnitSelected: {fileID: 0}
   HeroUIData:
   - {fileID: 179948430389475224}
   - {fileID: 2136112064}

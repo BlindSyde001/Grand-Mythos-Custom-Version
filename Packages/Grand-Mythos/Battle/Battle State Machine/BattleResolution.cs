@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class BattleResolution : MonoBehaviour
 {
@@ -56,33 +60,29 @@ public class BattleResolution : MonoBehaviour
     }
 
     // METHODS
-    public IEnumerable ResolveBattle(bool victory, BattleStateMachine battleStateMachine)
+    public async UniTask ResolveBattle(bool victory, BattleStateMachine battleStateMachine, CancellationToken cancellation)
     {
         if (victory)
             OnWin?.Invoke();
         else
             OnLose?.Invoke();
-        var enumerator = VideoAnimator.PlayVideoClip(VideoAnimator.videoClips[victory ? 0 : 1]);
-        while (enumerator.MoveNext())
-            yield return enumerator.Current;
+        await VideoAnimator.PlayVideoClip(VideoAnimator.videoClips[victory ? 0 : 1], cancellation);
 
         if (victory)
         {
-            foreach (var yields in ActivatePanel())
-                yield return yields;
-            foreach (var yields in DistributeRewards(battleStateMachine))
-                yield return yields;
+            await ActivatePanel(cancellation);
+            await DistributeRewards(battleStateMachine, cancellation);
         }
         else
         {
             LosePanel.SetActive(true);
         }
     }
-    IEnumerable ActivatePanel()
+    async UniTask ActivatePanel(CancellationToken cancellation)
     {
         RewardBackground.DOFillAmount(1, speed);                                   // Cool Anim Effect
         HeroGridBackground.DOFillAmount(1, speed);                                 // Cool Anim effect
-        yield return new WaitForSeconds(speed);
+        await UniTask.Delay(TimeSpan.FromSeconds(1f), cancellationToken: cancellation);
         for (int i = 0; i < GameManager.Instance.PartyLineup.Count; i++)         // Setting UI Numbers
         {
             HeroPanels[i].gameObject.SetActive(true);
@@ -96,7 +96,7 @@ public class BattleResolution : MonoBehaviour
         CurrencyRewards.gameObject.SetActive(true);
     }
 
-    IEnumerable DistributeRewards(BattleStateMachine battle)
+    async UniTask DistributeRewards(BattleStateMachine battle, CancellationToken cancellation)
     {
         int sharedExp = 0;
         int creditsEarned = 0;
@@ -128,7 +128,7 @@ public class BattleResolution : MonoBehaviour
         activateUpdate = true;
         InventoryManager.Instance.Credits += creditsEarned;
 
-        yield return new WaitForSeconds(duration * 2);
+        await UniTask.Delay(TimeSpan.FromSeconds(duration * 2), cancellationToken: cancellation);
 
         foreach (PartyContainer a in HeroPanels)
             a.gameObject.SetActive(false);
@@ -163,7 +163,7 @@ public class BattleResolution : MonoBehaviour
         foreach (var drop in itemsDropped)
             InventoryManager.Instance.AddToInventory(drop.item, drop.count);
 
-        yield return new WaitForSeconds(duration);
+        await UniTask.Delay(TimeSpan.FromSeconds(duration), cancellationToken: cancellation);
 
         ReturnToOverworld(battle);
     }

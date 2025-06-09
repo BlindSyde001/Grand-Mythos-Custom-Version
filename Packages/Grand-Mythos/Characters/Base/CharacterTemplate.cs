@@ -74,12 +74,6 @@ public class CharacterTemplate : MonoBehaviour
 
     public float ActionRechargeSpeed => EffectiveStats.Speed;
 
-    [BoxGroup("ATB"), PropertyRange(0, 1), ReadOnly]
-    public float PauseLeft;
-
-    [BoxGroup("ATB"), ReadOnly]
-    public float ChargeLeft, ChargeTotal;
-
     [BoxGroup("SKILLS"), Required]
     public Skill BasicAttack;
 
@@ -108,6 +102,21 @@ public class CharacterTemplate : MonoBehaviour
     [Tooltip("When this unit dies")]
     [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
     public IActionAnimation Death;
+    
+    [BoxGroup("ANIMATIONS/Shield")]
+    [Tooltip("When this unit shields")]
+    [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
+    public IActionAnimation Shield;
+    
+    [BoxGroup("ANIMATIONS/Dodge")]
+    [Tooltip("When this unit dodges")]
+    [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
+    public IActionAnimation Dodge;
+    
+    [BoxGroup("ANIMATIONS/Parry")]
+    [Tooltip("When this unit parries")]
+    [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
+    public IActionAnimation Parry;
 
     [BoxGroup("ANIMATIONS/Fallback Animation")]
     [Tooltip("When this unit performs an action that hasn't been added to the list above, this animation will run to ensure the unit doesn't look idle")]

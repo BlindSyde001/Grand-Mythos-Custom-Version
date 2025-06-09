@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using JetBrains.Annotations;
-using Sirenix.OdinInspector;
+using QTE;
 using UnityEngine;
 
 namespace ActionAnimation
@@ -12,13 +14,13 @@ namespace ActionAnimation
         [SerializeReference]
         public IActionAnimation[] Animations = Array.Empty<IActionAnimation>();
 
-        public IEnumerable Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets)
+        public async IAsyncEnumerable<(QTEStart qte, double start, float duration)> Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets, [EnumeratorCancellation] CancellationToken cancellation)
         {
             foreach (var animation in Animations)
             {
-                foreach (var yield in animation.Play(action, controller, targets))
+                await foreach (var qteData in animation.Play(action, controller, targets, cancellation))
                 {
-                    yield return yield;
+                    yield return qteData;
                 }
             }
         }

@@ -1,7 +1,11 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
-using Sirenix.OdinInspector;
+using QTE;
 using UnityEngine;
 
 namespace ActionAnimation
@@ -12,28 +16,26 @@ namespace ActionAnimation
         [SerializeReference]
         public IActionAnimation[] Animations = Array.Empty<IActionAnimation>();
 
-        public IEnumerable Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets)
+        public async IAsyncEnumerable<(QTEStart qte, double start, float duration)> Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets, [EnumeratorCancellation] CancellationToken cancellation)
         {
-            if (BattleStateMachine.TryGetInstance(out var bts) == false)
-                yield break;
-
-            int[] runningCounter = new int[1]; // Using an array here to share read and writes
+            int amount = Animations.Length;
+            var channel = Channel.CreateSingleConsumerUnbounded<(QTEStart qte, double start, float duration)>();
             foreach (var animation in Animations)
+                _ = Wrapper(animation);
+
+            await foreach (var v in channel.Reader.ReadAllAsync(cancellation))
             {
-                runningCounter[0]++;
-                // Have to run it through StartCoroutine since there is no clean way to handle concurrent WaitForSeconds and other YieldInstructions
-                bts.StartCoroutine(PlayWrapper(animation, action, controller, targets, runningCounter).GetEnumerator());
+                yield return v;
             }
 
-            while (runningCounter[0] != 0)
-                yield return null;
-        }
+            async Task Wrapper(IActionAnimation animation)
+            {
+                await foreach (var qteData in animation.Play(action, controller, targets, cancellation))
+                    channel.Writer.TryWrite(qteData);
 
-        IEnumerable PlayWrapper(IActionAnimation animation, IAction action, BattleCharacterController controller, BattleCharacterController[] targets, int[] running)
-        {
-            foreach (var yield in animation.Play(action, controller, targets))
-                yield return yield;
-            running[0]--;
+                if (Interlocked.Decrement(ref amount) == 0)
+                    channel.Writer.Complete();
+            }
         }
 
         public bool Validate([CanBeNull]IAction action, CharacterTemplate template, ref string message)

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using StatusHandler;
-using UnityEngine.InputSystem;
 
 namespace Characters.Special
 {
@@ -15,23 +14,22 @@ namespace Characters.Special
 
         public string ButtonLabel => "Elemental Ammo";
 
-        public IEnumerable OnButtonClicked(BattleCharacterController character, IDisposableMenuProvider menuProvider, Func<IAction, IEnumerable> presentTargetUI)
+        public async UniTask<Tactics?> OnButtonClicked(BattleCharacterController character, IDisposableMenuProvider menuProvider, Func<BattleCharacterController, IAction, CancellationToken, UniTask<Tactics?>> presentTargetUI, CancellationToken cancellation)
         {
-            var elementMenu = menuProvider.NewMenuOf<Element>(nameof(ElementalAmmoSpecial));
+            var elementMenu = menuProvider.NewMenuOf<Element?>(nameof(ElementalAmmoSpecial));
             for (Element v = default; v <= Element.Last; v++)
                 elementMenu.NewButton(v.ToString(), v);
 
-            var task = elementMenu.SelectedItem();
-            while (task.IsCompleted == false)
-                yield return null;
+            var t = await elementMenu.SelectedItem(cancellation);
+            if (t is { } selectedValue)
+            {
+                if (character.Profile.Modifiers.FirstOrDefault(x => x.Modifier is ElementalAmmo) is not {Modifier: ElementalAmmo ammo})
+                    character.Profile.Modifiers.Add(new AppliedModifier(character.Context, ammo = UnityEngine.Object.Instantiate(AssociatedStatus), null));
 
-            if (task.IsCanceled)
-                yield break;
+                ammo.Element = selectedValue;
+            }
 
-            if (character.Profile.Modifiers.FirstOrDefault(x => x.Modifier is ElementalAmmo) is not {Modifier: ElementalAmmo ammo})
-                character.Profile.Modifiers.Add(new AppliedModifier(character.Context, ammo = UnityEngine.Object.Instantiate(AssociatedStatus), null));
-
-            ammo.Element = task.Result;
+            return null;
         }
 
         public void OnBattleStart(BattleCharacterController character)

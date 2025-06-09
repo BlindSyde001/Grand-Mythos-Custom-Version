@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using Conditions;
+using Cysharp.Threading.Tasks;
 using Effects;
 using JetBrains.Annotations;
 using Sirenix.OdinInspector;
@@ -14,16 +14,12 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 {
     const bool MultiSelection = false;
 
     public BattleStateMachine BattleManagement;
-
-    [Header("Selected Character")]
-    [ReadOnly, CanBeNull] public BattleCharacterController UnitSelected;
 
     [Header("UI Info")]
     public List<HeroPrefabUIData> HeroUIData;
@@ -61,9 +57,6 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     public SerializableHashSet<BattleCharacterController> ProcessedUnits = new();
 
-    (Coroutine coroutine, IDisposable disposable)? _runningUIOperation;
-    bool _listenerBound;
-
     List<(GameObject cursor, BattleCharacterController? unit)> _targetCursors = new();
     Queue<(float availableAfter, DamageText component)> _damageTextCache = new();
 
@@ -89,21 +82,13 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         TooltipUI.OnHideTooltip.Invoke();
         ResetNavigation();
         HideNavigation();
-        if (_listenerBound == false)
-        {
-            _listenerBound = true;
-            Attack.onClick.AddListener(() => TryOrderWizard(PresentAttackUI()));
-            Repeat.onClick.AddListener(() => TryOrderWizard(PresentTargetSelectionUI(_lastAction[UnitSelected!])));
-            Skills.onClick.AddListener(() => TryOrderWizard(PresentSkillsUI()));
-            Items.onClick.AddListener(() => TryOrderWizard(PresentItemUI()));
 
-            foreach (var ui in HeroUIData)
-            {
-                for (int i = ui.ModifierContainer.childCount - 1; i >= 0; i--)
-                    Destroy(ui.ModifierContainer.transform.GetChild(i).gameObject);
-                for (int i = ui.ModifierContainer2.childCount - 1; i >= 0; i--)
-                    Destroy(ui.ModifierContainer2.transform.GetChild(i).gameObject);
-            }
+        foreach (var ui in HeroUIData)
+        {
+            for (int i = ui.ModifierContainer.childCount - 1; i >= 0; i--)
+                Destroy(ui.ModifierContainer.transform.GetChild(i).gameObject);
+            for (int i = ui.ModifierContainer2.childCount - 1; i >= 0; i--)
+                Destroy(ui.ModifierContainer2.transform.GetChild(i).gameObject);
         }
 
         AttributeAdd.OnApplied += DamageHandler;
@@ -150,38 +135,32 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         _damageTextCache.Enqueue((Time.time + damageText.Lifetime, damageText));
     }
 
-    [MaybeNull] private IEnumerable _infoPanelRunning;
+    [MaybeNull] private bool _infoPanelRunning;
 
     void Update()
     {
-        if (_infoPanelRunning is not null)
+        if (_infoPanelRunning)
             return;
 
         if (DetailedInfoPanelOpen.action.WasPerformedThisFrameUnique())
         {
-            _infoPanelRunning = DetailedInfoPanel.OpenAndAwaitClose(BattleManagement.Units.Select(x => x.Profile).ToArray());
-            BattleManagement.Blocked |= BlockBattleFlags.DetailedInfoOpen;
-            StartCoroutine(RunningPanelWatcher());
+            _infoPanelRunning = true;
+            _ = RunningPanelWatcher();
 
-            IEnumerator RunningPanelWatcher()
+            async UniTask RunningPanelWatcher()
             {
                 try
                 {
-                    foreach (var yield in _infoPanelRunning)
-                    {
-                        yield return yield;
-                    }
+                    await DetailedInfoPanel.OpenAndAwaitClose(BattleManagement.Units.Select(x => x.Profile).ToArray(), this.destroyCancellationToken);
                 }
                 finally
                 {
-                    BattleManagement.Blocked &= ~BlockBattleFlags.DetailedInfoOpen;
-                    _infoPanelRunning = null;
+                    _infoPanelRunning = false;
                 }
             }
         }
         
         UpdateScene();
-        UpdateSelected();
     }
 
     void UpdateScene()
@@ -233,8 +212,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             var hero = HeroData[i];
             ui.gameObject.SetActive(true);
             ui.CharacterIcon.sprite = hero.Portrait;
-            ui.ChargeBar.fillAmount = hero.ChargeTotal == 0 ? 0 : 1f - hero.ChargeLeft / hero.ChargeTotal;
-            ui.AtbBar.fillAmount = 1f - hero.PauseLeft;
+            ui.ChargeBar.fillAmount = 0;
+            ui.AtbBar.fillAmount = 0;
             //ui.HealthBar.fillAmount = (float)hero.CurrentHP / hero.EffectiveStats.HP;
             //ui.ManaBar.fillAmount = (float)hero.CurrentMP / hero.EffectiveStats.MP;
             ui.FlowBar.fillAmount = hero.CurrentFlow / 100f;
@@ -305,88 +284,94 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         }
     }
 
-    private void UpdateSelected()
+    public async UniTask<Tactics> RunUIFor(BattleCharacterController unit, List<BattleCharacterController> targetsAvailable, CancellationToken cancellation)
     {
-        Repeat.interactable = UnitSelected != null && _lastAction.ContainsKey(UnitSelected);
-
-        var characterReady = BattleManagement.Queue.FirstOrDefault(x => x.Profile.Team == BattleManagement.PlayerTeam && BattleManagement.Orders.ContainsKey(x) == false);
-        if (characterReady != UnitSelected)
+        Tactics tactic;
+        try
         {
-            if (UnitSelected != null)
-                HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].Highlight.gameObject.SetActive(false);
-            
-            UnitSelected = characterReady;
-            ResetNavigation();
-            if (UnitSelected is null)
-                HideNavigation();
+            if (unit.Profile is HeroExtension hero)
+                HeroUIData[HeroData.IndexOf(hero)].Highlight.gameObject.SetActive(true);
 
-            foreach (var (mod, display) in _modifierDisplays)
-                display.RemoveDisplay();
-            _modifierDisplays.Clear();
-
-            if (UnitSelected != null)
+            do
             {
-                Special.interactable = UnitSelected.Profile.Special is not null;
-                Special.GetComponentInChildren<TMP_Text>().text = UnitSelected.Profile.Special?.ButtonLabel ?? "Special";
-                Special.onClick.RemoveAllListeners();
-                Special.onClick.AddListener(() =>
+                
+                ResetNavigation();
+                Repeat.interactable = _lastAction.ContainsKey(unit);
+                Skills.interactable = unit.Profile.Skills.Count > 0;
+                Items.interactable = unit.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
+
+                Special.interactable = unit.Profile.Special is not null;
+                Special.GetComponentInChildren<TMP_Text>().text = unit.Profile.Special?.ButtonLabel ?? "Special";
+                int i;
                 {
-                    if (UnitSelected.Profile.Special is not null)
-                        TryOrderWizard(UnitSelected.Profile.Special.OnButtonClicked(UnitSelected, this, PresentTargetSelectionUI));
-                });
-                HeroUIData[HeroData.IndexOf((HeroExtension)UnitSelected.Profile)].Highlight.gameObject.SetActive(true);
+                    var tcs = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+                    try
+                    {
+                        i = await UniTask.WhenAny(
+                            Attack.onClick.OnInvokeAsync(tcs.Token),
+                            Repeat.onClick.OnInvokeAsync(tcs.Token),
+                            Skills.onClick.OnInvokeAsync(tcs.Token),
+                            Items.onClick.OnInvokeAsync(tcs.Token),
+                            Special.onClick.OnInvokeAsync(tcs.Token));
+                    }
+                    finally
+                    {
+                        tcs.Cancel();
+                    }
+                }
+
+                ActionSelectionContainer.gameObject.SetActive(false);
+
+                tactic = i switch
+                {
+                    0 => await PresentAttackUI(unit, cancellation),
+                    1 => await PresentTargetSelectionUI(unit, _lastAction[unit], cancellation),
+                    2 => await PresentSkillsUI(unit, cancellation),
+                    3 => await PresentItemUI(unit, cancellation),
+                    4 => await unit.Profile.Special!.OnButtonClicked(unit, this, PresentTargetSelectionUI, cancellation),
+                    _ => throw new InvalidOperationException($"Unknown index {i}")
+                };
+            } while (tactic == null && cancellation.IsCancellationRequested == false);
+        }
+        finally
+        {
+            if (ItemTemplate) // Check if we're being destroyed
+            {
+                HideNavigation();
+                if (unit.Profile is HeroExtension hero)
+                    HeroUIData[HeroData.IndexOf(hero)].Highlight.gameObject.SetActive(false);
+                foreach (var (mod, display) in _modifierDisplays)
+                    display.RemoveDisplay();
+                _modifierDisplays.Clear();
             }
         }
-        
-        if (characterReady)
-            BattleManagement.Blocked |= BlockBattleFlags.PreparingOrders;
-        else
-            BattleManagement.Blocked &= ~BlockBattleFlags.PreparingOrders;
 
-        if (UnitSelected == null)
-            return;
-
-        Skills.interactable = UnitSelected.Profile.Skills.Count > 0;
-        Items.interactable = UnitSelected.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
+        return tactic;
     }
 
-    IEnumerable PresentAttackUI()
+    UniTask<Tactics?> PresentAttackUI(BattleCharacterController unit, CancellationToken cancellation)
     {
-        if (UnitSelected == null)
-            yield break;
-
-        foreach (object o in PresentTargetSelectionUI(UnitSelected.Profile.BasicAttack))
-            yield return o;
+        return PresentTargetSelectionUI(unit, unit.Profile.BasicAttack, cancellation);
     }
 
-    IEnumerable PresentSkillsUI()
+    async UniTask<Tactics?> PresentSkillsUI(BattleCharacterController unit, CancellationToken cancellation)
     {
-        if (UnitSelected == null)
-            yield break;
-
         var menu = NewMenuOf<Skill>(nameof(PresentSkillsUI));
-        foreach (var skill in UnitSelected.Profile.Skills)
+        foreach (var skill in unit.Profile.Skills)
         {
             var button = menu.NewButton(skill.name, skill, skill.Description);
-            button.interactable = skill.ManaCost <= UnitSelected.Profile.CurrentMP;
+            button.interactable = skill.ManaCost <= unit.Profile.CurrentMP;
         }
 
-        var selectionTask = menu.SelectedItem();
-        while (selectionTask.IsCompleted == false)
-            yield return null;
-            
-        if (selectionTask.IsCanceled)
-            yield break;
+        var selection = await menu.SelectedItem(cancellation);
+        if (selection == null)
+            return null;
 
-        foreach (object o in PresentTargetSelectionUI(selectionTask.Result))
-            yield return o;
+        return await PresentTargetSelectionUI(unit, selection, cancellation);
     }
 
-    IEnumerable PresentItemUI()
+    async UniTask<Tactics?> PresentItemUI(BattleCharacterController UnitSelected, CancellationToken cancellation)
     {
-        if (UnitSelected == null)
-            yield break;
-
         var menu = NewMenuOf<Consumable>(nameof(PresentItemUI));
         foreach ((BaseItem item, uint count) in UnitSelected.Profile.Inventory.Items())
         {
@@ -397,22 +382,15 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             button.interactable = consumable.ManaCost <= UnitSelected.Profile.CurrentMP;
         }
 
-        var selectionTask = menu.SelectedItem();
-        while (selectionTask.IsCompleted == false)
-            yield return null;
-            
-        if (selectionTask.IsCanceled)
-            yield break;
+        var selection = await menu.SelectedItem(cancellation);
+        if (selection == null)
+            return null;
 
-        foreach (object o in PresentTargetSelectionUI(selectionTask.Result))
-            yield return o;
+        return await PresentTargetSelectionUI(UnitSelected, selection, cancellation);
     }
 
-    IEnumerable PresentTargetSelectionUI(IAction action)
+    async UniTask<Tactics?> PresentTargetSelectionUI(BattleCharacterController UnitSelected, IAction action, CancellationToken cancellation)
     {
-        if (UnitSelected == null)
-            yield break;
-
         SubActionSelectionContainer.gameObject.SetActive(true);
 
         bool accepted = false;
@@ -452,11 +430,9 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 accepted = false; // Reset click
 
                 if (CancelInput.action.WasPerformedThisFrameUnique())
-                {
-                    yield break;
-                }
+                    return null;
 
-                yield return null;
+                await UniTask.Yield(cancellation);
             } while (true);
 
             tactic.Condition = ScriptableObject.CreateInstance<ActionCondition>();
@@ -474,34 +450,15 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             SubActionSelectionContainer.gameObject.SetActive(false);
         }
 
-        ScheduleOrder(tactic);
-    }
+        if (tactic.Action == null || tactic.Condition == null)
+            throw new InvalidOperationException("Tried to schedule an incomplete order");
 
-    void ScheduleOrder(Tactics tactics)
-    {
-        if (tactics.Action == null || tactics.Condition == null)
-        {
-            Debug.LogWarning("Tried to schedule an incomplete order");
-            return;
-        }
-
-        ResetNavigation();
-        if (UnitSelected != null)
-        {
-            _lastAction[UnitSelected] = tactics.Action;
-            BattleManagement.Orders[UnitSelected] = tactics;
-        }
+        _lastAction[UnitSelected] = tactic.Action;
+        return tactic;
     }
 
     void ResetNavigation()
     {
-        if (_runningUIOperation is {} val)
-        {
-            StopCoroutine(val.coroutine);
-            val.disposable.Dispose();
-            _runningUIOperation = null;
-        }
-
         HideNavigation();
 
         ActionSelectionContainer.gameObject.SetActive(true);
@@ -516,39 +473,6 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         SubActionSelectionContainer.gameObject.SetActive(false);
         AcceptSelection.gameObject.SetActive(false);
         ActionSelectionContainer.gameObject.SetActive(false);
-    }
-
-    bool TryOrderWizard(IEnumerable inner)
-    {
-        if (_runningUIOperation != null)
-            return false;
-
-        var enumerable = BattleUICoroutine().GetEnumerator();
-        _runningUIOperation = (null, (IDisposable)enumerable);
-        var coroutine = StartCoroutine(enumerable);
-        // The coroutine may complete in its entirety when calling StartCoroutine when it never yields,
-        // make sure that we keep it as finished if that's the case
-        if (_runningUIOperation != null)
-            _runningUIOperation = (coroutine, (IDisposable)enumerable);
-
-        return true;
-
-        IEnumerable BattleUICoroutine()
-        {
-            try
-            {
-                ActionSelectionContainer.gameObject.SetActive(false);
-
-                foreach (var yield in inner)
-                    yield return yield;
-            }
-            finally
-            {
-                _runningUIOperation = null;
-
-                ResetNavigation();
-            }
-        }
     }
 
     [Serializable]
@@ -1155,14 +1079,14 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         public BattleUIOperation UI;
         public string Seed;
 
+        bool _disposed = false;
         readonly List<RectTransform> _submenuItems = new();
-        readonly TaskCompletionSource<T> _tcs = new();
-        Coroutine _cancellation;
+        readonly UniTaskCompletionSource<T?> _tcs = new();
 
 
         static Dictionary<string, T> _lastSelected = new();
 
-        public Button NewButton(string label, T item, string onHover = null, bool interactable = true)
+        public Button NewButton(string label, T item, string? onHover = null, bool interactable = true)
         {
             var uiElem = Instantiate(UI.SkillTemplate);
             if (uiElem.GetComponentInChildren<Text>() is { } text && text)
@@ -1171,11 +1095,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 tmpText.text = label;
 
             var button = uiElem.GetComponent<Button>();
-            button.onClick.AddListener(() =>
-            {
-                Clear();
-                _tcs.TrySetResult(item);
-            });
+            button.onClick.AddListener(() => _tcs.TrySetResult(item));
             button.interactable = interactable;
 
             UnityAction<BaseEventData> onHoverOrSelect = _ =>
@@ -1209,34 +1129,39 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             return button;
         }
 
-        public Task<T> SelectedItem()
+        /// <summary>
+        /// Do note that this method will return default when the user pressed cancel
+        /// </summary>
+        public async UniTask<T?> SelectedItem(CancellationToken cancellation)
         {
-            _cancellation = UI.StartCoroutine(AwaitCancellation());
-            return _tcs.Task;
-
-            IEnumerator AwaitCancellation()
+            _ = ListenForCancellationInput(cancellation);
+            T? result;
+            try
             {
-                do
-                {
-                    if (UI.CancelInput.action.WasPerformedThisFrameUnique())
-                    {
-                        Clear();
-                        _tcs.SetCanceled();
-                    }
-
-                    yield return null;
-                } while (true);
+                result = await _tcs.Task;
             }
+            finally
+            {
+                _disposed = true;
+                UI.SubActionSelectionContainer.gameObject.SetActive(false);
+                foreach (var element in _submenuItems)
+                    Destroy(element.gameObject);
+                _submenuItems.Clear();
+                UI.TooltipUI.OnHideTooltip?.Invoke();
+            }
+
+            return result;
         }
 
-        void Clear()
+        async UniTask ListenForCancellationInput(CancellationToken cancellation)
         {
-            UI.SubActionSelectionContainer.gameObject.SetActive(false);
-            foreach (var element in _submenuItems)
-                Destroy(element.gameObject);
-            _submenuItems.Clear();
-            UI.TooltipUI.OnHideTooltip?.Invoke();
-            UI.StopCoroutine(_cancellation);
+            do
+            {
+                if (UI.CancelInput.action.WasPerformedThisFrameUnique())
+                    _tcs.TrySetResult(default);
+
+                await UniTask.Yield(cancellation);
+            } while (_disposed == false && cancellation.IsCancellationRequested == false);
         }
     }
 }

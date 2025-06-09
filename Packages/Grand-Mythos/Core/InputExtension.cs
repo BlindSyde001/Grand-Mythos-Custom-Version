@@ -1,4 +1,5 @@
-﻿using UnityEngine.InputSystem;
+﻿using System.Linq;
+using UnityEngine.InputSystem;
 
 public static class InputExtension
 {
@@ -11,5 +12,10 @@ public static class InputExtension
         }
 
         return false;
+    }
+
+    public static string GetBindingLabel(this InputAction action)
+    {
+        return string.Join(" or ", action.bindings.Select(x => x.effectivePath[(x.effectivePath.IndexOf('/') + 1)..]));
     }
 }

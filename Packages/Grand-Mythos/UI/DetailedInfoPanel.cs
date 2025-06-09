@@ -1,4 +1,6 @@
-using System.Collections;
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -19,7 +21,7 @@ public class DetailedInfoPanel : MonoBehaviour
     [BoxGroup("Resistances")]
     [Required] public TMP_Text Fire, Ice, Lightning, Water;
 
-    public IEnumerable OpenAndAwaitClose(CharacterTemplate[] profiles)
+    public async UniTask OpenAndAwaitClose(CharacterTemplate[] profiles, CancellationToken cancellation)
     {
         try
         {
@@ -35,7 +37,7 @@ public class DetailedInfoPanel : MonoBehaviour
             int currentProfile = 0;
             do
             {
-                yield return null;
+                await UniTask.Yield(cancellation);
 
                 if (NextProfile.action.WasPerformedThisFrameUnique())
                     currentProfile++;
@@ -74,7 +76,7 @@ public class DetailedInfoPanel : MonoBehaviour
             {
                 state.speed = -1f;
                 state.time = state.clip.length;
-                yield return new WaitForSeconds(state.clip.length);
+                await UniTask.Delay(TimeSpan.FromSeconds(state.clip.length), cancellationToken: cancellation);
                 break;
             }
         }

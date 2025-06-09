@@ -1,4 +1,6 @@
-using System.Collections;
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -14,15 +16,15 @@ public class VideoAnimation : MonoBehaviour
 
     internal float time;
 
-    public IEnumerator PlayVideoClip(VideoClip videoClip)
+    public async UniTask PlayVideoClip(VideoClip videoClip, CancellationToken cancellation)
     {
         time = (float)videoClip.length;
         videoScreen.enabled = true;
         videoPlayer.clip = videoClip;
         videoPlayer.Play();
-        yield return new WaitForSeconds(time);
+        await UniTask.Delay(TimeSpan.FromSeconds(time), cancellationToken: cancellation);
         videoScreen.DOFade(0, 1f);
-        yield return new WaitForSeconds(1);
+        await UniTask.Delay(TimeSpan.FromSeconds(1f), cancellationToken: cancellation);
         videoScreen.enabled = false;
     }
 }

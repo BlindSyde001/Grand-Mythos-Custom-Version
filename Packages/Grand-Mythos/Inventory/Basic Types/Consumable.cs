@@ -1,11 +1,9 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
-using Battle;
 using Conditions;
 using Effects;
+using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "New Consumable", menuName = "Consumables")]
 public class Consumable : TradeableItem, IAction
@@ -20,16 +18,10 @@ public class Consumable : TradeableItem, IAction
                                         "This is more for items that should NEVER be used in a specific context. Eg: Items requiring mana to be used when self doesn't have enough mana";
 
     public int ManaCost = 0;
+    public IAction.Delay DelayToNextTurn = IAction.Delay.Base;
 
     [Range(0f,100f)]
     public float FlowCost;
-    
-    [Tooltip("How long the character has to charge the action before it can be executed")]
-    public float ChargeDuration = 0f;
-
-    [SerializeReference]
-    [MaybeNull]
-    public Channeling Channeling;
 
     [Space]
     [ListDrawerSettings(ShowFoldout = false, OnBeginListElementGUI = nameof(BeginDrawEffect), OnEndListElementGUI = nameof(EndDrawEffect))]
@@ -54,9 +46,8 @@ public class Consumable : TradeableItem, IAction
     [NonSerialized] And _basePrecondition;
     [NonSerialized] And _fullPrecondition;
 
-    float IAction.ChargeDuration => ChargeDuration;
-    Channeling IAction.Channeling => Channeling;
     Condition IAction.TargetFilter => TargetConstraint;
+    IAction.Delay IAction.DelayToNextTurn => DelayToNextTurn;
     AnimationClip IAction.CameraAnimation => CameraAnimation;
     int IAction.ManaCost => ManaCost;
 
@@ -95,13 +86,13 @@ public class Consumable : TradeableItem, IAction
         };
     }
 
-    public void Perform(BattleCharacterController[] targets, EvaluationContext context)
+    public void Perform(BattleCharacterController[] targets, QTEResult result, EvaluationContext context)
     {
         context.Profile.CurrentMP -= ManaCost;
 
         foreach (var effect in Effects)
         {
-            effect.Apply(targets, context);
+            effect.Apply(targets, result, context);
         }
     }
 
