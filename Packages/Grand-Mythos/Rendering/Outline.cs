@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [ExecuteAlways]
 public class Outline : MonoBehaviour
 {
+    private static bool _recursionSafeguard;
     [Required, OnValueChanged(nameof(Apply))] public Material OutlineMaterial;
     [ReadOnly] public Renderer[] OutlineObjects = Array.Empty<Renderer>();
 
     private void OnEnable()
     {
+        if (_recursionSafeguard)
+            return;
         Apply();
     }
 
@@ -32,8 +36,19 @@ public class Outline : MonoBehaviour
         for (int i = 0; i < renderers.Length; i++)
         {
             var renderer = renderers[i];
-            var r = Instantiate(renderer, renderer.transform);
+            Renderer r;
+            try
+            {
+                _recursionSafeguard = true;
+                r = Instantiate(renderer, renderer.transform);
+            }
+            finally
+            {
+                _recursionSafeguard = false;
+            }
+            
             r.material = OutlineMaterial;
+            r.shadowCastingMode = ShadowCastingMode.Off;
             for (int j = r.gameObject.GetComponentCount() - 1; j >= 0; j--)
             {
                 var c = r.gameObject.GetComponentAtIndex(j);
