@@ -65,6 +65,9 @@ public class Outline : MonoBehaviour
             }
 
             r.gameObject.hideFlags |= HideFlags.HideAndDontSave;
+            r.transform.localPosition = Vector3.zero;
+            r.transform.localRotation = Quaternion.identity;
+            r.transform.localScale = Vector3.one;
             renderers[i] = r;
         }
 
