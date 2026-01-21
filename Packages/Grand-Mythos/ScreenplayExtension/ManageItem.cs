@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Screenplay;
 using Screenplay.Nodes;
 using Sirenix.OdinInspector;
 using YNode;
-using Action = Screenplay.Nodes.Action;
 
-[Serializable, NodeWidth(NodeWidthAttribute.Default + 64)]
-public class ManageItem : Action
+[Serializable, NodeVisuals(Width = NodeVisualsAttribute.DefaultWidth  + 64)]
+public class ManageItem : ExecutableLinear
 {
     [HideLabel, HorizontalGroup(Width = 76)]
     public Operation Op = Operation.Give;
@@ -18,12 +18,12 @@ public class ManageItem : Action
 
     bool ValidateCount(uint count) => count > 0;
         
-    public override void CollectReferences(List<GenericSceneObjectReference> references)
+    public override void CollectReferences(ReferenceCollector references)
     {
         
     }
 
-    public override IEnumerable<Signal> Execute(IContext context)
+    protected override UniTask LinearExecution(IEventContext context, CancellationToken cancellation)
     {
         switch (Op)
         {
@@ -36,10 +36,11 @@ public class ManageItem : Action
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        yield return Signal.BreakInto(Next);
+
+        return UniTask.CompletedTask;
     }
 
-    public override void FastForward(IContext context)
+    public override void FastForward(IEventContext context, CancellationToken cancellationToken)
     {
         // No need to fast-forward this event as the inventory is already saved 
     }

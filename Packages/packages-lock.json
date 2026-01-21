@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.cysharp.csprojmodifier": {
+      "version": "https://github.com/Cysharp/CsprojModifier.git?path=src/CsprojModifier/Assets/CsprojModifier",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c91cd7ac9068de3d1a96b5b31453239cac47d51e"
+    },
     "com.cysharp.unitask": {
       "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
       "depth": 0,
@@ -23,7 +30,9 @@
       "version": "file:Screenplay",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
+      }
     },
     "com.github.ynode": {
       "version": "file:YNode",

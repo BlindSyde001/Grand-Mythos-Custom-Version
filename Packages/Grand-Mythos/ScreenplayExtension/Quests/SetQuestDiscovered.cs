@@ -1,30 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Screenplay;
 using Screenplay.Nodes;
 using Sirenix.OdinInspector;
-using Action = Screenplay.Nodes.Action;
 
 namespace Quests
 {
     [Serializable]
-    public class SetQuestDiscovered : Action
+    public class SetQuestDiscovered : ExecutableLinear
     {
         [Required, HideLabel] public Quest Quest;
         public bool Discovered = true;
         
-        public override void CollectReferences(List<GenericSceneObjectReference> references)
+        public override void CollectReferences(ReferenceCollector references)
         {
             
         }
 
-        public override IEnumerable<Signal> Execute(IContext context)
+        protected override UniTask LinearExecution(IEventContext context, CancellationToken cancellation)
         {
             Quest.Discovered = Discovered;
-            yield return Signal.BreakInto(Next);
+            return UniTask.CompletedTask;
         }
 
-        public override void FastForward(IContext context)
+        public override void FastForward(IEventContext context, CancellationToken cancellationToken)
         {
             Quest.Discovered = Discovered;
         }
@@ -34,7 +35,7 @@ namespace Quests
             var currentValue = Quest.Discovered;
             previewer.RegisterRollback(() => Quest.Discovered = currentValue);
             if (fastForwarded)
-                FastForward(previewer);
+                FastForward(previewer, CancellationToken.None);
             else
                 previewer.PlaySafeAction(this);
         }

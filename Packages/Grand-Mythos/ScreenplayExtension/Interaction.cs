@@ -1,39 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Screenplay;
-using Screenplay.Nodes;
-using Screenplay.Nodes.Triggers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-
-[Serializable]
-public class Interaction : ScreenplayNode, ITriggerSetup
+[System.Serializable]
+public class Interaction : Precondition
 {
     [Required] public SceneObjectReference<GameObject> Target;
 
     public string Label = "Interact";
 
-    public override void CollectReferences(List<GenericSceneObjectReference> references) => references.Add(Target);
+    public override void CollectReferences(ReferenceCollector references) => references.Collect(Target);
 
-    public bool TryCreateTrigger(System.Action onTriggered, [MaybeNullWhen(false)] out ITrigger trigger)
+    public override async UniTask Setup(IPreconditionCollector tracker, CancellationToken triggerCancellation)
     {
-        if (Target.TryGet(out var obj, out _) == false)
+        while (triggerCancellation.IsCancellationRequested == false)
         {
-            trigger = null;
-            return false;
-        }
+            var target = await Target.GetAsync(triggerCancellation);
 
-        var output = obj.AddComponent<InteractionComp>();
-        output.Callback = onTriggered;
-        output.Label = Label;
-        trigger = output;
-        return true;
+            var output = target.gameObject.AddComponent<InteractionComp>();
+            try
+            {
+                output.Label = Label;
+                while (output && triggerCancellation.IsCancellationRequested == false)
+                {
+                    await UniTask.NextFrame(triggerCancellation, cancelImmediately: true); // This isn't great, but we must keep it open for at least one frame for all the other latches to open ...
+                    tracker.SetUnlockedState(false);
+                    await output.AutoResetEvent.Task.WithInterruptingCancellation(triggerCancellation);
+                    tracker.SetUnlockedState(true);
+                }
+            }
+            finally
+            {
+                Object.Destroy(output);
+            }
+        }
     }
 }
 
-public class InteractionComp : MonoBehaviour, ITrigger
+public class InteractionComp : MonoBehaviour
 {
     /// <summary>
     /// Existing instances of this interactable,
@@ -44,18 +51,13 @@ public class InteractionComp : MonoBehaviour, ITrigger
 
     private static List<InteractionComp> s_instances = new();
 
+    public required AutoResetUniTaskCompletionSource AutoResetEvent = AutoResetUniTaskCompletionSource.Create();
     public string Label = "?";
-
-    /// <summary>
-    /// This callback will start the associated event when invoked
-    /// </summary>
-    public System.Action Callback = null!;
 
     private void OnEnable() => s_instances.Add(this);
     private void OnDisable() => s_instances.Remove(this);
+    private void OnDestroy() => AutoResetEvent.TrySetCanceled();
 
     [Button("Force Trigger")]
-    public void Trigger() => Callback.Invoke();
-
-    public void Dispose() => Destroy(this);
+    public void Trigger() => AutoResetEvent.TrySetResult();
 }

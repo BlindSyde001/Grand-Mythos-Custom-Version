@@ -1,43 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Screenplay;
 using Screenplay.Nodes;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using YNode;
 
-[Serializable, NodeWidth(NodeWidthAttribute.Default + 64)]
-public class StartEncounter : ScreenplayNode, Screenplay.Nodes.IAction
+[Serializable, NodeVisuals(Width = NodeVisualsAttribute.DefaultWidth  + 64)]
+public class StartEncounter : AbstractScreenplayNode, IExecutable
 {
     [Output, SerializeReference, HideLabel, Tooltip("What would run directly after the encounter starts")]
-    public Screenplay.Nodes.IAction? DuringEncounter;
+    public IExecutable? DuringEncounter;
 
     [Required, SerializeReference] public IEncounterDefinition Definition;
 
     public bool TestPrerequisite(HashSet<IPrerequisite> visited) => visited.Contains(this);
 
-    public IEnumerable<Screenplay.Nodes.IAction> Followup()
+    public IEnumerable<IExecutable> Followup()
     {
         if (DuringEncounter != null)
             yield return DuringEncounter;
     }
-        
-    public override void CollectReferences(List<GenericSceneObjectReference> references)
+
+    public override void CollectReferences(ReferenceCollector references)
     {
         
     }
 
-    public IEnumerable<Signal> Execute(IContext context)
+    public async UniTask InnerExecution(IEventContext context, CancellationToken cancellation)
     {
         var encounterSignal = Definition.Start(OverworldPlayerController.Instances.First());
         while (encounterSignal.Signaled == false)
-            yield return Signal.NextFrame;
+            await UniTask.NextFrame(cancellation, cancelImmediately: true);
 
-        yield return Signal.BreakInto(DuringEncounter);
+        DuringEncounter?.Execute(context, cancellation);
     }
 
-    public void FastForward(IContext context)
+    public void FastForward(IEventContext context, CancellationToken cancellation)
     {
         
     }

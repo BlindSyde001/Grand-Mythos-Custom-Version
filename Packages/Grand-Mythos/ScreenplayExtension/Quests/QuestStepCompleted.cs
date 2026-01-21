@@ -1,18 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Screenplay;
-using Screenplay.Nodes;
 using Sirenix.OdinInspector;
 
 namespace Quests
 {
     [Serializable]
-    public class QuestStepCompleted : ScreenplayNode, IPrerequisite
+    public class QuestStepCompleted : Precondition
     {
         [Required, HideLabel] public QuestStep Step;
         
-        public override void CollectReferences(List<GenericSceneObjectReference> references) { }
-
-        public bool TestPrerequisite(HashSet<IPrerequisite> visited) => Step.Completed;
+        public override void CollectReferences(ReferenceCollector references) { }
+        public override async UniTask Setup(IPreconditionCollector tracker, CancellationToken triggerCancellation)
+        {
+            while (triggerCancellation.IsCancellationRequested == false)
+            {
+                tracker.SetUnlockedState(Step.Completed);
+                await UniTask.NextFrame(triggerCancellation, cancelImmediately: true);
+            }
+        }
     }
 }
