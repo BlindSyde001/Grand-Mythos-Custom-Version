@@ -24,24 +24,21 @@ public class AwaitEndOfEncounter : AbstractScreenplayNode, IExecutable
             yield return Defeat;
     }
 
-    public async UniTask InnerExecution(IEventContext context, CancellationToken cancellation)
+    public async UniTask<IExecutable?> InnerExecution(IEventContext context, CancellationToken cancellation)
     {
         if (BattleStateMachine.TryGetInstance(out var battle))
         {
             while (battle.Finished.IsCompleted == false)
                 await UniTask.NextFrame(cancellation, cancelImmediately: true);
 
-            if (battle.Finished.Result)
-                await Victory.Execute(context, cancellation);
-            else
-                await Defeat.Execute(context, cancellation);
+            return battle.Finished.Result ? Victory : Defeat;
         }
 
         Debug.LogError($"Could not {nameof(AwaitEndOfEncounter)} as no battles are currently running, defaulting to 'victory' outcome");
-        await Victory.Execute(context, cancellation);
+        return Victory;
     }
 
-    public void FastForward(IEventContext context, CancellationToken cancellation) { }
+    public UniTask Persistence(IEventContext context, CancellationToken cancellation) => UniTask.CompletedTask;
 
     public override void CollectReferences(ReferenceCollector references){}
 

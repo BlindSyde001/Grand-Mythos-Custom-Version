@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Screenplay;
@@ -25,9 +24,9 @@ namespace Quests
             return UniTask.CompletedTask;
         }
 
-        public override void FastForward(IEventContext context, CancellationToken cancellationToken)
+        public override UniTask Persistence(IEventContext context, CancellationToken cancellationToken)
         {
-            Step.Completed = Completed;
+            return LinearExecution(context, cancellationToken);
         }
 
         public override void SetupPreview(IPreviewer previewer, bool fastForwarded)
@@ -35,7 +34,7 @@ namespace Quests
             var currentValue = Step.Completed;
             previewer.RegisterRollback(() => Step.Completed = currentValue);
             if (fastForwarded)
-                FastForward(previewer, CancellationToken.None);
+                Persistence(previewer, CancellationToken.None);
             else
                 previewer.PlaySafeAction(this);
         }

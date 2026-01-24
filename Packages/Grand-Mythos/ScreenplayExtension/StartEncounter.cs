@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Screenplay;
-using Screenplay.Nodes;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using YNode;
@@ -30,18 +29,18 @@ public class StartEncounter : AbstractScreenplayNode, IExecutable
         
     }
 
-    public async UniTask InnerExecution(IEventContext context, CancellationToken cancellation)
+    public async UniTask<IExecutable?> InnerExecution(IEventContext context, CancellationToken cancellation)
     {
         var encounterSignal = Definition.Start(OverworldPlayerController.Instances.First());
         while (encounterSignal.Signaled == false)
             await UniTask.NextFrame(cancellation, cancelImmediately: true);
 
-        DuringEncounter?.Execute(context, cancellation);
+        return DuringEncounter;
     }
 
-    public void FastForward(IEventContext context, CancellationToken cancellation)
+    public UniTask Persistence(IEventContext context, CancellationToken cancellation)
     {
-        
+        return UniTask.CompletedTask;
     }
 
     public void SetupPreview(IPreviewer previewer, bool fastForwarded)
