@@ -36,7 +36,7 @@ public class BattleStateMachine : MonoBehaviour
     public readonly SortedList<double, BattleCharacterController> Queue = new(new TimestampedQueueComparer());
 
     private double _timestamp = 0;
-    [CanBeNull] private TaskCompletionSource<bool> _finishedTcs;
+    private TaskCompletionSource<bool>? _finishedTcs;
 
     public Task<bool> Finished => (_finishedTcs ??= new()).Task;
 

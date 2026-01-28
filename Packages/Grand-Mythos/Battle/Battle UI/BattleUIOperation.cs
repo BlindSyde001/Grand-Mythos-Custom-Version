@@ -491,8 +491,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     class TargetSelection : UIElementSelection<BattleCharacterController, HashSet<BattleCharacterController>>
     {
-        [ItemCanBeNull] readonly HashSet<BattleCharacterController> _lastSelection = new();
-        [ItemCanBeNull] readonly HashSet<BattleCharacterController> _selection = new();
+        readonly HashSet<BattleCharacterController?> _lastSelection = new();
+        readonly HashSet<BattleCharacterController?> _selection = new();
         BattleCharacterController _unitSelected;
         BattleCharacterController _lastCursor;
         IAction _action;

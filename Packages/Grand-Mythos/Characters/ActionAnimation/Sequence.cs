@@ -17,7 +17,7 @@ namespace ActionAnimation
                 await animation.Play(action, controller, targets, cancellation);
         }
 
-        public bool Validate([CanBeNull]IAction action, CharacterTemplate template, ref string message)
+        public bool Validate(IAction? action, CharacterTemplate template, ref string message)
         {
             foreach (var actionAnimation in Animations)
             {

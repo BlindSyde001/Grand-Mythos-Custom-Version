@@ -57,7 +57,7 @@ namespace UnityEngine.UI
         /// <summary>
         /// <paramref name="dir3d"/> is treated as a 2d direction in canvas space, this method only operates in cardinal directions, diagonals are ignored
         /// </summary>
-        [CanBeNull] public unsafe Selectable FindSelectable(Vector3 dir3d)
+        public unsafe Selectable? FindSelectable(Vector3 dir3d)
         {
             Axis axis = Mathf.Abs(dir3d.x) >= Mathf.Abs(dir3d.y) ? Axis.X : Axis.Y;
             int sign = dir3d[(int)axis] >= 0 ? 1 : -1;

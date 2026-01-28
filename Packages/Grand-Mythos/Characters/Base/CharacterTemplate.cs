@@ -80,14 +80,14 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("SKILLS")]
     public SerializableHashSet<Skill> Skills;
 
-    [BoxGroup("SKILLS"), CanBeNull, SerializeReference]
-    public ISpecial Special;
+    [BoxGroup("SKILLS"), SerializeReference]
+    public ISpecial? Special;
 
-    [BoxGroup("SKILLS"), CanBeNull]
-    public LevelUnlocks LevelUnlocks;
+    [BoxGroup("SKILLS")]
+    public LevelUnlocks? LevelUnlocks;
 
-    [BoxGroup("TACTICS"), Required, ListDrawerSettings(ShowFoldout = false), TableList, ItemCanBeNull]
-    public Tactics[] Tactics = Array.Empty<Tactics>();
+    [BoxGroup("TACTICS"), Required, ListDrawerSettings(ShowFoldout = false), TableList]
+    public Tactics?[] Tactics = Array.Empty<Tactics>();
 
     [BoxGroup("ANIMATIONS")]
     [ValidateInput(nameof(ValidateActionAnimation)), InlineProperty, HideLabel]
@@ -96,27 +96,27 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("ANIMATIONS/Hurt")]
     [Tooltip("When this unit is hit by something")]
     [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
-    public IActionAnimation Hurt;
+    public IActionAnimation? Hurt;
     
     [BoxGroup("ANIMATIONS/Death")]
     [Tooltip("When this unit dies")]
     [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
-    public IActionAnimation Death;
+    public IActionAnimation? Death;
     
     [BoxGroup("ANIMATIONS/Shield")]
     [Tooltip("When this unit shields")]
     [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
-    public IActionAnimation Shield;
+    public IActionAnimation? Shield;
     
     [BoxGroup("ANIMATIONS/Dodge")]
     [Tooltip("When this unit dodges")]
     [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
-    public IActionAnimation Dodge;
+    public IActionAnimation? Dodge;
     
     [BoxGroup("ANIMATIONS/Parry")]
     [Tooltip("When this unit parries")]
     [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
-    public IActionAnimation Parry;
+    public IActionAnimation? Parry;
 
     [BoxGroup("ANIMATIONS/Fallback Animation")]
     [Tooltip("When this unit performs an action that hasn't been added to the list above, this animation will run to ensure the unit doesn't look idle")]

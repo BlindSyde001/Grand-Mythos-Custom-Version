@@ -20,7 +20,7 @@ public class BattleCamera : MonoBehaviour
     float _timeBeforeNextCam;
     BattlePointOfView _lastPov;
 
-    [CanBeNull] DisposableCoroutine _routine;
+    DisposableCoroutine? _routine;
 
     private void Start()
     {

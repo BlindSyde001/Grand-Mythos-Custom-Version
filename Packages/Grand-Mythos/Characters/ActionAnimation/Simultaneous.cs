@@ -23,7 +23,7 @@ namespace ActionAnimation
             await UniTask.WhenAll(tasks);
         }
 
-        public bool Validate([CanBeNull]IAction action, CharacterTemplate template, ref string message)
+        public bool Validate(IAction? action, CharacterTemplate template, ref string message)
         {
             foreach (var actionAnimation in Animations)
             {

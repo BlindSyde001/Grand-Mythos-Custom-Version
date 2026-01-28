@@ -12,7 +12,7 @@ public class ItemMenuActions : MenuContainer
     public TextMeshProUGUI itemDescriptionText;
     public TextMeshProUGUI itemDescriptionStats;
 
-    [CanBeNull] IFilter _filter;
+    IFilter? _filter;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)

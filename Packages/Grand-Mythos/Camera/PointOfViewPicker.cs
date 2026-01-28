@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class PointOfViewPicker : ICameraControl
 {
-    [CanBeNull] private PointOfViewBase currentPointOfView;
+    private PointOfViewBase? currentPointOfView;
     private (Vector3 fromP, Quaternion fromR, float time)? inTransition;
     
     public void Update(Camera camera, CameraFocus focus)

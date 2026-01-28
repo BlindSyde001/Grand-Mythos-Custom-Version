@@ -13,9 +13,9 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
 
     [SerializeField]
     [ListDrawerSettings(ShowFoldout = false)]
-    [CanBeNull, InlineProperty]
+    [InlineProperty]
     [LabelText("Actions' Animations"), TableList]
-    BackingKeyValue[] _backingArray;
+    BackingKeyValue[]? _backingArray;
 
     public void OnBeforeSerialize(){}
 

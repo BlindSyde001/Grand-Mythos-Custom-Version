@@ -7,7 +7,7 @@ using UnityEngine;
 [AddComponentMenu(" GrandMythos/BattleCharacterController")]
 public class BattleCharacterController : MonoBehaviour
 {
-    [ReadOnly] public CharacterTemplate Profile;
+    [ReadOnly] public required CharacterTemplate Profile;
 
     [ValidateInput(nameof(ValidateAnim))]
     public AnimationState IdleAnimation;

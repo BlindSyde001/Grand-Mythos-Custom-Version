@@ -1,9 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Characters;
+﻿using Characters;
 
 public interface IModifier
 {
-    [MaybeNull] ModifierDisplay DisplayPrefab { get; }
+    ModifierDisplay? DisplayPrefab { get; }
     void ModifyStats(ref Stats stats);
     /// <summary>
     /// This modifier is currently attached to the caster and modifies damage the caster deals to the target.

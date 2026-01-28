@@ -70,7 +70,7 @@ namespace ActionAnimation
             return info.length * (1f - info.normalizedTime) / info.speed / info.speedMultiplier;
         }
 
-        public bool Validate([CanBeNull]IAction action, CharacterTemplate template, ref string message)
+        public bool Validate(IAction? action, CharacterTemplate template, ref string message)
         {
             if (template.BattlePrefab == null)
             {

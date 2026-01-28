@@ -15,15 +15,13 @@ public class ActionCondition : IdentifiableScriptableObject
     [ValidateInput(nameof(ValidateCondition), "")]
     [HideLabel]
     [SerializeReference]
-    [CanBeNull]
-    public Condition TargetFilter;
+    public Condition? TargetFilter;
 
     [BoxGroup(nameof(AdditionalCondition), LabelText = @"@""AdditionalCondition:   "" + this.AdditionalCondition?.UIDisplayText")]
     [Tooltip("Condition that must be true in general")]
     [HideLabel]
     [SerializeReference]
-    [CanBeNull]
-    public Condition AdditionalCondition;
+    public Condition? AdditionalCondition;
 
     bool ValidateCondition(Condition _, ref string errorMessage)
     {
@@ -167,7 +165,7 @@ public class EvaluationContext
     public uint CombatSeed;
     public Random Random;
     public double CombatTimestamp;
-    [CanBeNull, NonSerialized] public IConditionEvalTracker Tracker;
+    [NonSerialized] public IConditionEvalTracker? Tracker;
 
     public EvaluationContext(BattleCharacterController controller)
     {

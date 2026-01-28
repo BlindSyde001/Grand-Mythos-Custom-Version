@@ -129,7 +129,7 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
 
         _listToggle = buttonPressed;
 
-        static void ButtonSetup(EquipmentMenuActions @this, [CanBeNull] Equipment equipment, ItemSlot slot, ref bool setSelection)
+        static void ButtonSetup(EquipmentMenuActions @this, Equipment? equipment, ItemSlot slot, ref bool setSelection)
         {
             @this.EquipNewItemContainers.Allocate(out var container);
 

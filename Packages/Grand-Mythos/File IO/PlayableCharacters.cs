@@ -31,7 +31,7 @@ public class PlayableCharacters : ScriptableObject
 
     [SerializeField] List<HeroExtension> Characters = new();
 
-    public static bool TryGet(guid guid, [MaybeNull] out HeroExtension hero)
+    public static bool TryGet(guid guid, out HeroExtension? hero)
     {
         if (guid == default)
         {

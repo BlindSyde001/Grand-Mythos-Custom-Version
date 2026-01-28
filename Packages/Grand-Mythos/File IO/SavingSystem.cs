@@ -121,7 +121,7 @@ public static class SavingSystem
     /// <remarks>
     /// Returns false when it failed to save, a message box will be automatically shown in such a case.
     /// </remarks>
-    public static bool TrySaveToDisk([CanBeNull] string fileToOverwrite = null)
+    public static bool TrySaveToDisk(string? fileToOverwrite = null)
     {
         try
         {
