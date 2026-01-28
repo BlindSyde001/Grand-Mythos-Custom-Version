@@ -1,16 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using UnityEngine.Serialization;
 
-
-[AddComponentMenu("Layout/Slanted Grid Layout Group", 152)]
 /// <summary>
 /// Layout class to arrange child elements in a grid format.
 /// </summary>
 /// <remarks>
 /// The GridLayoutGroup component is used to layout child layout elements in a uniform grid where all cells have the same size. The size and the spacing between cells is controlled by the GridLayoutGroup itself. The children have no influence on their sizes.
 /// </remarks>
+[AddComponentMenu("Layout/Slanted Grid Layout Group", 152)]
 public class SlantedGridLayoutGroup : GridLayoutGroup
 {
     [SerializeField] protected float m_Slantedness = 2;

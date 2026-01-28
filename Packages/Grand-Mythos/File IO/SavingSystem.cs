@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
-using JetBrains.Annotations;
 using UnityEngine;
 
 public partial class DomainReloadHelper
 {
     public SerializableDictionary<guid, ISaved> SavingSystemsGUID = new();
-    public SavingSystem.Save SavingLatestSave;
+    public SavingSystem.Save? SavingLatestSave;
 }
 
 public static class SavingSystem
@@ -34,7 +34,7 @@ public static class SavingSystem
             foreach (var (guid, system) in helper.SavingSystemsGUID)
                 _systemsByGuid.Add(guid, system);
             helper.SavingSystemsGUID.Clear();
-            _latestSave = helper.SavingLatestSave;
+            _latestSave = helper.SavingLatestSave!;
         };
         DomainReloadHelper.OnEnterEditMode += () =>
         {
@@ -189,7 +189,7 @@ public static class SavingSystem
         try
         {
             _loading = true;
-            SpawnPointReference spawn;
+            SpawnPointReference? spawn;
             Save newSave;
             try
             {
@@ -213,7 +213,7 @@ public static class SavingSystem
                 return false;
             }
 
-            var beforeLoad = SpawnPoint.LastSpawnUsed != null /*We haven't even spawned yet*/ ? SaveToMemory() : null; // Get latest state and store it in case we need to rollback
+            var beforeLoad = SpawnPoint.LastSpawnUsed != null! /*We haven't even spawned yet*/ ? SaveToMemory() : null; // Get latest state and store it in case we need to rollback
             try
             {
                 _latestSave = newSave;
@@ -297,9 +297,9 @@ public static class SavingSystem
                 if (peeker.TryPeek<InventoryManager, InventoryManager.SaveV1>(InventoryManager.Guid, out var inventoryData))
                     ui.moneyAcquired.text = $"{inventoryData.Credits} Credits";
 
-                if (IdentifiableDatabase.TryGet(peeker.Save.SpawnPointReference, out SpawnPointReference spawn))
+                if (IdentifiableDatabase.TryGet(peeker.Save.SpawnPointReference, out SpawnPointReference? spawn))
                 {
-                    ui.areaName.text = Path.GetFileNameWithoutExtension(spawn.Scene.Path);
+                    ui.areaName.text = Path.GetFileNameWithoutExtension(spawn!.Scene.Path);
                     ui.zoneName.text = spawn.SpawnName;
                 }
 
@@ -398,7 +398,7 @@ public static class SavingSystem
             JsonUtility.FromJsonOverwrite(json, Save);
         }
 
-        public bool TryPeek<TSaved, THandler>(guid sourceGuid, out THandler handler) where TSaved : ISaved<TSaved, THandler> where THandler : ISaveHandler<TSaved>, new()
+        public bool TryPeek<TSaved, THandler>(guid sourceGuid, [MaybeNullWhen(false)] out THandler handler) where TSaved : ISaved<TSaved, THandler> where THandler : ISaveHandler<TSaved>, new()
         {
             if (Save.Instances.TryGetValue(sourceGuid, out var data))
             {
@@ -444,9 +444,9 @@ public interface ISaveData
     /// <summary>
     /// May return false when this is not part of the save data, or when it's just this specific version, an anterior version may exist
     /// </summary>
-    public bool TryDeserialize<T>(SavingSystem.DataForInstance saveData, out T deserialized) where T : ISaveData => TryDeserializeBase(saveData, out deserialized);
+    public bool TryDeserialize<T>(SavingSystem.DataForInstance saveData, [MaybeNullWhen(false)] out T deserialized) where T : ISaveData => TryDeserializeBase(saveData, out deserialized);
 
-    protected bool TryDeserializeBase<T>(SavingSystem.DataForInstance saveData, out T deserialized) where T : ISaveData
+    protected bool TryDeserializeBase<T>(SavingSystem.DataForInstance saveData, [MaybeNullWhen(false)] out T deserialized) where T : ISaveData
     {
         if (saveData.Version == Version)
         {
@@ -500,7 +500,7 @@ public interface ISaveDataVersioned<in TPreviousVersion> : ISaveData where TPrev
 {
     public void UpgradeFromPrevious(TPreviousVersion old);
 
-    bool ISaveData.TryDeserialize<T>(SavingSystem.DataForInstance saveData, out T deserialized)
+    bool ISaveData.TryDeserialize<T>(SavingSystem.DataForInstance saveData, [MaybeNullWhen(false)] out T deserialized)
     {
         // T should be this instance's actual type, this is just a workaround for the lack of c# 11
 

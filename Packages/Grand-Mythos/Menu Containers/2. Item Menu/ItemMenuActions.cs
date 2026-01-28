@@ -1,16 +1,15 @@
 using System.Collections;
 using UnityEngine;
 using DG.Tweening;
-using JetBrains.Annotations;
 using TMPro;
 
 public class ItemMenuActions : MenuContainer
 {
-    public UIElementList<ItemButtonContainer> ItemUI = new();
+    public UIElementList<ItemButtonContainer> ItemUI = new(){ Template = null! };
 
-    public TextMeshProUGUI itemDescriptionName;
-    public TextMeshProUGUI itemDescriptionText;
-    public TextMeshProUGUI itemDescriptionStats;
+    public required TextMeshProUGUI itemDescriptionName;
+    public required TextMeshProUGUI itemDescriptionText;
+    public required TextMeshProUGUI itemDescriptionStats;
 
     IFilter? _filter;
 

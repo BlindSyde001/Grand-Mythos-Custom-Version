@@ -1,12 +1,11 @@
-﻿using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CameraFocusSwitch : ICameraControl
 {
-    [SerializeReference, Required] public ICameraControl A;
-    [SerializeReference, Required] public ICameraControl B;
-    [Required] public InputActionReference SwitchInput;
+    [SerializeReference] public required ICameraControl A;
+    [SerializeReference] public required ICameraControl B;
+    public required InputActionReference SwitchInput;
     public float TransitionDuration = 0.5f;
 
     float _t;

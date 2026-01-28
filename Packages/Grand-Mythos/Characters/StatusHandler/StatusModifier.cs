@@ -13,19 +13,19 @@ namespace StatusHandler
         private const string IncomingDescription = "What happens to attacks that this unit receives";
         private const string OutgoingDescription = "What happens to attacks that this unit deals";
         
-        [TextArea] public string Description;
+        [TextArea] public string Description = "";
 
-        [Required] public ModifierDisplay DisplayPrefab;
+        public required ModifierDisplay DisplayPrefab;
 
-        [SerializeReference, InfoBox(OutgoingDescription), BoxGroup(nameof(Outgoing)), HideLabel] public IStatusModifierLogic Outgoing;
-        [SerializeReference, InfoBox(IncomingDescription), BoxGroup(nameof(Incoming)), HideLabel] public IStatusModifierLogic Incoming;
+        [SerializeReference, InfoBox(OutgoingDescription), BoxGroup(nameof(Outgoing)), HideLabel] public IStatusModifierLogic? Outgoing;
+        [SerializeReference, InfoBox(IncomingDescription), BoxGroup(nameof(Incoming)), HideLabel] public IStatusModifierLogic? Incoming;
 
         [InfoBox("Is this status only effective during the encounter were it was applied, or carried between each encounter")]
         public bool Temporary = true;
 
         public float Duration = float.PositiveInfinity;
 
-        ModifierDisplay IModifier.DisplayPrefab => DisplayPrefab;
+        ModifierDisplay? IModifier.DisplayPrefab => DisplayPrefab;
 
         public void ModifyStats(ref Stats stats) { }
 

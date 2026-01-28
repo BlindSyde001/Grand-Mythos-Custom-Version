@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Nodalog;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -9,13 +10,13 @@ namespace Interactables
     [Serializable]
     public class SetTally : IInteraction
     {
-        [Required, HorizontalGroup, HideLabel]
-        public Tally Tally;
+        [HorizontalGroup, HideLabel]
+        public required Tally Tally;
 
-        [Required, HorizontalGroup, HideLabel, TableColumnWidth(10)]
+        [HorizontalGroup, HideLabel, TableColumnWidth(10)]
         public OperationType Operation;
 
-        [Required, HorizontalGroup, HideLabel]
+        [HorizontalGroup, HideLabel]
         public int Value = 1;
 
         public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
@@ -30,7 +31,7 @@ namespace Interactables
             yield break;
         }
 
-        public bool IsValid(out string error)
+        public bool IsValid([MaybeNullWhen(true)] out string error)
         {
             error = null;
             return true;

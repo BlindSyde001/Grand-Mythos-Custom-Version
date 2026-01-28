@@ -48,7 +48,7 @@ public class InlineInventory : IInventory
 [Serializable]
 public class ProxyForInventoryComponent : IInventory
 {
-    public InventoryManager Inventory;
+    public required InventoryManager Inventory;
 
     public bool HasItem(BaseItem item, out uint count)
     {

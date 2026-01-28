@@ -9,10 +9,10 @@ using DG.Tweening;
 public class VideoAnimation : MonoBehaviour
 {
     [SerializeField]
-    internal VideoPlayer videoPlayer;
+    public required VideoPlayer videoPlayer;
     [SerializeField]
-    internal RawImage videoScreen;
-    public VideoClip[] videoClips;
+    public required RawImage videoScreen;
+    public VideoClip[] videoClips = Array.Empty<VideoClip>();
 
     internal float time;
 

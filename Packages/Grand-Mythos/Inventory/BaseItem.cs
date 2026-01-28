@@ -3,5 +3,5 @@ using UnityEngine;
 public class BaseItem : IdentifiableScriptableObject
 {
     [TextArea]
-    public string Description;
+    public string Description = "";
 }

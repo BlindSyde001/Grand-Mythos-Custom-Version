@@ -4,18 +4,17 @@ using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using System.Linq;
 using Sirenix.OdinInspector;
-using UnityEngine.Serialization;
 
 public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, ISaved<InventoryManager, InventoryManager.SaveV1>
 {
     // VARIABLES
-    public static InventoryManager Instance { get; private set; }
+    public static InventoryManager Instance { get; private set; } = null!;
 
     Sort _lastSort;
     /// <summary>
     /// The first element in sorting order, recurse over this object's Next to iterate in order
     /// </summary>
-    ItemData _first;
+    ItemData? _first;
 
     public int Credits
     {
@@ -26,7 +25,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     [SerializeField, OnValueChanged(nameof(ConsolidateItems))]
     ItemSet Items = new();
 
-    public List<ActionCondition> ConditionsAcquired;
+    public List<ActionCondition> ConditionsAcquired = new();
 
     void ISerializationCallbackReceiver.OnBeforeSerialize() {}
 
@@ -82,7 +81,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
 
     void Awake()
     {
-        if (Instance == null)
+        if (Instance == null!)
         {
             Instance = this;
         }
@@ -100,7 +99,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     void OnDestroy()
     {
         if (Instance == this)
-            Instance = null;
+            Instance = null!;
 
         SavingSystem.Unregister<InventoryManager, SaveV1>(this);
     }
@@ -171,7 +170,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         }
     }
 
-    static void SortedInsertion<T>(T comparer, ItemData insertion, ref ItemData first) where T : IComparer<ItemData>
+    static void SortedInsertion<T>(T comparer, ItemData insertion, ref ItemData? first) where T : IComparer<ItemData>
     {
         if (insertion.Previous != null)
             insertion.Previous.Next = insertion.Next;
@@ -253,7 +252,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
             _ => throw new ArgumentOutOfRangeException(nameof(sort), sort, null)
         });
 
-        ItemData previous = null;
+        ItemData? previous = null;
         _first = null;
         foreach (var data in sorting)
         {
@@ -309,13 +308,13 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     [Serializable]
     public class ItemData
     {
-        [Required, HorizontalGroup, HideLabel, SuffixLabel("x")]
-        public BaseItem Item;
+        [HorizontalGroup, HideLabel, SuffixLabel("x")]
+        public required BaseItem Item;
         [HorizontalGroup, HideLabel]
         public uint Count = 1;
         public DateTime Timestamp = DateTime.Now;
         [NonSerialized]
-        public ItemData Previous, Next;
+        public ItemData? Previous, Next;
     }
 
     [Serializable]
@@ -324,32 +323,32 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
         public ItemSet() : base(new OnlyCollideWithItem()) { }
 
         [ThreadStatic]
-        static ItemData _dummy;
+        static ItemData? _dummy;
 
         public bool TryGetValue(BaseItem item, [MaybeNullWhen(false)] out ItemData data)
         {
-            _dummy ??= new();
+            _dummy ??= new() { Item = null! };
             _dummy.Item = item;
             return TryGetValue(_dummy, out data);
         }
 
         public bool Contains(BaseItem item)
         {
-            _dummy ??= new();
+            _dummy ??= new() { Item = null! };
             _dummy.Item = item;
             return Contains(_dummy);
         }
 
         public bool Remove(BaseItem item)
         {
-            _dummy ??= new();
+            _dummy ??= new() { Item = null! };
             _dummy.Item = item;
             return Remove(_dummy);
         }
 
         public class OnlyCollideWithItem : IEqualityComparer<ItemData>
         {
-            public bool Equals(ItemData x, ItemData y)
+            public bool Equals(ItemData? x, ItemData? y)
             {
                 return ReferenceEquals(x, y) || (x != null && y != null && Equals(x.Item, y.Item));
             }
@@ -392,7 +391,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
                 source.Items = new();
                 foreach (var x in Items)
                 {
-                    if (IdentifiableDatabase.TryGet(x.Item, out BaseItem item))
+                    if (IdentifiableDatabase.TryGet(x.Item, out BaseItem? item) && item is not null)
                     {
                         var data = new ItemData { Item = item, Count = x.Count, Timestamp = x.Timestamp };
                         source.Items.Add(data);
@@ -423,11 +422,11 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
     static InventoryManager()
     {
         DomainReloadHelper.BeforeReload += helper => helper.InventoryInstance = Instance;
-        DomainReloadHelper.AfterReload += helper => Instance = helper.InventoryInstance;
+        DomainReloadHelper.AfterReload += helper => Instance = helper.InventoryInstance!;
     }
 }
 
 public partial class DomainReloadHelper
 {
-    public InventoryManager InventoryInstance;
+    public InventoryManager? InventoryInstance;
 }

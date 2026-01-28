@@ -5,7 +5,7 @@ namespace SwitchSpecial
 {
     public class StatusModifierDisplay : ModifierDisplay
     {
-        [ReadOnly] public StatusModifier Modifier;
+        [ReadOnly] public StatusModifier Modifier = null!;
 
         public override void OnDisplayed(CharacterTemplate character, BattleUIOperation battleUI, IModifier modifier)
         {

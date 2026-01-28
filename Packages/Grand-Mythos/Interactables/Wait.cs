@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Interactables
@@ -16,7 +17,7 @@ namespace Interactables
             }
         }
 
-        public bool IsValid(out string error)
+        public bool IsValid([MaybeNullWhen(true)] out string error)
         {
             if (DurationInSeconds < 0)
             {

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Interactables;
-using Sirenix.OdinInspector;
 
 [Serializable]
 public class DiscoverQuest : IInteraction
 {
-    [Required, Tooltip("This quest will be added to the journal")]
-    public Quest Quest;
+    [Tooltip("This quest will be added to the journal")]
+    public required Quest Quest;
 
     public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
     {
@@ -17,7 +16,7 @@ public class DiscoverQuest : IInteraction
 
     public bool IsValid(out string error)
     {
-        if (Quest == null)
+        if (Quest == null!)
         {
             error = $"{nameof(Quest)} is null";
             return false;

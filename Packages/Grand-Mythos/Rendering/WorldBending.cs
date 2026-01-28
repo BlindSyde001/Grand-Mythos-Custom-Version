@@ -11,7 +11,7 @@ using UnityEngine.Rendering;
 [AddComponentMenu(" GrandMythos/WorldBending")]
 public class WorldBending : MonoBehaviour
 {
-    static WorldBending _instance;
+    static WorldBending _instance = null!;
     const string Keyword = "WorldBendingOn";
     const string SParamSource = "WorldBendingSource";
     const string SParamCurve = "WorldBendingCurve";
@@ -31,7 +31,7 @@ public class WorldBending : MonoBehaviour
 
     void OnEnable()
     {
-        if (_instance != null)
+        if (_instance != null!)
             Debug.LogError($"Multiple instances of {nameof(WorldBending)} used");
 
         _instance = this;
@@ -42,7 +42,7 @@ public class WorldBending : MonoBehaviour
         Shader[] matches = { Shader.Find("WorldBending/Base"), Shader.Find("WorldBending/Alpha"), Shader.Find("WorldBending/Skybox"),  };
         UnityEditor.EditorApplication.delayCall += () =>
         {
-            if (this == null)
+            if (this == null!)
                 return; // This function may error out when building since the editor opens and closes scenes while building
 
             if (Application.isPlaying)
@@ -67,7 +67,7 @@ public class WorldBending : MonoBehaviour
 
     void OnDisable()
     {
-        _instance = null;
+        _instance = null!;
         Camera.onPreCull -= OnAnyCameraPreCull;
         Shader.SetKeyword(GlobalKeyword.Create(Keyword), false);
     }

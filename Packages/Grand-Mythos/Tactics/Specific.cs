@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Conditions
 {
@@ -7,7 +8,7 @@ namespace Conditions
         public HashSet<BattleCharacterController> Targets = new();
         public override string UIDisplayText => "Specific Targets";
 
-        public override bool IsValid(out string error)
+        public override bool IsValid([MaybeNullWhen(true)] out string error)
         {
             error = null;
             return true;

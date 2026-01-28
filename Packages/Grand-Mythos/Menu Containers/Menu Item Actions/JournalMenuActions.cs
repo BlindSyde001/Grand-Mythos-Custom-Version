@@ -1,15 +1,14 @@
 using System.Collections;
 using System.Linq;
 using DG.Tweening;
-using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class JournalMenuActions : MenuContainer
 {
-    public UIElementList<QuestButton> QuestButtons = new();
-    [Required] public TMP_Text QuestTitle, StepTitle, Description;
+    public UIElementList<QuestButton> QuestButtons = new(){ Template = null! };
+    public required TMP_Text QuestTitle, StepTitle, Description;
 
     public override IEnumerable Open(MenuInputs menuInputs)
     {

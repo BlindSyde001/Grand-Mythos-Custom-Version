@@ -14,36 +14,28 @@ using Random = UnityEngine.Random;
 public class BattleResolution : MonoBehaviour
 {
     // VARIABLES
-    GameManager gameManager;
-
     [Header("Fill In Panel Effect")]
-    public Image RewardBackground;
-    public Image HeroGridBackground;
+    public required Image RewardBackground;
+    public required Image HeroGridBackground;
     float speed = 0.5f;
 
     [Header("Rewards")]
-    public TextMeshProUGUI ExperienceRewards;
-    public TextMeshProUGUI CurrencyRewards;
-    public List<PartyContainer> HeroPanels;
+    public required TextMeshProUGUI ExperienceRewards;
+    public required TextMeshProUGUI CurrencyRewards;
+    public List<PartyContainer> HeroPanels = new();
     bool activateUpdate;
 
     float duration = 3f;
-    public GameObject ItemRewardPanel;
-    public List<TextMeshProUGUI> ItemRewardsText;
+    public required GameObject ItemRewardPanel;
+    public List<TextMeshProUGUI> ItemRewardsText = new();
 
     [Header("Audio and Video")]
-    public VideoAnimation VideoAnimator;
+    public required VideoAnimation VideoAnimator;
 
-    public GameObject LosePanel;
+    public required GameObject LosePanel;
 
-    public UnityEvent OnWin;
-    public UnityEvent OnLose;
-
-    // UPDATES
-    void Start()
-    {
-        gameManager = GameManager.Instance;
-    }
+    public UnityEvent? OnWin;
+    public UnityEvent? OnLose;
 
     void Update()
     {
@@ -51,10 +43,10 @@ public class BattleResolution : MonoBehaviour
         {
             for (int i = 0; i < GameManager.Instance.PartyLineup.Count; i++)         // Setting UI Numbers
             {
-                HeroPanels[i].displayLevel.text = gameManager.PartyLineup[i].Level.ToString();
-                HeroPanels[i].displayEXPBar.fillAmount = (float)(gameManager.PartyLineup[i].Experience - gameManager.PartyLineup[i].PrevExperienceThreshold)/
-                                                                (gameManager.PartyLineup[i].ExperienceThreshold - gameManager.PartyLineup[i].PrevExperienceThreshold);
-                HeroPanels[i].displayEXPToNextLevel.text = (gameManager.PartyLineup[i].ExperienceThreshold - gameManager.PartyLineup[i].Experience).ToString();
+                HeroPanels[i].displayLevel.text = GameManager.Instance.PartyLineup[i].Level.ToString();
+                HeroPanels[i].displayEXPBar.fillAmount = (float)(GameManager.Instance.PartyLineup[i].Experience - GameManager.Instance.PartyLineup[i].PrevExperienceThreshold)/
+                                                                (GameManager.Instance.PartyLineup[i].ExperienceThreshold - GameManager.Instance.PartyLineup[i].PrevExperienceThreshold);
+                HeroPanels[i].displayEXPToNextLevel.text = (GameManager.Instance.PartyLineup[i].ExperienceThreshold - GameManager.Instance.PartyLineup[i].Experience).ToString();
             }
         }
     }
@@ -86,11 +78,11 @@ public class BattleResolution : MonoBehaviour
         for (int i = 0; i < GameManager.Instance.PartyLineup.Count; i++)         // Setting UI Numbers
         {
             HeroPanels[i].gameObject.SetActive(true);
-            HeroPanels[i].displayBanner.sprite = gameManager.PartyLineup[i].Banner;
-            HeroPanels[i].displayName.text = gameManager.PartyLineup[i].gameObject.name;
-            HeroPanels[i].displayLevel.text = gameManager.PartyLineup[i].Level.ToString();
-            HeroPanels[i].displayEXPBar.fillAmount = (float)gameManager.PartyLineup[i].ExperienceToNextLevel / gameManager.PartyLineup[i].ExperienceThreshold;
-            HeroPanels[i].displayEXPToNextLevel.text = (gameManager.PartyLineup[i].ExperienceThreshold - gameManager.PartyLineup[i].Experience).ToString();
+            HeroPanels[i].displayBanner.sprite = GameManager.Instance.PartyLineup[i].Banner;
+            HeroPanels[i].displayName.text = GameManager.Instance.PartyLineup[i].gameObject.name;
+            HeroPanels[i].displayLevel.text = GameManager.Instance.PartyLineup[i].Level.ToString();
+            HeroPanels[i].displayEXPBar.fillAmount = (float)GameManager.Instance.PartyLineup[i].ExperienceToNextLevel / GameManager.Instance.PartyLineup[i].ExperienceThreshold;
+            HeroPanels[i].displayEXPToNextLevel.text = (GameManager.Instance.PartyLineup[i].ExperienceThreshold - GameManager.Instance.PartyLineup[i].Experience).ToString();
         }
         ExperienceRewards.gameObject.SetActive(true);
         CurrencyRewards.gameObject.SetActive(true);
@@ -119,7 +111,7 @@ public class BattleResolution : MonoBehaviour
         Debug.Assert(heroesAlive.Count != 0);
 
         int individualExperience = sharedExp / heroesAlive.Count;
-        ExperienceRewards.text = $"Experience: {sharedExp}  ({individualExperience})"; ;
+        ExperienceRewards.text = $"Experience: {sharedExp}  ({individualExperience})";
         CurrencyRewards.text = $"Credits: {creditsEarned}";
 
         foreach (var hero in heroesAlive)

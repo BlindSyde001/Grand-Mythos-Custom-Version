@@ -15,7 +15,7 @@ public class StatModifier : IModifier
         }
     };
 
-    public ModifierDisplay DisplayPrefab => null;
+    public ModifierDisplay? DisplayPrefab => null;
 
     public void ModifyStats(ref Stats stats)
     {

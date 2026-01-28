@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Conditions;
-using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;
@@ -23,12 +21,12 @@ public class ActionCondition : IdentifiableScriptableObject
     [SerializeReference]
     public Condition? AdditionalCondition;
 
-    bool ValidateCondition(Condition _, ref string errorMessage)
+    bool ValidateCondition(Condition _, ref string? errorMessage)
     {
         return IsValid(out errorMessage);
     }
 
-    public bool IsValid(out string error)
+    public bool IsValid([MaybeNullWhen(true)] out string error)
     {
         if (TargetFilter != null && TargetFilter.IsValid(out error) == false)
             return false;
@@ -155,7 +153,7 @@ public class EvaluationContext
     /// </summary>
     public SerializableDictionary<object, object> ExecutionFlags = new();
     /// <summary> Reset before every battle </summary>
-    public SerializableDictionary<object, object> BattleFlags = new();
+    public SerializableDictionary<object, object?> BattleFlags = new();
 
     /// <summary>
     /// Incremented every time <see cref="Controller"/> has finished playing all its scheduled tactics

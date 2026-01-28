@@ -1,13 +1,12 @@
-﻿using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class ToggleWithInput : MonoBehaviour
 {
-    [Required] public InputActionReference Input;
+    public required InputActionReference Input;
     public bool State;
-    public UnityEvent WhenOn, WhenOff;
+    public UnityEvent? WhenOn, WhenOff;
 
     void Update()
     {
@@ -15,9 +14,9 @@ public class ToggleWithInput : MonoBehaviour
         {
             State = !State;
             if (State)
-                WhenOn.Invoke();
+                WhenOn?.Invoke();
             else
-                WhenOff.Invoke();
+                WhenOff?.Invoke();
         }
     }
 }

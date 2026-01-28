@@ -8,8 +8,8 @@ using UnityEngine.Rendering;
 public class Outline : MonoBehaviour
 {
     private static bool _recursionSafeguard;
-    [Required, OnValueChanged(nameof(Apply))] public Material OutlineMaterial;
-    [ReadOnly] public Renderer[] OutlineObjects = Array.Empty<Renderer>();
+    [OnValueChanged(nameof(Apply))] public required Material OutlineMaterial;
+    [ReadOnly] public Renderer?[] OutlineObjects = Array.Empty<Renderer>();
 
     private void OnEnable()
     {

@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using ActionAnimation;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -15,8 +13,7 @@ public class BattleCharacterController : MonoBehaviour
     [ValidateInput(nameof(ValidateAnim))]
     public AnimationState DeathAnimation;
 
-    [Required]
-    public Animator Animator;
+    public required Animator Animator;
 
     [NonSerialized]
     public EvaluationContext Context;

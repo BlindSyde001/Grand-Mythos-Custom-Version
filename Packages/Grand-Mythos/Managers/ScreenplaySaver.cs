@@ -34,9 +34,9 @@ public class ScreenplaySaver : MonoBehaviour, ISaved<ScreenplaySaver, Screenplay
             }
             else
             {
-                if (source.Dispatcher == null)
+                if (source.Dispatcher == null!)
                 {
-                    Debug.LogError($"Missing screenplay dispatcher", source);
+                    Debug.LogError("Missing screenplay dispatcher", source);
                     return;
                 }
 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -10,7 +8,7 @@ public class Tactics
     [TableColumnWidth(48, resizable:false)]
     public bool IsOn = true;
     [TableColumnWidth(200, resizable:false)]
-    public ActionCondition Condition;
+    public required ActionCondition Condition;
 
     public IAction Action 
     {
@@ -19,10 +17,10 @@ public class Tactics
     }
 
     [ShowInInspector]
-    [SerializeField]
+    [SerializeField, Required]
     [ValidateInput(nameof(IsIAction), "Must be an IAction, skill or consumable")]
     [ConstrainedType(typeof(IAction))]
-    ScriptableObject ActionsAsset;
+    ScriptableObject ActionsAsset = null!;
 
     bool IsIAction(ScriptableObject obj, ref string error)
     {

@@ -6,9 +6,9 @@ public class Prompt : MonoBehaviour
 {
     const int PromptLimit = 16;
 
-    static Prompt PromptTemplate;
+    static Prompt? PromptTemplate;
 
-    public TMP_Text Text;
+    public required TMP_Text Text;
 
     void Awake()
     {
@@ -102,5 +102,5 @@ public class Prompt : MonoBehaviour
 
 public partial class DomainReloadHelper
 {
-    public Prompt PromptTemplate;
+    public Prompt? PromptTemplate;
 }

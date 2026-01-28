@@ -5,8 +5,8 @@ using UnityEngine.Events;
 
 public class SaveMenuActions : MenuContainer
 {
-    public UIElementList<SaveFileButton> SaveFileButtons = new();
-    public UnityEvent OnSave;
+    public UIElementList<SaveFileButton> SaveFileButtons = new(){ Template = null! };
+    public UnityEvent? OnSave;
 
     // METHODS
     public void OpenLoadFiles()

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -10,13 +11,13 @@ using UnityEngine.UI;
 
 public class SkillTreeMenu : MenuContainerWithHeroSelection
 {
-    [Required] public RectTransform HeroSelectionContainer;
-    [Required] public TMP_Text PointsLeft;
-    [Required] public InputActionReference PointInput;
-    [Required] public InputActionReference StickInput;
-    [Required] public Image DragArea;
-    [ReadOnly, SerializeField] SkillTree _activeTree;
-    [ReadOnly, SerializeField] EventTrigger _trigger;
+    public required RectTransform HeroSelectionContainer;
+    public required TMP_Text PointsLeft;
+    public required InputActionReference PointInput;
+    public required InputActionReference StickInput;
+    public required Image DragArea;
+    [ReadOnly, SerializeField] SkillTree? _activeTree;
+    [ReadOnly, SerializeField] EventTrigger? _trigger;
     bool _isDragging;
     Vector2 _lastMousePos;
 
@@ -64,7 +65,7 @@ public class SkillTreeMenu : MenuContainerWithHeroSelection
             _activeTree = null;
         }
 
-        _activeTree = Instantiate(SelectedHero.SkillTree, this.transform);
+        _activeTree = Instantiate(SelectedHero!.SkillTree, this.transform);
         Destroy(_activeTree.GetComponent<CanvasRenderer>());
         Destroy(_activeTree.GetComponent<CanvasScaler>());
         Destroy(_activeTree.GetComponent<GraphicRaycaster>());
@@ -101,6 +102,9 @@ public class SkillTreeMenu : MenuContainerWithHeroSelection
         base.Update();
         if (SelectedHero == null)
             return;
+
+        if (_activeTree == null)
+            throw new Exception();
 
         if (_isDragging)
         {

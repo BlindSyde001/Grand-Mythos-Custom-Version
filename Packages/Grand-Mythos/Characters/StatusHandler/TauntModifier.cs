@@ -10,12 +10,12 @@ namespace Characters.StatusHandler
     {
         public float Duration = 2f;
 
-        [PreviewField] public Texture Icon;
-        [TextArea] public string Description;
+        [PreviewField] public required Texture Icon;
+        [TextArea] public string Description = "";
 
-        public ModifierDisplay DisplayPrefab;
+        public required ModifierDisplay DisplayPrefab;
 
-        ModifierDisplay IModifier.DisplayPrefab => DisplayPrefab;
+        ModifierDisplay? IModifier.DisplayPrefab => DisplayPrefab;
 
         public void ModifyStats(ref Stats stats) { }
 

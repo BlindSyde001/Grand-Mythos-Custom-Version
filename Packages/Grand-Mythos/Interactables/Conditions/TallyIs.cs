@@ -8,8 +8,8 @@ namespace Interactables.Conditions
     [Serializable]
     public class TallyIs : ICondition
     {
-        [HorizontalGroup, HideLabel, Required]
-        public Tally Tally;
+        [HorizontalGroup, HideLabel]
+        public required Tally Tally;
 
         [HorizontalGroup, HideLabel]
         public ComparisonType Comparison = ComparisonType.EqualTo;
@@ -30,7 +30,7 @@ namespace Interactables.Conditions
 
         public bool IsValid(out string error)
         {
-            if (Tally == null)
+            if (Tally == null!)
             {
                 error = $"{nameof(Tally)} is null";
                 return false;

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public abstract class MenuContainer : SelectionTracker
 {
-    MenuInputs _menuInputs;
+    MenuInputs? _menuInputs;
     protected MenuInputs MenuInputs => _menuInputs ??= FindObjectOfType<MenuInputs>();
     protected GameManager GameManager => GameManager.Instance;
     protected InventoryManager InventoryManager => InventoryManager.Instance;
@@ -17,16 +17,16 @@ public abstract class MenuContainer : SelectionTracker
 
 public abstract class MenuContainerWithHeroSelection : MenuContainer
 {
-    public UIElementList<SelectedHeroView> HeroSelectionUI;
-    [Required, SerializeField] InputActionReference SwitchHero;
-    [ReadOnly, SerializeField] protected HeroExtension SelectedHero;
+    public UIElementList<SelectedHeroView> HeroSelectionUI = new(){ Template = null! };
+    [Required, SerializeField] InputActionReference SwitchHero = null!;
+    [ReadOnly, SerializeField] protected HeroExtension? SelectedHero;
 
     protected override void Update()
     {
         float dir = SwitchHero.action.ReadValue<float>();
         if (SwitchHero.action.WasPerformedThisFrameUnique())
         {
-            int indexOf = GameManager.PartyLineup.IndexOf(SelectedHero);
+            int indexOf = GameManager.PartyLineup.IndexOf(SelectedHero!);
             indexOf += dir >= 0f ? 1 : -1;
             indexOf = indexOf < 0 ? GameManager.PartyLineup.Count + indexOf : indexOf % GameManager.PartyLineup.Count;
 
@@ -62,7 +62,7 @@ public abstract class MenuContainerWithHeroSelection : MenuContainer
             selectedHeroView.Outline.enabled = false;
         }
 
-        if (GameManager.PartyLineup.IndexOf(SelectedHero) is int indexOf and >= 0)
+        if (GameManager.PartyLineup.IndexOf(SelectedHero) is var indexOf and >= 0)
         {
             var ui = HeroSelectionUI[indexOf];
             var block = ui.Button.colors;

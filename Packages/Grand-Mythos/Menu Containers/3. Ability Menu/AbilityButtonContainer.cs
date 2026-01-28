@@ -1,4 +1,3 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -6,6 +5,6 @@ using TMPro;
 [AddComponentMenu(" GrandMythos/UIBinding/AbilityButtonContainer")]
 public class AbilityButtonContainer : MonoBehaviour
 {
-    [Required] public Button thisButton;
-    [Required] public TextMeshProUGUI buttonName;
+    public required Button thisButton;
+    public required TextMeshProUGUI buttonName;
 }

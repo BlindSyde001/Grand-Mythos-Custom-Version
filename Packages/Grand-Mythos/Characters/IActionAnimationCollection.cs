@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -27,7 +26,7 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
         _collection.Clear();
         foreach (var value in _backingArray)
         {
-            if (value.Action == null)
+            if (value.Action == null!)
                 continue;
 
             if (_collection.TryAdd((IAction)value.Action, value.Animation) == false)
@@ -63,7 +62,7 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
 
         foreach (var keyValue in _backingArray)
         {
-            if (keyValue.Action is not IAction action || keyValue.Animation is null)
+            if (keyValue.Action is not IAction action || keyValue.Animation == null!)
                 continue;
 
             if (keyValue.Animation.Validate(action, template, ref message) == false)
@@ -86,13 +85,13 @@ public class IActionAnimationCollection : ISerializationCallbackReceiver
     {
         [ConstrainedType(typeof(IAction)), ValidateInput(nameof(IsIAction), "Must be an IAction, skill or consumable")]
         [HideLabel, TableColumnWidth(150, resizable:false)]
-        public ScriptableObject Action;
+        public required ScriptableObject Action;
 
         [SerializeReference, InlineProperty]
-        [Required, HideLabel]
-        public IActionAnimation Animation;
+        [HideLabel]
+        public required IActionAnimation Animation;
 
-        bool IsIAction(ScriptableObject obj, ref string error)
+        bool IsIAction(ScriptableObject? obj, ref string error)
         {
             if (obj is null)
             {

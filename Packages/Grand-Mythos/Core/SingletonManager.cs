@@ -1,5 +1,4 @@
 ﻿using Nodalog;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -7,16 +6,16 @@ using UnityEngine.Serialization;
 
 public class SingletonManager : ScriptableObject
 {
-    [FormerlySerializedAs("CriticalFormula")] [Required] public Formulas Formulas;
-    [Required] public InputActionAsset PlayerInput;
-    [Required] public Tally HunterRank, HunterExperience, Credits;
-    [Required] public EventSystem DefaultEventSystem;
+    [FormerlySerializedAs("CriticalFormula")] public required Formulas Formulas;
+    public required InputActionAsset PlayerInput;
+    public required Tally HunterRank, HunterExperience, Credits;
+    public required EventSystem DefaultEventSystem;
 
 
 
 
 
-    static SingletonManager __instance;
+    static SingletonManager? __instance;
 
     public static SingletonManager Instance
     {

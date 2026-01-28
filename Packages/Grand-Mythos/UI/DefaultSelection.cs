@@ -1,5 +1,4 @@
-﻿using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -7,8 +6,7 @@ using UnityEngine.UI;
 public class DefaultSelection : MonoBehaviour
 {
     [Tooltip("Will select this element if there ever is a point where the selection is not set or is on an inactive object")]
-    [Required]
-    public Selectable Element;
+        public required Selectable Element;
 
     void Update()
     {

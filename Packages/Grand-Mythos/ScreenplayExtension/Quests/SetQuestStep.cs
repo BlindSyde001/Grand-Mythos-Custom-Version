@@ -10,7 +10,7 @@ namespace Quests
     [Serializable]
     public class SetQuestStep : ExecutableLinear
     {
-        [Required, HideLabel] public QuestStep Step;
+        [HideLabel] public required QuestStep Step;
         public bool Completed = true;
         
         public override void CollectReferences(ReferenceCollector references)

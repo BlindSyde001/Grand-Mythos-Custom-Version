@@ -1,28 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 [AddComponentMenu(" GrandMythos/UIBinding/StatusContainer")]
 public class StatusContainer : MonoBehaviour
 {
-    public TextMeshProUGUI HP;
-    public TextMeshProUGUI MP;
-    public TextMeshProUGUI Atk;
-    public TextMeshProUGUI MAtk;
-    public TextMeshProUGUI Def;
-    public TextMeshProUGUI MDef;
-    public TextMeshProUGUI Spd;
+    public required TextMeshProUGUI HP;
+    public required TextMeshProUGUI MP;
+    public required TextMeshProUGUI Atk;
+    public required TextMeshProUGUI MAtk;
+    public required TextMeshProUGUI Def;
+    public required TextMeshProUGUI MDef;
+    public required TextMeshProUGUI Spd;
 
-    public TextMeshProUGUI fireRes;
-    public TextMeshProUGUI iceRes;
-    public TextMeshProUGUI waterRes;
-    public TextMeshProUGUI lightRes;
+    public required TextMeshProUGUI fireRes;
+    public required TextMeshProUGUI iceRes;
+    public required TextMeshProUGUI waterRes;
+    public required TextMeshProUGUI lightRes;
 
-    public TextMeshProUGUI blindRes;
-    public TextMeshProUGUI silRes;
-    public TextMeshProUGUI furRes;
-    public TextMeshProUGUI parRes;
-    public TextMeshProUGUI physRes;
-    public TextMeshProUGUI magRes;
+    public required TextMeshProUGUI blindRes;
+    public required TextMeshProUGUI silRes;
+    public required TextMeshProUGUI furRes;
+    public required TextMeshProUGUI parRes;
+    public required TextMeshProUGUI physRes;
+    public required TextMeshProUGUI magRes;
 }

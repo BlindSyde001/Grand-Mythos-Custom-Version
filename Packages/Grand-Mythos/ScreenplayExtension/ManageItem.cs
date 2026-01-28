@@ -13,8 +13,8 @@ public class ManageItem : ExecutableLinear
     public Operation Op = Operation.Give;
     [ValidateInput(nameof(ValidateCount), "Must be greater than 0!"), HideLabel, HorizontalGroup(Width = 32)]
     public uint Count = 1;
-    [Required, HideLabel, HorizontalGroup]
-    public BaseItem Item;
+    [HideLabel, HorizontalGroup]
+    public required BaseItem Item;
 
     bool ValidateCount(uint count) => count > 0;
         

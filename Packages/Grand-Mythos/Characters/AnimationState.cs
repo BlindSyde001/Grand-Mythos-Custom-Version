@@ -9,7 +9,7 @@ public struct AnimationState
     public string StateName;
     public int Layer;
 
-    public bool EditorOnlyValidate(Animator animator, out string message, bool logToConsole = true)
+    public bool EditorOnlyValidate(Animator? animator, out string message, bool logToConsole = true)
     {
         if (animator is null)
         {

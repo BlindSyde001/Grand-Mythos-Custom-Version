@@ -13,8 +13,7 @@ namespace Battle
         private const float NearPlane = 0.1f;
         public static Dictionary<BattlePointOfViewReference, BattlePointOfView> Instances = new();
 
-        [Required]
-        public BattlePointOfViewReference Reference;
+        public required BattlePointOfViewReference Reference;
 
         private void OnEnable()
         {
@@ -36,18 +35,18 @@ namespace Battle
         private void OnDrawGizmos()
         {
             Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
-            Gizmos.color = Reference == null ? Color.red : new Color(1,1,0,0.05f);
+            Gizmos.color = Reference == null! ? Color.red : new Color(1,1,0,0.05f);
             Gizmos.DrawFrustum(default, FieldOfView, 1f, NearPlane, Ratio);
         }
 
 #if UNITY_EDITOR
 
-        private static Mesh _debugMesh;
-        private static (Vector3, Vector3)[] _ruleOfThird;
+        private static Mesh? _debugMesh;
+        private static (Vector3, Vector3)[]? _ruleOfThird;
         private void OnDrawGizmosSelected()
         {
             Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
-            Gizmos.color = Reference == null ? Color.red : new Color(1,1,0,1f);
+            Gizmos.color = Reference == null! ? Color.red : new Color(1,1,0,1f);
             if (_debugMesh == null && UnityEditor.SceneView.lastActiveSceneView is {} view)
             {
                 var previousAspect = view.camera.aspect;
@@ -77,7 +76,7 @@ namespace Battle
                 Gizmos.DrawMesh(_debugMesh);
                 Gizmos.DrawFrustum(default, FieldOfView, 100f, NearPlane, Ratio);
                 Gizmos.color = Reference == null ? Color.red : new Color(1,1,0,0.1f);
-                foreach (var (start, end) in _ruleOfThird)
+                foreach (var (start, end) in _ruleOfThird!)
                 {
                     Gizmos.DrawLine(start, end);
                 }

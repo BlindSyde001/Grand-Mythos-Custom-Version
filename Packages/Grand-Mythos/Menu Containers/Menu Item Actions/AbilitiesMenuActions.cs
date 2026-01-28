@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,8 +6,8 @@ using DG.Tweening;
 
 public class AbilitiesMenuActions : MenuContainerWithHeroSelection
 {
-    public UIElementList<AbilityButtonContainer> AbilityUI = new();
-    public AbilityDescriptionContainer AbilityDescriptionContainer;
+    public UIElementList<AbilityButtonContainer> AbilityUI = new(){ Template = null! };
+    public required AbilityDescriptionContainer AbilityDescriptionContainer;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
@@ -50,6 +51,9 @@ public class AbilitiesMenuActions : MenuContainerWithHeroSelection
 
     protected override void OnSelectedHeroChanged()
     {
+        if (SelectedHero == null)
+            throw new Exception();
+        
         AbilityDescriptionContainer.abilityNameTitle.text = "";
         AbilityDescriptionContainer.abilityDescription.text = "";
         AbilityUI.Clear();

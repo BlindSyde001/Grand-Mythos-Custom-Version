@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 [Serializable]
 public class UIElementList<T> : IEnumerable<T> where T : MonoBehaviour
 {
-    [Required] public T Template;
+    public required T Template;
     [SerializeField, ReadOnly, HorizontalGroup] List<T> _existing = new();
     [SerializeField, ReadOnly, HorizontalGroup] List<T> _pool = new();
 

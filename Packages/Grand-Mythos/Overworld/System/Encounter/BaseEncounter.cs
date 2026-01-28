@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Battle;
 using UnityEngine;
@@ -14,13 +15,13 @@ public abstract class BaseEncounter : IEncounterDefinition
     static bool startingEncounter;
 
     public SceneReference Scene;
-    public BattlePointOfViewReference PointOfView;
-    public AnimationClip IntroCamera, OutroCamera;
+    public BattlePointOfViewReference? PointOfView;
+    public AnimationClip? IntroCamera, OutroCamera;
 
     public Signal<BattleStateMachine> Start(OverworldPlayerController player)
     {
         if (startingEncounter)
-            return null;
+            throw new Exception("Trying to start an encounter while another one is already running");
 
         startingEncounter = true;
         var battleTransition = new GameObject(nameof(EncounterState));
@@ -106,7 +107,7 @@ public abstract class BaseEncounter : IEncounterDefinition
             {
                 SceneManager.sceneLoaded -= OnLoad;
                 var rootGameobjects = runtimeScene.GetRootGameObjects();
-                if (PointOfView)
+                if (PointOfView is not null)
                 {
                     try
                     {
@@ -128,9 +129,9 @@ public abstract class BaseEncounter : IEncounterDefinition
                 if (rootGameobjects.Select(x => x.GetComponentInChildren<BattleStateMachine>()).FirstOrDefault(x => x != null) is { } bsm && bsm != null)
                 {
                     signal.Set(bsm);
-                    if (IntroCamera)
+                    if (IntroCamera != null)
                         bsm.Intro = IntroCamera;
-                    if (OutroCamera)
+                    if (OutroCamera != null)
                         bsm.Outro = OutroCamera;
                     hostileSpawns = bsm.EnemySpawns.Select(x => (x.position, x.rotation)).ToArray();
                     alliesSpawns = bsm.HeroSpawns.Select(x => (x.position, x.rotation)).ToArray();
@@ -182,7 +183,7 @@ public abstract class BaseEncounter : IEncounterDefinition
         }
     }
 
-    public bool IsValid(out string error)
+    public bool IsValid([MaybeNullWhen(true)] out string error)
     {
         if (Scene.IsValid() == false)
         {
@@ -193,7 +194,7 @@ public abstract class BaseEncounter : IEncounterDefinition
         return SubIsValid(out error);
     }
 
-    protected abstract bool SubIsValid(out string error);
+    protected abstract bool SubIsValid([MaybeNullWhen(true)] out string error);
     protected abstract CharacterTemplate[] FormationToSpawn();
     protected abstract uint GetSeedForCharacter(CharacterTemplate character);
 

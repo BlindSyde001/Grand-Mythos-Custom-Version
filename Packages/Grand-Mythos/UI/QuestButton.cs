@@ -4,6 +4,6 @@ using UnityEngine.UI;
 
 public class QuestButton : MonoBehaviour
 {
-    public Button Button;
-    public TMP_Text Text;
+    public required Button Button;
+    public required TMP_Text Text;
 }

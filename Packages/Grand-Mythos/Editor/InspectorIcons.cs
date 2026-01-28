@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEditor;
 
@@ -6,7 +7,7 @@ namespace Editor
 {
     [InitializeOnLoad] internal static class InspectorIcons
     {
-        static Dictionary<int, Texture> _objIdToTexture = new();
+        static Dictionary<int, Texture?> _objIdToTexture = new();
         static List<Component> _utility = new();
 
         static InspectorIcons()
@@ -41,7 +42,7 @@ namespace Editor
             GUI.DrawTexture(rect, v);
         }
 
-        static bool TryGetIcon(GameObject go, out Texture t)
+        static bool TryGetIcon(GameObject? go, [MaybeNullWhen(false)]out Texture t)
         {
             try
             {

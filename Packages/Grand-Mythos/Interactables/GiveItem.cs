@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Sirenix.OdinInspector;
 
 namespace Interactables
@@ -7,10 +8,8 @@ namespace Interactables
     [Serializable]
     public class GiveItem : IInteraction
     {
-        [Required]
-        public BaseItem Item;
-        [ValidateInput(nameof(ValidateCount), "Must be greater than 0!")]
-        public uint Count = 1;
+        public required BaseItem Item;
+        public required uint Count = 1;
 
         bool ValidateCount(uint count) => count > 0;
 
@@ -20,9 +19,9 @@ namespace Interactables
             yield break;
         }
 
-        public bool IsValid(out string error)
+        public bool IsValid([MaybeNullWhen(true)] out string error)
         {
-            if (Item == null)
+            if (Item == null!)
             {
                 error = $"{nameof(Item)} is null";
                 return false;

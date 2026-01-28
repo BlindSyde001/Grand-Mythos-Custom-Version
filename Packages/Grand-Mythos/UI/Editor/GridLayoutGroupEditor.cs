@@ -1,29 +1,23 @@
 using UnityEditor;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEditorInternal;
-using UnityEditor.AnimatedValues;
-using UnityEditor.UI;
 
 
-
-[CustomEditor(typeof(SlantedGridLayoutGroup), true)]
-[CanEditMultipleObjects]
 /// <summary>
 /// Custom Editor for the GridLayout Component.
 /// Extend this class to write a custom editor for a component derived from GridLayout.
 /// </summary>
+[CustomEditor(typeof(SlantedGridLayoutGroup), true)]
+[CanEditMultipleObjects]
 public class GridLayoutGroupEditor : UnityEditor.Editor
 {
-    SerializedProperty m_Padding;
-    SerializedProperty m_CellSize;
-    SerializedProperty m_Spacing;
-    SerializedProperty m_StartCorner;
-    SerializedProperty m_StartAxis;
-    SerializedProperty m_ChildAlignment;
-    SerializedProperty m_Constraint;
-    SerializedProperty m_ConstraintCount;
-    SerializedProperty m_Slantedness;
+    SerializedProperty m_Padding = null!;
+    SerializedProperty m_CellSize = null!;
+    SerializedProperty m_Spacing = null!;
+    SerializedProperty m_StartCorner = null!;
+    SerializedProperty m_StartAxis = null!;
+    SerializedProperty m_ChildAlignment = null!;
+    SerializedProperty m_Constraint = null!;
+    SerializedProperty m_ConstraintCount = null!;
+    SerializedProperty m_Slantedness = null!;
 
     protected virtual void OnEnable()
     {

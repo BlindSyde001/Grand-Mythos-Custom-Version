@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Characters;
 using Characters.Special;
-using JetBrains.Annotations;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using StatusHandler;
@@ -13,16 +12,15 @@ using UnityEngine.Serialization;
 public class CharacterTemplate : MonoBehaviour
 {
     [ValidateInput(nameof(ValidateName))]
-    public string Name;
+    public string Name = "";
 
-    [Required]
-    public Team Team;
+    public required Team Team;
 
     [HorizontalGroup("ASSETS"), ValidateInput(nameof(HasBattleCharacterController), "Must have a BattleHeroModelController"), SerializeField, PreviewField(100)]
-    public GameObject BattlePrefab;
+    public required GameObject BattlePrefab;
 
     [HorizontalGroup("ASSETS"), SerializeField, PreviewField(100)]
-    public Sprite Portrait;
+    public required Sprite Portrait;
 
     [BoxGroup("STATS"), HorizontalGroup("STATS/POINTS"), GUIColor(0f, 1f, 0.3f)]
     public int CurrentHP;
@@ -74,11 +72,11 @@ public class CharacterTemplate : MonoBehaviour
 
     public float ActionRechargeSpeed => EffectiveStats.Speed;
 
-    [BoxGroup("SKILLS"), Required]
-    public Skill BasicAttack;
+    [BoxGroup("SKILLS")]
+    public required Skill BasicAttack;
 
     [BoxGroup("SKILLS")]
-    public SerializableHashSet<Skill> Skills;
+    public SerializableHashSet<Skill> Skills = new();
 
     [BoxGroup("SKILLS"), SerializeReference]
     public ISpecial? Special;
@@ -86,8 +84,8 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("SKILLS")]
     public LevelUnlocks? LevelUnlocks;
 
-    [BoxGroup("TACTICS"), Required, ListDrawerSettings(ShowFoldout = false), TableList]
-    public Tactics?[] Tactics = Array.Empty<Tactics>();
+    [BoxGroup("TACTICS"), ListDrawerSettings(ShowFoldout = false), TableList]
+    public required Tactics?[] Tactics = Array.Empty<Tactics>();
 
     [BoxGroup("ANIMATIONS")]
     [ValidateInput(nameof(ValidateActionAnimation)), InlineProperty, HideLabel]
@@ -121,10 +119,10 @@ public class CharacterTemplate : MonoBehaviour
     [BoxGroup("ANIMATIONS/Fallback Animation")]
     [Tooltip("When this unit performs an action that hasn't been added to the list above, this animation will run to ensure the unit doesn't look idle")]
     [SerializeReference, ValidateInput(nameof(ValidateSingleAnimation)), InlineProperty, HideLabel]
-    public IActionAnimation FallbackAnimation;
+    public required IActionAnimation FallbackAnimation;
 
-    [Required, SerializeReference, BoxGroup("INVENTORY"), InlineProperty, HideLabel]
-    public IInventory Inventory = new InlineInventory();
+    [SerializeReference, BoxGroup("INVENTORY"), InlineProperty, HideLabel]
+    public required IInventory Inventory = new InlineInventory();
 
     /// <summary>
     /// How much experience points this unit gives on death
@@ -142,7 +140,7 @@ public class CharacterTemplate : MonoBehaviour
     /// Loot that the enemy drops
     /// </summary>
     [BoxGroup("DROP")]
-    public List<Drop> DropItems;
+    public List<Drop> DropItems = new();
 
     [NonSerialized]
     public bool InFlowState;
@@ -162,7 +160,7 @@ public class CharacterTemplate : MonoBehaviour
         _effectiveStatsPreview = EffectiveStats;
     }
 
-    bool HasBattleCharacterController(GameObject go, ref string errorMessage)
+    bool HasBattleCharacterController(GameObject? go, ref string errorMessage)
     {
         return go != null && go.GetComponent<BattleCharacterController>();
     }
@@ -172,7 +170,7 @@ public class CharacterTemplate : MonoBehaviour
         return actionAnimation.Validate(this, ref errorMessage);
     }
 
-    bool ValidateSingleAnimation(IActionAnimation actionAnimation, ref string errorMessage)
+    bool ValidateSingleAnimation(IActionAnimation? actionAnimation, ref string errorMessage)
     {
         if (actionAnimation == null)
         {

@@ -9,7 +9,7 @@ namespace Effects
     public class AttributeAdd : IEffect
     {
         public delegate void Delegate(BattleCharacterController target, int initialAttributeValue, ComputableDamageScaling delta);
-        public static event Delegate OnApplied;
+        public static event Delegate? OnApplied;
 
         [HorizontalGroup, HideLabel, SuffixLabel("+=")]
         public Attribute Attribute = Attribute.Health;

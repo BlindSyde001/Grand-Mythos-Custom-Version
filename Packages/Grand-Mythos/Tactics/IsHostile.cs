@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Conditions
 {
@@ -23,7 +24,7 @@ namespace Conditions
             return false;
         }
 
-        public override bool IsValid(out string error)
+        public override bool IsValid([MaybeNullWhen(true)] out string error)
         {
             error = null;
             return true;

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Sirenix.OdinInspector;
 using StatusHandler;
 
 namespace Characters.Special
@@ -10,13 +9,13 @@ namespace Characters.Special
     [Serializable]
     public class ElementalAmmoSpecial : ISpecial
     {
-        [Required] public ElementalAmmo AssociatedStatus;
+        public required ElementalAmmo AssociatedStatus;
 
         public string ButtonLabel => "Elemental Ammo";
 
         public async UniTask<Tactics?> OnButtonClicked(BattleCharacterController character, IDisposableMenuProvider menuProvider, Func<BattleCharacterController, IAction, CancellationToken, UniTask<Tactics?>> presentTargetUI, CancellationToken cancellation)
         {
-            var elementMenu = menuProvider.NewMenuOf<Element?>(nameof(ElementalAmmoSpecial));
+            var elementMenu = menuProvider.NewMenuOf<Element>(nameof(ElementalAmmoSpecial));
             for (Element v = default; v <= Element.Last; v++)
                 elementMenu.NewButton(v.ToString(), v);
 

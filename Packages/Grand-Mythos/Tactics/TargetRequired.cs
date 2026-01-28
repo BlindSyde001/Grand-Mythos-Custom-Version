@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Sirenix.OdinInspector;
 
 namespace Conditions
@@ -27,7 +28,7 @@ namespace Conditions
                 targets.Empty();
         }
 
-        public override bool IsValid(out string error)
+        public override bool IsValid([MaybeNullWhen(true)] out string error)
         {
             error = null;
             return true;

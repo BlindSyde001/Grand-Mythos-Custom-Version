@@ -2,7 +2,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -14,8 +13,8 @@ public class Quest : IdentifiableScriptableObject
     [TextArea, Space]
     public string Description = "";
 
-    [Tooltip("What happens once the last step has been completed"), SerializeReference, ValidateInput(nameof(ValidateOutcome)), MaybeNull]
-    public IInteraction Outcome;
+    [Tooltip("What happens once the last step has been completed"), SerializeReference, ValidateInput(nameof(ValidateOutcome))]
+    public IInteraction? Outcome;
 
     [InlineEditor, ListDrawerSettings(CustomAddFunction = nameof(CustomAddFunction), CustomRemoveElementFunction = nameof(CustomRemoveFunction), DefaultExpandedState = true)]
     public QuestStep[] Steps = Array.Empty<QuestStep>();
@@ -152,7 +151,7 @@ public class Quest : IdentifiableScriptableObject
         #endif
     }
 
-    static bool ValidateOutcome(IInteraction interaction, ref string message)
+    static bool ValidateOutcome(IInteraction? interaction, ref string? message)
     {
         return interaction == null || interaction.IsValid(out message);
     }

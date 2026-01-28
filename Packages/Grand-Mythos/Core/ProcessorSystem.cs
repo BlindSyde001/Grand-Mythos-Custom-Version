@@ -6,7 +6,7 @@ namespace ProcessorSystem
 {
     public class ProcessorsManager : MonoBehaviour
     {
-        static ProcessorsManager _instance;
+        static ProcessorsManager? _instance;
 
         [SerializeReference] public List<IProcessorBase> Instances = new();
 
@@ -54,7 +54,7 @@ namespace ProcessorSystem
 
     public abstract class IComponent<T, T2> : MonoBehaviour where T : IComponent<T, T2>.IProcessor, new() where T2 : IComponent<T, T2>
     {
-        static T CachedProcessor;
+        static T? CachedProcessor;
 
         protected virtual void Awake()
         {

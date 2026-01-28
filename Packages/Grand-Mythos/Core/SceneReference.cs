@@ -5,12 +5,12 @@ using UnityEngine;
 [Serializable, InlineProperty]
 public struct SceneReference : ISerializationCallbackReceiver
 {
-    [SerializeField, HideInInspector] string _path;
+    [SerializeField, HideInInspector] string? _path;
 #if UNITY_EDITOR
     // This is required to ensure changing the path and running the game without a domain reload happening between does not break in editor
-    public string Path => _sceneAsset != null ? UnityEditor.AssetDatabase.GetAssetPath(_sceneAsset) : _path; 
+    public string? Path => _sceneAsset != null ? UnityEditor.AssetDatabase.GetAssetPath(_sceneAsset) : _path; 
 #else
-    public string Path => _path;
+    public string? Path => _path;
 #endif
 
 #if UNITY_EDITOR
@@ -22,7 +22,7 @@ public struct SceneReference : ISerializationCallbackReceiver
         _path = UnityEditor.AssetDatabase.GetAssetPath(asset);
     }
 
-    bool SceneNotNull(UnityEditor.SceneAsset asset, ref string message)
+    bool SceneNotNull(UnityEditor.SceneAsset? asset, ref string message)
     {
         if (asset == null)
         {

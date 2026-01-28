@@ -5,8 +5,8 @@ namespace Interactables.Conditions
 {
     public class FlagIs : ICondition
     {
-        [HorizontalGroup, HideLabel, Required]
-        public Flag Flag;
+        [HorizontalGroup, HideLabel]
+        public required Flag Flag;
 
         [HorizontalGroup, LabelText(" == "), SuffixLabel("?")]
         public bool State = true;
@@ -15,7 +15,7 @@ namespace Interactables.Conditions
 
         public bool IsValid(out string error)
         {
-            if (Flag == null)
+            if (Flag == null!)
             {
                 error = $"{nameof(Flag)} is null";
                 return false;

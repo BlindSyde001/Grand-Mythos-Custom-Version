@@ -32,22 +32,22 @@ public class Consumable : TradeableItem, IAction
     [DetailedInfoBox(TargetInfoTextShort, TargetInfoText)]
     [HideLabel]
     [SerializeReference]
-    public Condition TargetConstraint;
+    public Condition? TargetConstraint;
 
     [BoxGroup(nameof(InnerPrecondition), LabelText = @"@""Precondition To Use:   "" + this.InnerPrecondition?.UIDisplayText")]
     [DetailedInfoBox(PreconditionInfoTextShort, PreconditionInfoText)]
     [HideLabel]
     [SerializeReference]
-    public Condition InnerPrecondition;
+    public Condition? InnerPrecondition;
 
-    public AnimationClip CameraAnimation;
+    public AnimationClip? CameraAnimation;
 
-    [NonSerialized] And _basePrecondition;
-    [NonSerialized] And _fullPrecondition;
+    [NonSerialized] And? _basePrecondition;
+    [NonSerialized] And? _fullPrecondition;
 
-    Condition IAction.TargetFilter => TargetConstraint;
+    Condition? IAction.TargetFilter => TargetConstraint;
     IAction.Delay IAction.DelayToNextTurn => DelayToNextTurn;
-    AnimationClip IAction.CameraAnimation => CameraAnimation;
+    AnimationClip? IAction.CameraAnimation => CameraAnimation;
     int IAction.ManaCost => ManaCost;
 
     /// <summary>
@@ -60,7 +60,7 @@ public class Consumable : TradeableItem, IAction
             _basePrecondition ??= new IsSelf() & new ItemCarried { Item = this, AtLeastThisAmount = 1 };
             if (InnerPrecondition == null)
                 return _basePrecondition;
-            _fullPrecondition ??= new();
+            _fullPrecondition ??= new And { Left = null!, Right = null! };
             _fullPrecondition.Left = _basePrecondition;
             _fullPrecondition.Right = InnerPrecondition;
             return _fullPrecondition;

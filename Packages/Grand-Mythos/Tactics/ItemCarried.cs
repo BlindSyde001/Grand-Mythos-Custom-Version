@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Sirenix.OdinInspector;
 
 namespace Conditions
@@ -6,8 +7,8 @@ namespace Conditions
     [Serializable]
     public class ItemCarried : SimplifiedCondition
     {
-        [Required, HorizontalGroup, HideLabel, SuffixLabel("x")]
-        public BaseItem Item;
+        [HorizontalGroup, HideLabel, SuffixLabel("x")]
+        public required BaseItem Item;
 
         [HorizontalGroup, HideLabel]
         public uint AtLeastThisAmount = 1;
@@ -17,9 +18,9 @@ namespace Conditions
             return target.Profile.Inventory.HasItem(Item, out uint count) && count >= AtLeastThisAmount;
         }
 
-        public override bool IsValid(out string error)
+        public override bool IsValid([MaybeNullWhen(true)] out string error)
         {
-            if (Item == null)
+            if (Item == null!)
             {
                 error = $"{nameof(Item)} is null";
                 return false;

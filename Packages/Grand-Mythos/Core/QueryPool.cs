@@ -80,7 +80,7 @@ public static class QueryPool
         List<T>.Enumerator _inner;
         bool _disposed = false;
 
-        public T Current => _inner.Current;
+        public T Current => _inner.Current!;
 
         private RecycledEnum() { }
 
@@ -103,7 +103,7 @@ public static class QueryPool
             _inner = _buffer.GetEnumerator();
         }
 
-        object IEnumerator.Current => Current;
+        object IEnumerator.Current => Current!;
         public RecycledEnum<T> GetEnumerator() => this;
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => this;
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

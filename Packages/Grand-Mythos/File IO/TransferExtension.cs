@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public static class TransferExtension
@@ -13,7 +12,7 @@ public static class TransferExtension
             source = handler;
     }
 
-    public static void Identifiable<T>(this SavingSystem.Transfer type, ref guid handler, ref T source) where T : IdentifiableScriptableObject
+    public static void Identifiable<T>(this SavingSystem.Transfer type, ref guid handler, ref T? source) where T : IdentifiableScriptableObject
     {
         if (type == SavingSystem.Transfer.PullFromSource)
         {
@@ -21,7 +20,7 @@ public static class TransferExtension
         }
         else
         {
-            if (IdentifiableDatabase.TryGet(handler, out T item))
+            if (IdentifiableDatabase.TryGet(handler, out T? item))
                 source = item;
             else
                 Debug.LogError($"Could not find '{typeof(T)}' with id '{handler}' in the database");
@@ -87,7 +86,7 @@ public static class TransferExtension
             source.Clear();
             foreach (var item in handler)
             {
-                if (IdentifiableDatabase.TryGet(item, out T3 identifiable))
+                if (IdentifiableDatabase.TryGet(item, out T3? identifiable) && identifiable is not null)
                     source.Add(identifiable);
                 else
                     Debug.LogError($"Could not find '{typeof(T3)}' with id '{handler}' in the database");
@@ -112,7 +111,7 @@ public static class TransferExtension
             int j = 0;
             for (int i = 0; i < source.Length; i++)
             {
-                if (IdentifiableDatabase.TryGet(handler[i], out T identifiable))
+                if (IdentifiableDatabase.TryGet(handler[i], out T? identifiable) && identifiable is not null)
                     source[j++] = identifiable;
                 else
                     Debug.LogError($"Could not find '{typeof(T)}' with id '{handler}' in the database");
@@ -163,7 +162,7 @@ public static class TransferExtension
         {
             if (source == null)
             {
-                handler = default;
+                handler = default!;
                 return true;
             }
         }
@@ -171,7 +170,7 @@ public static class TransferExtension
         {
             if (handler == null)
             {
-                source = default;
+                source = default!;
                 return true;
             }
         }

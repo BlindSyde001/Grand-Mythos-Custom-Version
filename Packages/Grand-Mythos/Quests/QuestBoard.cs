@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Interactables;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -7,12 +6,12 @@ using UnityEngine;
 public class QuestBoard : MonoBehaviour
 {
     [TableList]
-    public ConditionalQuest[] Quests;
-    public UIElementList<QuestItem> UIItems;
+    public required ConditionalQuest[] Quests;
+    public required UIElementList<QuestItem> UIItems;
 
     void OnEnable()
     {
-        if (GameManager.Instance == null)
+        if (GameManager.Instance == null!)
         {
             Debug.LogWarning($"No {typeof(GameManager)} in scene, disabling the shop");
             gameObject.SetActive(false);
@@ -52,9 +51,8 @@ public class QuestBoard : MonoBehaviour
     [Serializable]
     public struct ConditionalQuest
     {
-        [Required]
-        public Quest Quest;
-        [SerializeReference, Tooltip("If this is set to a condition, that condition must be true for the quest to show up"), MaybeNull]
-        public ICondition Condition;
+        public required Quest Quest;
+        [SerializeReference, Tooltip("If this is set to a condition, that condition must be true for the quest to show up")]
+        public ICondition? Condition;
     }
 }

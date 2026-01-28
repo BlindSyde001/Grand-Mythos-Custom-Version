@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFocus : ReloadableBehaviour
 {
     public static List<CameraFocus> Queue = new();
-    public static CameraFocus CurrentFocus => _currentFocus;
-    static CameraFocus _previousFocus, _currentFocus;
-    static Coroutine _coroutine;
+    public static CameraFocus? CurrentFocus => _currentFocus;
+    static CameraFocus? _previousFocus, _currentFocus;
+    static Coroutine? _coroutine;
 
     [SerializeReference]
-    public ICameraControl Control = new OrbitCamera();
+    public required ICameraControl Control = new OrbitCamera{ Input = null! };
 
-    public ICameraTransition FadeIn;
-    public ICameraTransition FadeOut;
+    public ICameraTransition? FadeIn;
+    public ICameraTransition? FadeOut;
 
     protected override void OnEnabled(bool afterDomainReload)
     {
@@ -54,7 +53,7 @@ public class CameraFocus : ReloadableBehaviour
         Control?.OnValidate(this);
     }
 
-    IEnumerator FocusTransition(CameraFocus previous)
+    IEnumerator FocusTransition(CameraFocus? previous)
     {
         if (previous != null && previous.FadeOut != null)
         {
@@ -92,5 +91,5 @@ public interface ICameraTransition
 
 public partial class DomainReloadHelper
 {
-    public List<CameraFocus> FocusQueue;
+    public List<CameraFocus> FocusQueue = new();
 }

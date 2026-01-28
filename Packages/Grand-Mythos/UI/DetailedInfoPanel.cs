@@ -9,17 +9,17 @@ using UnityEngine.UI;
 
 public class DetailedInfoPanel : MonoBehaviour
 {
-    [Required] public Animation Animation;
+    public required Animation Animation;
     [BoxGroup("Inputs")]
-    [Required] public InputActionReference Close, NextProfile, PreviousProfile;
+    public required InputActionReference Close, NextProfile, PreviousProfile;
     [BoxGroup("Base")]
-    [Required] public Image Profile;
+    public required Image Profile;
     [BoxGroup("Base")]
-    [Required] public TMP_Text Level, Name;
+    public required TMP_Text Level, Name;
     [BoxGroup("Stats")]
-    [Required] public TMP_Text Health, Mana, Attack, MagicAttack, Defense, MagicDefense, Speed, Luck;
+    public required TMP_Text Health, Mana, Attack, MagicAttack, Defense, MagicDefense, Speed, Luck;
     [BoxGroup("Resistances")]
-    [Required] public TMP_Text Fire, Ice, Lightning, Water;
+    public required TMP_Text Fire, Ice, Lightning, Water;
 
     public async UniTask OpenAndAwaitClose(CharacterTemplate[] profiles, CancellationToken cancellation)
     {

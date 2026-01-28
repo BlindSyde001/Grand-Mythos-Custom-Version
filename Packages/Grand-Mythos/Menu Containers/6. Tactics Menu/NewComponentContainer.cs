@@ -5,9 +5,9 @@ using TMPro;
 [AddComponentMenu(" GrandMythos/UIBinding/NewComponentContainer")]
 public class NewComponentContainer : MonoBehaviour
 {
-    public Button cmpButton;
-    public TextMeshProUGUI cmpName;
+    public required Button cmpButton;
+    public required TextMeshProUGUI cmpName;
 
-    public ActionCondition selectedCnd;
-    [SerializeReference] public IAction selectedAction;
+    public required ActionCondition selectedCnd;
+    [SerializeReference] public required IAction selectedAction;
 }

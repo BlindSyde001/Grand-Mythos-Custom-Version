@@ -9,7 +9,7 @@ namespace Quests
     [Serializable]
     public class QuestStepCompleted : Precondition
     {
-        [Required, HideLabel] public QuestStep Step;
+        [HideLabel] public required QuestStep Step;
         
         public override void CollectReferences(ReferenceCollector references) { }
         public override async UniTask Setup(IPreconditionCollector tracker, CancellationToken triggerCancellation)

@@ -5,13 +5,13 @@ namespace System.Runtime.InteropServices
 {
     public static class CollectionsMarshal
     {
-        public static Span<T> AsSpan<T>(List<T> list)
+        public static Span<T> AsSpan<T>(List<T>? list)
         {
             if (list == null)
-                return default(Span<T>);
+                return default;
 
             var box = new ListCastHelper { List = list }.StrongBox;
-            return new Span<T>((T[])box.Value, 0, list.Count);
+            return new Span<T>((T[])box!.Value, 0, list.Count);
         }
 
         [StructLayout(LayoutKind.Explicit)]

@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine.UI;
 
 public class StartMenuActions : MenuContainer
 {
-    public UIElementList<PartyContainer> PartyUI = new();
-    public UIElementList<ReserveContainer> ReserveUI = new();
-    [Required] public MiscContainer miscList;
-    [Required] public TMP_Text HunterRank;
-    [Required] public Image HunterExpBar;
+    public UIElementList<PartyContainer> PartyUI = new(){ Template = null! };
+    public UIElementList<ReserveContainer> ReserveUI = new(){ Template = null! };
+    public required MiscContainer miscList;
+    public required TMP_Text HunterRank;
+    public required Image HunterExpBar;
 
     ((List<HeroExtension> collection, int index) sourceA, (List<HeroExtension> collection, int index) sourceB) _lineupChange;
 
@@ -89,7 +88,7 @@ public class StartMenuActions : MenuContainer
     internal void DisplayMisc()
     {
         miscList.miscArea.text = this.gameObject.scene.name;
-        miscList.miscZone.text = SpawnPoint.LastSpawnUsed != null ? SpawnPoint.LastSpawnUsed.Reference.SpawnName : "Unknown";
+        miscList.miscZone.text = SpawnPoint.LastSpawnUsed != null! ? SpawnPoint.LastSpawnUsed.Reference.SpawnName : "Unknown";
         miscList.miscCurrency.text = InventoryManager.Credits.ToString();
     }
 

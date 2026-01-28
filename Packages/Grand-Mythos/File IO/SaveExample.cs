@@ -5,7 +5,7 @@
     public int Health, Mana;
     public bool Alive;
     public float HeadSize;
-    public SerializableHashSet<int> KnownNumbers;
+    public SerializableHashSet<int> KnownNumbers = new();
 
     public guid UniqueConstID { get; } = new("42def988-ade2-4d6e-831a-3880a48a5e82");
 

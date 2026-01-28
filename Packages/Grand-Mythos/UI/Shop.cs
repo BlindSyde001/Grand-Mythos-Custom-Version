@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Interactables;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [AddComponentMenu(" GrandMythos/Shop")]
@@ -23,19 +21,19 @@ public class Shop : MonoBehaviour, IInteractionSource
     public List<Transaction> Stock = new();
 
     [Header("UI")]
-    [Required] public Button BuyTab;
-    [Required] public Button SellTab;
-    public UIElementList<ShopCategoryTab> CategoriesContainer = new();
-    public UIElementList<ShopItemButton> ItemsList = new();
+    public required Button BuyTab;
+    public required Button SellTab;
+    public UIElementList<ShopCategoryTab> CategoriesContainer = new(){ Template = null! };
+    public UIElementList<ShopItemButton> ItemsList = new(){ Template = null! };
 
-    [Required] public TMP_Text PlayerCredits;
-    [Required] public TMP_Text ItemDescription;
+    public required TMP_Text PlayerCredits;
+    public required TMP_Text ItemDescription;
 
     Categories _selectedCategory;
 
     void OnEnable()
     {
-        if (InventoryManager.Instance == null)
+        if (InventoryManager.Instance == null!)
         {
             Debug.LogWarning($"No {typeof(InventoryManager)} in scene, disabling the shop");
             gameObject.SetActive(false);
@@ -248,12 +246,11 @@ public class Shop : MonoBehaviour, IInteractionSource
     [Serializable]
     public struct Transaction
     {
-        [Required]
-        public TradeableItem Item;
-        [SerializeReference, Tooltip("Condition for this item to become available, None means it is always available"), MaybeNull]
-        public ICondition Availability;
-        [SerializeReference, Tooltip("Interaction occuring once this item is bought"), MaybeNull]
-        public IInteraction OnTransaction;
+        public required TradeableItem Item;
+        [SerializeReference, Tooltip("Condition for this item to become available, None means it is always available")]
+        public ICondition? Availability;
+        [SerializeReference, Tooltip("Interaction occuring once this item is bought")]
+        public IInteraction? OnTransaction;
     }
 
     [Flags]

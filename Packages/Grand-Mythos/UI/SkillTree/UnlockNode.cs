@@ -10,14 +10,14 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class UnlockNode : MonoBehaviour, ISerializationCallbackReceiver
 {
-    [SerializeReference, Required, BoxGroup("UNLOCKS"), HideLabel]
-    public IUnlock[] Unlocks;
+    [SerializeReference, BoxGroup("UNLOCKS"), HideLabel]
+    public required IUnlock[] Unlocks;
 
     [FormerlySerializedAs("Requirements"), ListDrawerSettings(ShowFoldout = false)]
     public UnlockNode[] LinkedTo = Array.Empty<UnlockNode>();
 
-    [BoxGroup("VISUALS"), Required] public Button Button;
-    [BoxGroup("VISUALS")] public UnityEvent OnReachable, OnUnreachable;
+    [BoxGroup("VISUALS")] public required Button Button;
+    [BoxGroup("VISUALS")] public UnityEvent? OnReachable, OnUnreachable;
     [BoxGroup("VISUALS")] public Subnode[] Subnodes = new Subnode[6];
     UnlockNode[] _previousLinks = Array.Empty<UnlockNode>();
 
@@ -30,9 +30,9 @@ public class UnlockNode : MonoBehaviour, ISerializationCallbackReceiver
     {
         ForceValidateLinks();
         for (int i = 0; i < Subnodes.Length; i++)
-            Subnodes[i].OnDisabled.Invoke();
+            Subnodes[i].OnDisabled?.Invoke();
         for (int i = 0; i < Unlocks.Length; i++)
-            Subnodes[Unlocks.Length - 1 - i].OnEnabled.Invoke();
+            Subnodes[Unlocks.Length - 1 - i].OnEnabled?.Invoke();
     }
 
     void ISerializationCallbackReceiver.OnBeforeSerialize()

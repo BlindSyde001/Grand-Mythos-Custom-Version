@@ -8,7 +8,7 @@ namespace Quests
 {
     public class IsCurrentStep : Precondition
     {
-        [Required, HideLabel] public QuestStep Step;
+        [HideLabel] public required QuestStep Step;
         
         public override void CollectReferences(ReferenceCollector references) { }
 

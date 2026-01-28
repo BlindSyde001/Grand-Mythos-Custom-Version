@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Nodalog;
 using Sirenix.OdinInspector;
 
@@ -8,10 +9,10 @@ namespace Interactables
     [Serializable]
     public class SetFlag : IInteraction
     {
-        [Required, HorizontalGroup, HideLabel]
-        public Flag Flag;
+        [HorizontalGroup, HideLabel]
+        public required Flag Flag;
 
-        [Required, HorizontalGroup, LabelText(" \u2192 ")]
+        [HorizontalGroup, LabelText(" \u2192 ")]
         public bool NewState;
 
         public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
@@ -20,7 +21,7 @@ namespace Interactables
             yield break;
         }
 
-        public bool IsValid(out string error)
+        public bool IsValid([MaybeNullWhen(true)] out string error)
         {
             error = null;
             return true;

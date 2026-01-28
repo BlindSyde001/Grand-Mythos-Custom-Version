@@ -9,8 +9,8 @@ namespace Editor
     [CanEditMultipleObjects]
     public class UnlockNodeRendererEditor : ImageEditor
     {
-        UnlockNode _node;
-        protected SerializedProperty LineColor;
+        UnlockNode? _node;
+        protected SerializedProperty LineColor = null!;
 
         protected override void OnEnable()
         {
@@ -31,7 +31,7 @@ namespace Editor
         void OnSceneGUI()
         {
             var skillTree = _node?.GetComponentInParent<SkillTree>();
-            if (skillTree == null)
+            if (_node is null || skillTree == null)
                 return;
 
             for (var e = skillTree.NodesEnum(); e.MoveNext(); )

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Interactables
@@ -8,7 +8,7 @@ namespace Interactables
     [Serializable]
     public class StartEncounter : IInteraction
     {
-        [Required, SerializeReference] public IEncounterDefinition Encounter;
+        [SerializeReference] public required IEncounterDefinition Encounter;
 
         public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
@@ -20,9 +20,9 @@ namespace Interactables
                 yield return Delay.WaitTillNextFrame;
         }
 
-        public bool IsValid(out string error)
+        public bool IsValid([MaybeNullWhen(true)] out string error)
         {
-            if (Encounter == null)
+            if (Encounter == null!)
             {
                 error = $"{nameof(Encounter)} is null";
                 return false;

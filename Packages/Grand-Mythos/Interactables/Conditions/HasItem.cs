@@ -6,16 +6,14 @@ namespace Interactables.Conditions
     [Serializable]
     public class HasItem : ICondition
     {
-        [Required]
-        public BaseItem Item;
-        [ValidateInput(nameof(ValidateCount), "Must be greater than 0!")]
-        public uint Count = 1;
+        public required BaseItem Item;
+        public required uint Count = 1;
 
         public bool Evaluate() => InventoryManager.Instance.FindItem(Item, out var count) && count >= Count;
 
         public bool IsValid(out string error)
         {
-            if (Item == null)
+            if (Item == null!)
             {
                 error = "Item is null";
                 return false;
@@ -30,7 +28,5 @@ namespace Interactables.Conditions
             error = "";
             return true;
         }
-
-        bool ValidateCount(uint count) => count > 0;
     }
 }

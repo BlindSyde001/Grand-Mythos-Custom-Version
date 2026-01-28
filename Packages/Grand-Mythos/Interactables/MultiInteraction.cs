@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 namespace Interactables
@@ -8,7 +8,7 @@ namespace Interactables
     [Serializable]
     public class MultiInteraction : IInteraction
     {
-        [Required, SerializeReference] public IInteraction[] Array = System.Array.Empty<IInteraction>();
+        [SerializeReference] public required IInteraction[] Array = System.Array.Empty<IInteraction>();
         public Mode Execution = Mode.Sequentially;
 
         public enum Mode
@@ -29,7 +29,7 @@ namespace Interactables
                     }
                     break;
                 case Mode.Simultaneously:
-                    var enums = new IEnumerator<Delay>[Array.Length];
+                    var enums = new IEnumerator<Delay>?[Array.Length];
                     for (int i = 0; i < enums.Length; i++)
                         enums[i] = Array[i].InteractEnum(source, player).GetEnumerator();
 
@@ -38,14 +38,15 @@ namespace Interactables
                     {
                         for (int i = 0; i < enums.Length; i++)
                         {
-                            if (enums[i] != null && enums[i].MoveNext())
+                            var enumVal = enums[i];
+                            if (enumVal != null && enumVal.MoveNext())
                             {
-                                switch (enums[i].Current)
+                                switch (enumVal.Current)
                                 {
                                     case Delay.WaitTillNextFrame:
                                         break;
                                     default:
-                                        throw new ArgumentOutOfRangeException(enums[i].Current.ToString());
+                                        throw new ArgumentOutOfRangeException(enumVal.Current.ToString());
                                 }
 
                                 continue;
@@ -64,12 +65,12 @@ namespace Interactables
             }
         }
 
-        public bool IsValid(out string error)
+        public bool IsValid([MaybeNullWhen(true)]out string error)
         {
             for (int i = 0; i < Array.Length; i++)
             {
-                IInteraction interaction = Array[i];
-                if (interaction == null)
+                IInteraction? interaction = Array[i];
+                if (interaction == null!)
                 {
                     error = $"Interaction #{i} is null";
                     return false;

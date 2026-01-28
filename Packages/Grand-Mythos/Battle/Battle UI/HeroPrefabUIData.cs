@@ -1,4 +1,3 @@
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -6,14 +5,14 @@ using TMPro;
 [AddComponentMenu(" GrandMythos/UIBinding/HeroPrefabUIData")]
 public class HeroPrefabUIData : MonoBehaviour
 {
-    [Required] public Image CharacterIcon;
-    [Required] public TextMeshProUGUI Health;
-    [Required] public Image AtbBar;
-    [Required] public Image ChargeBar;
-    [Required] public Image FlowBar;
-    [Required] public TextMeshProUGUI ManaLabel;
-    [Required] public TextMeshProUGUI NameLabel;
-    [Required] public RectTransform ModifierContainer;
-    [Required] public RectTransform ModifierContainer2;
-    [Required] public RectTransform Highlight;
+    public required Image CharacterIcon;
+    public required TextMeshProUGUI Health;
+    public required Image AtbBar;
+    public required Image ChargeBar;
+    public required Image FlowBar;
+    public required TextMeshProUGUI ManaLabel;
+    public required TextMeshProUGUI NameLabel;
+    public required RectTransform ModifierContainer;
+    public required RectTransform ModifierContainer2;
+    public required RectTransform Highlight;
 }

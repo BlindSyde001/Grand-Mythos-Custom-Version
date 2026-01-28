@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackReceiver
 {
-    static IdentifiableDatabase __instance;
+    static IdentifiableDatabase? __instance;
 
     static IdentifiableDatabase Instance
     {
@@ -29,11 +29,11 @@ public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackRece
 
     [SerializeField]
     List<IdentifiableScriptableObject> _identifiables = new();
-    Dictionary<guid, IdentifiableScriptableObject> _findByGuid;
+    Dictionary<guid, IdentifiableScriptableObject>? _findByGuid;
     bool _cleanupScheduled = false;
 
 
-    public static bool TryGet<T>(guid guid, out T item) where T : IdentifiableScriptableObject
+    public static bool TryGet<T>(guid guid, out T? item) where T : IdentifiableScriptableObject
     {
         if (guid == default)
         {
@@ -62,7 +62,7 @@ public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackRece
             return true;
         }
 
-        item = default;
+        item = null;
         return false;
     }
 

@@ -8,22 +8,22 @@ using UnityEngine.Serialization;
 public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtension.SaveV2>, ISerializationCallbackReceiver
 {
     [SerializeField, TitleGroup("EQUIPMENT ATTRIBUTES"), HorizontalGroup("EQUIPMENT ATTRIBUTES/Split"), VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left"), BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
-    protected internal Weapon _Weapon;
+    protected internal Weapon? _Weapon;
 
     [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
     internal Weapon.WeaponType myWeaponType;
 
     [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
-    protected internal Armour _Armour;
+    protected internal Armour? _Armour;
 
     [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment")]
     internal Armour.ArmourType myArmourType;
 
     [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
-    protected internal Accessory _AccessoryOne;
+    protected internal Accessory? _AccessoryOne;
 
     [SerializeField, BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
-    protected internal Accessory _AccessoryTwo;
+    protected internal Accessory? _AccessoryTwo;
 
     [SerializeField, VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Right"), BoxGroup("EQUIPMENT ATTRIBUTES/Split/Right/Total Stats"), LabelWidth(120)]
     private protected int equipHP, equipMP, equipAttack, equipMagAttack, equipDefense,  equipMagDefense, equipSpeed;
@@ -37,9 +37,9 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     public int EquipSpeed => equipSpeed;
 
     [FormerlySerializedAs("charBanner"), HorizontalGroup("ASSETS"), SerializeField, PreviewField(100)]
-    internal Sprite Banner;
+    public required Sprite Banner;
 
-    [Required, BoxGroup("SKILLS")] public SkillTree SkillTree;
+    [BoxGroup("SKILLS")] public required SkillTree SkillTree;
 
     [BoxGroup("SKILLS")] public SerializableDictionary<guid, uint> UnlockedTreeNodes = new();
 
@@ -133,7 +133,8 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         #endregion
         #region Add Equipped Items to a Temporary List
         var tempEquip = new List<Equipment>();
-        tempEquip.Add(_Weapon);
+        if (_Weapon != null)
+            tempEquip.Add(_Weapon);
         if (_Armour != null)
             tempEquip.Add(_Armour);
         if (_AccessoryOne != null)

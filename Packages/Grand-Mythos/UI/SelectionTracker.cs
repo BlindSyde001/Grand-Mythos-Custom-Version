@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,7 +7,7 @@ using UnityEngine.UI;
 public class SelectionTracker : MonoBehaviour
 {
     [Tooltip("The element that should be selected when this is opened, can be a parent containing selectable, the first one will be selected.")]
-    [Required] public GameObject DefaultSelection;
+    public required GameObject DefaultSelection;
 
     [Tooltip("Whether selection should be set to the last element that was selected whenever this is enabled again")]
     public bool RestoreSelection = true;
@@ -72,7 +71,7 @@ public class SelectionTracker : MonoBehaviour
         }
 
         {
-            if (DefaultSelection != null)
+            if (DefaultSelection != null!)
             {
                 foreach (var selectable in DefaultSelection.GetComponentsInChildren<Selectable>())
                 {
@@ -88,7 +87,7 @@ public class SelectionTracker : MonoBehaviour
         }
     }
 
-    static bool IsValidForSelection(Selectable selectable)
+    static bool IsValidForSelection(Selectable? selectable)
     {
         if (selectable == null || selectable.enabled == false || selectable.IsInteractable() == false || selectable.navigation.mode == Navigation.Mode.None)
             return false;

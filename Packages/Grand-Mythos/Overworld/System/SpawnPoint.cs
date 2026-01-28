@@ -7,11 +7,11 @@ using UnityEngine.SceneManagement;
 public class SpawnPoint : MonoBehaviour
 {
     public static SerializableDictionary<SpawnPointReference, SpawnPoint> SpawnPoints = new();
-    public static SpawnPoint LastSpawnUsed;
-    public static SpawnPointReference ScheduledSpawnOnPoint;
+    public static SpawnPoint LastSpawnUsed = null!;
+    public static SpawnPointReference? ScheduledSpawnOnPoint;
 
-    [InlineEditor, Required]
-    public SpawnPointReference Reference;
+    [InlineEditor]
+    public required SpawnPointReference Reference;
 
     void Awake()
     {
@@ -99,7 +99,7 @@ public class SpawnPoint : MonoBehaviour
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         Gizmos.DrawCube(Vector3.up, new Vector3(0.8f, 2f, 0.8f));
 
-        if (Reference == null)
+        if (Reference == null!)
             GizmosHelper.Label(center, $"No {nameof(Reference)} created for this {nameof(SpawnPoint)}", Color.red);
         else if (Reference.Scene.Path != gameObject.scene.path)
             GizmosHelper.Label(center, $"{nameof(Reference)} scene doesn't match this {nameof(SpawnPoint)}'s scene", Color.red);
@@ -118,14 +118,14 @@ public class SpawnPoint : MonoBehaviour
         };
         DomainReloadHelper.AfterReload += helper =>
         {
-            SpawnPoints = helper._spawnPoints;
-            LastSpawnUsed = helper._lastSpawnUsed;
+            SpawnPoints = helper._spawnPoints ?? new();
+            LastSpawnUsed = helper._lastSpawnUsed!;
         };
     }
 }
 
 public partial class DomainReloadHelper
 {
-    public SerializableDictionary<SpawnPointReference, SpawnPoint> _spawnPoints;
-    public SpawnPoint _lastSpawnUsed;
+    public SerializableDictionary<SpawnPointReference, SpawnPoint>? _spawnPoints;
+    public SpawnPoint? _lastSpawnUsed;
 }

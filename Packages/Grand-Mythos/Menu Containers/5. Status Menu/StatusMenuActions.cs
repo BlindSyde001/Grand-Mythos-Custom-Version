@@ -1,17 +1,16 @@
+using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using Sirenix.OdinInspector;
-using UnityEngine.InputSystem;
 
 public class StatusMenuActions : MenuContainerWithHeroSelection
 {
-    [Required] public TextMeshProUGUI TotalExp;
-    [Required] public TextMeshProUGUI NextLevelExp;
+    public required TextMeshProUGUI TotalExp;
+    public required TextMeshProUGUI NextLevelExp;
 
-    [SerializeField] StatusContainer StatusContainer;
+    [SerializeField, Required] StatusContainer StatusContainer = null!;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
@@ -43,6 +42,9 @@ public class StatusMenuActions : MenuContainerWithHeroSelection
 
     protected override void OnSelectedHeroChanged()
     {
+        if (SelectedHero is null)
+            throw new Exception();
+        
         TotalExp.text = SelectedHero.Experience.ToString();
         NextLevelExp.text = SelectedHero.ExperienceToNextLevel.ToString();
 

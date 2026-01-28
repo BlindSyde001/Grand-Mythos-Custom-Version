@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public interface IDisposableMenuProvider
 {
-    IDisposableMenu<T> NewMenuOf<T>(string seed);
+    IDisposableMenu<T> NewMenuOf<T>(string seed) where T : notnull;
 }
 
 public interface IDisposableMenu<T>

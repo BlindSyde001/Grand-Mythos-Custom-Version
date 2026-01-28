@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Interactables;
-using Sirenix.OdinInspector;
 
 public class TeleportToSpawn : IInteraction
 {
-    [Required] public SpawnPointReference Target;
+    public required SpawnPointReference Target;
 
     public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
     {
@@ -14,7 +13,7 @@ public class TeleportToSpawn : IInteraction
 
     public bool IsValid(out string error)
     {
-        if (Target == null)
+        if (Target == null!)
         {
             error = "No spawn point assigned";
             return false;

@@ -5,8 +5,7 @@ using TMPro;
 [AddComponentMenu(" GrandMythos/UIBinding/EnemyPrefabUIData")]
 public class EnemyPrefabUIData : MonoBehaviour
 {
-    public TextMeshProUGUI identity;
-    public TextMeshProUGUI health;
-    public Image healthBar;
-    public GameObject Cursor;
+    public required TextMeshProUGUI identity;
+    public required TextMeshProUGUI health;
+    public required Image healthBar;
 }

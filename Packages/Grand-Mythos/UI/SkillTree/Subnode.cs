@@ -5,6 +5,6 @@ namespace UI.SkillTree
 {
     public class Subnode : MonoBehaviour
     {
-        public UnityEvent OnUnlock, OnLock, OnEnabled, OnDisabled;
+        public UnityEvent? OnUnlock, OnLock, OnEnabled, OnDisabled;
     }
 }

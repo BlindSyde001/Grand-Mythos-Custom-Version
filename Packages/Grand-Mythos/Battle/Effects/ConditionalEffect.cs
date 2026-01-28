@@ -8,8 +8,8 @@ namespace Effects
     [Serializable]
     public class ConditionalEffect : IEffect
     {
-        [SerializeReference, Required]
-        public Condition Condition;
+        [SerializeReference]
+        public required Condition Condition;
         [LabelText(@"@""Effects:   "" + this.UIDisplaySubText")]
         [SerializeReference]
         public IEffect[] Effects = Array.Empty<IEffect>();

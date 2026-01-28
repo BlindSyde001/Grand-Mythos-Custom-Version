@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using StatusHandler;
 
 namespace Conditions
@@ -7,11 +8,11 @@ namespace Conditions
     public class StatusApplied : SimplifiedCondition
     {
         public bool Has = true;
-        public StatusModifier Status;
+        public required StatusModifier Status;
 
         protected override bool Filter(BattleCharacterController target, EvaluationContext context) => target.Profile.HasStatus(Status) == Has;
 
-        public override bool IsValid(out string error)
+        public override bool IsValid([MaybeNullWhen(true)] out string error)
         {
             error = null;
             return true;

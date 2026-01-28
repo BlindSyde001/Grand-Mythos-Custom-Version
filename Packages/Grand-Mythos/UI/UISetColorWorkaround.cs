@@ -1,12 +1,10 @@
-﻿using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 [AddComponentMenu(" GrandMythos/UI/UISetColorWorkaround")]
 public class UISetColorWorkaround : MonoBehaviour
 {
-    [Required]
-    public Graphic Image;
+    public required Graphic Image;
 
     public void SetRGBFromHex(string hex)
     {

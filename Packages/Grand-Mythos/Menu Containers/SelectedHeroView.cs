@@ -3,6 +3,6 @@ using UnityEngine.UI;
 
 public class SelectedHeroView : MonoBehaviour
 {
-    public Button Button;
-    public Image Outline;
+    public required Button Button;
+    public required Image Outline;
 }

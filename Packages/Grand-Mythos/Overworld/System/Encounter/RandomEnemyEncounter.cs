@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Random = UnityEngine.Random;
 
 [Serializable]
@@ -8,7 +9,7 @@ public class RandomEnemyEncounter : BaseEncounter
     public RangeInt FormationSize = new RangeInt(1, 3);
     public uint Seed = (uint)Random.Range(int.MinValue, int.MaxValue);
 
-    protected override bool SubIsValid(out string error)
+    protected override bool SubIsValid([MaybeNullWhen(true)] out string error)
     {
         if (FormationSize.Min <= 0)
         {
@@ -19,7 +20,7 @@ public class RandomEnemyEncounter : BaseEncounter
         for (int i = 0; i < RandomUnits.Length; i++)
         {
             EncounterAndRate encounterAndRate = RandomUnits[i];
-            if (encounterAndRate.Unit == null)
+            if (encounterAndRate.Unit == null!)
             {
                 error = $"{nameof(RandomUnits)} #{i} is null";
                 return false;
@@ -32,7 +33,7 @@ public class RandomEnemyEncounter : BaseEncounter
         }
 
         error = null;
-        return false;
+        return true;
     }
 
     protected override CharacterTemplate[] FormationToSpawn()
@@ -65,7 +66,7 @@ public class RandomEnemyEncounter : BaseEncounter
                 total -= RandomUnits[i].Chance;
             }
 
-            if (output[j] == null)
+            if (output[j] == null!)
                 output[j] = RandomUnits[0].Unit;
         }
 
@@ -77,7 +78,7 @@ public class RandomEnemyEncounter : BaseEncounter
     [Serializable]
     public struct EncounterAndRate
     {
-        public CharacterTemplate Unit;
-        public uint Chance;
+        public required CharacterTemplate Unit;
+        public required uint Chance;
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 [System.Serializable]
 public class Interaction : Precondition
 {
-    [Required] public SceneObjectReference<GameObject> Target;
+    public required SceneObjectReference<GameObject> Target;
 
     public string Label = "Interact";
 

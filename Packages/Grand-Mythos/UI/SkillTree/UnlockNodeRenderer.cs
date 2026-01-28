@@ -1,5 +1,4 @@
 ﻿using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +11,7 @@ public class UnlockNodeRenderer : Image
 
     public Color LineColor = Color.white;
 
-    [Required] public UnlockNode Data;
+    public required UnlockNode Data;
 
     (Vector3, Vector3)[] _posCache = Array.Empty<(Vector3, Vector3)>();
 

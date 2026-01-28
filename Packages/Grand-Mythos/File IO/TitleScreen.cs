@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TitleScreen : MonoBehaviour
 {
-    public SpawnPointReference NewGameScene;
+    public required SpawnPointReference NewGameScene;
 
     void OnEnable()
     {

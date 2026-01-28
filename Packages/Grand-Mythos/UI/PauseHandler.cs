@@ -1,18 +1,15 @@
 ﻿using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class PauseHandler : MonoBehaviour
 {
-    [Required]
-    public InputActionReference[] InputsToActivate = Array.Empty<InputActionReference>();
+    public required InputActionReference[] InputsToActivate = Array.Empty<InputActionReference>();
 
-    [Required]
-    public InputActionReference InputToDeactivate;
+    public required InputActionReference InputToDeactivate;
 
-    public UnityEvent OnPause, OnUnpause;
+    public UnityEvent? OnPause, OnUnpause;
 
     void Update()
     {
@@ -36,13 +33,13 @@ public class PauseHandler : MonoBehaviour
     {
         Time.timeScale = 0f;
         InputManager.PushGameState(GameState.Pause, this);
-        OnPause.Invoke();
+        OnPause?.Invoke();
     }
 
     void SwitchOff()
     {
         Time.timeScale = 1f;
         InputManager.PopGameState(this);
-        OnUnpause.Invoke();
+        OnUnpause?.Invoke();
     }
 }

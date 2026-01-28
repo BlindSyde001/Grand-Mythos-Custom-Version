@@ -4,9 +4,9 @@ using UnityEngine.Events;
 [AddComponentMenu(" GrandMythos/OverworldAnimator")]
 public class OverworldAnimator : MonoBehaviour
 {
-    public OverworldPlayerController Controller;
-    public UnityEvent OnStartMove;
-    public UnityEvent OnStartIdle;
+    public required OverworldPlayerController Controller;
+    public UnityEvent? OnStartMove;
+    public UnityEvent? OnStartIdle;
 
     Vector3 _prevPosition;
     bool _wasMoving;

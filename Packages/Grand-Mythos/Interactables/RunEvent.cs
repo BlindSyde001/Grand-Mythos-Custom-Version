@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine.Events;
 
 namespace Interactables
@@ -7,7 +8,7 @@ namespace Interactables
     [Serializable]
     public class RunEvent : IInteraction
     {
-        public UnityEvent Event;
+        public UnityEvent? Event;
 
         public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
@@ -15,7 +16,7 @@ namespace Interactables
             yield break;
         }
 
-        public bool IsValid(out string error)
+        public bool IsValid([MaybeNullWhen(true)] out string error)
         {
             error = null;
             return true;

@@ -9,7 +9,7 @@ namespace ActionAnimation
     public class PlayAnimator : IActionAnimation
     {
         [Tooltip("Plays the following state through the BattlePrefab's Animator")]
-        public string StateName;
+        public string StateName = "";
         public int Layer;
 
         public async UniTask Play(IAction? action, BattleCharacterController controller, BattleCharacterController[] targets, CancellationToken cancellation)
@@ -72,7 +72,7 @@ namespace ActionAnimation
 
         public bool Validate(IAction? action, CharacterTemplate template, ref string message)
         {
-            if (template.BattlePrefab == null)
+            if (template.BattlePrefab == null!)
             {
                 message = $"{nameof(template.BattlePrefab)} is null";
                 return false;
@@ -84,7 +84,7 @@ namespace ActionAnimation
                 return false;
             }
 
-            if (controller.Animator == null)
+            if (controller.Animator == null!)
             {
                 message = $"{nameof(template.BattlePrefab)} does not have its {nameof(controller.Animator)} set";
                 return false;

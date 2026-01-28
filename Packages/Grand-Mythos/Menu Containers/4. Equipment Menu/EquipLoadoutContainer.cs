@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -7,7 +5,7 @@ using TMPro;
 [AddComponentMenu(" GrandMythos/UIBinding/EquipLoadoutContainer")]
 public class EquipLoadoutContainer : MonoBehaviour
 {
-    public TextMeshProUGUI EquippedName;
-    public Equipment thisEquipment;
-    public Button ThisButton;
+    public required TextMeshProUGUI EquippedName;
+    public required Equipment? thisEquipment;
+    public required Button ThisButton;
 }

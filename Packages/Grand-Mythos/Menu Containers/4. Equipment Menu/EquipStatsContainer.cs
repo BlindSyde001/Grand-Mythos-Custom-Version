@@ -1,32 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 [AddComponentMenu(" GrandMythos/UIBinding/EquipStatsContainer")]
 public class EquipStatsContainer : MonoBehaviour
 {
-    public TextMeshProUGUI TotalHPText;
-    public TextMeshProUGUI TotalMPText;
-    public TextMeshProUGUI TotalAttackText;
-    public TextMeshProUGUI TotalMagAttackText;
-    public TextMeshProUGUI TotalDefenseText;
-    public TextMeshProUGUI TotalMagDefenseText;
-    public TextMeshProUGUI TotalSpeedText;
+    public required TextMeshProUGUI TotalHPText;
+    public required TextMeshProUGUI TotalMPText;
+    public required TextMeshProUGUI TotalAttackText;
+    public required TextMeshProUGUI TotalMagAttackText;
+    public required TextMeshProUGUI TotalDefenseText;
+    public required TextMeshProUGUI TotalMagDefenseText;
+    public required TextMeshProUGUI TotalSpeedText;
 
-    public TextMeshProUGUI baseHPText;
-    public TextMeshProUGUI baseMPText;
-    public TextMeshProUGUI baseAttackText;
-    public TextMeshProUGUI baseMagAttackText;
-    public TextMeshProUGUI baseDefenseText;
-    public TextMeshProUGUI baseMagDefenseText;
-    public TextMeshProUGUI baseSpeedText;
+    public required TextMeshProUGUI baseHPText;
+    public required TextMeshProUGUI baseMPText;
+    public required TextMeshProUGUI baseAttackText;
+    public required TextMeshProUGUI baseMagAttackText;
+    public required TextMeshProUGUI baseDefenseText;
+    public required TextMeshProUGUI baseMagDefenseText;
+    public required TextMeshProUGUI baseSpeedText;
 
-    public TextMeshProUGUI EquipHPText;
-    public TextMeshProUGUI EquipMPText;
-    public TextMeshProUGUI EquipAttackText;
-    public TextMeshProUGUI EquipMagAttackText;
-    public TextMeshProUGUI EquipDefenseText;
-    public TextMeshProUGUI EquipMagDefenseText;
-    public TextMeshProUGUI EquipSpeedText;
+    public required TextMeshProUGUI EquipHPText;
+    public required TextMeshProUGUI EquipMPText;
+    public required TextMeshProUGUI EquipAttackText;
+    public required TextMeshProUGUI EquipMagAttackText;
+    public required TextMeshProUGUI EquipDefenseText;
+    public required TextMeshProUGUI EquipMagDefenseText;
+    public required TextMeshProUGUI EquipSpeedText;
 }

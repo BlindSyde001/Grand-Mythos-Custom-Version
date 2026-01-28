@@ -10,7 +10,7 @@ namespace Quests
     [Serializable]
     public class SetQuestDiscovered : ExecutableLinear
     {
-        [Required, HideLabel] public Quest Quest;
+        [HideLabel] public required Quest Quest;
         public bool Discovered = true;
         
         public override void CollectReferences(ReferenceCollector references)

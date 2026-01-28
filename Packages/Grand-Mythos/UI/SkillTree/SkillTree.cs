@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class SkillTree : MonoBehaviour
 {
-    [Required] public UnlockNode Root;
-    [ReadOnly] public HeroExtension SelectedHero;
+    public required UnlockNode Root;
+    [ReadOnly] public HeroExtension SelectedHero = null!;
     [ReadOnly, SerializeField] SerializableDictionary<UnlockNode, guid> _nodeToGuid = new();
     [ReadOnly, SerializeField] SerializableHashSet<UnlockNode> _reachableNodes = new();
 
     void Start()
     {
-        if (Root == null)
+        if (Root == null!)
             Debug.LogError($"You must set a node as the {nameof(Root)} on {gameObject}'s {nameof(SkillTree)} otherwise nodes cannot be unlocked by the user");
 
         foreach (var (node, guid) in _nodeToGuid)
@@ -21,9 +21,9 @@ public class SkillTree : MonoBehaviour
             if (SelectedHero.UnlockedTreeNodes.TryGetValue(guid, out var count))
             {
                 for (int i = 0; i < node.Unlocks.Length; i++)
-                    node.Subnodes[i].OnLock.Invoke();
+                    node.Subnodes[i].OnLock?.Invoke();
                 for (int i = 0; i < count && i < node.Unlocks.Length; i++)
-                    node.Subnodes[node.Unlocks.Length - 1 - i].OnUnlock.Invoke();
+                    node.Subnodes[node.Unlocks.Length - 1 - i].OnUnlock?.Invoke();
             }
         }
         _reachableNodes.Clear();
@@ -87,7 +87,7 @@ public class SkillTree : MonoBehaviour
 
         unlockedNodes[guid] = count + 1;
         node.Unlocks[count].OnUnlock(SelectedHero);
-        node.Subnodes[node.Unlocks.Length - 1 - count].OnUnlock.Invoke();
+        node.Subnodes[node.Unlocks.Length - 1 - count].OnUnlock?.Invoke();
         UpdateReachableNodes();
     }
 }

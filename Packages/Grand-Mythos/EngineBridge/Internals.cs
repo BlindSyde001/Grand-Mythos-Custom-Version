@@ -14,7 +14,7 @@ namespace UnityHackyInternals
         public delegate UnityEngine.Object ObjectFieldValidator(
             UnityEngine.Object[] references,
             System.Type objType,
-            SerializedProperty property,
+            SerializedProperty? property,
             ObjectFieldValidatorOptions options);
 
         [Flags]
@@ -26,13 +26,13 @@ namespace UnityHackyInternals
 
         public static GUIStyle objectFieldButton => EditorStyles.objectFieldButton;
 
-        public static Object CustomDoObjectField(Rect position, Rect dropRect, int id, Object obj, Object objBeingEdited, Type objType, Type[] additionalTypes, SerializedProperty property, ObjectFieldValidator validator, bool allowSceneObjects, GUIStyle style, Action<Object> onObjectSelectorClosed = null, Action<Object> onObjectSelectedUpdated = null)
+        public static Object? CustomDoObjectField(Rect position, Rect dropRect, int id, Object? obj, Object? objBeingEdited, Type objType, Type[]? additionalTypes, SerializedProperty? property, ObjectFieldValidator? validator, bool allowSceneObjects, GUIStyle style, Action<Object>? onObjectSelectorClosed = null, Action<Object>? onObjectSelectedUpdated = null)
         {
-            EditorGUI.ObjectFieldValidator internalValidator = validator == null ? null : (refs, type, property, options) => validator(refs, type, property, (ObjectFieldValidatorOptions)options);
+            EditorGUI.ObjectFieldValidator? internalValidator = validator == null ? null : (refs, type, property, options) => validator(refs, type, property, (ObjectFieldValidatorOptions)options);
             return CustomDoObjectField(position, dropRect, id, obj, objBeingEdited, objType, additionalTypes, property, internalValidator, allowSceneObjects, style, EditorStyles.objectFieldButton, onObjectSelectorClosed, onObjectSelectedUpdated);
         }
 
-        static Object CustomDoObjectField(Rect position, Rect dropRect, int id, Object obj, Object objBeingEdited, Type objType, Type[] additionalTypes, SerializedProperty property, EditorGUI.ObjectFieldValidator validator, bool allowSceneObjects, GUIStyle style, GUIStyle buttonStyle, Action<Object> onObjectSelectorClosed = null, Action<Object> onObjectSelectedUpdated = null)
+        static Object? CustomDoObjectField(Rect position, Rect dropRect, int id, Object? obj, Object? objBeingEdited, Type objType, Type[]? additionalTypes, SerializedProperty? property, EditorGUI.ObjectFieldValidator? validator, bool allowSceneObjects, GUIStyle style, GUIStyle buttonStyle, Action<Object>? onObjectSelectorClosed = null, Action<Object>? onObjectSelectedUpdated = null)
         {
             if (validator == null)
                 validator = EditorGUI.ValidateObjectFieldAssignment;
@@ -61,7 +61,7 @@ namespace UnityHackyInternals
 
             if ((eventType == EventType.MouseDown && Event.current.button == 1 || eventType == EventType.ContextClick && visualType == EditorGUI.ObjectFieldVisualType.IconAndText) && position.Contains(Event.current.mousePosition))
             {
-                Object actualObject = property != null ? property.objectReferenceValue : obj;
+                Object? actualObject = property != null ? property.objectReferenceValue : obj;
                 GenericMenu menu = new GenericMenu();
                 if (EditorGUI.FillPropertyContextMenu(property, menu: menu) != null)
                     menu.AddSeparator("");
@@ -99,9 +99,9 @@ namespace UnityHackyInternals
                         }
                         else
                         {
-                            Object @object = property != null ? property.objectReferenceValue : obj;
-                            Component component = @object as Component;
-                            if ((bool)(Object)component)
+                            Object? @object = property != null ? property.objectReferenceValue : obj;
+                            Component? component = @object as Component;
+                            if (component is not null)
                                 @object = component.gameObject;
                             if (EditorGUI.showMixedValue)
                                 @object = null;
@@ -109,7 +109,7 @@ namespace UnityHackyInternals
                             {
                                 GUIUtility.keyboardControl = id;
                                 EditorGUI.PingObjectOrShowPreviewOnClick(@object, position);
-                                Material targetMaterial = @object as Material;
+                                Material? targetMaterial = @object as Material;
                                 if (targetMaterial != null)
                                     EditorGUI.PingObjectInSceneViewOnClick(targetMaterial);
                                 current.Use();
@@ -204,7 +204,7 @@ namespace UnityHackyInternals
                     if (dropRect.Contains(Event.current.mousePosition) && GUI.enabled)
                     {
                         Object[] objectReferences = DragAndDrop.objectReferences;
-                        Object target = validator(objectReferences, objType, property, EditorGUI.ObjectFieldValidatorOptions.None);
+                        Object? target = validator(objectReferences, objType, property, EditorGUI.ObjectFieldValidatorOptions.None);
                         if (target != null && !allowSceneObjects && !EditorUtility.IsPersistent(target))
                             target = null;
                         if (target != null)
@@ -287,7 +287,7 @@ namespace UnityHackyInternals
             }
         }
 
-        private static Object AssignSelectedObject(SerializedProperty property, EditorGUI.ObjectFieldValidator validator, Type objectType, Event evt)
+        private static Object AssignSelectedObject(SerializedProperty? property, EditorGUI.ObjectFieldValidator validator, Type objectType, Event evt)
         {
             Object[] references = new Object[1] { ObjectSelector.GetCurrentObject() };
             Object @object = validator(references, objectType, property, EditorGUI.ObjectFieldValidatorOptions.None);
@@ -298,7 +298,7 @@ namespace UnityHackyInternals
             return @object;
         }
 
-        private static void DrawObjectFieldLargeThumb(Rect position, int id, Object obj, GUIContent content)
+        private static void DrawObjectFieldLargeThumb(Rect position, int id, Object? obj, GUIContent content)
         {
             GUIStyle objectFieldThumb = EditorStyles.objectFieldThumb;
             objectFieldThumb.Draw(position, GUIContent.none, id, DragAndDrop.activeControlID == id, position.Contains(Event.current.mousePosition));
@@ -306,7 +306,7 @@ namespace UnityHackyInternals
             {
                 Matrix4x4 matrix = GUI.matrix;
                 bool flag1 = obj is Sprite;
-                bool flag2 = obj is Texture2D && (obj as Texture2D).alphaIsTransparency;
+                bool flag2 = obj is Texture2D texture2D && texture2D.alphaIsTransparency;
                 Rect position1 = objectFieldThumb.padding.Remove(position);
                 Texture2D assetPreview = AssetPreview.GetAssetPreview(obj);
                 if (assetPreview != null)
@@ -345,7 +345,7 @@ namespace UnityHackyInternals
 
         private static GUIContent s_Select = EditorGUIUtility.TrTextContent("Select");
 
-        private static void DrawObjectFieldMiniThumb(Rect position, int id, Object obj, GUIContent content)
+        private static void DrawObjectFieldMiniThumb(Rect position, int id, Object? obj, GUIContent content)
         {
             GUIStyle objectFieldMiniThumb = EditorStyles.objectFieldMiniThumb;
             position.width = 32f;
@@ -358,7 +358,7 @@ namespace UnityHackyInternals
             if (!(obj != null) || EditorGUI.showMixedValue)
                 return;
             Rect position1 = new Rect(position.x + 1f, position.y + 1f, position.height - 2f, position.height - 2f);
-            Texture2D image = content.image as Texture2D;
+            Texture2D? image = content.image as Texture2D;
             if (image != null && image.alphaIsTransparency)
                 EditorGUI.DrawTextureTransparent(position1, image);
             else
@@ -367,7 +367,7 @@ namespace UnityHackyInternals
                 GUI.Label(position1, GUIContent.Temp(string.Empty, "Ctrl + Click to show preview"));
         }
 
-        private static bool ValidDroppedObject(Object[] references, Type objType, out string errorString)
+        private static bool ValidDroppedObject(Object[]? references, Type objType, out string errorString)
         {
             errorString = "";
             if (references == null || references.Length == 0)

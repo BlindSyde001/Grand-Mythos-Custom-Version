@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.UI;
@@ -13,7 +12,7 @@ public static class InputManager
     public static GameState CurrentState { get; private set; } = GameState.Menu;
     public static List<GameStateRequests> StateStack = new();
     static InputActionAsset PlayerInput => SingletonManager.Instance.PlayerInput;
-    static InputSystemUIInputModule Module;
+    static InputSystemUIInputModule? Module;
 
     /// <summary>
     /// Push a new gamestate to change the control scheme, the key is used when poping said game state.
@@ -25,7 +24,7 @@ public static class InputManager
     {
         StateStack.Add(new(){ State = newState, Key = key });
 
-        if (PlayerInput == null) // When unloading the game input gets destroyed but this function will still be called
+        if (PlayerInput == null!) // When unloading the game input gets destroyed but this function will still be called
             return;
 
         SetGameState(newState);
@@ -51,7 +50,7 @@ public static class InputManager
             }
         }
 
-        if (PlayerInput == null && ReferenceEquals(PlayerInput, null) == false) // When unloading the game input gets destroyed but this function will still be called
+        if (PlayerInput == null! && ReferenceEquals(PlayerInput, null) == false) // When unloading the game input gets destroyed but this function will still be called
             return;
 
         if (StateStack.Count > 0 && StateStack[^1].State != CurrentState)
@@ -73,18 +72,18 @@ public static class InputManager
 
         if (ReferenceEquals(Module, null))
             throw new NullReferenceException(nameof(Module));
-        else if (Module != null) // Exist but not destroyed, if it doesn't exist it better throw which is why we have the exception above
+        else if (Module != null!) // Exist but not destroyed, if it doesn't exist it better throw which is why we have the exception above
         {
-            Module.move = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Navigate"));
-            Module.submit = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Submit"));
-            Module.cancel = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Cancel"));
-            Module.point = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Point"));
-            Module.leftClick = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "Click"));
-            Module.middleClick = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "MiddleClick"));
-            Module.rightClick = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "RightClick"));
-            Module.scrollWheel = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "ScrollWheel"));
-            Module.trackedDevicePosition = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "TrackedDevicePosition"));
-            Module.trackedDeviceOrientation = InputActionReference.Create(currentMap.actions.FirstOrDefault(x => x.name == "TrackedDeviceOrientation"));
+            Module.move = InputActionReference.Create(currentMap.actions.First(x => x.name == "Navigate"));
+            Module.submit = InputActionReference.Create(currentMap.actions.First(x => x.name == "Submit"));
+            Module.cancel = InputActionReference.Create(currentMap.actions.First(x => x.name == "Cancel"));
+            Module.point = InputActionReference.Create(currentMap.actions.First(x => x.name == "Point"));
+            Module.leftClick = InputActionReference.Create(currentMap.actions.First(x => x.name == "Click"));
+            Module.middleClick = InputActionReference.Create(currentMap.actions.First(x => x.name == "MiddleClick"));
+            Module.rightClick = InputActionReference.Create(currentMap.actions.First(x => x.name == "RightClick"));
+            Module.scrollWheel = InputActionReference.Create(currentMap.actions.First(x => x.name == "ScrollWheel"));
+            Module.trackedDevicePosition = InputActionReference.Create(currentMap.actions.First(x => x.name == "TrackedDevicePosition"));
+            Module.trackedDeviceOrientation = InputActionReference.Create(currentMap.actions.First(x => x.name == "TrackedDeviceOrientation"));
         }
 
         CurrentState = newState;
@@ -118,7 +117,7 @@ public static class InputManager
     public struct GameStateRequests
     {
         public GameState State;
-        public Object Key;
+        public Object? Key;
     }
 
     static InputManager()
@@ -197,5 +196,5 @@ public static class InputManager
 
 public partial class DomainReloadHelper
 {
-    public List<InputManager.GameStateRequests> InputManagerInstance;
+    public List<InputManager.GameStateRequests> InputManagerInstance = new();
 }

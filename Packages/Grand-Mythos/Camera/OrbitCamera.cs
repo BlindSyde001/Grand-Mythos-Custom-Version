@@ -1,13 +1,11 @@
 ﻿using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [Serializable]
 public class OrbitCamera : ICameraControl
 {
-    [Required]
-    public InputActionReference Input;
+    public required InputActionReference Input;
     public float Distance = 3f;
     public float MinimumAngle = -90f;
     public float MaximumAngle = 90f;
@@ -43,7 +41,7 @@ public class OrbitCamera : ICameraControl
 
     public void OnValidate(CameraFocus focus)
     {
-        if (Input == null)
+        if (Input == null!)
             Debug.LogError($"{nameof(Input)} on {focus} is not set", focus);
     }
 

@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MessageModal : ConstrainSelection
 {
-    [Required] public TMPro.TMP_Text Header;
-    [Required] public TMPro.TMP_InputField Message;
-    [Required] public Button Button;
-    [Required] public Canvas Canvas;
-    [Required] public Image HeaderImage;
+    public required TMPro.TMP_Text Header;
+    public required TMPro.TMP_InputField Message;
+    public required Button Button;
+    public required Canvas Canvas;
+    public required Image HeaderImage;
 
-    static GameObject _reference;
+    static GameObject? _reference;
     static List<MessageModal> _instances = new();
 
-    public static MessageModal Show(string title, string message, Type type, params (string Label, Action OnClick)[] buttons)
+    public static MessageModal Show(string title, string message, Type type, params (string Label, Action? OnClick)[]? buttons)
     {
         #warning BLOCK OTHER INPUT LAYERS WHILE THIS IS ON SCREEN
         if (buttons == null || buttons.Length == 0)
-            buttons = new[] { ("OK", default(Action)) };
+            buttons = new (string Label, Action? OnClick)[] { ("OK", null) };
 
         _reference = _reference == null ? Resources.Load<GameObject>("MessageModal") : _reference;
         var copy = Instantiate(_reference);

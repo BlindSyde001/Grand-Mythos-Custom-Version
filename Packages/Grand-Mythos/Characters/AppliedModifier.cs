@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -13,14 +12,14 @@ namespace Characters
         [SerializeReference, ReadOnly] private IModifier? _modRef;
 
         public double CreationTimeStamp;
-        [MaybeNull] public CharacterTemplate? Source;
+        public CharacterTemplate? Source;
 
         public IModifier Modifier
         {
-            get => _modRef ?? (IModifier)_object;
+            get => _modRef ?? (IModifier)_object!;
             set
             {
-                _object = null;
+                _object = null!;
                 _modRef = null;
                 if (value is ScriptableObject so)
                     _object = so;
@@ -29,7 +28,7 @@ namespace Characters
             }
         }
 
-        bool IsIModifier(ScriptableObject obj, ref string error)
+        bool IsIModifier(ScriptableObject? obj, ref string error)
         {
             if (obj is null)
             {
@@ -40,7 +39,7 @@ namespace Characters
             return obj is IModifier;
         }
 
-        public AppliedModifier(EvaluationContext context, IModifier modifier, [MaybeNull] CharacterTemplate? source)
+        public AppliedModifier(EvaluationContext context, IModifier modifier, CharacterTemplate? source)
         {
             _object = null;
             _modRef = null;

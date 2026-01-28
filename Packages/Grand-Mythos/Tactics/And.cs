@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -10,10 +11,10 @@ namespace Conditions
         [Title("v AND v", TitleAlignment = TitleAlignments.Centered), CustomValueDrawer("DrawNothing")]
         public DummyStruct _;
 
-        [TabGroup("Left", TabName = "@this.Left?.UIDisplayText"), Required, SerializeReference, HideLabel]
-        public Condition Left;
-        [TabGroup("Right", TabName = "@this.Right?.UIDisplayText"), Required, SerializeReference, HideLabel]
-        public Condition Right;
+        [TabGroup("Left", TabName = "@this.Left?.UIDisplayText"), SerializeReference, HideLabel]
+        public required Condition Left;
+        [TabGroup("Right", TabName = "@this.Right?.UIDisplayText"), SerializeReference, HideLabel]
+        public required Condition Right;
 
         protected override void FilterInner(ref TargetCollection targets, EvaluationContext context)
         {
@@ -21,14 +22,14 @@ namespace Conditions
             Right.Filter(ref targets, context);
         }
 
-        public override bool IsValid(out string error)
+        public override bool IsValid([MaybeNullWhen(true)] out string error)
         {
-            if (Left == null)
+            if (Left == null!)
             {
                 error = $"{nameof(Left)} is null";
                 return false;
             }
-            if (Right == null)
+            if (Right == null!)
             {
                 error = $"{nameof(Right)} is null";
                 return false;

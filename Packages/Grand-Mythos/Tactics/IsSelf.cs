@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Conditions
 {
@@ -7,7 +8,7 @@ namespace Conditions
     {
         protected override bool Filter(BattleCharacterController target, EvaluationContext context) => context.Controller == target;
 
-        public override bool IsValid(out string error)
+        public override bool IsValid([MaybeNullWhen(true)] out string error)
         {
             error = null;
             return true;

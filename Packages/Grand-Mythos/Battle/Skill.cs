@@ -34,20 +34,20 @@ public class Skill : IdentifiableScriptableObject, IAction
     [DetailedInfoBox(TargetInfoTextShort, TargetInfoText)]
     [HideLabel]
     [SerializeReference]
-    public Condition TargetConstraint;
+    public Condition? TargetConstraint;
 
     [BoxGroup(nameof(PreconditionToUse), LabelText = @"@""Precondition To Use:   "" + this.PreconditionToUse?.UIDisplayText")]
     [DetailedInfoBox(PreconditionInfoTextShort, PreconditionInfoText)]
     [HideLabel]
     [SerializeReference]
-    public Condition PreconditionToUse;
+    public Condition? PreconditionToUse;
 
-    public AnimationClip CameraAnimation;
+    public AnimationClip? CameraAnimation;
 
-    Condition IAction.TargetFilter => TargetConstraint;
-    Condition IAction.Precondition => PreconditionToUse;
+    Condition? IAction.TargetFilter => TargetConstraint;
+    Condition? IAction.Precondition => PreconditionToUse;
     IAction.Delay IAction.DelayToNextTurn => DelayToNextTurn;
-    AnimationClip IAction.CameraAnimation => CameraAnimation;
+    AnimationClip? IAction.CameraAnimation => CameraAnimation;
     int IAction.ManaCost => ManaCost;
 
     public string UIDisplayText => Effects.UIDisplayText();

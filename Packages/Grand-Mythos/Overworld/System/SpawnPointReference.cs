@@ -2,9 +2,9 @@
 
 public class SpawnPointReference : IdentifiableScriptableObject
 {
-    public string SpawnName;
-    public SpawnablePlayerCharacter PlayerCharacter;
-    public SceneReference Scene;
+    public string SpawnName = "";
+    public required SpawnablePlayerCharacter PlayerCharacter;
+    public required SceneReference Scene;
 
     public void SwapSceneToThisSpawnPoint()
     {

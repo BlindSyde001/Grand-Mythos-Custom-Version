@@ -6,8 +6,8 @@ namespace Interactables.Conditions
     [Serializable]
     public class QuestStepState : ICondition
     {
-        [Required, HideLabel, HorizontalGroup, SuffixLabel(" is ")]
-        public QuestStep Step;
+        [HideLabel, HorizontalGroup, SuffixLabel(" is ")]
+        public required QuestStep Step;
         [HideLabel, HorizontalGroup]
         public State Check;
 
@@ -25,7 +25,7 @@ namespace Interactables.Conditions
 
         public bool IsValid(out string error)
         {
-            if (Step == null)
+            if (Step == null!)
             {
                 error = $"{nameof(Step)} is null";
                 return false;

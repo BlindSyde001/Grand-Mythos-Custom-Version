@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Conditions
+﻿namespace Conditions
 {
     public interface IConditionEvalTracker
     {

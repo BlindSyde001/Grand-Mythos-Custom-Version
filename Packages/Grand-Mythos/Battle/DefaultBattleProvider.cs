@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;
@@ -7,14 +8,14 @@ namespace Battle
 {
     public class DefaultBattleProvider : MonoBehaviour
     {
-        public CharacterTemplate[] Allies;
-        public CharacterTemplate[] Opponents;
+        public CharacterTemplate[] Allies = Array.Empty<CharacterTemplate>();
+        public CharacterTemplate[] Opponents = Array.Empty<CharacterTemplate>();
         public bool CarryAttributeChangesBetweenSessions = false;
         public uint Seed = (uint)new System.Random().Next(int.MinValue, int.MaxValue);
 
         private void Awake()
         {
-            if (GameManager.Instance != null)
+            if (GameManager.Instance != null!)
             {
                 gameObject.SetActive(false);
                 Destroy(this);

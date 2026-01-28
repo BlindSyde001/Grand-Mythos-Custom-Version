@@ -9,12 +9,12 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
 {
     public static readonly guid Guid = new("bb05002e-f0d5-4936-a986-c47a045e58d8");
 
-    public static GameManager Instance { get; private set; }
+    public static GameManager Instance { get; private set; } = null!;
 
     [BoxGroup("PARTY DATA")]
-    public List<HeroExtension> PartyLineup;  // Who I've selected to be fighting
+    public List<HeroExtension> PartyLineup = new();  // Who I've selected to be fighting
     [BoxGroup("PARTY DATA")]
-    public List<HeroExtension> ReservesLineup;  // Who I have available in the Party
+    public List<HeroExtension> ReservesLineup = new();  // Who I have available in the Party
 
     public SerializableHashSet<QuestStep> CompletedSteps = new();
     public SerializableHashSet<Quest> DiscoveredQuests = new();
@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
 
     void Awake()
     {
-        if (Instance == null)
+        if (Instance == null!)
         {
             Instance = this;
         }
@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
     void OnDestroy()
     {
         if (Instance == this)
-            Instance = null;
+            Instance = null!;
 
         SavingSystem.Unregister<GameManager, SaveV1>(this);
     }
@@ -108,12 +108,12 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
             {
                 source.PartyLineup = new();
                 foreach (guid guid in Party)
-                    if (PlayableCharacters.TryGet(guid, out var hero))
+                    if (PlayableCharacters.TryGet(guid, out var hero) && hero != null)
                         source.PartyLineup.Add(hero);
 
                 source.ReservesLineup = new();
                 foreach (guid guid in Reserve)
-                    if (PlayableCharacters.TryGet(guid, out var hero))
+                    if (PlayableCharacters.TryGet(guid, out var hero) && hero != null)
                         source.ReservesLineup.Add(hero);
 
                 source._lastPlaytime = TimeSpan.FromTicks(Ticks);
@@ -121,9 +121,9 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
                 source.CompletedSteps = new();
                 foreach (var questStep in CompletedSteps)
                 {
-                    if (IdentifiableDatabase.TryGet(questStep.quest, out Quest quest))
+                    if (IdentifiableDatabase.TryGet(questStep.quest, out Quest? quest))
                     {
-                        if (quest.Steps.FirstOrDefault(x => x.Guid == questStep.step) is { } step)
+                        if (quest!.Steps.FirstOrDefault(x => x.Guid == questStep.step) is { } step)
                             source.CompletedSteps.Add(step);
                         else
                             Debug.LogWarning($"Could not find step {questStep.step} in quest {quest}");
@@ -134,8 +134,8 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
                 source.DiscoveredQuests = new();
                 foreach (var guid in DiscoveredQuests)
                 {
-                    if (IdentifiableDatabase.TryGet(guid, out Quest quest))
-                        source.DiscoveredQuests.Add(quest);
+                    if (IdentifiableDatabase.TryGet(guid, out Quest? quest))
+                        source.DiscoveredQuests.Add(quest!);
                     else
                         Debug.LogWarning($"Could not find quest {guid}");
                 }
@@ -176,12 +176,12 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
             {
                 source.PartyLineup = new();
                 foreach (guid guid in Party)
-                    if (PlayableCharacters.TryGet(guid, out var hero))
+                    if (PlayableCharacters.TryGet(guid, out var hero) && hero != null)
                         source.PartyLineup.Add(hero);
 
                 source.ReservesLineup = new();
                 foreach (guid guid in Reserve)
-                    if (PlayableCharacters.TryGet(guid, out var hero))
+                    if (PlayableCharacters.TryGet(guid, out var hero) && hero != null)
                         source.ReservesLineup.Add(hero);
 
                 source._lastPlaytime = TimeSpan.FromTicks(Ticks);
@@ -193,11 +193,11 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
     static GameManager()
     {
         DomainReloadHelper.BeforeReload += helper => helper.GMInstance = Instance;
-        DomainReloadHelper.AfterReload += helper => Instance = helper.GMInstance;
+        DomainReloadHelper.AfterReload += helper => Instance = helper.GMInstance!;
     }
 }
 
 public partial class DomainReloadHelper
 {
-    public GameManager GMInstance;
+    public GameManager? GMInstance;
 }

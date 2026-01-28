@@ -12,15 +12,15 @@ public partial class DomainReloadHelper : MonoBehaviour
     /// <summary>
     /// Called before the domain is reloaded, so before un-serialized fields are reset, and before components have their OnEnable() called.
     /// </summary>
-    public static System.Action<DomainReloadHelper> BeforeReload;
+    public static System.Action<DomainReloadHelper>? BeforeReload;
     /// <summary>
     /// Called after the domain is reloaded, so after un-serialized fields are reset, but before components have their OnEnable() called.
     /// </summary>
-    public static System.Action<DomainReloadHelper> AfterReload;
+    public static System.Action<DomainReloadHelper>? AfterReload;
     /// <summary>
     /// Called after exiting play mode.
     /// </summary>
-    public static System.Action OnEnterEditMode;
+    public static System.Action? OnEnterEditMode;
     /// <summary>
     /// When the game is not entering or exiting edit mode, and exiting play mode
     /// </summary>

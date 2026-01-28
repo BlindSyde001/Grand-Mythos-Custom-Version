@@ -13,22 +13,20 @@ using TMPro;
 
 public class BattleStateMachine : MonoBehaviour
 {
-    static BattleStateMachine _instance;
+    static BattleStateMachine _instance = null!;
 
-    public Team PlayerTeam;
+    public required Team PlayerTeam;
 
-    public AnimationClip Intro, Outro;
+    public required AnimationClip Intro, Outro;
 
-    [Required]
-    public BattleUIOperation UIOperation;
+    public required BattleUIOperation UIOperation;
     
-    [Required]
-    public BattleResolution BattleResolution;
+        public required BattleResolution BattleResolution;
 
-    public List<Transform> HeroSpawns;
-    public List<Transform> EnemySpawns;
+    public List<Transform> HeroSpawns = new();
+    public List<Transform> EnemySpawns = new();
 
-    public TMP_Text DebugNotificationText;
+    public required TMP_Text DebugNotificationText;
 
     [ReadOnly] public List<BattleCharacterController> PartyLineup = new();
     [ReadOnly] public List<BattleCharacterController> Units = new();
@@ -52,7 +50,7 @@ public class BattleStateMachine : MonoBehaviour
     // UPDATES
     void Awake()
     {
-        if (_instance == null)
+        if (_instance == null!)
         {
             _instance = this;
         }
@@ -67,7 +65,7 @@ public class BattleStateMachine : MonoBehaviour
     void OnDestroy()
     {
         if (_instance == this)
-            _instance = null;
+            _instance = null!;
         InputManager.PopGameState(this);
     }
 
@@ -253,7 +251,7 @@ public class BattleStateMachine : MonoBehaviour
                 Debug.LogWarning($"No animations setup for action '{chosenTactic.Action}' on unit {unit}. Using fallback animation.", unit);
             }
 
-            if (chosenTactic.Action.CameraAnimation)
+            if (chosenTactic.Action.CameraAnimation != null)
                 BattleCamera.Instance.TryPlayAnimation(unit, chosenTactic.Action.CameraAnimation);
 
 
@@ -339,7 +337,7 @@ public class BattleStateMachine : MonoBehaviour
 
     public static bool TryGetInstance([MaybeNullWhen(false)] out BattleStateMachine bts)
     {
-        if (_instance != null)
+        if (_instance != null!)
         {
             bts = _instance;
             return true;
@@ -375,7 +373,7 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
 
-    public void Exclude(BattleCharacterController unit)
+    public void Exclude(BattleCharacterController? unit)
     {
         if (unit == null)
             return;
@@ -401,7 +399,7 @@ public class BattleStateMachine : MonoBehaviour
     {
         int _stackDepth;
         int _failureDepth = 0;
-        public string FailureMessage;
+        public string FailureMessage = "";
         IAction _associatedAction;
 
         public FailureTracker(IAction associatedAction)

@@ -5,9 +5,9 @@ using TMPro;
 [AddComponentMenu(" GrandMythos/UIBinding/TacticsModuleContainer")]
 public class TacticsModuleContainer : ActionSetContainer
 {
-    public TextMeshProUGUI onToggle;
-    public Button onToggleBtn;
+    public required TextMeshProUGUI onToggle;
+    public required Button onToggleBtn;
 
-    public TextMeshProUGUI condition;
-    public Button conditionBtn;
+    public required TextMeshProUGUI condition;
+    public required Button conditionBtn;
 }

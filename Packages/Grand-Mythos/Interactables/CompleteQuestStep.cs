@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Interactables;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
 public class CompleteQuestStep : IInteraction
 {
-    [Required]
-    public QuestStep Step;
+    public required QuestStep Step;
 
     public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
     {
@@ -31,7 +29,7 @@ public class CompleteQuestStep : IInteraction
 
     public bool IsValid(out string error)
     {
-        if (Step == null)
+        if (Step == null!)
         {
             error = $"{nameof(Step)} is null";
             return false;

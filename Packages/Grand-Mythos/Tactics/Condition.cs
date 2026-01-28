@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Diagnostics.CodeAnalysis;
 using Sirenix.OdinInspector;
 using Conditions;
 
@@ -32,7 +32,7 @@ public abstract class Condition
     /// <summary>
     /// Checks whether this condition is configured properly in the editor
     /// </summary>
-    public abstract bool IsValid(out string error);
+    public abstract bool IsValid([MaybeNullWhen(true)] out string error);
 
     /// <summary>
     /// Called after an action linked to this condition ran

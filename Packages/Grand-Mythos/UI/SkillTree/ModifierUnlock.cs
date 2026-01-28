@@ -7,7 +7,7 @@ using UnityEngine;
 public class ModifierUnlock : IUnlock
 {
     [SerializeReference, InlineProperty]
-    public IModifier Modifier;
+    public required IModifier Modifier;
 
     public void OnUnlock(HeroExtension hero)
     {

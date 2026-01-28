@@ -3,5 +3,5 @@
 [CreateAssetMenu]
 public class SpawnablePlayerCharacter : ScriptableObject
 {
-    public GameObject Prefab;
+    public required GameObject Prefab;
 }

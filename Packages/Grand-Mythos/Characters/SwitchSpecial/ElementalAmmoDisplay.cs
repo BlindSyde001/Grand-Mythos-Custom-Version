@@ -6,8 +6,8 @@ namespace SwitchSpecial
 {
     public class ElementalAmmoDisplay : ModifierDisplay
     {
-        public Graphic Background;
-        [ReadOnly] public ElementalAmmo Modifier;
+        public required Graphic Background;
+        [ReadOnly] public ElementalAmmo Modifier = null!;
 
         public override void OnDisplayed(CharacterTemplate character, BattleUIOperation battleUI, IModifier modifier)
         {

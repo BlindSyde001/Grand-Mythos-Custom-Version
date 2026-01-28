@@ -5,9 +5,9 @@ using UnityEngine.Events;
 [Serializable]
 public class MeansOfTransport
 {
-    public string PromptLabel;
+    public string PromptLabel = "";
     public NavFlags NavFlags;
-    public UnityEvent OnActivate, OnDeactivate;
+    public UnityEvent? OnActivate, OnDeactivate;
 }
 
 [System.Flags]

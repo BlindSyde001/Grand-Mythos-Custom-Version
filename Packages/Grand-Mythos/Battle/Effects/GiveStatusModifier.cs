@@ -9,7 +9,7 @@ namespace Effects
     [Serializable]
     public class GiveStatusModifier : IEffect
     {
-        [Required] public StatusModifier Modifier;
+        public required StatusModifier Modifier;
         [Range(0, 100), SuffixLabel("%")] public float Chance = 50f;
         
         public void Apply(BattleCharacterController[] targets, EvaluationContext context)
@@ -21,6 +21,6 @@ namespace Effects
             }
         }
 
-        public string UIDisplayText => $"{Chance}% chance to apply {(Modifier == null ? "?" : Modifier.name)}";
+        public string UIDisplayText => $"{Chance}% chance to apply {(Modifier == null! ? "?" : Modifier.name)}";
     }
 }

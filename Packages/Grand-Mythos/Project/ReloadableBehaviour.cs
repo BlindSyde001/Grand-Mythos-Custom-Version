@@ -5,7 +5,7 @@
 /// </summary>
 public abstract class ReloadableBehaviour : MonoBehaviour
 {
-    static DomainReloadHelper _reloadHelper;
+    static DomainReloadHelper? _reloadHelper;
     static SerializableHashSet<ReloadableBehaviour> _compLeftToReload = new();
 
     protected void OnEnable()
@@ -18,7 +18,7 @@ public abstract class ReloadableBehaviour : MonoBehaviour
     {
         if (_reloadHelper)
         {
-            _reloadHelper.ReloadableBehaviours.Add(this);
+            _reloadHelper!.ReloadableBehaviours.Add(this);
             OnDisabled(true);
         }
         OnDisabled(false);

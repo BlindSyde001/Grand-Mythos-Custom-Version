@@ -1,5 +1,4 @@
-﻿using System;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,8 +6,8 @@ namespace Characters
 {
     public class NPC : MonoBehaviour
     {
-        [Required] public NavMeshAgent Agent;
-        [Required] public Animator Animator;
+        public required NavMeshAgent Agent;
+        public required Animator Animator;
         public float WalkRunThreshold = 2f;
         
         [ValidateInput(nameof(ValidateAnim))]
@@ -84,7 +83,7 @@ namespace Characters
 
         bool ValidateAnim(AnimationState state, ref string message)
         {
-            if (Animator == null)
+            if (Animator == null!)
             {
                 message = $"{nameof(Animator)} is null";
                 return false;

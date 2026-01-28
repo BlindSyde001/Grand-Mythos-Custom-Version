@@ -4,16 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using JetBrains.Annotations;
 
 public class EquipmentMenuActions : MenuContainerWithHeroSelection
 {
-    public EquipStatsContainer EquipStatsContainer;
-    public List<EquipLoadoutContainer> EquipLoadoutContainers;
+    public required EquipStatsContainer EquipStatsContainer;
+    public List<EquipLoadoutContainer> EquipLoadoutContainers = new();
 
-    public UIElementList<EquipNewItemContainer> EquipNewItemContainers;
-    public GameObject EquipNewItemList;
-    Button _listToggle;
+    public UIElementList<EquipNewItemContainer> EquipNewItemContainers = new(){ Template = null! };
+    public required GameObject EquipNewItemList;
+    Button? _listToggle;
 
     // METHODS
     public override IEnumerable Open(MenuInputs menuInputs)
@@ -42,6 +41,11 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
 
     protected override void OnSelectedHeroChanged()
     {
+        if (SelectedHero is null)
+        {
+            return;
+        }
+
         EquipStatsContainer.baseHPText.text = SelectedHero.BaseStats.HP.ToString();
         EquipStatsContainer.baseMPText.text = SelectedHero.BaseStats.MP.ToString();
         EquipStatsContainer.baseAttackText.text = SelectedHero.BaseStats.Attack.ToString();
@@ -79,7 +83,7 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
         }
     }
 
-    static Equipment GetItemFromSlot(ItemSlot slot, HeroExtension hero) => slot switch
+    static Equipment? GetItemFromSlot(ItemSlot slot, HeroExtension hero) => slot switch
     {
         ItemSlot.Weapon => hero._Weapon,
         ItemSlot.Armor => hero._Armour,
@@ -90,6 +94,9 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
 
     public void EquippableItemOpen(ItemSlot equipSlot, Button buttonPressed)
     {
+        if (SelectedHero is null)
+            throw new Exception();
+
         // Open List
         // Add These Item Types onto the List as Buttons, and when pressed, swap them out for Hero's Loadout
         if(EquipNewItemList.activeSelf && buttonPressed == _listToggle)
@@ -146,8 +153,11 @@ public class EquipmentMenuActions : MenuContainerWithHeroSelection
         }
     }
 
-    public void EquipNewItem(Equipment newEquip, ItemSlot slotHint)
+    public void EquipNewItem(Equipment? newEquip, ItemSlot slotHint)
     {
+        if (SelectedHero is null)
+            throw new Exception();
+
         switch(newEquip)
         {
             case Weapon w:

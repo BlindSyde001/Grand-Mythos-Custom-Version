@@ -108,8 +108,8 @@ public abstract class PointOfViewBase : MonoBehaviour
         }
     }
 
-    private static Mesh _debugMesh;
-    private static (Vector3, Vector3)[] _ruleOfThird;
+    private static Mesh? _debugMesh;
+    private static (Vector3, Vector3)[]? _ruleOfThird;
 
     protected static void DrawCameraFrustum()
     {
@@ -142,7 +142,7 @@ public abstract class PointOfViewBase : MonoBehaviour
             Gizmos.DrawMesh(_debugMesh);
             Gizmos.DrawFrustum(default, FieldOfView, FarPlane, NearPlane, Ratio);
             Gizmos.color = new Color(1,1,0,0.1f);
-            foreach (var (start, end) in _ruleOfThird)
+            foreach (var (start, end) in _ruleOfThird!)
             {
                 Gizmos.DrawLine(start, end);
             }

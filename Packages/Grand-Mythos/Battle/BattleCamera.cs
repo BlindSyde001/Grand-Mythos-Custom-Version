@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Linq;
 using Battle;
-using JetBrains.Annotations;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
@@ -11,14 +9,14 @@ using Random = Unity.Mathematics.Random;
 
 public class BattleCamera : MonoBehaviour
 {
-    public static BattleCamera Instance;
-    [Required] public BattleUIOperation BattleController;
+    public static BattleCamera Instance = null!;
+    public required BattleUIOperation BattleController;
     public Random Random = new(11447788);
     public float TransitionDuration = 2f;
     public float TimeBetweenNewPOV = 10f;
 
     float _timeBeforeNextCam;
-    BattlePointOfView _lastPov;
+    BattlePointOfView? _lastPov;
 
     DisposableCoroutine? _routine;
 
@@ -34,7 +32,7 @@ public class BattleCamera : MonoBehaviour
 
     private void OnDisable()
     {
-        Instance = null;
+        Instance = null!;
     }
 
     void Update()
@@ -147,7 +145,8 @@ public class BattleCamera : MonoBehaviour
                 }
 
                 _routine = null;
-                TransitionTo(_lastPov);
+                if (_lastPov is not null)
+                    TransitionTo(_lastPov);
             }
             finally
             {
@@ -198,7 +197,8 @@ public class BattleCamera : MonoBehaviour
                 if (transitionOut)
                 {
                     _routine = null;
-                    TransitionTo(_lastPov);
+                    if (_lastPov is not null)
+                        TransitionTo(_lastPov);
                 }
             }
             finally
@@ -220,7 +220,7 @@ public class BattleCamera : MonoBehaviour
     {
         public readonly int Priority;
 
-        IDisposable _disposable;
+        IDisposable? _disposable;
         Coroutine _routine;
         MonoBehaviour _host;
         

@@ -8,9 +8,9 @@ namespace Effects
     public class RemoveItem : IEffect
     {
         [HorizontalGroup, HideLabel, SuffixLabel("x")]
-        public BaseItem Item;
+        public required BaseItem Item;
         [HorizontalGroup, HideLabel]
-        public uint Amount = 1;
+        public required uint Amount = 1;
 
         public void Apply(BattleCharacterController[] targets, EvaluationContext context)
         {

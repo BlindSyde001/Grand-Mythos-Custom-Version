@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class SerializableHashSet<T> : ISet<T>, ISerializationCallbackReceiver
 {
-    [SerializeField]T[] _backingArray = Array.Empty<T>();
+    [SerializeField]T[]? _backingArray;
     HashSet<T> _proxy;
 
     public SerializableHashSet()
@@ -29,7 +29,7 @@ public class SerializableHashSet<T> : ISet<T>, ISerializationCallbackReceiver
     void ISerializationCallbackReceiver.OnAfterDeserialize()
     {
         Clear();
-        foreach (var val in _backingArray)
+        foreach (var val in _backingArray ?? Array.Empty<T>())
             _proxy.Add(val);
     }
 

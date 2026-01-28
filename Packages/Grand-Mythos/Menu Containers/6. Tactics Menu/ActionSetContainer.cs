@@ -6,14 +6,14 @@ using UnityEngine.UI;
 [AddComponentMenu(" GrandMythos/UIBinding/ActionSetContainer")]
 public class ActionSetContainer : MonoBehaviour
 {
-    public List<Button> addActionBtns;
+    public List<Button> addActionBtns = new();
 
-    public List<Button> singleActionBtns;
-    public List<Button> doubleActionBtns;
-    public List<Button> tripleActionBtns;
-    public Button quadActionBtn;
-    public List<TextMeshProUGUI> singlesText;
-    public List<TextMeshProUGUI> doublesText;
-    public List<TextMeshProUGUI> triplesText;
-    public TextMeshProUGUI quadruplesText;
+    public List<Button> singleActionBtns = new();
+    public List<Button> doubleActionBtns = new();
+    public List<Button> tripleActionBtns = new();
+    public required Button quadActionBtn;
+    public List<TextMeshProUGUI> singlesText = new();
+    public List<TextMeshProUGUI> doublesText = new();
+    public List<TextMeshProUGUI> triplesText = new();
+    public required TextMeshProUGUI quadruplesText;
 }

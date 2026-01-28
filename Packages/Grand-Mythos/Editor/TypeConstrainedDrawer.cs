@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 public class TypeConstrainedDrawer : PropertyDrawer
 {
     static Dictionary<Type, Type[]> _assignableTypes = new();
-    static MethodInfo _method;
+    static MethodInfo? _method;
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
@@ -37,9 +37,9 @@ public class TypeConstrainedDrawer : PropertyDrawer
     public static void ShowObjectSelector(Type type,
         SerializedProperty prop,
         bool allowSceneObjects,
-        List<int> allowedInstanceIDs = null,
-        System.Action<Object> onObjectSelectorClosed = null,
-        System.Action<Object> onObjectSelectedUpdated = null)
+        List<int>? allowedInstanceIDs = null,
+        System.Action<Object>? onObjectSelectorClosed = null,
+        System.Action<Object>? onObjectSelectedUpdated = null)
     {
         if (_assignableTypes.TryGetValue(type, out var types) == false)
             _assignableTypes[type] = types = type.Assembly.GetTypes().Where(x => typeof(IAction).IsAssignableFrom(x)).ToArray();
@@ -64,7 +64,7 @@ public class TypeConstrainedDrawer : PropertyDrawer
                 .First(method => method.GetParameters().Select(param => param.ParameterType).SequenceEqual(parameters));
         }
 
-        _method.Invoke(obj, new object[]
+        _method.Invoke(obj, new object?[]
         {
             types, // requiredTypes
             prop,

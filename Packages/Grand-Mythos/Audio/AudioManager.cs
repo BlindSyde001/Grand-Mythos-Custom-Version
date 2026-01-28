@@ -4,17 +4,18 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     // VARIABLES
-    public static AudioManager _instance;
-    AudioSource BGMSource;
-    AudioSource sfxSource;
+    public static AudioManager _instance = null!;
 
-    public Sound overworldTheme;
-    public Sound battleTheme;
+    private AudioSource BGMSource = null!;
+    private AudioSource sfxSource = null!;
+
+    public required Sound overworldTheme;
+    public required Sound battleTheme;
 
     //UPDATES
     void Awake()
     {
-        if (_instance == null)
+        if (_instance == null!)
         {
             _instance = this;
         }
@@ -60,13 +61,19 @@ public class AudioManager : MonoBehaviour
 
     }
 
-    public void PlayMusicWithFade(Sound music)
+    public void PlayMusicWithFade(Sound? music)
     {
         StartCoroutine(UpdateMusicWithFade(music));
     }
 
-    IEnumerator UpdateMusicWithFade(Sound newMusicToPlay)
+    IEnumerator UpdateMusicWithFade(Sound? newMusicToPlay)
     {
+        if (newMusicToPlay == null)
+        {
+            Debug.LogWarning("Playing empty music clip");
+            yield break;
+        }
+
         if(BGMSource.clip == newMusicToPlay.clip)
         {
             Debug.LogWarning("Playing the same music clip!!");

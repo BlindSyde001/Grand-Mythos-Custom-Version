@@ -14,7 +14,7 @@ public class StartEncounter : AbstractScreenplayNode, IExecutable
     [Output, SerializeReference, HideLabel, Tooltip("What would run directly after the encounter starts")]
     public IExecutable? DuringEncounter;
 
-    [Required, SerializeReference] public IEncounterDefinition Definition;
+    [SerializeReference] public required IEncounterDefinition Definition;
 
     public bool TestPrerequisite(HashSet<IPrerequisite> visited) => visited.Contains(this);
 

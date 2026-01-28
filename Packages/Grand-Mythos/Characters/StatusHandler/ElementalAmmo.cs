@@ -9,14 +9,14 @@ namespace StatusHandler
     [CreateAssetMenu(menuName = "IModifier/ElementalAmmo")]
     public class ElementalAmmo : ScriptableObject, IModifier
     {
-        [PreviewField] public Texture Icon;
-        [TextArea] public string Description;
+        [PreviewField] public required Texture Icon;
+        [TextArea] public string Description = "";
 
         public Element Element;
 
-        public ModifierDisplay DisplayPrefab;
+        public required ModifierDisplay DisplayPrefab;
 
-        ModifierDisplay IModifier.DisplayPrefab => DisplayPrefab;
+        ModifierDisplay? IModifier.DisplayPrefab => DisplayPrefab;
 
         public void ModifyStats(ref Stats stats) { }
 

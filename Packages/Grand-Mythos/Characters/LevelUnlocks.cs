@@ -33,7 +33,7 @@ public class LevelUnlocks : ScriptableObject, ISerializationCallbackReceiver
     public struct SkillUnlock
     {
         [HorizontalGroup]
-        [Required] public Skill Skill;
+        public required Skill Skill;
         [HorizontalGroup]
         public uint Level;
     }

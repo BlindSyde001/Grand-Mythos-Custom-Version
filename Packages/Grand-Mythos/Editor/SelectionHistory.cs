@@ -10,11 +10,10 @@ namespace Editor
     [InitializeOnLoad]
     public class SelectionHistory : EditorWindow
     {
-        static SelectionHistory instance;
+        static SelectionHistory instance = null!;
 
         public List<SelectionStruct> History = new();
         public int Current;
-        EditorWindow inspectorWindow;
         Rect lastInspectorWindowRect;
 
         [Serializable]
@@ -42,7 +41,7 @@ namespace Editor
 
         static void InspectorHeaderGUI(UnityEditor.Editor obj)
         {
-            if (instance == null)
+            if (instance == null!)
             {
                 List<SelectionStruct> History = new();
                 int Current = 0;

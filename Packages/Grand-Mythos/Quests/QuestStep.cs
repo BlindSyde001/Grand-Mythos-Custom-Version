@@ -8,10 +8,10 @@ public class QuestStep : ScriptableObject
     public string Title = "New Step";
 
     [TextArea]
-    public string Description;
+    public string Description = "";
 
     [SerializeField, HideInInspector]
-    Quest _quest;
+    Quest _quest = null!;
 
     [SerializeField, HideInInspector]
     guid _guid = guid.New();

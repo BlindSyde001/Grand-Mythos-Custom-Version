@@ -6,7 +6,6 @@ using System.Threading;
 using Conditions;
 using Cysharp.Threading.Tasks;
 using Effects;
-using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -19,45 +18,45 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 {
     const bool MultiSelection = false;
 
-    public BattleStateMachine BattleManagement;
+    public required BattleStateMachine BattleManagement;
 
     [Header("UI Info")]
-    public List<HeroPrefabUIData> HeroUIData;
+    public List<HeroPrefabUIData> HeroUIData = new();
     public Gradient HealthLabelColorPercent = new(), ManaLabelColorPercent = new();
-    [ReadOnly, SerializeField] public List<HeroExtension> HeroData;
+    [ReadOnly, SerializeField] public List<HeroExtension> HeroData = new();
 
-    [Required] public GameObject EnemyUIPrefab;
-    [ReadOnly, SerializeField] List<CharacterTemplate> EnemyData;
-    [ReadOnly, SerializeField] List<EnemyPrefabUIData> EnemyUIData;
+    public required GameObject EnemyUIPrefab;
+    [ReadOnly, SerializeField] List<CharacterTemplate> EnemyData = new();
+    [ReadOnly, SerializeField] List<EnemyPrefabUIData> EnemyUIData = new();
 
-    [Required] public BattleTooltipUI TooltipUI;
-    [Required] public DetailedInfoPanel DetailedInfoPanel;
-    [Required] public InputActionReference DetailedInfoPanelOpen;
+    public required BattleTooltipUI TooltipUI;
+    public required DetailedInfoPanel DetailedInfoPanel;
+    public required InputActionReference DetailedInfoPanelOpen;
 
     [Header("Action Selection")]
-    [Required] public RectTransform ActionSelectionContainer;
-    [Required] public Button Attack;
-    [Required] public Button Repeat;
-    [Required] public Button Special;
-    [Required] public Button Skills;
-    [Required] public Button Items;
+    public required RectTransform ActionSelectionContainer;
+    public required Button Attack;
+    public required Button Repeat;
+    public required Button Special;
+    public required Button Skills;
+    public required Button Items;
 
     [Header("Sub-Action Selection")]
-    [Required] public InputActionReference CancelInput;
-    [Required] public RectTransform SubActionSelectionContainer;
-    [Required] public Button AcceptSelection;
-    [ValidateInput(nameof(HasButton), "Must have a button")] public RectTransform ItemTemplate;
-    [ValidateInput(nameof(HasButton), "Must have a button")] public RectTransform SkillTemplate;
-    public TargetList Targets = new();
+    public required InputActionReference CancelInput;
+    public required RectTransform SubActionSelectionContainer;
+    public required Button AcceptSelection;
+    [ValidateInput(nameof(HasButton), "Must have a button")] public required RectTransform ItemTemplate;
+    [ValidateInput(nameof(HasButton), "Must have a button")] public required RectTransform SkillTemplate;
+    public TargetList Targets = new(){ AlliesTargetTemplate = null!, HostileTargetTemplate = null! };
 
     [Header("Previews")]
-    [Required] public GameObject TargetCursorTemplate;
+    public required GameObject TargetCursorTemplate;
 
-    [Required] public DamageText DamageTextTemplate;
+    public required DamageText DamageTextTemplate;
 
     public SerializableHashSet<BattleCharacterController> ProcessedUnits = new();
 
-    List<(GameObject cursor, BattleCharacterController? unit)> _targetCursors = new();
+    List<(GameObject cursor, BattleCharacterController unit)> _targetCursors = new();
     Queue<(float availableAfter, DamageText component)> _damageTextCache = new();
 
     GroupSelection _groupSelection;
@@ -72,14 +71,14 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         _targetSelection = new(this);
     }
 
-    bool HasButton(RectTransform val, ref string errorMessage)
+    bool HasButton(RectTransform? val, ref string errorMessage)
     {
         return val != null &&  val.GetComponentInChildren<Button>();
     }
 
     void OnEnable()
     {
-        TooltipUI.OnHideTooltip.Invoke();
+        TooltipUI.OnHideTooltip?.Invoke();
         ResetNavigation();
         HideNavigation();
 
@@ -135,7 +134,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         _damageTextCache.Enqueue((Time.time + damageText.Lifetime, damageText));
     }
 
-    [MaybeNull] private bool _infoPanelRunning;
+    private bool _infoPanelRunning;
 
     void Update()
     {
@@ -250,7 +249,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 }
             }
 
-            List<(IModifier, CharacterTemplate)> modifiersToRemove = null;
+            List<(IModifier, CharacterTemplate)>? modifiersToRemove = null;
             foreach (var ((mod, unit), display) in _modifierDisplays)
             {
                 foreach (var modifier in unit.Modifiers)
@@ -286,7 +285,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     public async UniTask<Tactics> RunUIFor(BattleCharacterController unit, List<BattleCharacterController> targetsAvailable, CancellationToken cancellation)
     {
-        Tactics tactic;
+        Tactics? tactic;
         try
         {
             if (unit.Profile is HeroExtension hero)
@@ -331,7 +330,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                     4 => await unit.Profile.Special!.OnButtonClicked(unit, this, PresentTargetSelectionUI, cancellation),
                     _ => throw new InvalidOperationException($"Unknown index {i}")
                 };
-            } while (tactic == null && cancellation.IsCancellationRequested == false);
+                cancellation.ThrowIfCancellationRequested();
+            } while (tactic == null);
         }
         finally
         {
@@ -401,8 +401,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             AcceptSelection.onClick.AddListener(listener);
         }
 
-        IUIElementSelection<HashSet<BattleCharacterController>> selector = null;
-        var tactic = new Tactics();
+        IUIElementSelection<HashSet<BattleCharacterController>>? selector = null;
+        var tactic = new Tactics {  Action = null!, Condition = null! };
         try
         {
             if (_groupSelection.ValidAndPrepared(UnitSelected, action, BattleManagement.Units))
@@ -415,7 +415,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 selector = _targetSelection;
             }
 
-            HashSet<BattleCharacterController> selection;
+            HashSet<BattleCharacterController>? selection;
             do
             {
                 selector.UpdateRenderingAndSelection();
@@ -479,11 +479,11 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
     public class TargetList
     {
         [ValidateInput(nameof(HasToggle), "Must have a toggle")]
-        public RectTransform HostileTargetTemplate;
+        public required RectTransform HostileTargetTemplate;
         [ValidateInput(nameof(HasToggle), "Must have a toggle")]
-        public RectTransform AlliesTargetTemplate;
+        public required RectTransform AlliesTargetTemplate;
 
-        bool HasToggle(RectTransform val, ref string errorMessage)
+        bool HasToggle(RectTransform? val, ref string errorMessage)
         {
             return val != null && val.GetComponentInChildren<Toggle>();
         }
@@ -491,12 +491,12 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     class TargetSelection : UIElementSelection<BattleCharacterController, HashSet<BattleCharacterController>>
     {
-        readonly HashSet<BattleCharacterController?> _lastSelection = new();
-        readonly HashSet<BattleCharacterController?> _selection = new();
-        BattleCharacterController _unitSelected;
-        BattleCharacterController _lastCursor;
-        IAction _action;
-        List<BattleCharacterController> _units;
+        readonly HashSet<BattleCharacterController> _lastSelection = new();
+        readonly HashSet<BattleCharacterController> _selection = new();
+        BattleCharacterController _unitSelected = null!;
+        BattleCharacterController _lastCursor = null!;
+        IAction _action = null!;
+        List<BattleCharacterController> _units = new();
 
         public TargetSelection(BattleUIOperation battleUIParam) : base(battleUIParam) { }
 
@@ -702,16 +702,16 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         readonly HashSet<TargetGroupNonAlloc> _selectedTargetGroups = new();
         readonly TargetGroupNonAlloc[] _targetGroups;
         TargetGroupNonAlloc _lastCursor;
-        BattleCharacterController _unitSelected;
-        IAction _action;
-        List<BattleCharacterController> _units;
+        BattleCharacterController _unitSelected = null!;
+        IAction _action = null!;
+        List<BattleCharacterController> _units = new();
 
         public GroupSelection(BattleUIOperation battleUIParam) : base(battleUIParam)
         {
             _targetGroups = new[]
             {
-                new TargetGroupNonAlloc { GenericName = "Hostiles", Filter = x => x.IsHostileTo(_unitSelected!.Context.Controller), ConsideredHostile = true },
-                new TargetGroupNonAlloc { GenericName = "Allies", Filter = x => x.IsHostileTo(_unitSelected!.Context.Controller) == false, ConsideredHostile = false }
+                new TargetGroupNonAlloc { GenericName = "Hostiles", Filter = x => x.IsHostileTo(_unitSelected.Context.Controller), ConsideredHostile = true },
+                new TargetGroupNonAlloc { GenericName = "Allies", Filter = x => x.IsHostileTo(_unitSelected.Context.Controller) == false, ConsideredHostile = false }
             };
         }
 
@@ -781,7 +781,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             return _selectedTargetGroups.Count != 0;
         }
 
-        public override bool TryGetSelected([MaybeNullWhen(false)]out HashSet<BattleCharacterController> units)
+        public override bool TryGetSelected([MaybeNullWhen(false)] out HashSet<BattleCharacterController> units)
         {
             if (_selectedTargetGroups.Count == 0)
             {
@@ -895,13 +895,13 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
             public bool Equals(TargetGroupNonAlloc other) => GenericName == other.GenericName && ConsideredHostile == other.ConsideredHostile && Equals(Filter, other.Filter);
 
-            public override bool Equals(object obj) => obj is TargetGroupNonAlloc other && Equals(other);
+            public override bool Equals(object? obj) => obj is TargetGroupNonAlloc other && Equals(other);
 
             public override int GetHashCode() => HashCode.Combine(GenericName, ConsideredHostile, Filter);
         }
     }
 
-    abstract class UIElementSelection<T, T2> : IUIElementSelection<T2>
+    abstract class UIElementSelection<T, T2> : IUIElementSelection<T2> where T : notnull where T2 : notnull
     {
         readonly BattleUIOperation _battleUI;
         readonly List<T> _temp = new();
@@ -917,7 +917,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         }
 
         public abstract bool HasAnythingSelected();
-        public abstract bool TryGetSelected(out T2 values);
+        public abstract bool TryGetSelected([MaybeNullWhen(false)] out T2 values);
         protected abstract IEnumerable<T> GetItems();
         protected abstract void OnHoverOrSelected(T obj);
         protected abstract void OnRemoved(T obj, bool fromClearAction);
@@ -1061,23 +1061,23 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         public virtual void Close() => Clear();
     }
 
-    interface IUIElementSelection<T>
+    interface IUIElementSelection<T> where T : notnull
     {
         bool HasAnythingSelected();
-        bool TryGetSelected(out T values);
+        bool TryGetSelected([MaybeNullWhen(false)] out T values);
         void UpdateRenderingAndSelection();
         void Close();
     }
 
-    public IDisposableMenu<T> NewMenuOf<T>(string seed)
+    public IDisposableMenu<T> NewMenuOf<T>(string seed) where T : notnull
     {
         return new DisposableMenu<T> { UI = this, Seed = seed };
     }
 
-    class DisposableMenu<T> : IDisposableMenu<T>
+    class DisposableMenu<T> : IDisposableMenu<T> where T : notnull
     {
-        public BattleUIOperation UI;
-        public string Seed;
+        public required BattleUIOperation UI;
+        public required string Seed;
 
         bool _disposed = false;
         readonly List<RectTransform> _submenuItems = new();

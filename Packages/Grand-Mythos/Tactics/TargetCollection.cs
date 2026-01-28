@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquatable<TargetCollection>
@@ -21,7 +22,7 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquata
         _targets = targets;
     }
 
-    public readonly bool TryGetNext(ref int i, out BattleCharacterController target)
+    public readonly bool TryGetNext(ref int i, [MaybeNullWhen(false)] out BattleCharacterController target)
     {
         i += 1;
         for (; i < _targets.Count; i++)
@@ -111,7 +112,7 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquata
             _targets = targets;
             _included = included;
             _i = -1;
-            Current = null;
+            Current = null!;
         }
 
         public bool MoveNext()
@@ -126,7 +127,7 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquata
                 }
             }
 
-            Current = null;
+            Current = null!;
             return false;
         }
 

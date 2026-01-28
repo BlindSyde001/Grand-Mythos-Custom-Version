@@ -126,8 +126,8 @@ namespace Editor
                     { // PROPERTY
                         EditorGUI.BeginChangeCheck();
 
-                        object newRef = refProp.managedReferenceValue;
-                        Object newObj = objProp.objectReferenceValue;
+                        object? newRef = refProp.managedReferenceValue;
+                        Object? newObj = objProp.objectReferenceValue;
                         if (hasInlineRef)
                             newRef = InlineObjectPicker(fieldValueRect.Padding(16, 38, 0, 0), fieldValueRect.AlignRight(40).AlignLeft(20), newRef, interfaceType, allowSceneObjects);
 
@@ -193,7 +193,7 @@ namespace Editor
             }
         }
 
-        static object InlineObjectPicker(Rect fieldRect, Rect buttonRect, object value, Type type, bool allowSceneObjects)
+        static object? InlineObjectPicker(Rect fieldRect, Rect buttonRect, object? value, Type type, bool allowSceneObjects)
         {
             bool mouseHover = buttonRect.Contains(Event.current.mousePosition);
 
@@ -218,9 +218,9 @@ namespace Editor
             return value;
         }
 
-        static Object UnityObjectField(Rect rect, Rect editButtonRect, Object value, Type objectType, bool allowSceneObjects)
+        static Object? UnityObjectField(Rect rect, Rect editButtonRect, Object? value, Type objectType, bool allowSceneObjects)
         {
-            Object originalValue = value;
+            Object? originalValue = value;
             bool originalValueWasFakeNull = value == null && !ReferenceEquals(value, null);
 
             // This could be added to also support dragging on object fields.
@@ -236,7 +236,7 @@ namespace Editor
             if (showEditor)
                 EndDrawOpenInspector(penRect, value);
 
-            if (originalValueWasFakeNull && object.ReferenceEquals(value, null))
+            if (originalValueWasFakeNull && ReferenceEquals(value, null))
             {
                 value = originalValue;
             }
@@ -244,7 +244,7 @@ namespace Editor
             return value;
         }
 
-        static void BeginDrawOpenInspector(Rect rect, Object obj, Rect btnRect)
+        static void BeginDrawOpenInspector(Rect rect, Object? obj, Rect btnRect)
         {
             // Setting GUI.enabled to false here can accidentally disable prefix labels drawn just before this is invoked
             // because prefix labels inherit the enabledness of whatever thing is drawn next. So if a prefix label is drawn
@@ -265,7 +265,7 @@ namespace Editor
                     obj = AssetDatabase.LoadMainAssetAtPath(path) ?? obj;
                 }
 
-                if (Event.current.button == 0 || obj.GetType() == typeof(GameObject))
+                if (Event.current.button == 0 || obj is GameObject)
                 {
                     GUIHelper.OpenInspectorWindow(obj);
                 }
@@ -279,7 +279,7 @@ namespace Editor
             //GUI.enabled = prevEnabled;
         }
 
-        static void EndDrawOpenInspector(Rect rect, Object obj)
+        static void EndDrawOpenInspector(Rect rect, Object? obj)
         {
             var prevEnabled = GUI.enabled;
             GUI.enabled = obj != null;
@@ -309,9 +309,9 @@ namespace Editor
                 .Invoke(null, new object[] { obj, btnRect, 400 });
         }
 
-        static Object ObjectField(
+        static Object? ObjectField(
             Rect position,
-            Object obj,
+            Object? obj,
             Type objType,
             bool allowSceneObjects)
         {

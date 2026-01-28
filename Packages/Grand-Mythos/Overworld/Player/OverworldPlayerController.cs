@@ -23,7 +23,7 @@ public class OverworldPlayerController : ReloadableBehaviour
     static Collider[] _sphereCastUtility = new Collider[16];
 
 
-    public CharacterController Controller;
+    public required CharacterController Controller;
 
     [PropertyTooltip("Speed of the jump in meters per second")]
     public float JumpUnitPerSecond = 10f;
@@ -45,7 +45,7 @@ public class OverworldPlayerController : ReloadableBehaviour
     };
 
     public float SwapTransportQueryRadius = 5f;
-    [Required] public InputActionReference Interact, Move;
+    public required InputActionReference Interact, Move;
 
     bool _noNavmesh;
     Vector3 _lastPointOnNavMesh;
@@ -63,7 +63,7 @@ public class OverworldPlayerController : ReloadableBehaviour
 
     void Start()
     {
-        MeansOfTransports[_activeTransport].OnActivate.Invoke();
+        MeansOfTransports[_activeTransport].OnActivate?.Invoke();
     }
 
     protected override void OnEnabled(bool afterDomainReload)
@@ -145,7 +145,7 @@ public class OverworldPlayerController : ReloadableBehaviour
             return;
 
         {
-            InteractionComp closestInteraction = null;
+            InteractionComp? closestInteraction = null;
             float closestDist = InteractDistance;
             foreach (var interactionComp in InteractionComp.Instances)
             {
@@ -158,7 +158,7 @@ public class OverworldPlayerController : ReloadableBehaviour
                 }
             }
 
-            if (closestInteraction)
+            if (closestInteraction is not null)
             {
                 if (Prompt.TryShowInteractivePromptThisFrame(closestInteraction.transform.position, closestInteraction.Label)
                     && Interact.action.WasPressedThisFrame())
@@ -167,12 +167,12 @@ public class OverworldPlayerController : ReloadableBehaviour
         }
 
         {
-            Interactable closestInteractable = null;
+            Interactable? closestInteractable = null;
             float closestDist = float.PositiveInfinity;
             for (int i = Physics.OverlapSphereNonAlloc(transform.position, InteractDistance, _sphereCastUtility, ~CharacterLayerMask, QueryTriggerInteraction.Collide) - 1; i >= 0; i--)
             {
-                Collider c = _sphereCastUtility[i];
-                if (c.GetComponent<Interactable>() is not Interactable interactable || interactable.Consumed)
+                var c = _sphereCastUtility[i];
+                if (c.TryGetComponent<Interactable>(out var interactable) == false || interactable.Consumed)
                     continue;
 
                 var closestOnBounds = c.ClosestPointOnBounds(transform.position);
@@ -184,7 +184,7 @@ public class OverworldPlayerController : ReloadableBehaviour
                 }
             }
 
-            if (closestInteractable)
+            if (closestInteractable is not null)
             {
                 if (Prompt.TryShowInteractivePromptThisFrame(closestInteractable.transform.position, closestInteractable.Text)
                     && Interact.action.WasPressedThisFrame()
@@ -301,10 +301,10 @@ public class OverworldPlayerController : ReloadableBehaviour
 
             if (Prompt.TryShowInteractivePromptThisFrame(hit.position, transport.PromptLabel) && Interact.action.WasPressedThisFrame())
             {
-                MeansOfTransports[_activeTransport].OnDeactivate.Invoke();
+                MeansOfTransports[_activeTransport].OnDeactivate?.Invoke();
                 _activeTransport = i;
                 Controller.transform.position = hit.position;
-                MeansOfTransports[_activeTransport].OnActivate.Invoke();
+                MeansOfTransports[_activeTransport].OnActivate?.Invoke();
                 return;
             }
         }

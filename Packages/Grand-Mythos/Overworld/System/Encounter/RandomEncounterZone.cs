@@ -8,7 +8,7 @@ public class RandomEncounterZone : MonoBehaviour
     [PropertyTooltip("Amount of meters to traverse within the collision before an encounter occurs, random between the min and max value")]
     public Range MetersPerEncounter = new Range(10, 20);
     public Random Random = new Random(1);
-    [SerializeReference] public IEncounterDefinition Encounter;
+    [SerializeReference] public required IEncounterDefinition Encounter;
 
     double lastMetersTraversed;
     double metersLeftToTraverse;
@@ -20,13 +20,13 @@ public class RandomEncounterZone : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (Encounter == null)
+        if (Encounter == null!)
             GizmosHelper.Label(transform.position, $"No {nameof(Encounter)} set on this {nameof(RandomEncounterZone)}", Color.red);
-        else if (Encounter.IsValid(out string error) == false)
+        else if (Encounter.IsValid(out var error) == false)
             GizmosHelper.Label(transform.position, error, Color.red);
         else if (Random.state == 0)
             GizmosHelper.Label(transform.position, $"{nameof(Random)} with a state of zero is not allowed", Color.red);
-        else if (GetComponent<Collider>() is Collider c && c != null)
+        else if (TryGetComponent<Collider>(out var c))
         {
             if (c.isTrigger == false)
                 GizmosHelper.Label(transform.position, "Set this collider to trigger", Color.red);

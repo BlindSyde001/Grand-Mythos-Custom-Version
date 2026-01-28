@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -9,17 +7,14 @@ using UnityEngine.InputSystem;
 
 public class MenuInputs : MonoBehaviour
 {
-    public GameManager GameManager { get; private set; }
+    public required InputActionReference Open, Close;
 
-    [Required]
-    public InputActionReference Open, Close;
+    [SerializeField, Required]
+    internal StartMenuActions startMenuActions = null!;
 
-    [SerializeField]
-    internal StartMenuActions startMenuActions;
-    [SerializeField]
-    public Image MenuBackground;
+    public required Image MenuBackground;
 
-    public MenuContainer CurrentMenuOpen;
+    public MenuContainer? CurrentMenuOpen;
     public float Speed = 0.5f;
 
     bool _busySwitching;
@@ -35,7 +30,6 @@ public class MenuInputs : MonoBehaviour
     // UPDATES
     void Start()
     {
-        GameManager = GameManager.Instance;
         CurrentMenuOpen = null;
         startMenuActions.gameObject.SetActive(false);
     }
@@ -80,7 +74,7 @@ public class MenuInputs : MonoBehaviour
     /// <summary>
     /// Will switch to this menu, if another menu is already being switched to, this will wait for that switch to complete before taking over
     /// </summary>
-    IEnumerator QueueSwitchTo(MenuContainer menu)
+    IEnumerator QueueSwitchTo(MenuContainer? menu)
     {
         while (_busySwitching)
             yield return null;
@@ -92,7 +86,7 @@ public class MenuInputs : MonoBehaviour
     /// <summary>
     /// Tries to switch to this menu, if another switch is running, this will exit out early without switching
     /// </summary>
-    IEnumerable TrySwitchTo(MenuContainer to)
+    IEnumerable TrySwitchTo(MenuContainer? to)
     {
         if (_busySwitching)
             yield break;

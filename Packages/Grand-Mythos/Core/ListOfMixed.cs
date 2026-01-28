@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 [Serializable]
-public class ListOfMixed<T> : List<T>, ISerializationCallbackReceiver where T : class
+public class ListOfMixed<T> : List<T?>, ISerializationCallbackReceiver where T : class
 {
-    [SerializeReference, SerializeField] List<T> _refs = new();
-    [SerializeField] List<Object> _objects = new();
+    [SerializeReference, SerializeField] List<T?> _refs = new();
+    [SerializeField] List<Object?> _objects = new();
 
     void ISerializationCallbackReceiver.OnBeforeSerialize()
     {
@@ -61,7 +60,7 @@ public class ListOfMixed<T> : List<T>, ISerializationCallbackReceiver where T : 
         }
     }
 
-    [MaybeNull] static FieldInfo _sizeField, _itemsField;
+    static FieldInfo? _sizeField, _itemsField;
     void Workaround()
     {
         // Fix for some weird ass stuff going on, Count == 1 when _items.Length == 0 and Capacity == 0

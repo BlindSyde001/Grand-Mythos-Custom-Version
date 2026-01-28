@@ -21,10 +21,10 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
     guid _guid = Guid.NewGuid();
 
     [FormerlySerializedAs("Interaction"), Required, SerializeReference, SerializeField, ValidateInput(nameof(ValidateOnTrigger))]
-    protected IInteraction OnTrigger;
+    protected IInteraction OnTrigger = null!;
 
     [SerializeReference, SerializeField, Tooltip(InfoBoxWarningPersistent), ValidateInput(nameof(ValidatePersistentEffect))]
-    protected IInteraction PersistentEffect;
+    protected IInteraction? PersistentEffect;
 
     public TriggerType Type = TriggerType.OnceEveryLoad;
 
@@ -63,12 +63,12 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             SavingSystem.StoreAndUnregister<UniqueInteractionSource, Save>(this);
     }
 
-    static bool ValidateOnTrigger(IInteraction interaction, ref string message)
+    static bool ValidateOnTrigger(IInteraction? interaction, ref string? message)
     {
         return interaction != null && interaction.IsValid(out message);
     }
 
-    static bool ValidatePersistentEffect(IInteraction interaction, ref string message)
+    static bool ValidatePersistentEffect(IInteraction? interaction, ref string? message)
     {
         return interaction == null || interaction.IsValid(out message);
     }
@@ -80,8 +80,11 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
             return false;
         }
 
-        if (OnTrigger == null)
+        if (OnTrigger == null!)
+        {
             Debug.LogError($"No interaction on this interactable ({this})", this);
+            return false;
+        }
 
         _consumed |= Type is TriggerType.OnceEver or TriggerType.OnceEveryLoad;
         IInteraction interaction;

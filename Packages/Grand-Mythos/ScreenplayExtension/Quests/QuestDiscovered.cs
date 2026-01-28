@@ -9,7 +9,7 @@ namespace Quests
     [Serializable]
     public class QuestDiscovered : Precondition
     {
-        [Required, HideLabel] public Quest Quest;
+        [HideLabel] public required Quest Quest;
         
         public override void CollectReferences(ReferenceCollector references) { }
         public override async UniTask Setup(IPreconditionCollector tracker, CancellationToken triggerCancellation)

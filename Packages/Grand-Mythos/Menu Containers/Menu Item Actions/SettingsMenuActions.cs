@@ -9,16 +9,15 @@ using Menu_Containers.Menu_Item_Actions;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class SettingsMenuActions : MenuContainer
 {
-    [Required] public SettingsMenuDropdownTemplate DropdownTemplate;
-    [Required] public RectTransform DefaultDropdownParent;
+    public required SettingsMenuDropdownTemplate DropdownTemplate;
+    public required RectTransform DefaultDropdownParent;
     public SerializableDictionary<string, SettingsMenuDropdownTemplate> Dropdowns = new();
 
-    [Required] public TMP_Dropdown ResolutionDropdown;
-    [Required] public TMP_Dropdown BattleSpeedDropdown;
+    public required TMP_Dropdown ResolutionDropdown;
+    public required TMP_Dropdown BattleSpeedDropdown;
 
     readonly Dictionary<object, Action> _scheduledChanges = new();
 
@@ -107,7 +106,7 @@ public class SettingsMenuActions : MenuContainer
             SetupDropdown(BattleSpeedDropdown, speeds, Settings.Current.BattleSpeed, f => Settings.Current.BattleSpeed = f);
         }*/
 
-        void SetupDropdown<T>(TMP_Dropdown dropdown, (string name, T associatedValue)[] values, T selectedValue, Action<T> onValueChanged)
+        void SetupDropdown<T>(TMP_Dropdown dropdown, (string name, T associatedValue)[] values, T selectedValue, Action<T> onValueChanged) where T : notnull
         {
             dropdown.options.Clear();
             for (int i = 0; i < values.Length; i++)

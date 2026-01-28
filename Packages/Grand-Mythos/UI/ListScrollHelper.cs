@@ -1,12 +1,11 @@
-﻿using Sirenix.OdinInspector;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class ListScrollHelper : MonoBehaviour
 {
-    [Required] public InputActionReference ScrollInput;
+    public required InputActionReference ScrollInput;
 
     void Update()
     {

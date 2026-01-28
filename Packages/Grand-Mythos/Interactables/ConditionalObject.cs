@@ -10,8 +10,8 @@ namespace Interactables
     [AddComponentMenu(" GrandMythos/ConditionalObject")]
     public class ConditionalObject : IComponent<ConditionalObjectProcessor, ConditionalObject>
     {
-        [Required, SerializeReference, ValidateInput(nameof(ValidateCondition)), InlineProperty, HideLabel, BoxGroup]
-        public ICondition Condition = new FlagIs();
+        [SerializeReference, ValidateInput(nameof(ValidateCondition)), InlineProperty, HideLabel, BoxGroup]
+        public required ICondition Condition = new FlagIs { Flag = null! };
 
         [HideInInspector]
         public bool LastEvaluation;

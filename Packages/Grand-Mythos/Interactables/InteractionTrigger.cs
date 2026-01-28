@@ -1,5 +1,4 @@
 ﻿using System;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 [AddComponentMenu(" GrandMythos/InteractionTrigger")]
@@ -11,11 +10,11 @@ public class InteractionTrigger : UniqueInteractionSource
 
     void OnDrawGizmos()
     {
-        if (OnTrigger == null)
+        if (OnTrigger == null!)
             GizmosHelper.Label(transform.position, $"No interaction set on this {nameof(Interactable)}", Color.red);
-        else if (OnTrigger.IsValid(out string error) == false)
+        else if (OnTrigger.IsValid(out var error) == false)
             GizmosHelper.Label(transform.position, error, Color.red);
-        else if (GetComponent<Collider>() is Collider c && c != null)
+        else if (TryGetComponent<Collider>(out var c))
         {
             if (c.isTrigger == false)
                 GizmosHelper.Label(transform.position, "Set this collider to trigger", Color.red);

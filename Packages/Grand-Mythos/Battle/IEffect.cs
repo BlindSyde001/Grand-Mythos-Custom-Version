@@ -39,7 +39,7 @@ public static class EffectsExtension
         if (effects.Length == 0)
             return "";
         if (effects.Length == 1)
-            return effects[0]?.UIDisplayText;
+            return effects[0]?.UIDisplayText ?? "";
         return $"({string.Join(") then (", effects.Select(x => x?.UIDisplayText))})";
     }
 }
