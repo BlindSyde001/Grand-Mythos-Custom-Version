@@ -1,5 +1,4 @@
 ﻿using System;
-using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -14,11 +13,11 @@ namespace Effects
         [SerializeReference]
         public IEffect[] Effects = Array.Empty<IEffect>();
 
-        public void Apply(BattleCharacterController[] targets, QTEResult result, EvaluationContext context)
+        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
-            var casterTarget = new BattleCharacterController[]{ context.Controller };
+            var casterTarget = new[]{ context.Controller };
             foreach (var effect in Effects)
-                effect.Apply(casterTarget, result, context);
+                effect.Apply(casterTarget, context);
         }
 
         public string UIDisplayText => $"{Effects.UIDisplayText()} on Caster";

@@ -1,5 +1,4 @@
 ﻿using System;
-using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -32,7 +31,7 @@ namespace Effects
         [HorizontalGroup("Crit"), SuffixLabel("x added crit damage"), HideLabel, FormerlySerializedAs("CritMultiplier")]
         public float AdditionalCritMultiplier = 2.5f;
 
-        public void Apply(BattleCharacterController[] targets, QTEResult result, EvaluationContext context)
+        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
         {
             Formulas.GetCritModifiersBasedOnLuck(context.Profile.EffectiveStats.Luck, out var luckBasedChance, out var luckBasedMult);
             float critChanceTotal = CanCrit ? AdditionalCritChance + luckBasedChance : 0f;
@@ -50,7 +49,6 @@ namespace Effects
                 damageScaling.VarianceBase = Variance;
                 damageScaling.VarianceRolled = context.Random.NextInt(-Variance, Variance+1);
                 damageScaling.CritChanceRolled = context.Random.NextFloat(0f, 100f);
-                damageScaling.QTEScaler = result;
                 damageScaling.SourceAttackStat = context.Profile.EffectiveStats.Attack;
                 damageScaling.SourceMagicAttackStat = context.Profile.EffectiveStats.MagAttack;
                 damageScaling.Element = Element;

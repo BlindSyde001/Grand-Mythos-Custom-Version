@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading;
-using JetBrains.Annotations;
-using QTE;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace ActionAnimation
@@ -14,15 +11,10 @@ namespace ActionAnimation
         [SerializeReference]
         public IActionAnimation[] Animations = Array.Empty<IActionAnimation>();
 
-        public async IAsyncEnumerable<(QTEStart qte, double start, float duration)> Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets, [EnumeratorCancellation] CancellationToken cancellation)
+        public async UniTask Play(IAction? action, BattleCharacterController controller, BattleCharacterController[] targets, CancellationToken cancellation)
         {
             foreach (var animation in Animations)
-            {
-                await foreach (var qteData in animation.Play(action, controller, targets, cancellation))
-                {
-                    yield return qteData;
-                }
-            }
+                await animation.Play(action, controller, targets, cancellation);
         }
 
         public bool Validate([CanBeNull]IAction action, CharacterTemplate template, ref string message)

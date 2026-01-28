@@ -1,7 +1,6 @@
 using System;
 using Conditions;
 using Effects;
-using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -86,13 +85,13 @@ public class Consumable : TradeableItem, IAction
         };
     }
 
-    public void Perform(BattleCharacterController[] targets, QTEResult result, EvaluationContext context)
+    public void Perform(BattleCharacterController[] targets, EvaluationContext context)
     {
         context.Profile.CurrentMP -= ManaCost;
 
         foreach (var effect in Effects)
         {
-            effect.Apply(targets, result, context);
+            effect.Apply(targets, context);
         }
     }
 

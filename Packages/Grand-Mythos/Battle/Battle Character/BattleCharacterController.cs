@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using ActionAnimation;
-using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -34,30 +33,6 @@ public class BattleCharacterController : MonoBehaviour
 
     void Start()
     {
-        foreach (var clip in Animator.runtimeAnimatorController.animationClips)
-        {
-            var eventsCopy = clip.events;
-            for (var i = 0; i < eventsCopy.Length; i++)
-            {
-                var clipEvent = eventsCopy[i];
-                if (clipEvent.objectReferenceParameter is QTEStart or QTEEnd)
-                {
-                    clipEvent.functionName = nameof(AnimationEventCallback.HandleQTEEvent);
-                    clipEvent.messageOptions = SendMessageOptions.RequireReceiver;
-                    if (clipEvent.objectReferenceParameter is QTEStart)
-                    {
-                        if (eventsCopy.Skip(i).FirstOrDefault(x => x.objectReferenceParameter is QTEEnd) is { } endEvent)
-                            clipEvent.floatParameter = endEvent.time - clipEvent.time;
-                        else
-                            clipEvent.floatParameter = clip.length - clipEvent.time;
-                    }
-
-                    eventsCopy[i] = clipEvent;
-                }
-            }
-            clip.events = eventsCopy;
-        }
-
         if (BattleStateMachine.TryGetInstance(out var bts))
             bts.Include(this);
     }

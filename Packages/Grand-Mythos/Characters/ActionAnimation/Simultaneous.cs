@@ -4,8 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using JetBrains.Annotations;
-using QTE;
 using UnityEngine;
 
 namespace ActionAnimation
@@ -16,26 +14,13 @@ namespace ActionAnimation
         [SerializeReference]
         public IActionAnimation[] Animations = Array.Empty<IActionAnimation>();
 
-        public async IAsyncEnumerable<(QTEStart qte, double start, float duration)> Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets, [EnumeratorCancellation] CancellationToken cancellation)
+        public async UniTask Play(IAction? action, BattleCharacterController controller, BattleCharacterController[] targets, CancellationToken cancellation)
         {
-            int amount = Animations.Length;
-            var channel = Channel.CreateSingleConsumerUnbounded<(QTEStart qte, double start, float duration)>();
+            var tasks = new List<UniTask>(Animations.Length);
             foreach (var animation in Animations)
-                _ = Wrapper(animation);
+                tasks.Add(animation.Play(action, controller, targets, cancellation));
 
-            await foreach (var v in channel.Reader.ReadAllAsync(cancellation))
-            {
-                yield return v;
-            }
-
-            async Task Wrapper(IActionAnimation animation)
-            {
-                await foreach (var qteData in animation.Play(action, controller, targets, cancellation))
-                    channel.Writer.TryWrite(qteData);
-
-                if (Interlocked.Decrement(ref amount) == 0)
-                    channel.Writer.Complete();
-            }
+            await UniTask.WhenAll(tasks);
         }
 
         public bool Validate([CanBeNull]IAction action, CharacterTemplate template, ref string message)

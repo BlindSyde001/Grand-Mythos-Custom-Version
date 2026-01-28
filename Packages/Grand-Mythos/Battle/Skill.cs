@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using QTE;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -55,13 +54,13 @@ public class Skill : IdentifiableScriptableObject, IAction
     string IAction.Name => name;
     public string Description => string.IsNullOrWhiteSpace(_description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : _description;
 
-    public void Perform(BattleCharacterController[] targets, QTEResult result, EvaluationContext context)
+    public void Perform(BattleCharacterController[] targets, EvaluationContext context)
     {
         context.Profile.CurrentMP -= ManaCost;
         
         foreach (var effect in Effects)
         {
-            effect.Apply(targets, result, context);
+            effect.Apply(targets, context);
         }
 
         if (!ProcAttachedSkills
@@ -107,7 +106,7 @@ public class Skill : IdentifiableScriptableObject, IAction
 
         foreach (var effect in attachedSkill.Effects)
         {
-            effect.Apply(attachmentFilteredTargets, result, context);
+            effect.Apply(attachmentFilteredTargets, context);
         }
 
         attachedSkill.TargetConstraint?.NotifyUsedCondition(attachmentTargets, context);

@@ -1,5 +1,4 @@
 ﻿using System;
-using QTE;
 
 public struct ComputableDamageScaling
 {
@@ -11,8 +10,6 @@ public struct ComputableDamageScaling
     public int VarianceBase;
     public int VarianceRolled;
     public float CritChanceRolled;
-
-    public QTEResult QTEScaler;
 
     public int SourceAttackStat;
     public int SourceMagicAttackStat;
@@ -51,13 +48,6 @@ public struct ComputableDamageScaling
         };
 
         delta *= (double)resistance / 100.0;
-        delta *= QTEScaler switch
-        {
-            QTEResult.Failure => 0,
-            QTEResult.Correct => 1,
-            QTEResult.Success => 2,
-            _ => throw new ArgumentOutOfRangeException()
-        };
         currentValue = currentValue + (int)delta; 
     }
 

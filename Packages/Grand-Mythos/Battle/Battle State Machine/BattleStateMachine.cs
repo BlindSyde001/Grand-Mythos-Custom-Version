@@ -8,11 +8,8 @@ using Characters.StatusHandler;
 using UnityEngine;
 using Conditions;
 using Cysharp.Threading.Tasks;
-using JetBrains.Annotations;
-using QTE;
 using Sirenix.OdinInspector;
 using TMPro;
-using EventType = QTE.EventType;
 
 public class BattleStateMachine : MonoBehaviour
 {
@@ -241,7 +238,7 @@ public class BattleStateMachine : MonoBehaviour
         return hostilesLeft == 0 || alliesLeft == 0;
     }
 
-    async UniTask ProcessUnit(BattleCharacterController unit, Tactics chosenTactic, List<BattleCharacterController> preselection, CancellationToken cancellation, bool allowQTE = true)
+    async UniTask ProcessUnit(BattleCharacterController unit, Tactics chosenTactic, List<BattleCharacterController> preselection, CancellationToken cancellation)
     {
         #if UNITY_EDITOR
         // Halting execution to reload assemblies while this enumerator is running
@@ -260,61 +257,11 @@ public class BattleStateMachine : MonoBehaviour
                 BattleCamera.Instance.TryPlayAnimation(unit, chosenTactic.Action.CameraAnimation);
 
 
-            var QTEs = new List<UniTask>();
-            await foreach (var (qte, start, duration) in animation.Play(chosenTactic.Action, unit, preselection.ToArray(), cancellation))
-            {
-                if (allowQTE)
-                    QTEs.Add(ApplyEffectsWithQTE(unit, qte, start, duration));
-                else
-                    QTEs.Add(DelayedEffect(start, duration));
-            }
+            await animation.Play(chosenTactic.Action, unit, preselection.ToArray(), cancellation);
 
-            if (QTEs.Count == 0)
-                await ApplyEffects(QTEResult.Correct, EventType.PlayerAttack, null);
-            else
-                await UniTask.WhenAll(QTEs);
+            await ApplyEffects();
 
-            async UniTask DelayedEffect(double timeStart, float duration)
-            {
-                var timeLeft = duration - (Time.timeAsDouble - timeStart);
-                await UniTask.Delay(TimeSpan.FromSeconds(timeLeft), cancellationToken: cancellation);
-                await ApplyEffects(QTEResult.Correct, EventType.PlayerAttack, null);
-            }
-
-            async UniTask ApplyEffectsWithQTE(BattleCharacterController source, QTEStart qte, double timeStart, float duration)
-            {
-                if (source.Profile.Team == PlayerTeam && qte.EventType != EventType.PlayerAttack)
-                    return;
-
-                if (source.Profile.Team != PlayerTeam && qte.EventType == EventType.PlayerAttack)
-                    return;
-
-                QTEResult result;
-                var qteInterface = Instantiate(qte.Interface);
-                try
-                {
-                    result = await qte.QTEType.Evaluate(qte, () => (float)((Time.timeAsDouble - timeStart) / duration), qteInterface, cancellation);
-                }
-                finally
-                {
-                    if (qteInterface.gameObject != null)
-                        Destroy(qteInterface.gameObject);
-                }
-
-                if (qte.EventType != EventType.PlayerAttack)
-                {
-                    result = result switch
-                    {
-                        QTEResult.Failure => QTEResult.Success,
-                        QTEResult.Success => QTEResult.Failure,
-                        _ => result
-                    };
-                }
-
-                await ApplyEffects(result, qte.EventType, qte.Counter);
-            }
-
-            async UniTask ApplyEffects(QTEResult attackEffectiveness, EventType eventType, [CanBeNull] Skill counter)
+            async UniTask ApplyEffects()
             {
                 using (Units.TemporaryCopy(out var unitsCopy))
                 {
@@ -354,7 +301,7 @@ public class BattleStateMachine : MonoBehaviour
                     for (var i = 0; i < selectionArray.Length; i++)
                         initialHP[i] = selectionArray[i].Profile.CurrentHP;
 
-                    chosenTactic.Action.Perform(selectionArray, attackEffectiveness, unit.Context);
+                    chosenTactic.Action.Perform(selectionArray, unit.Context);
 
                     chosenTactic.Condition.TargetFilter?.NotifyUsedCondition(selection, unit.Context);
                     chosenTactic.Condition.AdditionalCondition?.NotifyUsedCondition(selection, unit.Context);
@@ -365,54 +312,17 @@ public class BattleStateMachine : MonoBehaviour
                     for (var i = 0; i < selectionArray.Length; i++)
                     {
                         var controller = selectionArray[i];
-                        IActionAnimation anim;
+                        IActionAnimation? anim;
                         if (controller.Profile.CurrentHP == initialHP[i])
-                        {
-                            anim = eventType switch
-                            {
-                                EventType.PlayerAttack => null,
-                                EventType.PlayerDodge => controller.Profile.Dodge,
-                                EventType.PlayerParry => controller.Profile.Parry,
-                                EventType.PlayerShield => controller.Profile.Shield,
-                                _ => throw new ArgumentOutOfRangeException(nameof(eventType), eventType, null)
-                            };
-                        }
+                            anim = controller.Profile.Dodge ?? controller.Profile.Parry ?? controller.Profile.Shield;
                         else
-                        {
                             anim = controller.Profile.CurrentHP > 0 ? controller.Profile.Hurt : controller.Profile.Death;
-                        }
 
                         if (anim is null)
                             continue;
 
                         var reactionAnimation = anim.Play(null, controller, Array.Empty<BattleCharacterController>(), cancellation);
-                        UniTask task;
-                        if (controller.Profile.CurrentHP == initialHP[i] && counter && eventType != EventType.PlayerAttack && allowQTE)
-                        {
-                            var tactic = new Tactics
-                            {
-                                Condition = ScriptableObject.CreateInstance<ActionCondition>(),
-                                Action = counter,
-                            };
-                            tactic.Condition.TargetFilter = new SpecificTargetsCondition { Targets = new HashSet<BattleCharacterController>{ unit } };
-                            task = RunCounter();
-
-                            async UniTask RunCounter()
-                            {
-                                await foreach (var _ in reactionAnimation){ }
-                                await ProcessUnit(controller, tactic, new List<BattleCharacterController> { unit }, cancellation, false);
-                            }
-                        }
-                        else
-                        {
-                            task = RunInTheBackground(reactionAnimation);
-
-                            static async UniTask RunInTheBackground<T>(IAsyncEnumerable<T> f)
-                            {
-                                await foreach (var _ in f){ }
-                            }
-                        }
-                        tasks.Add(task);
+                        tasks.Add(reactionAnimation);
                     }
 
                     await UniTask.WhenAll(tasks);
