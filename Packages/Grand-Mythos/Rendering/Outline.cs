@@ -20,17 +20,27 @@ public class Outline : MonoBehaviour
 
     private void OnDisable()
     {
+        Cleanup();
+    }
+
+    private void Cleanup()
+    {
         foreach (var o in OutlineObjects)
+        {
             if (o != null)
-                DestroyImmediate(o.gameObject);
+            {
+                if (Application.isPlaying)
+                    Destroy(o.gameObject);
+                else
+                    DestroyImmediate(o.gameObject);
+            }
+        }
     }
 
     [Button]
     private void Apply()
     {
-        foreach (var o in OutlineObjects)
-            if (o != null)
-                DestroyImmediate(o.gameObject);
+        Cleanup();
 
         var renderers = GetComponentsInChildren<Renderer>();
         for (int i = 0; i < renderers.Length; i++)
