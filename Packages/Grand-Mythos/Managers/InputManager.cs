@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.InputSystem.Utilities;
 using Object = UnityEngine.Object;
 
 public static class InputManager
@@ -71,19 +72,31 @@ public static class InputManager
             action.Enable();
 
         if (ReferenceEquals(Module, null))
+        {
             throw new NullReferenceException(nameof(Module));
+        }
         else if (Module != null!) // Exist but not destroyed, if it doesn't exist it better throw which is why we have the exception above
         {
-            Module.move = InputActionReference.Create(currentMap.actions.First(x => x.name == "Navigate"));
-            Module.submit = InputActionReference.Create(currentMap.actions.First(x => x.name == "Submit"));
-            Module.cancel = InputActionReference.Create(currentMap.actions.First(x => x.name == "Cancel"));
-            Module.point = InputActionReference.Create(currentMap.actions.First(x => x.name == "Point"));
-            Module.leftClick = InputActionReference.Create(currentMap.actions.First(x => x.name == "Click"));
-            Module.middleClick = InputActionReference.Create(currentMap.actions.First(x => x.name == "MiddleClick"));
-            Module.rightClick = InputActionReference.Create(currentMap.actions.First(x => x.name == "RightClick"));
-            Module.scrollWheel = InputActionReference.Create(currentMap.actions.First(x => x.name == "ScrollWheel"));
-            Module.trackedDevicePosition = InputActionReference.Create(currentMap.actions.First(x => x.name == "TrackedDevicePosition"));
-            Module.trackedDeviceOrientation = InputActionReference.Create(currentMap.actions.First(x => x.name == "TrackedDeviceOrientation"));
+            Module.move = TryGetAction(currentMap.actions, "Navigate");
+            Module.submit = TryGetAction(currentMap.actions, "Submit");
+            Module.cancel = TryGetAction(currentMap.actions, "Cancel");
+            Module.point = TryGetAction(currentMap.actions, "Point");
+            Module.leftClick = TryGetAction(currentMap.actions, "Click");
+            Module.middleClick = TryGetAction(currentMap.actions, "MiddleClick");
+            Module.rightClick = TryGetAction(currentMap.actions, "RightClick");
+            Module.scrollWheel = TryGetAction(currentMap.actions, "ScrollWheel");
+            Module.trackedDevicePosition = TryGetAction(currentMap.actions, "TrackedDevicePosition");
+            Module.trackedDeviceOrientation = TryGetAction(currentMap.actions, "TrackedDeviceOrientation");
+
+            static InputActionReference? TryGetAction(ReadOnlyArray<InputAction> inputActions, string name)
+            {
+                if (inputActions.FirstOrDefault(x => x.name == name) is { } v)
+                {
+                    return InputActionReference.Create(v);
+                }
+
+                return null;
+            }
         }
 
         CurrentState = newState;
