@@ -10,6 +10,7 @@ public class UnlockNodeRenderer : Image
     const float LineThickness = 5;
 
     public Color LineColor = Color.white;
+    public Color LineColorDisabled = Color.gray;
 
     public required UnlockNode Data;
 
@@ -38,12 +39,17 @@ public class UnlockNodeRenderer : Image
 
         var matrix = transform.worldToLocalMatrix;
         Span<Vector2> points = stackalloc Vector2[2];
+        var skilltree = GetComponentInParent<SkillTree>();
 
         foreach (var requirement in Data.LinkedTo)
         {
             points[0] = matrix.MultiplyPoint3x4(transform.position);
             points[1] = matrix.MultiplyPoint3x4(requirement.transform.position);
-            PointOnEdge(((RectTransform)transform), (RectTransform)requirement.transform, ref points[0], ref points[1]);
+            PointOnEdge((RectTransform)transform, (RectTransform)requirement.transform, ref points[0], ref points[1]);
+
+            var lineColor = LineColor;
+            if (Application.isPlaying && (skilltree.HasUnlocked(this.Data) == false || skilltree.HasUnlocked(requirement) == false))
+                lineColor *= LineColorDisabled;
 
             for (int i = 1; i < points.Length; i++)
             {
@@ -58,12 +64,12 @@ public class UnlockNodeRenderer : Image
                 var v3 = cur + perpPos;
                 var v4 = cur + perpNeg;
 
-                AddVert(vbo, v1);
-                AddVert(vbo, v2);
+                AddVert(vbo, v1, lineColor);
+                AddVert(vbo, v2, lineColor);
                 if (i != 1)
                     LastFourToTriangles(vbo); // Create a quad between the end of the previous line and the start of the current to remove any discontinuities
-                AddVert(vbo, v3);
-                AddVert(vbo, v4);
+                AddVert(vbo, v3, lineColor);
+                AddVert(vbo, v4, lineColor);
                 LastFourToTriangles(vbo);
             }
         }
@@ -101,10 +107,10 @@ public class UnlockNodeRenderer : Image
         }
     }
 
-    void AddVert(VertexHelper vbo, Vector2 vertex)
+    void AddVert(VertexHelper vbo, Vector2 vertex, Color color)
     {
         var vert = UIVertex.simpleVert;
-        vert.color = LineColor;
+        vert.color = color;
         vert.position = vertex;
         vert.position.z = 1f;
         vbo.AddVert(vert);

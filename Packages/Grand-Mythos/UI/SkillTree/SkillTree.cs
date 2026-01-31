@@ -35,6 +35,9 @@ public class SkillTree : MonoBehaviour
 
     void UpdateReachableNodes()
     {
+        foreach (var unlockNodeRenderer in GetComponentsInChildren<UnlockNodeRenderer>())
+            unlockNodeRenderer.SetVerticesDirty();
+        
         if (_reachableNodes.Add(Root))
             Root.OnReachable?.Invoke();
 
@@ -70,6 +73,11 @@ public class SkillTree : MonoBehaviour
 
         foreach (var keyValuePair in _nodeToGuid.Where(x => x.Key == null).ToArray())
             _nodeToGuid.Remove(keyValuePair.Key);
+    }
+
+    public bool HasUnlocked(UnlockNode node)
+    {
+        return node == Root || _reachableNodes.Contains(node);
     }
 
     public void TryUnlock(UnlockNode node)
