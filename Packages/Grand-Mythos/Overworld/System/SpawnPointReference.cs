@@ -1,4 +1,5 @@
-﻿using UnityEngine.SceneManagement;
+﻿using Screenplay;
+using UnityEngine.SceneManagement;
 
 public class SpawnPointReference : IdentifiableScriptableObject
 {
