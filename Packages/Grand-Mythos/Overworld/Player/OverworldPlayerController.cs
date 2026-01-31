@@ -144,6 +144,10 @@ public class OverworldPlayerController : ReloadableBehaviour
         if (Disabler != 0)
             return;
 
+        var camera = Camera.main;
+        if (camera == null)
+            return; // This may happen when swapping scenes
+
         {
             InteractionComp? closestInteraction = null;
             float closestDist = InteractDistance;
@@ -199,7 +203,7 @@ public class OverworldPlayerController : ReloadableBehaviour
         movementVector.y = 0;
         movementVector.z = inputMovement.y;
 
-        Vector3 facingDirection = Vector3.Cross(Camera.main.transform.right, Vector3.up).normalized;
+        Vector3 facingDirection = Vector3.Cross(camera.transform.right, Vector3.up).normalized;
         var inputSpace = Quaternion.LookRotation(facingDirection);
         if (movementVector != default)
         {
