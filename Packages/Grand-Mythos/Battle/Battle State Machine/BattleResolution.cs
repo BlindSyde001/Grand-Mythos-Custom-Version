@@ -17,15 +17,15 @@ public class BattleResolution : MonoBehaviour
     [Header("Fill In Panel Effect")]
     public required Image RewardBackground;
     public required Image HeroGridBackground;
-    float speed = 0.5f;
+    private float speed = 0.5f;
 
     [Header("Rewards")]
     public required TextMeshProUGUI ExperienceRewards;
     public required TextMeshProUGUI CurrencyRewards;
     public List<PartyContainer> HeroPanels = new();
-    bool activateUpdate;
+    private bool activateUpdate;
 
-    float duration = 3f;
+    private float duration = 3f;
     public required GameObject ItemRewardPanel;
     public List<TextMeshProUGUI> ItemRewardsText = new();
 
@@ -37,7 +37,7 @@ public class BattleResolution : MonoBehaviour
     public UnityEvent? OnWin;
     public UnityEvent? OnLose;
 
-    void Update()
+    private void Update()
     {
         if (activateUpdate)
         {
@@ -70,7 +70,8 @@ public class BattleResolution : MonoBehaviour
             LosePanel.SetActive(true);
         }
     }
-    async UniTask ActivatePanel(CancellationToken cancellation)
+
+    private async UniTask ActivatePanel(CancellationToken cancellation)
     {
         RewardBackground.DOFillAmount(1, speed);                                   // Cool Anim Effect
         HeroGridBackground.DOFillAmount(1, speed);                                 // Cool Anim effect
@@ -88,7 +89,7 @@ public class BattleResolution : MonoBehaviour
         CurrencyRewards.gameObject.SetActive(true);
     }
 
-    async UniTask DistributeRewards(BattleStateMachine battle, CancellationToken cancellation)
+    private async UniTask DistributeRewards(BattleStateMachine battle, CancellationToken cancellation)
     {
         int sharedExp = 0;
         int creditsEarned = 0;
@@ -101,7 +102,7 @@ public class BattleResolution : MonoBehaviour
             }
         }
 
-        List<CharacterTemplate> heroesAlive = new();
+        var heroesAlive = new List<CharacterTemplate>();
         foreach (var unit in battle.Units)
         {
             if (unit.Profile.CurrentHP > 0 && unit.Profile.Team == battle.PlayerTeam)
@@ -122,8 +123,8 @@ public class BattleResolution : MonoBehaviour
 
         await UniTask.Delay(TimeSpan.FromSeconds(duration * 2), cancellationToken: cancellation);
 
-        foreach (PartyContainer a in HeroPanels)
-            a.gameObject.SetActive(false);
+        foreach (var container in HeroPanels)
+            container.gameObject.SetActive(false);
 
         ItemRewardPanel.SetActive(true);
 
@@ -156,11 +157,9 @@ public class BattleResolution : MonoBehaviour
             InventoryManager.Instance.AddToInventory(drop.item, drop.count);
 
         await UniTask.Delay(TimeSpan.FromSeconds(duration), cancellationToken: cancellation);
-
-        ReturnToOverworld(battle);
     }
 
-    static IEnumerator ReceiveExperienceRewards(CharacterTemplate myHero, int individualExperience, float duration)
+    private static IEnumerator ReceiveExperienceRewards(CharacterTemplate myHero, int individualExperience, float duration)
     {
         uint start = myHero.Experience;
         float t = 0f;
@@ -172,22 +171,5 @@ public class BattleResolution : MonoBehaviour
             yield return null;
         }
         myHero.Experience = (uint)(start + individualExperience);
-    }
-
-    static void ReturnToOverworld(BattleStateMachine battle)
-    {
-        foreach (var hero in battle.PartyLineup)
-            hero.Profile.CurrentHP = hero.Profile.CurrentHP == 0 ? 1 : hero.Profile.CurrentHP;
-
-        if (battle.gameObject.scene == SceneManager.GetActiveScene())
-        {
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-            {
-                if (SceneManager.GetSceneAt(i) != battle.gameObject.scene)
-                    SceneManager.SetActiveScene(SceneManager.GetSceneAt(i));
-            }
-        }
-
-        SceneManager.UnloadSceneAsync(battle.gameObject.scene);
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Screenplay;
-using Screenplay.Nodes;
 using UnityEngine;
 using YNode;
 
@@ -11,7 +10,7 @@ using YNode;
 public class AwaitEndOfEncounter : AbstractScreenplayNode, IExecutable
 {
     [Output, SerializeReference, Tooltip("What would run directly after the encounter starts")]
-    public ExecutableLinear? Victory, Defeat;
+    public IExecutable? Victory, Defeat;
 
     public bool TestPrerequisite(HashSet<IPrerequisite> visited) => visited.Contains(this);
 
@@ -28,10 +27,8 @@ public class AwaitEndOfEncounter : AbstractScreenplayNode, IExecutable
     {
         if (BattleStateMachine.TryGetInstance(out var battle))
         {
-            while (battle.Finished.IsCompleted == false)
-                await UniTask.NextFrame(cancellation, cancelImmediately: true);
-
-            return battle.Finished.Result ? Victory : Defeat;
+            var result = await battle.Finished.AsUniTask().WithInterruptingCancellation(cancellation);
+            return result ? Victory : Defeat;
         }
 
         Debug.LogError($"Could not {nameof(AwaitEndOfEncounter)} as no battles are currently running, defaulting to 'victory' outcome");

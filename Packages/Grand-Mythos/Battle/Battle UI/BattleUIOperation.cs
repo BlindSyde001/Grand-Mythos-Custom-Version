@@ -144,7 +144,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         if (DetailedInfoPanelOpen.action.WasPerformedThisFrameUnique())
         {
             _infoPanelRunning = true;
-            _ = RunningPanelWatcher();
+            RunningPanelWatcher().Forget();
 
             async UniTask RunningPanelWatcher()
             {
@@ -1134,7 +1134,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         /// </summary>
         public async UniTask<T?> SelectedItem(CancellationToken cancellation)
         {
-            _ = ListenForCancellationInput(cancellation);
+            ListenForCancellationInput(cancellation).Forget();
             T? result;
             try
             {

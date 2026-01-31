@@ -10,10 +10,11 @@ using Conditions;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class BattleStateMachine : MonoBehaviour
 {
-    static BattleStateMachine _instance = null!;
+    private static BattleStateMachine _instance = null!;
 
     public required Team PlayerTeam;
 
@@ -21,7 +22,7 @@ public class BattleStateMachine : MonoBehaviour
 
     public required BattleUIOperation UIOperation;
     
-        public required BattleResolution BattleResolution;
+    public required BattleResolution BattleResolution;
 
     public List<Transform> HeroSpawns = new();
     public List<Transform> EnemySpawns = new();
@@ -33,22 +34,16 @@ public class BattleStateMachine : MonoBehaviour
 
     public readonly SortedList<double, BattleCharacterController> Queue = new(new TimestampedQueueComparer());
 
+    private CancellationTokenSource _targetStateChanged = new();
+    private TargetState _targetState, _currentState;
+    private bool _skipBattleEndScreen = true;
     private double _timestamp = 0;
-    private TaskCompletionSource<bool>? _finishedTcs;
+    private TaskCompletionSource<bool> _finishedTcs = new();
 
-    public Task<bool> Finished => (_finishedTcs ??= new()).Task;
-
-    class TimestampedQueueComparer : IComparer<double>
-    {
-        public int Compare(double x, double y)
-        {
-            var v = x.CompareTo(y);
-            return v == 0 ? 1 : v;
-        }
-    }
+    public Task<bool> Finished => _finishedTcs.Task;
 
     // UPDATES
-    void Awake()
+    private void Awake()
     {
         if (_instance == null!)
         {
@@ -62,16 +57,16 @@ public class BattleStateMachine : MonoBehaviour
         InputManager.PushGameState(GameState.Battle, this);
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         if (_instance == this)
             _instance = null!;
         InputManager.PopGameState(this);
     }
 
-    void Start()
+    private void Start()
     {
-        _ = Run(destroyCancellationToken);
+        Run(destroyCancellationToken).Forget();
     }
 
     private float DelayScalar(IAction.Delay delay, float baseValue)
@@ -85,7 +80,7 @@ public class BattleStateMachine : MonoBehaviour
         };
     }
 
-    async UniTask Run(CancellationToken cancellation)
+    private async UniTask Run(CancellationToken cancellation)
     {
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
             Include(target);
@@ -99,19 +94,42 @@ public class BattleStateMachine : MonoBehaviour
         // Sort them in the order they are setup in the party
         PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
 
-        UniTaskCompletionSource cancellationSignal = new();
-        cancellation.Register(() => cancellationSignal.TrySetResult());
+        _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
         
         bool win;
-        while (IsBattleFinished(out win) == false && cancellation.IsCancellationRequested == false)
+        while (IsBattleFinished(out win) == false && _targetState != TargetState.End)
         {
-            BattleCharacterController unit;
-            do
+            cancellation.ThrowIfCancellationRequested();
+
+            if (_targetState != _currentState)
             {
-                _timestamp = Queue.Keys[0];
-                unit = Queue.Values[0];
-                Queue.RemoveAt(0);
-            } while (unit.Profile.CurrentHP == 0);
+                _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+                _currentState = _targetState;
+            }
+
+            if (_currentState == TargetState.Paused)
+            {
+                await UniTask.NextFrame(cancellation, cancelImmediately: true);
+                continue;
+            }
+
+            BattleCharacterController? unit = null;
+            for (int i = 0; i < Queue.Count; i++)
+            {
+                if (Queue.Values[i].Profile.CurrentHP == 0)
+                    continue;
+
+                _timestamp = Queue.Keys[i];
+                unit = Queue.Values[i];
+                for (int j = 0; j < i; j++)
+                    Queue.RemoveAt(0); // Remove all previous units
+            }
+
+            if (unit == null)
+            {
+                await UniTask.NextFrame(cancellation, cancelImmediately: true);
+                continue;
+            }
 
             Tactics? chosenTactic;
             TargetCollection selectionAsTargetCollection;
@@ -121,8 +139,17 @@ public class BattleStateMachine : MonoBehaviour
                 {
                     if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is { Modifier: not null } taunt)
                         unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
-                    
-                    chosenTactic = await UIOperation.RunUIFor(unit, unitsCopy, cancellation);
+
+                    try
+                    {
+                        chosenTactic = await UIOperation.RunUIFor(unit, unitsCopy, _targetStateChanged.Token);
+                    }
+                    catch (Exception e) when (e is OperationCanceledException or TaskCanceledException) // May be interrupted as a result of a state change
+                    {
+                        _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+                        continue;
+                    }
+
                     var allUnits = new TargetCollection(unitsCopy);
                     if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out selectionAsTargetCollection) == false)
                         chosenTactic = null;
@@ -148,6 +175,10 @@ public class BattleStateMachine : MonoBehaviour
                     }
                 }
             }
+
+            var unitIndex = Queue.Values.IndexOf(unit);
+            if (unitIndex != -1)
+                Queue.RemoveAt(unitIndex);
 
             unit.Context.CombatTimestamp = _timestamp;
             unit.Context.Round++;
@@ -192,33 +223,51 @@ public class BattleStateMachine : MonoBehaviour
             }
         }
 
-        await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellation);
-        
-        _finishedTcs?.SetResult(win);
-        
-        foreach (var unit in PartyLineup)
+        if (_skipBattleEndScreen == false)
         {
-            for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
+            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellation);
+        
+            foreach (var unit in PartyLineup)
             {
-                var m = unit.Profile.Modifiers[i];
-                if (m.Modifier.Temporary && Settings.Current.ModifiersBehavior == ModifiersBehavior.RemovedAfterBattle)
-                    unit.Profile.Modifiers.RemoveAt(i);
+                for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
+                {
+                    var m = unit.Profile.Modifiers[i];
+                    if (m.Modifier.Temporary && Settings.Current.ModifiersBehavior == ModifiersBehavior.RemovedAfterBattle)
+                        unit.Profile.Modifiers.RemoveAt(i);
+                }
+            }
+                
+            enabled = false;
+
+            if (Outro)
+            {
+                BattleCamera.Instance.PlayUninterruptible(Outro, false);
+                await UniTask.Delay(TimeSpan.FromSeconds(Outro.length), cancellationToken: cancellation);
+                BattleCamera.Instance.enabled = false;
+            }
+
+            await BattleResolution.ResolveBattle(win, this, cancellation);
+        }
+
+        foreach (var hero in PartyLineup)
+            hero.Profile.CurrentHP = hero.Profile.CurrentHP == 0 ? 1 : hero.Profile.CurrentHP;
+
+        if (gameObject.scene == SceneManager.GetActiveScene())
+        {
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                if (SceneManager.GetSceneAt(i) != gameObject.scene)
+                    SceneManager.SetActiveScene(SceneManager.GetSceneAt(i));
             }
         }
-                
-        enabled = false;
 
-        if (Outro)
-        {
-            BattleCamera.Instance.PlayUninterruptible(Outro, false);
-            await UniTask.Delay(TimeSpan.FromSeconds(Outro.length), cancellationToken: cancellation);
-            BattleCamera.Instance.enabled = false;
-        }
+        await SceneManager.UnloadSceneAsync(gameObject.scene)!.ToUniTask(cancellationToken: CancellationToken.None);
 
-        await BattleResolution.ResolveBattle(win, this, cancellation);
+        _currentState = TargetState.End;
+        _finishedTcs.SetResult(win);
     }
 
-    bool IsBattleFinished(out bool win)
+    private bool IsBattleFinished(out bool win)
     {
         int alliesLeft = 0;
         int hostilesLeft = 0;
@@ -236,7 +285,7 @@ public class BattleStateMachine : MonoBehaviour
         return hostilesLeft == 0 || alliesLeft == 0;
     }
 
-    async UniTask ProcessUnit(BattleCharacterController unit, Tactics chosenTactic, List<BattleCharacterController> preselection, CancellationToken cancellation)
+    private async UniTask ProcessUnit(BattleCharacterController unit, Tactics chosenTactic, List<BattleCharacterController> preselection, CancellationToken cancellation)
     {
         #if UNITY_EDITOR
         // Halting execution to reload assemblies while this enumerator is running
@@ -276,7 +325,7 @@ public class BattleStateMachine : MonoBehaviour
                             var failureTracker = new FailureTracker(chosenTactic.Action);
                             unit.Context.Tracker = failureTracker;
                             chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out _);
-                            _ = ShowFailureReason(failureTracker.FailureMessage);
+                            ShowFailureReason(failureTracker.FailureMessage).Forget();
 
                             async UniTask ShowFailureReason(string text)
                             {
@@ -347,6 +396,37 @@ public class BattleStateMachine : MonoBehaviour
         return false;
     }
 
+    public UniTask ForceEnd(bool skipBattleEndScreen)
+    {
+        _targetState = TargetState.End;
+        _targetStateChanged.Cancel();
+        _skipBattleEndScreen = skipBattleEndScreen;
+        return Finished.AsUniTask();
+    }
+
+    public async UniTask Pause(CancellationToken cancellationToken)
+    {
+        if (_targetState == TargetState.Running)
+        {
+            _targetState = TargetState.Paused;
+            _targetStateChanged.Cancel();
+        }
+        while (_currentState == TargetState.Running)
+            await UniTask.NextFrame(cancellationToken, true);
+    }
+
+    public async UniTask Unpause(CancellationToken cancellationToken)
+    {
+        if (_targetState == TargetState.Paused)
+        {
+            _targetState = TargetState.Running;
+            _targetStateChanged.Cancel();
+        }
+
+        while (_currentState == TargetState.Paused)
+            await UniTask.NextFrame(cancellationToken, true);
+    }
+
     public void Include(BattleCharacterController unit)
     {
         if (unit == null)
@@ -386,6 +466,13 @@ public class BattleStateMachine : MonoBehaviour
         }
     }
 
+    private enum TargetState
+    {
+        Running,
+        Paused,
+        End
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(1, 1, 1, 0.25f);
@@ -395,12 +482,12 @@ public class BattleStateMachine : MonoBehaviour
             Gizmos.DrawCube(spawn.position + Vector3.up, new Vector3(1, 2, 1));
     }
 
-    class FailureTracker : IConditionEvalTracker
+    private class FailureTracker : IConditionEvalTracker
     {
-        int _stackDepth;
-        int _failureDepth = 0;
+        private int _stackDepth;
+        private int _failureDepth = 0;
         public string FailureMessage = "";
-        IAction _associatedAction;
+        private IAction _associatedAction;
 
         public FailureTracker(IAction associatedAction)
         {
@@ -443,6 +530,15 @@ public class BattleStateMachine : MonoBehaviour
         public void PostAdditionalCondition(CharacterTemplate source, Condition condition, TargetCollection previousTargets) { }
 
         public void PostSuccess(CharacterTemplate source, TargetCollection previousTargets) { }
+    }
+
+    private class TimestampedQueueComparer : IComparer<double>
+    {
+        public int Compare(double x, double y)
+        {
+            var v = x.CompareTo(y);
+            return v == 0 ? 1 : v;
+        }
     }
 }
 
