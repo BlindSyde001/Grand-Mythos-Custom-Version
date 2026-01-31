@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Interactables
@@ -12,7 +14,7 @@ namespace Interactables
 
         public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
-            Encounter.Start(player);
+            Encounter.Start(CancellationToken.None).Forget();
             #warning this is a bit flacky, should change this into something more robust
             while (InputManager.CurrentState != GameState.Battle) // Wait for transition into battle
                 yield return Delay.WaitTillNextFrame;

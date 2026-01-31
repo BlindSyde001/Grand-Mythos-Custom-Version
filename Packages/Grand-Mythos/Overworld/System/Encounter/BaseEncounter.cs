@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using Battle;
 using Cysharp.Threading.Tasks;
 using Screenplay;
@@ -20,7 +20,7 @@ public abstract class BaseEncounter : IEncounterDefinition
     public BattlePointOfViewReference? PointOfView;
     public AnimationClip? IntroCamera, OutroCamera;
 
-    public Signal<BattleStateMachine> Start(OverworldPlayerController player)
+    public UniTask<BattleStateMachine> Start(CancellationToken cts)
     {
         if (startingEncounter)
             throw new Exception("Trying to start an encounter while another one is already running");
@@ -31,22 +31,23 @@ public abstract class BaseEncounter : IEncounterDefinition
         var encounterState = battleTransition.AddComponent<EncounterState>();
         foreach (var reserve in GameManager.Instance.ReservesLineup)
             reserve.gameObject.SetActive(false);
-        var signal = new Signal<BattleStateMachine>();
-        encounterState.StartCoroutine(OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup, signal));
-        return signal;
+        return OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup, cts);
     }
 
-    IEnumerator OverworldToBattleTransition(SceneReference Scene, IEnumerable<CharacterTemplate> allies, Signal<BattleStateMachine> signal)
+    private async UniTask<BattleStateMachine> OverworldToBattleTransition(SceneReference scene, IEnumerable<CharacterTemplate> allies, CancellationToken cts)
     {
-        var opponents = FormationToSpawn();
         var gameObjectsToReEnable = new List<GameObject>();
         var hostileControllers = new List<BattleCharacterController>();
         var alliesControllers = new List<BattleCharacterController>();
-
-        bool ranToCompletion = false;
+        var previouslyActiveScene = SceneManager.GetActiveScene();
         try
         {
-            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(Scene.Path, LoadSceneMode.Additive);
+            var opponents = FormationToSpawn();
+
+            var loadOperation = SceneManager.LoadSceneAsync(scene.Path, LoadSceneMode.Additive);
+            if (loadOperation == null)
+                throw new Exception($"Could not find scene '{scene.Path}'");
+
             loadOperation.allowSceneActivation = false;
 
 #warning Both game manager and event switch scene should be rewritten, right now it's a bit too constrictive
@@ -65,11 +66,10 @@ public abstract class BaseEncounter : IEncounterDefinition
                 }
             }
 
-
             // "If you set allowSceneActivation to false, progress is halted at 0.9 until it is set to true"
             // Do note that this will fail if you specify '0.9' instead of '0.9f'
             while (loadOperation.progress < 0.9f)
-                yield return null;
+                await UniTask.NextFrame(cancellationToken:cts, cancelImmediately: true);
 
             loadOperation.allowSceneActivation = true;
 
@@ -102,85 +102,78 @@ public abstract class BaseEncounter : IEncounterDefinition
                 alliesControllers.Add(controller);
             }
 
-            // We have to do this awful workaround to ensure our logic runs before the update loop of that scene
-            SceneManager.sceneLoaded += OnLoad;
+            await loadOperation.ToUniTask(cancellationToken: cts);
 
-            void OnLoad(Scene runtimeScene, LoadSceneMode lsm)
+            var runtimeScene = SceneManager.GetSceneByPath(scene.Path);
+
+            var rootGameObjects = runtimeScene.GetRootGameObjects();
+
+            var bsm = rootGameObjects.Select(x => x.GetComponentInChildren<BattleStateMachine>()).FirstOrDefault(x => x != null);
+            if (bsm == null)
+                throw new Exception($"Could not find {nameof(BattleStateMachine)} in scene '{scene.Path}'");
+
+            if (IntroCamera != null)
+                bsm.Intro = IntroCamera;
+            if (OutroCamera != null)
+                bsm.Outro = OutroCamera;
+            (Vector3 pos, Quaternion rot)[] hostileSpawns = bsm.EnemySpawns.Select(x => (x.position, x.rotation)).ToArray();
+            (Vector3 pos, Quaternion rot)[] alliesSpawns = bsm.HeroSpawns.Select(x => (x.position, x.rotation)).ToArray();
+
+            if (PointOfView is not null)
             {
-                SceneManager.sceneLoaded -= OnLoad;
-                var rootGameobjects = runtimeScene.GetRootGameObjects();
-                if (PointOfView is not null)
+                try
                 {
-                    try
-                    {
-                        var camera = rootGameobjects
-                            .Select(x => x.GetComponentInChildren<BattleCamera>())
-                            .First(x => x != null);
-                        if (BattlePointOfView.Instances.TryGetValue(PointOfView, out var povComp))
-                            camera.TransitionTo(povComp);
-                    }
-                    catch (Exception e)
-                    {
-                        // Let's mostly ignore exceptions related to the camera, failing to do this still leads to a working battle
-                        Debug.LogException(e);
-                    }
+                    var camera = rootGameObjects
+                        .Select(x => x.GetComponentInChildren<BattleCamera>())
+                        .First(x => x != null);
+                    if (BattlePointOfView.Instances.TryGetValue(PointOfView, out var povComp))
+                        camera.TransitionTo(povComp);
                 }
-                
-                (Vector3 pos, Quaternion rot)[] hostileSpawns;
-                (Vector3 pos, Quaternion rot)[] alliesSpawns;
-                if (rootGameobjects.Select(x => x.GetComponentInChildren<BattleStateMachine>()).FirstOrDefault(x => x != null) is { } bsm && bsm != null)
+                catch (Exception e)
                 {
-                    signal.Set(bsm);
-                    if (IntroCamera != null)
-                        bsm.Intro = IntroCamera;
-                    if (OutroCamera != null)
-                        bsm.Outro = OutroCamera;
-                    hostileSpawns = bsm.EnemySpawns.Select(x => (x.position, x.rotation)).ToArray();
-                    alliesSpawns = bsm.HeroSpawns.Select(x => (x.position, x.rotation)).ToArray();
+                    // Let's mostly ignore exceptions related to the camera, failing to do this still leads to a working battle
+                    Debug.LogException(e);
                 }
-                else
-                {
-                    hostileSpawns = new (Vector3, Quaternion)[] { (default, Quaternion.identity) };
-                    alliesSpawns = new (Vector3, Quaternion)[] { (default, Quaternion.identity) };
-                    Debug.LogWarning($"Could not find {nameof(BattleStateMachine)} when trying to set encounter");
-                }
-
-                for (int i = 0; i < hostileControllers.Count; i++)
-                {
-                    SceneManager.MoveGameObjectToScene(hostileControllers[i].Profile.gameObject, runtimeScene);
-                    hostileControllers[i].transform.SetPositionAndRotation(hostileSpawns[i % hostileSpawns.Length].pos, hostileSpawns[i % hostileSpawns.Length].rot);
-                }
-
-                for (int i = 0; i < alliesControllers.Count; i++)
-                {
-                    SceneManager.MoveGameObjectToScene(alliesControllers[i].gameObject, runtimeScene);
-                    alliesControllers[i].transform.SetPositionAndRotation(alliesSpawns[i % alliesSpawns.Length].pos, alliesSpawns[i % alliesSpawns.Length].rot);
-                }
-
-                Scene previouslyActiveScene = SceneManager.GetActiveScene();
-                SceneManager.SetActiveScene(runtimeScene);
-                var unloader = new GameObject(nameof(BackToOverworldOnDestroy)).AddComponent<BackToOverworldOnDestroy>();
-                unloader.ActiveScene = previouslyActiveScene;
-                unloader.gameObjectsToReEnable = gameObjectsToReEnable;
-
-                ranToCompletion = true;
             }
 
-            while (loadOperation.isDone == false)
-                yield return new WaitForEndOfFrame();
+            for (int i = 0; i < hostileControllers.Count; i++)
+            {
+                SceneManager.MoveGameObjectToScene(hostileControllers[i].Profile.gameObject, runtimeScene);
+                hostileControllers[i].transform.SetPositionAndRotation(hostileSpawns[i % hostileSpawns.Length].pos, hostileSpawns[i % hostileSpawns.Length].rot);
+            }
+
+            for (int i = 0; i < alliesControllers.Count; i++)
+            {
+                SceneManager.MoveGameObjectToScene(alliesControllers[i].gameObject, runtimeScene);
+                alliesControllers[i].transform.SetPositionAndRotation(alliesSpawns[i % alliesSpawns.Length].pos, alliesSpawns[i % alliesSpawns.Length].rot);
+            }
+
+            SceneManager.SetActiveScene(runtimeScene);
+            var unloader = new GameObject(nameof(BackToOverworldOnDestroy)).AddComponent<BackToOverworldOnDestroy>();
+            unloader.ActiveScene = previouslyActiveScene;
+            unloader.gameObjectsToReEnable = gameObjectsToReEnable;
+            return bsm;
+        }
+        catch
+        {
+            foreach (var gameObject in gameObjectsToReEnable)
+                gameObject.SetActive(true);
+            foreach (var controller in hostileControllers)
+                Object.Destroy(controller.Profile);
+            foreach (var controller in hostileControllers)
+                Object.Destroy(controller);
+
+            if (previouslyActiveScene.IsValid() && previouslyActiveScene.isLoaded)
+                SceneManager.SetActiveScene(previouslyActiveScene);
+
+            var runtimeScene = SceneManager.GetSceneByPath(scene.Path);
+            if (runtimeScene.IsValid())
+                await SceneManager.UnloadSceneAsync(runtimeScene)!.ToUniTask(cancellationToken: CancellationToken.None);
+
+            throw;
         }
         finally
         {
-            if (ranToCompletion == false)
-            {
-                foreach (var gameObject in gameObjectsToReEnable)
-                    gameObject.SetActive(true);
-                foreach (var controller in hostileControllers)
-                    Object.Destroy(controller.Profile);
-                foreach (var controller in hostileControllers)
-                    Object.Destroy(controller);
-            }
-
             startingEncounter = false;
         }
     }

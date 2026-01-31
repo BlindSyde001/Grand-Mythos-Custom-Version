@@ -31,9 +31,7 @@ public class StartEncounter : AbstractScreenplayNode, IExecutable
 
     public async UniTask<IExecutable?> InnerExecution(IEventContext context, CancellationToken cancellation)
     {
-        var encounterSignal = Definition.Start(OverworldPlayerController.Instances.First());
-        while (encounterSignal.Signaled == false)
-            await UniTask.NextFrame(cancellation, cancelImmediately: true);
+        await Definition.Start(cancellation);
 
         return DuringEncounter;
     }

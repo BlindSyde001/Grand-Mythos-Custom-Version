@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
@@ -64,7 +66,7 @@ public class RandomEncounterZone : MonoBehaviour
         if (metersLeftToTraverse <= 0)
         {
             metersLeftToTraverse += Random.NextFloat(MetersPerEncounter.Min, MetersPerEncounter.Max);
-            Encounter.Start(controller);
+            Encounter.Start(CancellationToken.None).Forget();
         }
     }
 }
