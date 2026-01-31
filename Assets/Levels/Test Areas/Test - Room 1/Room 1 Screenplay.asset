@@ -1,0 +1,163 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f280a14fbcd4a8eb855b9acb1471d1e, type: 3}
+  m_Name: Room 1 Screenplay
+  m_EditorClassIdentifier: 
+  Nodes:
+  - rid: 2764370834597347419
+  - rid: 2764370834597347421
+  - rid: 2764370834597347424
+  - rid: 2764370834597347431
+  - rid: 2764370834597347434
+  - rid: 2764370857063350287
+  - rid: 2764370857063350290
+  - rid: 2764370857063350539
+  - rid: 2764370857063350547
+  - rid: 2764370857063350564
+  AllowMultipleInstances: 0
+  RestoreMode: 1
+  DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
+  DebugRetainProgressInEditor: 0
+  _debugState:
+    Events: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2764370834597347419
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -168, y: -56}
+        Name: Encounter Interrupt Test
+        Action:
+          rid: 2764370834597347421
+        TriggerSource:
+          rid: 2764370834597347431
+        Repeatable: 0
+        Scene:
+          _path: Assets/Levels/Test Areas/Test - Room 1.unity
+          _sceneAsset: {fileID: 102900000, guid: a301f98ce08f6584495c915fc8d6ecd3, type: 3}
+    - rid: 2764370834597347421
+      type: {class: StartEncounter, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: 328, y: -56}
+        DuringEncounter:
+          rid: 2764370834597347434
+        Definition:
+          rid: 2764370834597347429
+    - rid: 2764370834597347424
+      type: {class: EndEncounter, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: 2296, y: -104}
+        Next:
+          rid: -2
+        SkipEndScreen: 1
+    - rid: 2764370834597347429
+      type: {class: FixedEncounter, ns: , asm: Grand-Mythos}
+      data:
+        Scene:
+          _path: Assets/Levels/Test Areas/Test - Battle.unity
+          _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
+        PointOfView: {fileID: 0}
+        IntroCamera: {fileID: 0}
+        OutroCamera: {fileID: 0}
+        Formation:
+        - {fileID: 4298728654131661726, guid: 95b17ca1544aeb047bcaddce9004d5c2, type: 3}
+        - {fileID: 9115676008236007249, guid: 98a278fbb427a4d4687934919c8a3a01, type: 3}
+        Seed: 3670892518
+    - rid: 2764370834597347431
+      type: {class: Interaction, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: -472, y: -56}
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
+            _objId:
+              a: 4858329512231775444
+              b: 4349669265313117116
+            _sceneAsset: {fileID: 102900000, guid: a301f98ce08f6584495c915fc8d6ecd3, type: 3}
+        Label: Interact
+    - rid: 2764370834597347434
+      type: {class: Wait, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 712, y: -56}
+        Next:
+          rid: 2764370857063350287
+        Duration: 10
+    - rid: 2764370857063350287
+      type: {class: HaltEncounter, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: 936, y: -56}
+        Next:
+          rid: 2764370857063350539
+    - rid: 2764370857063350290
+      type: {class: ContinueEncounter, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: 2040, y: -104}
+        Next:
+          rid: 2764370834597347424
+    - rid: 2764370857063350539
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1192, y: -56}
+        Next:
+          rid: 2764370857063350547
+        Line:
+          Content: 'Dialog Line
+
+
+            Another Line'
+          _guid:
+            a: 4667698098323547718
+            b: 16568323188907575700
+        InterlocutorSource:
+          rid: -2
+    - rid: 2764370857063350547
+      type: {class: Choice, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1464, y: -56}
+        Choices:
+        - Prerequisite:
+            rid: -2
+          Action:
+            rid: 2764370857063350564
+          Text:
+            Content: Choice A
+            _guid:
+              a: 5426463189044060020
+              b: 18000493430079366329
+        - Prerequisite:
+            rid: -2
+          Action:
+            rid: 2764370857063350290
+          Text:
+            Content: Choice B
+            _guid:
+              a: 4739471893633421718
+              b: 6730377836122129583
+    - rid: 2764370857063350564
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1720, y: -136}
+        Next:
+          rid: 2764370857063350290
+        Line:
+          Content: 'Dialog Line
+
+
+            Another Line'
+          _guid:
+            a: 5080231582761477290
+            b: 13165487054592665009
+        InterlocutorSource:
+          rid: -2

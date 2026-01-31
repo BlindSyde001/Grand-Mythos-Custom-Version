@@ -82,6 +82,7 @@ MonoBehaviour:
   DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
   DebugRetainProgressInEditor: 0
   __visitedSerializationProxy: []
+  __orderedVisitationSerializationProxy: []
   references:
     version: 2
     RefIds:
@@ -94,11 +95,12 @@ MonoBehaviour:
         Name: Faramir
         Action:
           rid: 5987214906623262771
-        Repeatable: 1
-        Prerequisite:
-          rid: -2
         TriggerSource:
           rid: 5987214951661962189
+        Repeatable: 1
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 5987214906623262771
       type: {class: Choice, ns: Screenplay.Nodes, asm: Screenplay}
       data:
@@ -155,99 +157,107 @@ MonoBehaviour:
         _position: {x: 792, y: 120}
         Next:
           rid: 5987214906623262793
-        Interlocutor: {fileID: 0}
         Line:
           Content: Uh ...
           _guid:
             a: 4894024612462625054
             b: 14779133439577142917
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262787
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 808, y: 280}
         Next:
           rid: 5987214906623262789
-        Interlocutor: {fileID: 0}
         Line:
           Content: 'Congratulations are in order ! '
           _guid:
             a: 4838644638664040673
             b: 14672904693861793180
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262789
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1176, y: 248}
         Next:
           rid: 5987214906623262808
-        Interlocutor: {fileID: 0}
         Line:
           Content: Here is your reward for a job well done.
           _guid:
             a: 5644194760290412350
             b: 6923428691925044667
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262793
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1128, y: 40}
         Next:
           rid: 5987214906623262796
-        Interlocutor: {fileID: 0}
         Line:
           Content: Ah yes, Gothmog has been evading our sentries for the past few
             weeks.
           _guid:
             a: 5621000392060788761
             b: 17694728269986610360
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262796
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1368, y: 40}
         Next:
           rid: 5987214906623262798
-        Interlocutor: {fileID: 0}
         Line:
           Content: We know he is still hiding to the north somewhere ...
           _guid:
             a: 5647151792896793297
             b: 13990058478943975357
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262798
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1608, y: 40}
         Next:
           rid: 5987214906623262801
-        Interlocutor: {fileID: 0}
         Line:
           Content: Frodo shared with me that his old blade, Sting he calls it, could
             detect nearby Orcs.
           _guid:
             a: 4647642514155954249
             b: 1829069584076930977
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262801
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1848, y: 40}
         Next:
           rid: 5987214906623262804
-        Interlocutor: {fileID: 0}
         Line:
           Content: Sadly he lost it while fighting off Shelob, but it must still
             be there, in Mirkwood.
           _guid:
             a: 4665738369652941682
             b: 13295034527575928503
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262804
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 2088, y: 40}
         Next:
           rid: 5987214906623262806
-        Interlocutor: {fileID: 0}
         Line:
           Content: You might be able to use it to find where Gothmog may be hiding.
           _guid:
             a: 4612721924373226615
             b: 12399892318264904341
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262806
       type: {class: Choice, ns: Screenplay.Nodes, asm: Screenplay}
       data:
@@ -276,24 +286,26 @@ MonoBehaviour:
         _position: {x: 1656, y: 248}
         Next:
           rid: 5987214906623262813
-        Interlocutor: {fileID: 0}
         Line:
           Content: Oh, and you better not get caught brandishing Sting around
           _guid:
             a: 5741616332397120195
             b: 14579190935721735329
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623262813
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1896, y: 248}
         Next:
           rid: -2
-        Interlocutor: {fileID: 0}
         Line:
           Content: Frodo might want to get it back !
           _guid:
             a: 4742306231487306395
             b: 12966233390063351186
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623263043
       type: {class: And, ns: Screenplay.Nodes.Logic, asm: Screenplay}
       data:
@@ -337,11 +349,12 @@ MonoBehaviour:
         Name: Celebrimbor
         Action:
           rid: 5987214906623263525
-        Repeatable: 1
-        Prerequisite:
-          rid: -2
         TriggerSource:
           rid: 5987214951661962192
+        Repeatable: 1
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 5987214906623263525
       type: {class: Branch, ns: Screenplay.Nodes, asm: Screenplay}
       data:
@@ -358,24 +371,26 @@ MonoBehaviour:
         _position: {x: 840, y: -680}
         Next:
           rid: 5987214906623263638
-        Interlocutor: {fileID: 0}
         Line:
           Content: Not too sure what I can do for ya ...
           _guid:
             a: 4691092411055958932
             b: 15422833305466597539
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214906623263638
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1096, y: -680}
         Next:
           rid: -2
-        Interlocutor: {fileID: 0}
         Line:
           Content: Let me know when you are in need of a blacksmith though !
           _guid:
             a: 4889416739829331611
             b: 14981111834959509925
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214909154525326
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
@@ -396,13 +411,14 @@ MonoBehaviour:
         _position: {x: 840, y: -968}
         Next:
           rid: 5987214909154525326
-        Interlocutor: {fileID: 0}
         Line:
           Content: Looks like yer blade is in a sorry state, give it here, I'll see
             what I can do ...
           _guid:
             a: 4914027371270396454
             b: 5188133437415049862
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214909154525570
       type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
       data:
@@ -429,36 +445,39 @@ MonoBehaviour:
         Name: Sting
         Action:
           rid: 5987214909154525581
-        Repeatable: 0
-        Prerequisite:
-          rid: 5987214951661962198
         TriggerSource:
           rid: 5987214951661962195
+        Repeatable: 0
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 5987214909154525581
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 376, y: -1720}
         Next:
           rid: 5987214909154525584
-        Interlocutor: {fileID: 0}
         Line:
           Content: Sting lays there, on the ground, stuck betwixt the arachnid's
             webs.
           _guid:
             a: 5354555780128106656
             b: 12469907304607489694
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214909154525584
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 664, y: -1720}
         Next:
           rid: 5987214909154525586
-        Interlocutor: {fileID: 0}
         Line:
           Content: The blade is still radiant, but its hilt as all but vanished.
           _guid:
             a: 5519927029783645102
             b: 1388928446296175039
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214909154525586
       type: {class: Choice, ns: Screenplay.Nodes, asm: Screenplay}
       data:
@@ -488,38 +507,41 @@ MonoBehaviour:
         _position: {x: 1272, y: -1816}
         Next:
           rid: 5987214909154525592
-        Interlocutor: {fileID: 0}
         Line:
           Content: You try and grasp at it, the spine searing through your glove.
           _guid:
             a: 4744245633326944506
             b: 7171431774581565879
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214909154525592
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1576, y: -1672}
         Next:
           rid: 5987214909154525596
-        Interlocutor: {fileID: 0}
         Line:
           Content: You won't be able to use it in this state, Celebrimbor should
             be able to create a new hilt for you.
           _guid:
             a: 4802227048977420392
             b: 16789496165333862075
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214909154525596
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
         _position: {x: 1864, y: -1672}
         Next:
           rid: 5987214909154525599
-        Interlocutor: {fileID: 0}
         Line:
           Content: You quickly wrap the blade in one of your duvet and pack it in
             your bag before Shelob finds you.
           _guid:
             a: 4788815069545379502
             b: 18364105220324857520
+        InterlocutorSource:
+          rid: -2
     - rid: 5987214909154525599
       type: {class: SetQuestStep, ns: Quests, asm: Grand-Mythos}
       data:
@@ -581,11 +603,12 @@ MonoBehaviour:
         Name: Sting Invisible
         Action:
           rid: 5987214952037352100
-        Repeatable: 0
-        Prerequisite:
-          rid: 5987214952037352097
         TriggerSource:
           rid: -2
+        Repeatable: 0
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 5987214952037352087
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
@@ -631,11 +654,12 @@ MonoBehaviour:
         Name: Sting Visible
         Action:
           rid: 5987214952037352116
-        Repeatable: 0
-        Prerequisite:
-          rid: 5987214952037352104
         TriggerSource:
           rid: -2
+        Repeatable: 0
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 5987214952037352116
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
@@ -669,11 +693,12 @@ MonoBehaviour:
         Name: Gothmog
         Action:
           rid: 5987214952212202123
-        Repeatable: 1
-        Prerequisite:
-          rid: 5987214952212201719
         TriggerSource:
           rid: 5987214952212201730
+        Repeatable: 1
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 5987214952212201730
       type: {class: TriggerZone, ns: Screenplay.Nodes.Triggers, asm: Screenplay}
       data:
@@ -741,11 +766,12 @@ MonoBehaviour:
         Name: Gothmog Visible
         Action:
           rid: 5987214953964372277
-        Repeatable: 0
-        Prerequisite:
-          rid: 5987214953964372294
         TriggerSource:
           rid: -2
+        Repeatable: 0
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 5987214953964372277
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
@@ -781,11 +807,12 @@ MonoBehaviour:
         Name: Gothmog Invisible
         Action:
           rid: 5987214953964372280
-        Repeatable: 0
-        Prerequisite:
-          rid: 5987214953964372301
         TriggerSource:
           rid: -2
+        Repeatable: 0
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 5987214953964372294
       type: {class: IsCurrentStep, ns: Quests, asm: Grand-Mythos}
       data:
@@ -804,13 +831,14 @@ MonoBehaviour:
         Name: My Unnamed Event
         Action:
           rid: 8872252081620124036
-        Repeatable: 0
-        Prerequisite:
-          rid: -2
         TriggerSource:
           rid: -2
+        Repeatable: 0
+        Scene:
+          _path: 
+          _sceneAsset: {fileID: 0}
     - rid: 8872252081620124036
-      type: {class: Navigate, ns: Screenplay.Nodes, asm: Screenplay}
+      type: {class: Navigate, ns: , asm: Grand-Mythos}
       data:
         _position: {x: 408, y: -3000}
         Next:
