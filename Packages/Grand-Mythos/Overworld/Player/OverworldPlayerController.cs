@@ -360,7 +360,7 @@ public class OverworldPlayerController : ReloadableBehaviour
         using var edgeVerticesForLink = new NativeArray<Vector3>(4, allocator1);
 
         var neighborsResult = navQuery.GetEdgesAndNeighbors(closestLocation.polygon, edgeVertices, neighbors, indices, out int verticesCount, out int neighborsTotal);
-        Debug.Assert(neighborsResult == PathQueryStatus.Success, neighborsResult);
+        Debug.Assert(neighborsResult == PathQueryStatus.Success, $"Could not move on the navmesh, might be missing: {neighborsResult}");
         Debug.Assert(neighborsTotal <= neighbors.Length);
         for (int i = 0; i < neighborsTotal; i++)
         {

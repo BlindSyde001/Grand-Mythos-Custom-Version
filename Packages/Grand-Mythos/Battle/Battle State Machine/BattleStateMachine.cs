@@ -42,6 +42,10 @@ public class BattleStateMachine : MonoBehaviour
 
     public Task<bool> Finished => _finishedTcs.Task;
 
+    public Tactics? TacticsPlaying { get; private set; }
+
+    public BattleCharacterController? UnitPlaying { get; private set; }
+
     // UPDATES
     private void Awake()
     {
@@ -176,10 +180,6 @@ public class BattleStateMachine : MonoBehaviour
                 }
             }
 
-            var unitIndex = Queue.Values.IndexOf(unit);
-            if (unitIndex != -1)
-                Queue.RemoveAt(unitIndex);
-
             unit.Context.CombatTimestamp = _timestamp;
             unit.Context.Round++;
 
@@ -193,17 +193,29 @@ public class BattleStateMachine : MonoBehaviour
             {
                 try
                 {
+                    TacticsPlaying = chosenTactic;
+                    UnitPlaying = unit;
                     await ProcessUnit(unit, chosenTactic, selectionAsTargetCollection.ToList(), cancellation);
                 }
-                catch (Exception e) when(e is not OperationCanceledException)
+                catch (Exception e) when (e is not OperationCanceledException)
                 {
                     Debug.LogException(e);
+                }
+                finally
+                {
+                    TacticsPlaying = null;
+                    UnitPlaying = unit;
                 }
 
                 delay = chosenTactic.Action.DelayToNextTurn;
             }
 
             var delayDuration = DelayScalar(delay, unit.Profile.ActionRechargeSpeed);
+
+            var unitIndex = Queue.Values.IndexOf(unit);
+            if (unitIndex != -1)
+                Queue.RemoveAt(unitIndex);
+
             Queue.Add(_timestamp + delayDuration, unit);
             if (unit.Profile.InFlowState)
             {
@@ -424,6 +436,12 @@ public class BattleStateMachine : MonoBehaviour
         }
 
         while (_currentState == TargetState.Paused)
+            await UniTask.NextFrame(cancellationToken, true);
+    }
+
+    public async UniTask WaitForSkillPlayed(Skill skill, CancellationToken cancellationToken)
+    {
+        while (Finished.IsCompleted == false)
             await UniTask.NextFrame(cancellationToken, true);
     }
 

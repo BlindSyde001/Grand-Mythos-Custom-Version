@@ -17,12 +17,16 @@ MonoBehaviour:
   - rid: 2764370834597347421
   - rid: 2764370834597347424
   - rid: 2764370834597347431
-  - rid: 2764370834597347434
   - rid: 2764370857063350287
   - rid: 2764370857063350290
   - rid: 2764370857063350539
   - rid: 2764370857063350547
   - rid: 2764370857063350564
+  - rid: 2764370857063350873
+  - rid: 2764370857063350875
+  - rid: 2764370857063350936
+  - rid: 2764370857063350957
+  - rid: 2764370857063350961
   AllowMultipleInstances: 0
   RestoreMode: 1
   DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
@@ -52,13 +56,13 @@ MonoBehaviour:
       data:
         _position: {x: 328, y: -56}
         DuringEncounter:
-          rid: 2764370834597347434
+          rid: -2
         Definition:
           rid: 2764370834597347429
     - rid: 2764370834597347424
       type: {class: EndEncounter, ns: , asm: Grand-Mythos}
       data:
-        _position: {x: 2296, y: -104}
+        _position: {x: 1400, y: -472}
         Next:
           rid: -2
         SkipEndScreen: 1
@@ -87,36 +91,26 @@ MonoBehaviour:
               b: 4349669265313117116
             _sceneAsset: {fileID: 102900000, guid: a301f98ce08f6584495c915fc8d6ecd3, type: 3}
         Label: Interact
-    - rid: 2764370834597347434
-      type: {class: Wait, ns: Screenplay.Nodes, asm: Screenplay}
-      data:
-        _position: {x: 712, y: -56}
-        Next:
-          rid: 2764370857063350287
-        Duration: 10
     - rid: 2764370857063350287
       type: {class: HaltEncounter, ns: , asm: Grand-Mythos}
       data:
-        _position: {x: 936, y: -56}
+        _position: {x: 584, y: -504}
         Next:
-          rid: 2764370857063350539
+          rid: 2764370857063350936
     - rid: 2764370857063350290
       type: {class: ContinueEncounter, ns: , asm: Grand-Mythos}
       data:
-        _position: {x: 2040, y: -104}
+        _position: {x: 1592, y: -328}
         Next:
-          rid: 2764370834597347424
+          rid: -2
     - rid: 2764370857063350539
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: 1192, y: -56}
+        _position: {x: 824, y: -344}
         Next:
           rid: 2764370857063350547
         Line:
-          Content: 'Dialog Line
-
-
-            Another Line'
+          Content: Ouch, why did you do that !?
           _guid:
             a: 4667698098323547718
             b: 16568323188907575700
@@ -125,39 +119,91 @@ MonoBehaviour:
     - rid: 2764370857063350547
       type: {class: Choice, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: 1464, y: -56}
+        _position: {x: 1080, y: -344}
         Choices:
         - Prerequisite:
             rid: -2
           Action:
             rid: 2764370857063350564
           Text:
-            Content: Choice A
+            Content: Wasn't me !
             _guid:
               a: 5426463189044060020
               b: 18000493430079366329
         - Prerequisite:
             rid: -2
           Action:
-            rid: 2764370857063350290
+            rid: 2764370857063350961
           Text:
-            Content: Choice B
+            Content: Do what ?
             _guid:
               a: 4739471893633421718
               b: 6730377836122129583
     - rid: 2764370857063350564
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: 1720, y: -136}
+        _position: {x: 1320, y: -360}
         Next:
           rid: 2764370857063350290
         Line:
-          Content: 'Dialog Line
-
-
-            Another Line'
+          Content: I swear - if you do it again ... !
           _guid:
             a: 5080231582761477290
             b: 13165487054592665009
+        InterlocutorSource:
+          rid: -2
+    - rid: 2764370857063350873
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 232, y: -520}
+        Name: After attack
+        Action:
+          rid: 2764370857063350287
+        TriggerSource:
+          rid: 2764370857063350875
+        Repeatable: 1
+        Scene:
+          _path: Assets/Levels/Test Areas/Test - Battle.unity
+          _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
+    - rid: 2764370857063350875
+      type: {class: SkillPlayed, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -8, y: -520}
+        Skill: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+        Filter: 2
+    - rid: 2764370857063350936
+      type: {class: Branch, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 824, y: -504}
+        True:
+          rid: 2764370857063350957
+        False:
+          rid: 2764370857063350539
+        Prerequisite:
+          rid: 2764370857063350539
+    - rid: 2764370857063350957
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1096, y: -488}
+        Next:
+          rid: 2764370834597347424
+        Line:
+          Content: Huff ! That's it, I quit !!!
+          _guid:
+            a: 5442677246728524098
+            b: 9958821794498467212
+        InterlocutorSource:
+          rid: -2
+    - rid: 2764370857063350961
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1320, y: -248}
+        Next:
+          rid: 2764370857063350290
+        Line:
+          Content: Don't play around with me ...
+          _guid:
+            a: 5267467881321872857
+            b: 10222743882810438079
         InterlocutorSource:
           rid: -2

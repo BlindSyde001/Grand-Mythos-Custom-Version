@@ -28,7 +28,7 @@ public class Interaction : Precondition
                 {
                     await UniTask.NextFrame(triggerCancellation, cancelImmediately: true); // This isn't great, but we must keep it open for at least one frame for all the other latches to open ...
                     tracker.SetUnlockedState(false);
-                    await output.AutoResetEvent.Task.WithInterruptingCancellation(triggerCancellation);
+                    await output.ManualResetEvent.AwaitOpen.WithInterruptingCancellation(triggerCancellation);
                     tracker.SetUnlockedState(true);
                 }
             }
@@ -51,13 +51,20 @@ public class InteractionComp : MonoBehaviour
 
     private static List<InteractionComp> s_instances = new();
 
-    public required AutoResetUniTaskCompletionSource AutoResetEvent = AutoResetUniTaskCompletionSource.Create();
+    public required SafeManualResetEvent ManualResetEvent = new();
     public string Label = "?";
 
     private void OnEnable() => s_instances.Add(this);
     private void OnDisable() => s_instances.Remove(this);
-    private void OnDestroy() => AutoResetEvent.TrySetCanceled();
+    private void OnDestroy()
+    {
+        ManualResetEvent.TrySetCanceled();
+    }
 
     [Button("Force Trigger")]
-    public void Trigger() => AutoResetEvent.TrySetResult();
+    public void Trigger()
+    {
+        ManualResetEvent.Open();
+        ManualResetEvent.Close();
+    }
 }
