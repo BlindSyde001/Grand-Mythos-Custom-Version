@@ -23,7 +23,7 @@ public class AwaitEndOfEncounter : AbstractScreenplayNode, IExecutable
             yield return Defeat;
     }
 
-    public async UniTask<IExecutable?> InnerExecution(IEventContext context, CancellationToken cancellation)
+    public async UniTask<IExecutable?> Execute(IEventContext context, CancellationToken cancellation)
     {
         if (BattleStateMachine.TryGetInstance(out var battle))
         {

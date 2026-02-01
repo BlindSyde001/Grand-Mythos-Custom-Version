@@ -79,15 +79,22 @@ MonoBehaviour:
   - rid: 5987214953964372301
   - rid: 8872252081481188294
   - rid: 8872252081620124036
-  DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
+  AllowMultipleInstances: 0
+  RestoreMode: 1
   DebugRetainProgressInEditor: 0
-  __visitedSerializationProxy: []
-  __orderedVisitationSerializationProxy: []
+  _debugState:
+    Events: []
+  Fields:
+  - rid: 718286792178008118
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 718286792178008118
+      type: {class: DialogUIField, ns: Screenplay, asm: Screenplay}
+      data:
+        DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
     - rid: 5987214906623262768
       type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
       data:
