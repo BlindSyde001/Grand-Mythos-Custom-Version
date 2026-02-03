@@ -30,6 +30,8 @@ public class OverworldPlayerController : ReloadableBehaviour
     public float InteractDistance = 0.5f;
     public float TurnRate = 20f;
     public float MovementSpeed = 8f;
+    public float WalkingMultiplier = 0.5f;
+    public float SprintingMultiplier = 2f;
     public ControlDisabler Disabler;
     public double UnitsWalked;
 
@@ -45,12 +47,19 @@ public class OverworldPlayerController : ReloadableBehaviour
     };
 
     public float SwapTransportQueryRadius = 5f;
-    public required InputActionReference Interact, Move;
+    public required InputActionReference Interact, Move, WalkingToggle, SprintingToggle;
 
     bool _noNavmesh;
     Vector3 _lastPointOnNavMesh;
     int _activeTransport;
+    SpeedModifier _speedModifier;
 
+    private enum SpeedModifier
+    {
+        Walk,
+        Run,
+        Sprint
+    }
 
     [Flags]
     public enum ControlDisabler
@@ -224,10 +233,22 @@ public class OverworldPlayerController : ReloadableBehaviour
 
     void MoveOffset(Vector3 movementVector)
     {
+        if (SprintingToggle.action.WasPerformedThisFrameUnique())
+            _speedModifier = _speedModifier == SpeedModifier.Sprint ? SpeedModifier.Run : SpeedModifier.Sprint;
+        if (WalkingToggle.action.WasPerformedThisFrameUnique())
+            _speedModifier = _speedModifier == SpeedModifier.Walk ? SpeedModifier.Run : SpeedModifier.Walk;
+        
         var previousPosition = Controller.transform.position;
         try
         {
             var offset = movementVector * (MovementSpeed * Time.deltaTime);
+            offset *= _speedModifier switch
+            {
+                SpeedModifier.Walk => WalkingMultiplier,
+                SpeedModifier.Run => 1f,
+                SpeedModifier.Sprint => SprintingMultiplier,
+                _ => throw new ArgumentOutOfRangeException()
+            };
             Controller.Move(offset);
 
             if (_noNavmesh)
