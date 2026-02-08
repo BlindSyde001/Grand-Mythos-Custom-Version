@@ -19,9 +19,9 @@ namespace Characters.StatusHandler
 
         public void ModifyStats(ref Stats stats) { }
 
-        public void ModifyOutgoingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling) { }
+        public void ModifyOutgoingDelta(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling) { }
 
-        public void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling) { }
+        public void ModifyIncomingDelta(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling) { }
 
         public bool Temporary => true;
         public bool DisplayOnRightSide => false;

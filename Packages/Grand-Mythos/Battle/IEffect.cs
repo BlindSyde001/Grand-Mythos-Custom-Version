@@ -6,7 +6,7 @@ using UnityEngine;
 [InlineProperty]
 public interface IEffect
 {
-    void Apply(BattleCharacterController[] targets, EvaluationContext context);
+    void Apply(CharacterTemplate[] targets, EvaluationContext context);
     /// <summary> Describes the effect in a human-readable format </summary>
     string UIDisplayText { get; }
 

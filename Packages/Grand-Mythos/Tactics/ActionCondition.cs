@@ -46,13 +46,13 @@ public class ActionCondition : IdentifiableScriptableObject
 
         if (context.Profile.CurrentHP == 0)
         {
-            context.Tracker?.PostDead(context.Controller.Profile);
+            context.Tracker?.PostDead(context.Profile);
             return false;
         }
 
         if (action.ManaCost > context.Profile.CurrentMP)
         {
-            context.Tracker?.PostNotEnoughMana(context.Controller.Profile);
+            context.Tracker?.PostNotEnoughMana(context.Profile);
             return false;
         }
 
@@ -61,7 +61,7 @@ public class ActionCondition : IdentifiableScriptableObject
             var allTargetsCopy = allTargets;
             try
             {
-                action.Precondition.Filter(ref allTargetsCopy, context.Controller.Context);
+                action.Precondition.Filter(ref allTargetsCopy, context);
             }
             catch(Exception e) when (action is UnityEngine.Object o)
             {
@@ -70,7 +70,7 @@ public class ActionCondition : IdentifiableScriptableObject
 
             if (allTargetsCopy.IsEmpty)
             {
-                context.Tracker?.PostActionPrecondition(context.Controller.Profile, action, allTargets);
+                context.Tracker?.PostActionPrecondition(context.Profile, action, allTargets);
                 return false;
             }
         }
@@ -89,7 +89,7 @@ public class ActionCondition : IdentifiableScriptableObject
 
             if (selectedTargets.IsEmpty)
             {
-                context.Tracker?.PostTargetFilter(context.Controller.Profile, TargetFilter);
+                context.Tracker?.PostTargetFilter(context.Profile, TargetFilter);
                 return false;
             }
         }
@@ -108,7 +108,7 @@ public class ActionCondition : IdentifiableScriptableObject
 
             if (selectedTargets.IsEmpty)
             {
-                context.Tracker?.PostActionTargetFilter(context.Controller.Profile, action, previousTargets);
+                context.Tracker?.PostActionTargetFilter(context.Profile, action, previousTargets);
                 return false;
             }
         }
@@ -126,13 +126,13 @@ public class ActionCondition : IdentifiableScriptableObject
             }
             if (allTargetsCopy.IsEmpty)
             {
-                context.Tracker?.PostAdditionalCondition(context.Controller.Profile, AdditionalCondition, allTargetsCopy);
+                context.Tracker?.PostAdditionalCondition(context.Profile, AdditionalCondition, allTargetsCopy);
                 return false;
             }
         }
 
         selection = selectedTargets;
-        context.Tracker?.PostSuccess(context.Controller.Profile, selection);
+        context.Tracker?.PostSuccess(context.Profile, selection);
         return true;
     }
 }
@@ -140,11 +140,7 @@ public class ActionCondition : IdentifiableScriptableObject
 [Serializable]
 public class EvaluationContext
 {
-    [SerializeField]
-    BattleCharacterController _controller;
-
-    public BattleCharacterController Controller => _controller;
-    public CharacterTemplate Profile => Controller.Profile;
+    public CharacterTemplate Profile;
 
     /// <summary>
     /// Reset only between evaluating full tactics,
@@ -156,7 +152,7 @@ public class EvaluationContext
     public SerializableDictionary<object, object?> BattleFlags = new();
 
     /// <summary>
-    /// Incremented every time <see cref="Controller"/> has finished playing all its scheduled tactics
+    /// Incremented every time <see cref="Profile"/> has finished playing all its scheduled tactics
     /// </summary>
     public uint Round;
 
@@ -165,8 +161,9 @@ public class EvaluationContext
     public double CombatTimestamp;
     [NonSerialized] public IConditionEvalTracker? Tracker;
 
-    public EvaluationContext(BattleCharacterController controller)
+    public EvaluationContext(CharacterTemplate template)
     {
-        _controller = controller;
+        Profile = template;
+        Random = new Random(1);
     }
 }

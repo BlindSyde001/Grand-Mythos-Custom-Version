@@ -75,15 +75,9 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
 
     protected override void Awake()
     {
-        SavingSystem.TryRestore<HeroExtension, SaveV2>(this);
         InitializeCharacter();
         RefreshEquipmentStats();
         base.Awake();
-    }
-
-    void OnDestroy()
-    {
-        SavingSystem.StoreAndUnregister<HeroExtension, SaveV2>(this);
     }
 
     // METHODS

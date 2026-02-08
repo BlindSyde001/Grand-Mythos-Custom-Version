@@ -12,12 +12,12 @@ namespace Effects
         public required StatusModifier Modifier;
         [Range(0, 100), SuffixLabel("%")] public float Chance = 50f;
         
-        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(CharacterTemplate[] targets, EvaluationContext context)
         {
             foreach (var target in targets)
             {
                 if (context.Random.NextFloat(0,100) <= Chance)
-                    target.Profile.Modifiers.Add(new AppliedModifier(target.Context, Modifier, context.Profile));
+                    target.Modifiers.Add(new AppliedModifier(context.CombatTimestamp, Modifier, context.Profile));
             }
         }
 

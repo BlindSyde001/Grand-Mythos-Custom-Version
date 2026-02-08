@@ -154,7 +154,7 @@ public class BattleStateMachine : MonoBehaviour
                         continue;
                     }
 
-                    var allUnits = new TargetCollection(unitsCopy);
+                    var allUnits = new TargetCollection(unitsCopy.Select(x => x.Profile).ToList());
                     if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out selectionAsTargetCollection) == false)
                         chosenTactic = null;
                 }
@@ -170,7 +170,7 @@ public class BattleStateMachine : MonoBehaviour
 
                     foreach (var tactic in unit.Profile.Tactics)
                     {
-                        var allUnits = new TargetCollection(unitsCopy);
+                        var allUnits = new TargetCollection(unitsCopy.Select(x => x.Profile).ToList());
                         if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Action, allUnits, unit.Context, out selectionAsTargetCollection))
                         {
                             chosenTactic = tactic;
@@ -195,7 +195,7 @@ public class BattleStateMachine : MonoBehaviour
                 {
                     TacticsPlaying = chosenTactic;
                     UnitPlaying = unit;
-                    await ProcessUnit(unit, chosenTactic, selectionAsTargetCollection.ToList(), cancellation);
+                    await ProcessUnit(unit, chosenTactic, selectionAsTargetCollection.Select(x => Units.First(y => x == y.Profile)).ToList(), cancellation);
                 }
                 catch (Exception e) when (e is not OperationCanceledException)
                 {
@@ -324,7 +324,7 @@ public class BattleStateMachine : MonoBehaviour
             {
                 using (Units.TemporaryCopy(out var unitsCopy))
                 {
-                    var allUnits = new TargetCollection(unitsCopy);
+                    var allUnits = new TargetCollection(unitsCopy.Select(x => x.Profile).ToList());
                     // Check AGAIN that our selection is still valid, may not be after playing the animation
                     if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out var selection) == false)
                     {
@@ -358,7 +358,7 @@ public class BattleStateMachine : MonoBehaviour
                     var selectionArray = selection.ToArray();
                     var initialHP = new int[selectionArray.Length];
                     for (var i = 0; i < selectionArray.Length; i++)
-                        initialHP[i] = selectionArray[i].Profile.CurrentHP;
+                        initialHP[i] = selectionArray[i].CurrentHP;
 
                     chosenTactic.Action.Perform(selectionArray, unit.Context);
 
@@ -372,15 +372,15 @@ public class BattleStateMachine : MonoBehaviour
                     {
                         var controller = selectionArray[i];
                         IActionAnimation? anim;
-                        if (controller.Profile.CurrentHP == initialHP[i])
-                            anim = controller.Profile.Dodge ?? controller.Profile.Parry ?? controller.Profile.Shield;
+                        if (controller.CurrentHP == initialHP[i])
+                            anim = controller.Dodge ?? controller.Parry ?? controller.Shield;
                         else
-                            anim = controller.Profile.CurrentHP > 0 ? controller.Profile.Hurt : controller.Profile.Death;
+                            anim = controller.CurrentHP > 0 ? controller.Hurt : controller.Death;
 
                         if (anim is null)
                             continue;
 
-                        var reactionAnimation = anim.Play(null, controller, Array.Empty<BattleCharacterController>(), cancellation);
+                        var reactionAnimation = anim.Play(null, Units.First(x => x.Profile == controller), Array.Empty<BattleCharacterController>(), cancellation);
                         tasks.Add(reactionAnimation);
                     }
 

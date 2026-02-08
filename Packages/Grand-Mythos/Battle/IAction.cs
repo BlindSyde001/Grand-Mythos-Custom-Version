@@ -10,7 +10,7 @@ public interface IAction : IIdentifiable
     AnimationClip? CameraAnimation { get; }
     Condition? TargetFilter { get; }
     Condition? Precondition { get; }
-    void Perform(BattleCharacterController[] targets, EvaluationContext context);
+    void Perform(CharacterTemplate[] targets, EvaluationContext context);
 
     public enum Delay
     {

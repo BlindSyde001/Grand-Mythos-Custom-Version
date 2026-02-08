@@ -16,7 +16,7 @@ namespace Conditions
             int highestTarget = -1;
             for (int i = -1; targets.TryGetNext(ref i, out var target);)
             {
-                var thisTargetStat = target.Profile.GetAttribute(TargetAttribute);
+                var thisTargetStat = target.GetAttribute(TargetAttribute);
                 if (thisTargetStat > highestStat)
                 {
                     highestStat = thisTargetStat;

@@ -39,11 +39,11 @@ namespace Characters
             return obj is IModifier;
         }
 
-        public AppliedModifier(EvaluationContext context, IModifier modifier, CharacterTemplate? source)
+        public AppliedModifier(double combatTimestamp, IModifier modifier, CharacterTemplate? source)
         {
             _object = null;
             _modRef = null;
-            CreationTimeStamp = context.CombatTimestamp;
+            CreationTimeStamp = combatTimestamp;
             Source = source;
             Modifier = modifier;
         }

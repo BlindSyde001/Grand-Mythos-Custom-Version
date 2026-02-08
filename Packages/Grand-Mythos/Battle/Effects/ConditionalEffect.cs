@@ -14,7 +14,7 @@ namespace Effects
         [SerializeReference]
         public IEffect[] Effects = Array.Empty<IEffect>();
 
-        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(CharacterTemplate[] targets, EvaluationContext context)
         {
             var collection = new TargetCollection(targets.ToList());
             Condition.Filter(ref collection, context);

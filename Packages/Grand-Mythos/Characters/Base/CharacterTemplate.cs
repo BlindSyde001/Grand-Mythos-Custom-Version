@@ -240,6 +240,11 @@ public class CharacterTemplate : IdentifiableScriptableObject
         }
     }
 
+    public bool IsHostileTo(CharacterTemplate character)
+    {
+        return Team.Allies.Contains(character.Team) == false;
+    }
+
     protected virtual void Awake()
     {
         RegenHealthAndMana();

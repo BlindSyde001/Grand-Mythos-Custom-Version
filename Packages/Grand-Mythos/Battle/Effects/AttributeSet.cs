@@ -12,12 +12,12 @@ namespace Effects
         public int Value = 100;
         public int Variance = 0;
 
-        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(CharacterTemplate[] targets, EvaluationContext context)
         {
             foreach (var target in targets)
             {
                 int val = Value + UnityEngine.Random.Range(-Variance, Variance+1);
-                target.Profile.SetAttribute(Attribute, val);
+                target.SetAttribute(Attribute, val);
             }
         }
 

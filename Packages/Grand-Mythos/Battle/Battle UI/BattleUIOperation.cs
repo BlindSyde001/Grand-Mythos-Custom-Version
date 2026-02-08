@@ -98,11 +98,13 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         AttributeAdd.OnApplied -= DamageHandler;
     }
 
-    void DamageHandler(BattleCharacterController target, int initialAttributeValue, ComputableDamageScaling computeDamage)
+    void DamageHandler(CharacterTemplate t, int initialAttributeValue, ComputableDamageScaling computeDamage)
     {
         if (computeDamage.Attribute != Attribute.Health)
             return;
 
+        var target = BattleManagement.Units.First(x => x.Profile == t);
+        
         DamageText damageText;
         if (_damageTextCache.TryPeek(out var data) && Time.time >= data.availableAfter)
             damageText = _damageTextCache.Dequeue().component;
@@ -436,7 +438,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             } while (true);
 
             tactic.Condition = ScriptableObject.CreateInstance<ActionCondition>();
-            tactic.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection.ToHashSet() };
+            tactic.Condition.TargetFilter = new SpecificTargetsCondition { Targets = selection.Select(x => x.Profile).ToHashSet() };
             tactic.Action = action;
         }
         finally
@@ -574,7 +576,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
         protected override IEnumerable<BattleCharacterController> GetItems()
         {
-            return _units.Where(x => IsFiltered(x, _action, _unitSelected.Context, _units) == false).OrderByDescending(x => x.IsHostileTo(_unitSelected));
+            return _units.Where(x => IsFiltered(x, _action, _unitSelected.Context, _units) == false).OrderByDescending(x => x.Profile.IsHostileTo(_unitSelected.Profile));
         }
 
         protected override void OnHoverOrSelected(BattleCharacterController unit)
@@ -598,7 +600,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         {
             isOn = _selection.Contains(unit);
             label = unit.Profile.Name;
-            inHostileList = unit.IsHostileTo(_unitSelected);
+            inHostileList = unit.Profile.IsHostileTo(_unitSelected.Profile);
             subSelections = Array.Empty<string>();
         }
 
@@ -651,13 +653,13 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
         static bool Filtered(IAction action, EvaluationContext context, HashSet<BattleCharacterController> input, out HashSet<BattleCharacterController> output)
         {
-            var collection = new TargetCollection(input.ToList());
+            var collection = new TargetCollection(input.Select(x => x.Profile).ToList());
             var filtered = collection;
             action.TargetFilter?.Filter(ref filtered, context);
 
             if (collection != filtered)
             {
-                output = filtered.ToHashSet();
+                output = filtered.Select(x => input.First(y => y.Profile == x)).ToHashSet();
                 return true;
             }
             else
@@ -669,7 +671,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
         static bool Filter(IAction action, EvaluationContext context, HashSet<BattleCharacterController> input)
         {
-            var collection = new TargetCollection(input.ToList());
+            var collection = new TargetCollection(input.Select(x => x.Profile).ToList());
             var filtered = collection;
             action.TargetFilter?.Filter(ref filtered, context);
 
@@ -677,18 +679,18 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             {
                 input.Clear();
                 foreach (var unit in filtered)
-                    input.Add(unit);
+                    input.Add(input.First(x => x.Profile == unit));
                 return true;
             }
 
             return false;
         }
 
-        bool IsFiltered(BattleCharacterController x, IAction action, EvaluationContext context, List<BattleCharacterController> units)
+        bool IsFiltered(BattleCharacterController chara, IAction action, EvaluationContext context, List<BattleCharacterController> units)
         {
-            var alone = new TargetCollection(units);
+            var alone = new TargetCollection(units.Select(x => x.Profile).ToList());
             alone.Empty();
-            alone.SetAt(units.IndexOf(x));
+            alone.SetAt(units.IndexOf(chara));
 
             action.TargetFilter?.Filter(ref alone, context);
 
@@ -710,8 +712,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         {
             _targetGroups = new[]
             {
-                new TargetGroupNonAlloc { GenericName = "Hostiles", Filter = x => x.IsHostileTo(_unitSelected.Context.Controller), ConsideredHostile = true },
-                new TargetGroupNonAlloc { GenericName = "Allies", Filter = x => x.IsHostileTo(_unitSelected.Context.Controller) == false, ConsideredHostile = false }
+                new TargetGroupNonAlloc { GenericName = "Hostiles", Filter = x => x.Profile.IsHostileTo(_unitSelected.Profile), ConsideredHostile = true },
+                new TargetGroupNonAlloc { GenericName = "Allies", Filter = x => x.Profile.IsHostileTo(_unitSelected.Profile) == false, ConsideredHostile = false }
             };
         }
 
@@ -794,7 +796,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             {
                 EvaluateGroupFilter(group, _units, _action, _unitSelected.Context, out _, out var selection);
                 foreach (var unit in selection)
-                    units.Add(unit);
+                    units.Add(_units.First(x => x.Profile == unit));
             }
 
             return units.Count != 0; // Unlikely but just in case
@@ -809,8 +811,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         {
             _lastCursor = group;
             EvaluateGroupFilter(group, _units, _action, _unitSelected.Context, out _, out var selection);
-            TooltipUI.OnPresentNewTooltip?.Invoke($"Targets: {string.Join(", ", selection.Select(x => x.Profile.Name))}");
-            UpdateSelectionArrow(selection);
+            TooltipUI.OnPresentNewTooltip?.Invoke($"Targets: {string.Join(", ", selection.Select(x => x.Name))}");
+            UpdateSelectionArrow(selection.Select(x => _units.First(y => y.Profile == x)));
         }
 
         protected override void OnRemoved(TargetGroupNonAlloc group, bool fromClearAction)
@@ -825,7 +827,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             inHostileList = obj.ConsideredHostile;
             
             EvaluateGroupFilter(obj, _units, _action, _unitSelected.Context, out _, out var selection);
-            subSelections = selection.Select(x => x.Profile.Name).ToArray();
+            subSelections = selection.Select(x => x.Name).ToArray();
             if (subSelections.Length > 0)
                 label = "";
         }
@@ -852,11 +854,11 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         bool EvaluateGroupFilter(TargetGroupNonAlloc group, List<BattleCharacterController> allUnits, IAction action, EvaluationContext context, out string specificName, out TargetCollection selection)
         {
             int initiallyValidCount = 0;
-            selection = new(allUnits);
+            selection = new(allUnits.Select(x => x.Profile).ToList());
             using var e = selection.GetEnumerator();
             for (; e.MoveNext();)
             {
-                if (group.Filter(e.Current) == false)
+                if (group.Filter(allUnits.First(x => x.Profile == e.Current)) == false)
                     selection.RemoveAt(e.CurrentIndex);
                 else
                     initiallyValidCount++;

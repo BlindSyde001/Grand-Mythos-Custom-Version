@@ -23,7 +23,7 @@ namespace Characters.Special
             if (t is { } selectedValue)
             {
                 if (character.Profile.Modifiers.FirstOrDefault(x => x.Modifier is ElementalAmmo) is not {Modifier: ElementalAmmo ammo})
-                    character.Profile.Modifiers.Add(new AppliedModifier(character.Context, ammo = UnityEngine.Object.Instantiate(AssociatedStatus), null));
+                    character.Profile.Modifiers.Add(new AppliedModifier(character.Context.CombatTimestamp, ammo = UnityEngine.Object.Instantiate(AssociatedStatus), null));
 
                 ammo.Element = selectedValue;
             }
@@ -34,7 +34,7 @@ namespace Characters.Special
         public void OnBattleStart(BattleCharacterController character)
         {
             if (character.Profile.Modifiers.FirstOrDefault(x => x.Modifier is ElementalAmmo) is not {Modifier: ElementalAmmo})
-                character.Profile.Modifiers.Add(new (character.Context, UnityEngine.Object.Instantiate(AssociatedStatus), null));
+                character.Profile.Modifiers.Add(new AppliedModifier(character.Context.CombatTimestamp, UnityEngine.Object.Instantiate(AssociatedStatus), null));
         }
     }
 }

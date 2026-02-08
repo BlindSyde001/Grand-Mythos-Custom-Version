@@ -56,6 +56,11 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV3
             ReservesLineup[i] = Instantiate(ReservesLineup[i], transform);
             ReservesLineup[i].name = ReservesLineup[i].name[..^"(Clone)".Length]; // Remove the postfix unity inserts when instantiating
         }
+
+        foreach (var heroExtension in AllHeroes)
+        {
+            SavingSystem.TryRestore<HeroExtension, HeroExtension.SaveV2>(heroExtension);
+        }
     }
 
     void Update()
@@ -70,6 +75,11 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV3
             Instance = null!;
 
         SavingSystem.Unregister<GameManager, SaveV3>(this);
+
+        foreach (var heroExtension in AllHeroes)
+        {
+            SavingSystem.Unregister<HeroExtension, HeroExtension.SaveV2>(heroExtension);
+        }
     }
 
     /// <summary>

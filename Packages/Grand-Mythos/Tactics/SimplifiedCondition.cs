@@ -17,6 +17,6 @@
         /// <summary>
         /// Returns whether this <paramref name="target"/> matches this condition
         /// </summary>
-        protected abstract bool Filter(BattleCharacterController target, EvaluationContext context);
+        protected abstract bool Filter(CharacterTemplate target, EvaluationContext context);
     }
 }

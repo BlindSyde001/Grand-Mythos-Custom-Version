@@ -6,14 +6,12 @@ public interface IModifier
     void ModifyStats(ref Stats stats);
     /// <summary>
     /// This modifier is currently attached to the caster and modifies damage the caster deals to the target.
-    /// You can retrieve the reference to the caster by fetching <see cref="EvaluationContext.Controller"/>.
     /// </summary>
-    void ModifyOutgoingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling);
+    void ModifyOutgoingDelta(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling);
     /// <summary>
     /// This modifier is attached to the target of an action and modifies damage the <paramref name="target"/> receives from the caster.
-    /// You can retrieve the reference to the caster by fetching <see cref="EvaluationContext.Controller"/>.
     /// </summary>
-    void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling);
+    void ModifyIncomingDelta(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling);
 
     bool Temporary { get; }
     bool DisplayOnRightSide { get; }

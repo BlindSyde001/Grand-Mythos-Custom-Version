@@ -2,6 +2,6 @@
 {
     public interface IStatusModifierLogic
     {
-        void Modify(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling);
+        void Modify(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling);
     }
 }

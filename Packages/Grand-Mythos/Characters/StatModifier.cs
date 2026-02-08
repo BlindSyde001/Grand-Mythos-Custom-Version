@@ -23,12 +23,12 @@ public class StatModifier : IModifier
             stats[mod.Attribute] += mod.Value;
     }
 
-    public void ModifyOutgoingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
+    public void ModifyOutgoingDelta(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling)
     {
 
     }
 
-    public void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
+    public void ModifyIncomingDelta(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling)
     {
 
     }

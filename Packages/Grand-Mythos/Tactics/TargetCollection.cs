@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
-public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquatable<TargetCollection>
+public struct TargetCollection : IEnumerable<CharacterTemplate>, IEquatable<TargetCollection>
 {
-    List<BattleCharacterController> _targets;
+    List<CharacterTemplate> _targets;
     ulong _included;
 
     public bool IsEmpty => _included == 0;
 
-    public TargetCollection(List<BattleCharacterController> targets)
+    public TargetCollection(List<CharacterTemplate> targets)
     {
         Debug.Assert(targets.Count <= sizeof(ulong));
         // Support for more than 64 targets is feasible, just not something I think we need to focus on right now
@@ -22,7 +22,7 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquata
         _targets = targets;
     }
 
-    public readonly bool TryGetNext(ref int i, [MaybeNullWhen(false)] out BattleCharacterController target)
+    public readonly bool TryGetNext(ref int i, [MaybeNullWhen(false)] out CharacterTemplate target)
     {
         i += 1;
         for (; i < _targets.Count; i++)
@@ -65,9 +65,9 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquata
         return total;
     }
 
-    public readonly BattleCharacterController[] ToArray()
+    public readonly CharacterTemplate[] ToArray()
     {
-        BattleCharacterController[] array = new BattleCharacterController[CountSlow()];
+        CharacterTemplate[] array = new CharacterTemplate[CountSlow()];
         for (int i = -1, c = 0; TryGetNext(ref i, out var target); c++)
             array[c] = target;
 
@@ -93,21 +93,21 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquata
     }
 
     public Enum GetEnumerator() => new Enum(_targets, _included);
-    IEnumerator<BattleCharacterController> IEnumerable<BattleCharacterController>.GetEnumerator() => GetEnumerator();
+    IEnumerator<CharacterTemplate> IEnumerable<CharacterTemplate>.GetEnumerator() => GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public struct Enum : IEnumerator<BattleCharacterController>
+    public struct Enum : IEnumerator<CharacterTemplate>
     {
-        List<BattleCharacterController> _targets;
+        List<CharacterTemplate> _targets;
         ulong _included;
         int _i;
 
-        public BattleCharacterController Current { get; private set; }
+        public CharacterTemplate Current { get; private set; }
         public int CurrentIndex => _i;
 
         object IEnumerator.Current => Current;
 
-        public Enum(List<BattleCharacterController> targets, ulong included)
+        public Enum(List<CharacterTemplate> targets, ulong included)
         {
             _targets = targets;
             _included = included;
@@ -141,7 +141,7 @@ public struct TargetCollection : IEnumerable<BattleCharacterController>, IEquata
 
     public bool Equals(TargetCollection other) => Equals(_targets, other._targets) && _included == other._included;
 
-    public override bool Equals(object obj) => obj is TargetCollection other && Equals(other);
+    public override bool Equals(object? obj) => obj is TargetCollection other && Equals(other);
 
     public override int GetHashCode() => HashCode.Combine(_targets, _included);
 

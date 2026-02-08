@@ -1,4 +1,3 @@
-using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -15,18 +14,9 @@ public class BattleCharacterController : MonoBehaviour
 
     public required Animator Animator;
 
-    [NonSerialized]
-    public EvaluationContext Context;
+    private EvaluationContext? _context;
 
-    public bool IsHostileTo(BattleCharacterController character)
-    {
-        return Profile.Team.Allies.Contains(character.Profile.Team) == false;
-    }
-
-    public BattleCharacterController()
-    {
-        Context = new(this);
-    }
+    public EvaluationContext Context => _context ??= new EvaluationContext(Profile);
 
     void Start()
     {

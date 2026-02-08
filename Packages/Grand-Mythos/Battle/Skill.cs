@@ -54,7 +54,7 @@ public class Skill : IdentifiableScriptableObject, IAction
     string IAction.Name => name;
     public string Description => string.IsNullOrWhiteSpace(_description) ? $"No Description - falling back to auto generated; {UIDisplayText}" : _description;
 
-    public void Perform(BattleCharacterController[] targets, EvaluationContext context)
+    public void Perform(CharacterTemplate[] targets, EvaluationContext context)
     {
         context.Profile.CurrentMP -= ManaCost;
         
@@ -79,8 +79,8 @@ public class Skill : IdentifiableScriptableObject, IAction
             {
                 if (attachedSkill.PreconditionToUse != null)
                 {
-                    var allTargetsCopy = new TargetCollection(battle.Units);
-                    attachedSkill.PreconditionToUse.Filter(ref allTargetsCopy, context.Controller.Context);
+                    var allTargetsCopy = new TargetCollection(battle.Units.Select(x => x.Profile).ToList());
+                    attachedSkill.PreconditionToUse.Filter(ref allTargetsCopy, context);
 
                     if (allTargetsCopy.IsEmpty)
                     {

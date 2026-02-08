@@ -12,10 +12,10 @@ namespace Effects
         [HorizontalGroup, HideLabel]
         public required uint Amount = 1;
 
-        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(CharacterTemplate[] targets, EvaluationContext context)
         {
             foreach (var target in targets)
-                target.Profile.Inventory.RemoveItem(Item, Amount);
+                target.Inventory.RemoveItem(Item, Amount);
         }
 
         public string UIDisplayText => $"Remove {((Object)Item)?.name} x {Amount}";

@@ -29,12 +29,12 @@ namespace StatusHandler
 
         public void ModifyStats(ref Stats stats) { }
 
-        public void ModifyOutgoingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
+        public void ModifyOutgoingDelta(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling)
         {
             Outgoing?.Modify(context, target, ref scaling);
         }
 
-        public void ModifyIncomingDelta(EvaluationContext context, BattleCharacterController target, ref ComputableDamageScaling scaling)
+        public void ModifyIncomingDelta(EvaluationContext context, CharacterTemplate target, ref ComputableDamageScaling scaling)
         {
             Incoming?.Modify(context, target, ref scaling);
         }

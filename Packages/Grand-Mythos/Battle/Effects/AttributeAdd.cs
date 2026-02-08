@@ -8,7 +8,7 @@ namespace Effects
     [Serializable]
     public class AttributeAdd : IEffect
     {
-        public delegate void Delegate(BattleCharacterController target, int initialAttributeValue, ComputableDamageScaling delta);
+        public delegate void Delegate(CharacterTemplate target, int initialAttributeValue, ComputableDamageScaling delta);
         public static event Delegate? OnApplied;
 
         [HorizontalGroup, HideLabel, SuffixLabel("+=")]
@@ -31,7 +31,7 @@ namespace Effects
         [HorizontalGroup("Crit"), SuffixLabel("x added crit damage"), HideLabel, FormerlySerializedAs("CritMultiplier")]
         public float AdditionalCritMultiplier = 2.5f;
 
-        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(CharacterTemplate[] targets, EvaluationContext context)
         {
             Formulas.GetCritModifiersBasedOnLuck(context.Profile.EffectiveStats.Luck, out var luckBasedChance, out var luckBasedMult);
             float critChanceTotal = CanCrit ? AdditionalCritChance + luckBasedChance : 0f;
@@ -52,20 +52,20 @@ namespace Effects
                 damageScaling.SourceAttackStat = context.Profile.EffectiveStats.Attack;
                 damageScaling.SourceMagicAttackStat = context.Profile.EffectiveStats.MagAttack;
                 damageScaling.Element = Element;
-                damageScaling.ResistanceFire = target.Profile.ResistanceFire;
-                damageScaling.ResistanceIce = target.Profile.ResistanceIce;
-                damageScaling.ResistanceLightning = target.Profile.ResistanceLightning;
-                damageScaling.ResistanceWater = target.Profile.ResistanceWater;
+                damageScaling.ResistanceFire = target.ResistanceFire;
+                damageScaling.ResistanceIce = target.ResistanceIce;
+                damageScaling.ResistanceLightning = target.ResistanceLightning;
+                damageScaling.ResistanceWater = target.ResistanceWater;
                 damageScaling.Missed = false;
 
-                int initialAttributeValue = target.Profile.GetAttribute(Attribute);
-                int maxAttributeValue = target.Profile.GetAttributeMax(Attribute);
+                int initialAttributeValue = target.GetAttribute(Attribute);
+                int maxAttributeValue = target.GetAttributeMax(Attribute);
                 int currentValue = initialAttributeValue;
 
                 foreach (var modifierOfSource in context.Profile.Modifiers)
                     modifierOfSource.Modifier.ModifyOutgoingDelta(context, target, ref damageScaling);
 
-                foreach (var modifierOfTarget in target.Profile.Modifiers)
+                foreach (var modifierOfTarget in target.Modifiers)
                     modifierOfTarget.Modifier.ModifyIncomingDelta(context, target, ref damageScaling);
 
                 int initialValue = currentValue;
@@ -83,18 +83,18 @@ namespace Effects
                             context.Profile.CurrentFlow = 100f;
                         }
                     }
-                    if (target.Profile.InFlowState == false)
+                    if (target.InFlowState == false)
                     {
-                        target.Profile.CurrentFlow += -delta * targetFlowScaler;
-                        if (target.Profile.CurrentFlow >= 100f)
+                        target.CurrentFlow += -delta * targetFlowScaler;
+                        if (target.CurrentFlow >= 100f)
                         {
-                            target.Profile.InFlowState = true;
-                            target.Profile.CurrentFlow = 100f;
+                            target.InFlowState = true;
+                            target.CurrentFlow = 100f;
                         }
                     }
                 }
 
-                target.Profile.SetAttribute(Attribute, currentValue);
+                target.SetAttribute(Attribute, currentValue);
                 OnApplied?.Invoke(target, initialAttributeValue, damageScaling);
             }
         }

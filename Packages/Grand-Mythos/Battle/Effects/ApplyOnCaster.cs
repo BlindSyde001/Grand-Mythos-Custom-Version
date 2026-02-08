@@ -13,9 +13,9 @@ namespace Effects
         [SerializeReference]
         public IEffect[] Effects = Array.Empty<IEffect>();
 
-        public void Apply(BattleCharacterController[] targets, EvaluationContext context)
+        public void Apply(CharacterTemplate[] targets, EvaluationContext context)
         {
-            var casterTarget = new[]{ context.Controller };
+            var casterTarget = new[]{ context.Profile };
             foreach (var effect in Effects)
                 effect.Apply(casterTarget, context);
         }

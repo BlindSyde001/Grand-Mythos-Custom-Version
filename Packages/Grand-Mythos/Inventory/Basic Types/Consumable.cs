@@ -85,7 +85,7 @@ public class Consumable : TradeableItem, IAction
         };
     }
 
-    public void Perform(BattleCharacterController[] targets, EvaluationContext context)
+    public void Perform(CharacterTemplate[] targets, EvaluationContext context)
     {
         context.Profile.CurrentMP -= ManaCost;
 

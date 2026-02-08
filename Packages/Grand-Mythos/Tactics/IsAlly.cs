@@ -8,14 +8,14 @@ namespace Conditions
     {
         public AliveState State = AliveState.Alive;
 
-        protected override bool Filter(BattleCharacterController target, EvaluationContext context)
+        protected override bool Filter(CharacterTemplate target, EvaluationContext context)
         {
-            if (context.Controller.IsHostileTo(target) == false)
+            if (context.Profile.IsHostileTo(target) == false)
             {
                 return State switch
                 {
-                    AliveState.Alive => target.Profile.CurrentHP > 0,
-                    AliveState.Dead => target.Profile.CurrentHP == 0,
+                    AliveState.Alive => target.CurrentHP > 0,
+                    AliveState.Dead => target.CurrentHP == 0,
                     AliveState.Either => true,
                     _ => throw new ArgumentOutOfRangeException(State.ToString())
                 };
