@@ -6,7 +6,7 @@ using Characters;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1>
+public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV3>
 {
     public static readonly guid Guid = new("bb05002e-f0d5-4936-a986-c47a045e58d8");
 
@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
 
     public SerializableHashSet<QuestStep> CompletedSteps = new();
     public SerializableHashSet<Quest> DiscoveredQuests = new();
+    public SerializableHashSet<BaseItem> DiscoveredItems = new();
+    public SerializableDictionary<guid, HostileStats> HostileStats = new();
 
     public IEnumerable<HeroExtension> AllHeroes => PartyLineup.Concat(ReservesLineup);
     public TimeSpan DurationTotal => _stopwatch.Elapsed + _lastPlaytime;
@@ -43,7 +45,7 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         transform.parent = null;
         DontDestroyOnLoad(this.gameObject);
 
-        SavingSystem.TryRestore<GameManager, SaveV1>(this);
+        SavingSystem.TryRestore<GameManager, SaveV3>(this);
         for (int i = 0; i < PartyLineup.Count; i++)
         {
             PartyLineup[i] = Instantiate(PartyLineup[i], transform);
@@ -67,7 +69,7 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         if (Instance == this)
             Instance = null!;
 
-        SavingSystem.Unregister<GameManager, SaveV1>(this);
+        SavingSystem.Unregister<GameManager, SaveV3>(this);
     }
 
     /// <summary>
@@ -85,7 +87,61 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         }
     }
 
-    [Serializable] public struct SaveV2 : ISaveHandler<GameManager>, ISaveDataVersioned<SaveV1>
+    [Serializable] public struct SaveV3 : ISaveHandler<GameManager>, ISaveDataVersioned<SaveV2>
+    {
+        public guid[] DiscoveredItems;
+        public HostileStatPair[] HostileStats;
+        public SaveV2 PreviousData;
+        
+        public uint Version => 3;
+
+        public void Transfer(GameManager source, SavingSystem.Transfer transfer)
+        {
+            PreviousData.Transfer(source, transfer);
+            if (transfer == SavingSystem.Transfer.PullFromSource)
+            {
+                DiscoveredItems = source.DiscoveredItems.Select(x => x.Guid).ToArray();
+                HostileStats = source.HostileStats.Select(x => new HostileStatPair
+                {
+                    Hostile = x.Key,
+                    Stats = x.Value,
+                }).ToArray();
+            }
+            else
+            {
+                source.DiscoveredItems = new();
+                foreach (var guid in DiscoveredItems)
+                {
+                    if (IdentifiableDatabase.TryGet(guid, out BaseItem? item))
+                        source.DiscoveredItems.Add(item!);
+                    else
+                        Debug.LogWarning($"Could not find item {guid}");
+                }
+                source.HostileStats = new();
+                foreach (var pair in HostileStats)
+                {
+                    if (IdentifiableDatabase.TryGet(pair.Hostile, out CharacterTemplate? item))
+                        source.HostileStats.Add(pair.Hostile, pair.Stats);
+                    else
+                        Debug.LogWarning($"Could not find item {pair.Hostile}");
+                }
+            }
+        }
+
+        public void UpgradeFromPrevious(SaveV2 old)
+        {
+            PreviousData = old;
+        }
+
+        [Serializable]
+        public struct HostileStatPair
+        {
+            public guid Hostile;
+            public HostileStats Stats;
+        }
+    }
+
+    [Serializable] public struct SaveV2 : ISaveDataVersioned<SaveV1>
     {
         public TimeSpan TimeSpan => TimeSpan.FromTicks(Ticks);
         public long Ticks;

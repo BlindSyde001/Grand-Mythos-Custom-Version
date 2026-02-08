@@ -5,7 +5,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
 
-public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtension.SaveV2>, ISerializationCallbackReceiver
+public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtension.SaveV2>
 {
     [SerializeField, TitleGroup("EQUIPMENT ATTRIBUTES"), HorizontalGroup("EQUIPMENT ATTRIBUTES/Split"), VerticalGroup("EQUIPMENT ATTRIBUTES/Split/Left"), BoxGroup("EQUIPMENT ATTRIBUTES/Split/Left/Equipment"), LabelWidth(100)]
     protected internal Weapon? _Weapon;
@@ -73,7 +73,6 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         }
     }
 
-    // UPDATES
     protected override void Awake()
     {
         SavingSystem.TryRestore<HeroExtension, SaveV2>(this);

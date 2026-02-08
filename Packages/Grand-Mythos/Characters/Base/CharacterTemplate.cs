@@ -14,6 +14,8 @@ public class CharacterTemplate : IdentifiableScriptableObject
     [ValidateInput(nameof(ValidateName))]
     public string Name = "";
 
+    public string BestiaryLocationDescription = "";
+
     public required Team Team;
 
     [HorizontalGroup("ASSETS"), ValidateInput(nameof(HasBattleCharacterController), "Must have a BattleHeroModelController"), SerializeField, PreviewField(100)]
@@ -283,13 +285,21 @@ public class CharacterTemplate : IdentifiableScriptableObject
 
     public void SetAttribute(Attribute attribute, int value)
     {
-        switch(attribute)
+        var previousHP = CurrentHP;
+        switch (attribute)
         {
             case Attribute.Health: CurrentHP = Mathf.Clamp(value, 0, EffectiveStats.HP); break;
             case Attribute.Mana: CurrentMP = Mathf.Clamp(value, 0, EffectiveStats.MP); break;
             case Attribute.HealthPercent: CurrentHP = Mathf.CeilToInt(value / 100f * EffectiveStats.HP); break;
             case Attribute.ManaPercent: CurrentMP = Mathf.CeilToInt(value / 100f * EffectiveStats.MP); break;
             default: throw new ArgumentOutOfRangeException(nameof(attribute), attribute, null);
+        }
+
+        if (previousHP != CurrentHP && CurrentHP == 0)
+        {
+            GameManager.Instance.HostileStats.TryGetValue(Guid, out var stats);
+            stats.AmountDefeated++;
+            GameManager.Instance.HostileStats[Guid] = stats;
         }
     }
 

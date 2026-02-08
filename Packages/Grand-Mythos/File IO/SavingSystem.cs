@@ -282,11 +282,11 @@ public static class SavingSystem
                 var peeker = new SaveDataPeeking(filePath);
 
                 // Set the Lineup of heroes
-                if (peeker.TryPeek<GameManager, GameManager.SaveV1>(GameManager.Guid, out var managerData))
+                if (peeker.TryPeek<GameManager, GameManager.SaveV3>(GameManager.Guid, out var managerData))
                 {
-                    for (int memberIndex = 0; memberIndex < managerData.Party.Length; memberIndex++)
+                    for (int memberIndex = 0; memberIndex < managerData.PreviousData.Party.Length; memberIndex++)
                     {
-                        if (IdentifiableDatabase.TryGet(managerData.Party[memberIndex], out HeroExtension? playable))
+                        if (IdentifiableDatabase.TryGet(managerData.PreviousData.Party[memberIndex], out HeroExtension? playable))
                             ui.characterPortraits[memberIndex].sprite = playable != null ? playable.Portrait : null;
                     }
                 }

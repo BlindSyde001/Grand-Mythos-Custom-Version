@@ -160,6 +160,7 @@ public class InventoryManager : MonoBehaviour, ISerializationCallbackReceiver, I
 
     void SortedInsertion(ItemData insertion)
     {
+        GameManager.Instance.DiscoveredItems.Add(insertion.Item);
         switch (_lastSort)
         {
             case Sort.Timestamp: SortedInsertion(new SortByTimestamp(), insertion, ref _first); break;
