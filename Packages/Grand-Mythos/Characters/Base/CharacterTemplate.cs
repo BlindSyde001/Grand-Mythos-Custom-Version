@@ -8,8 +8,8 @@ using StatusHandler;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
-[AddComponentMenu(" GrandMythos/CharacterTemplate")]
-public class CharacterTemplate : MonoBehaviour
+[CreateAssetMenu(menuName = "Character Template")]
+public class CharacterTemplate : IdentifiableScriptableObject
 {
     [ValidateInput(nameof(ValidateName))]
     public string Name = "";

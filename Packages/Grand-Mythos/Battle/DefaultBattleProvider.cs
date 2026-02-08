@@ -28,10 +28,10 @@ namespace Battle
             for (int i = 0; i < Opponents.Length; i++)
             {
                 var template = Instantiate(Opponents[i]);
-                template.name = $"{Opponents[i].gameObject.name} Data {i}";
+                template.name = $"{Opponents[i].name} Data {i}";
 
-                var model = Instantiate(template.BattlePrefab, template.transform);
-                model.name = $"{template.gameObject.name} Model {i}";
+                var model = Instantiate(template.BattlePrefab);
+                model.name = $"{template.name} Model {i}";
 
                 // Attach Relevant References
                 var controller = model.GetComponent<BattleCharacterController>();
@@ -44,7 +44,7 @@ namespace Battle
             foreach (var ally in Allies)
             {
                 var model = Instantiate(ally.BattlePrefab);
-                model.name = $"{ally.gameObject.name} Model";
+                model.name = $"{ally.name} Model";
 
                 // Attach Relevant References
                 var controller = model.GetComponent<BattleCharacterController>();

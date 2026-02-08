@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Characters;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -108,13 +109,13 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
             {
                 source.PartyLineup = new();
                 foreach (guid guid in Party)
-                    if (PlayableCharacters.TryGet(guid, out var hero) && hero != null)
-                        source.PartyLineup.Add(hero);
+                    if (IdentifiableDatabase.TryGet(guid, out HeroExtension? hero))
+                        source.PartyLineup.Add(hero!);
 
                 source.ReservesLineup = new();
                 foreach (guid guid in Reserve)
-                    if (PlayableCharacters.TryGet(guid, out var hero) && hero != null)
-                        source.ReservesLineup.Add(hero);
+                    if (IdentifiableDatabase.TryGet(guid, out HeroExtension? hero))
+                        source.ReservesLineup.Add(hero!);
 
                 source._lastPlaytime = TimeSpan.FromTicks(Ticks);
                 source._stopwatch.Restart();
@@ -156,9 +157,8 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
         }
     }
 
-    [Serializable] public struct SaveV1 : ISaveHandler<GameManager>
+    [Serializable] public struct SaveV1 : ISaveData
     {
-        public TimeSpan TimeSpan => TimeSpan.FromTicks(Ticks);
         public long Ticks;
         public guid[] Party, Reserve;
 
@@ -176,13 +176,13 @@ public class GameManager : MonoBehaviour, ISaved<GameManager, GameManager.SaveV1
             {
                 source.PartyLineup = new();
                 foreach (guid guid in Party)
-                    if (PlayableCharacters.TryGet(guid, out var hero) && hero != null)
-                        source.PartyLineup.Add(hero);
+                    if (IdentifiableDatabase.TryGet(guid, out HeroExtension? hero))
+                        source.PartyLineup.Add(hero!);
 
                 source.ReservesLineup = new();
                 foreach (guid guid in Reserve)
-                    if (PlayableCharacters.TryGet(guid, out var hero) && hero != null)
-                        source.ReservesLineup.Add(hero);
+                    if (IdentifiableDatabase.TryGet(guid, out HeroExtension? hero))
+                        source.ReservesLineup.Add(hero!);
 
                 source._lastPlaytime = TimeSpan.FromTicks(Ticks);
                 source._stopwatch.Restart();

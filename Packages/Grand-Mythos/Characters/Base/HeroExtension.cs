@@ -155,30 +155,7 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
     }
     #endregion
 
-
-    [InfoBox("Each character must have a unique GUID, characters will share GUID when duplicated, in which case you must press the button below on the new character", InfoMessageType.Warning)]
-    [SerializeField, DisplayAsString, ReadOnly]
-    guid _guid;
-
-    public guid Guid => _guid;
-
-    guid ISaved.UniqueConstID => _guid;
-
-    void ISerializationCallbackReceiver.OnBeforeSerialize()
-    {
-#if UNITY_EDITOR
-        if (_guid == default)
-            _guid = System.Guid.NewGuid();
-#endif
-    }
-
-    void ISerializationCallbackReceiver.OnAfterDeserialize() => PlayableCharacters.EnsureRegistered(this);
-
-    [Button("Generate new GUID", ButtonSizes.Small)]
-    void NewGuid()
-    {
-        _guid = System.Guid.NewGuid();
-    }
+    guid ISaved.UniqueConstID => Guid;
 
     [Serializable] public struct SaveV2 : ISaveDataVersioned<SaveV1>, ISaveHandler<HeroExtension>
     {

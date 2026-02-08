@@ -1,83 +1,54 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &9187409409059822421
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9187409409059822419}
-  - component: {fileID: 9187409409059822420}
-  m_Layer: 0
-  m_Name: Flagbearer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9187409409059822419
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9187409409059822421}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9187409409059822420
+--- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9187409409059822421}
-  m_Enabled: 1
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d15068e09dc949b4892147541d528416, type: 3}
-  m_Name: 
+  m_Name: Detective
   m_EditorClassIdentifier: 
-  Name: Flagbearer
+  _guid:
+    a: 5394414329812987845
+    b: 4802621530814039718
+  Name: Detective
   Team: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
   BattlePrefab: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
-  Portrait: {fileID: 21300000, guid: e8ebef25f0f504b4aa936076404e341d, type: 3}
-  CurrentHP: 143
-  CurrentMP: 74
+  Portrait: {fileID: 21300000, guid: 8c4789b052a71724eae732d73e226d70, type: 3}
+  CurrentHP: 201
+  CurrentMP: 100
   CurrentFlow: 0
   BaseStats:
-    HP: 22
+    HP: 20
     MP: 10
-    Attack: 8
-    MagAttack: 8
-    Defense: 8
-    MagDefense: 8
+    Attack: 5
+    MagAttack: 5
+    Defense: 5
+    MagDefense: 5
     Speed: 10
-    Luck: 0
+    Luck: 2
   _effectiveStatsPreview:
-    HP: 143
-    MP: 74
-    Attack: 52
-    MagAttack: 59
-    Defense: 52
-    MagDefense: 59
+    HP: 201
+    MP: 100
+    Attack: 50
+    MagAttack: 50
+    Defense: 50
+    MagDefense: 50
     Speed: 10
-    Luck: 0
+    Luck: 17
   StatGrowth:
-    HP: 1
+    HP: 3
     MP: 3
-    Attack: 1
+    Attack: 3
     MagAttack: 3
-    Defense: 1
+    Defense: 3
     MagDefense: 3
     Speed: 0
-    Luck: 0
+    Luck: 1
   FlowStatGrowth:
     HP: 4
     MP: 4
@@ -87,8 +58,8 @@ MonoBehaviour:
     MagDefense: 4
     Speed: 4
     Luck: 4
-  Experience: 982
-  Level: 5
+  Experience: 2496
+  Level: 7
   ResistanceFire: 100
   ResistanceIce: 100
   ResistanceLightning: 100
@@ -100,36 +71,36 @@ MonoBehaviour:
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
     _backingArray:
-    - {fileID: 11400000, guid: fef754235cc77ec4eb70d70fed16fd68, type: 2}
+    - {fileID: 11400000, guid: fd54cf86c02aac7488137cc169e65908, type: 2}
   Special:
-    rid: -2
+    rid: 6655646579991773188
   LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
   Tactics: []
   ActionAnimations:
     _backingArray:
     - Action: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
       Animation:
-        rid: 7380285029310791818
+        rid: 7380285029310791798
     - Action: {fileID: 11400000, guid: 29e2ebdb1ec960f4e9e76198ca5b31cb, type: 2}
       Animation:
-        rid: 7380285029310791819
+        rid: 7380285029310791788
     - Action: {fileID: 11400000, guid: 565824b87e5b38b4f81e0b21ba8eaceb, type: 2}
       Animation:
-        rid: 7380285029310791820
+        rid: 7380285029310791803
   Hurt:
-    rid: 5987214973894131733
+    rid: 5987214973894131728
   Death:
-    rid: 5987214973894131735
+    rid: 5987214973894131730
   Shield:
-    rid: 1936692569947504875
+    rid: 1936692569947504868
   Dodge:
-    rid: 1936692569947504876
+    rid: 1936692569947504872
   Parry:
-    rid: 1936692569947504877
+    rid: 1936692569947504873
   FallbackAnimation:
-    rid: 7380285059924230146
+    rid: 7380285059924230144
   Inventory:
-    rid: 7380285029310791780
+    rid: 7380285029310791778
   ExperiencePool: 0
   CreditPool: 0
   DropItems: []
@@ -146,62 +117,61 @@ MonoBehaviour:
   equipDefense: 0
   equipMagDefense: 0
   equipSpeed: 0
-  Banner: {fileID: 21300000, guid: 727db8c394622dc489df6aba97aa5d2e, type: 3}
+  Banner: {fileID: 21300000, guid: e2368ee01c9e284449a43aa5be256c28, type: 3}
   SkillTree: {fileID: 248158881564659840, guid: 1fcb273e1da81064c90f4559082510e8, type: 3}
   UnlockedTreeNodes:
     _backingArray: []
-  _guid:
-    a: 5052209774049475975
-    b: 3919714855663956155
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 1936692569947504875
+    - rid: 1936692569947504868
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:
         StateName: Jump
         Layer: 0
-    - rid: 1936692569947504876
+    - rid: 1936692569947504872
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:
         StateName: Jump
         Layer: 0
-    - rid: 1936692569947504877
+    - rid: 1936692569947504873
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:
         StateName: Jump
         Layer: 0
-    - rid: 5987214973894131733
+    - rid: 5987214973894131728
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:
         StateName: Hurt
         Layer: 0
-    - rid: 5987214973894131735
+    - rid: 5987214973894131730
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:
         StateName: Die
         Layer: 0
-    - rid: 7380285029310791780
+    - rid: 6655646579991773188
+      type: {class: ElementalAmmoSpecial, ns: Characters.Special, asm: Grand-Mythos}
+      data:
+        AssociatedStatus: {fileID: 11400000, guid: d4d5d8459cb4d9e44b93492eb7897dda, type: 2}
+    - rid: 7380285029310791778
       type: {class: PlayerInventory, ns: , asm: Grand-Mythos}
       data: 
-    - rid: 7380285029310791818
-      type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
-      data:
-        StateName: Attack
-        Layer: 0
-    - rid: 7380285029310791819
+    - rid: 7380285029310791788
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:
         StateName: Reload
         Layer: 0
-    - rid: 7380285029310791820
+    - rid: 7380285029310791798
+      type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
+      data:
+        StateName: Attack
+        Layer: 0
+    - rid: 7380285029310791803
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:
         StateName: Stance
         Layer: 0
-    - rid: 7380285059924230146
+    - rid: 7380285059924230144
       type: {class: PlayAnimator, ns: ActionAnimation, asm: Grand-Mythos}
       data:
         StateName: Reload

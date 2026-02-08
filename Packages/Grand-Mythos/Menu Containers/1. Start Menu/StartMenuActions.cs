@@ -62,7 +62,7 @@ public class StartMenuActions : MenuContainer
         {
             var hero = GameManager.PartyLineup[i];
             PartyUI.Allocate(out var element);
-            element.displayName.text = hero.gameObject.name;
+            element.displayName.text = hero.name;
             element.displayBanner.sprite = hero.Banner;
             element.displayLevel.text = hero.Level.ToString();
 

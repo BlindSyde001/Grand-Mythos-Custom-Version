@@ -29,8 +29,6 @@ public abstract class BaseEncounter : IEncounterDefinition
         var battleTransition = new GameObject(nameof(EncounterState));
         Object.DontDestroyOnLoad(battleTransition);
         var encounterState = battleTransition.AddComponent<EncounterState>();
-        foreach (var reserve in GameManager.Instance.ReservesLineup)
-            reserve.gameObject.SetActive(false);
         return OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup, cts);
     }
 
@@ -76,10 +74,10 @@ public abstract class BaseEncounter : IEncounterDefinition
             for (int i = 0; i < opponents.Length; i++)
             {
                 var template = Object.Instantiate(opponents[i]);
-                template.name = $"{opponents[i].gameObject.name} Data {i}";
+                template.name = $"{opponents[i].name} Data {i}";
 
-                var model = Object.Instantiate(template.BattlePrefab, template.transform);
-                model.name = $"{template.gameObject.name} Model {i}";
+                var model = Object.Instantiate(template.BattlePrefab);
+                model.name = $"{template.name} Model {i}";
 
                 // Attach Relevant References
                 var controller = model.GetComponent<BattleCharacterController>();
@@ -92,7 +90,7 @@ public abstract class BaseEncounter : IEncounterDefinition
             foreach (var ally in allies)
             {
                 var model = Object.Instantiate(ally.BattlePrefab);
-                model.name = $"{ally.gameObject.name} Model";
+                model.name = $"{ally.name} Model";
 
                 // Attach Relevant References
                 var controller = model.GetComponent<BattleCharacterController>();
@@ -138,7 +136,7 @@ public abstract class BaseEncounter : IEncounterDefinition
 
             for (int i = 0; i < hostileControllers.Count; i++)
             {
-                SceneManager.MoveGameObjectToScene(hostileControllers[i].Profile.gameObject, runtimeScene);
+                SceneManager.MoveGameObjectToScene(hostileControllers[i].gameObject, runtimeScene);
                 hostileControllers[i].transform.SetPositionAndRotation(hostileSpawns[i % hostileSpawns.Length].pos, hostileSpawns[i % hostileSpawns.Length].rot);
             }
 

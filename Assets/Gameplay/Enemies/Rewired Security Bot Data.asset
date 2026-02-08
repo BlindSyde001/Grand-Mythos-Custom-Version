@@ -1,49 +1,20 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4298728654131661724
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4298728654131661727}
-  - component: {fileID: 4298728654131661726}
-  m_Layer: 0
-  m_Name: Rewired Security Bot Data
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4298728654131661727
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4298728654131661724}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4298728654131661726
+--- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4298728654131661724}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4641ffa80864dee44b0783a967b1c81c, type: 3}
-  m_Name: 
+  m_Name: Rewired Security Bot Data
   m_EditorClassIdentifier: 
+  _guid:
+    a: 5209120979484440121
+    b: 427012423827045047
   Name: Rewired Security Bot
   Team: {fileID: 11400000, guid: 998822fe4b9cbd14e99fabd4b5e31caa, type: 2}
   BattlePrefab: {fileID: 5499571375476555240, guid: 1eb592d996651674d93b63d2df0729e2, type: 3}
@@ -97,9 +68,6 @@ MonoBehaviour:
   StatusResistances:
     m_Keys: []
     m_Values: 
-  PauseLeft: 0
-  ChargeLeft: 0
-  ChargeTotal: 0
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
   Skills:
     _backingArray:
@@ -126,6 +94,12 @@ MonoBehaviour:
     rid: 5987214973894131718
   Death:
     rid: 5987214973894131721
+  Shield:
+    rid: -2
+  Dodge:
+    rid: -2
+  Parry:
+    rid: -2
   FallbackAnimation:
     rid: 7380285059924230152
   Inventory:

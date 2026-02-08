@@ -286,13 +286,13 @@ public static class SavingSystem
                 {
                     for (int memberIndex = 0; memberIndex < managerData.Party.Length; memberIndex++)
                     {
-                        if (PlayableCharacters.TryGet(managerData.Party[memberIndex], out var playable))
+                        if (IdentifiableDatabase.TryGet(managerData.Party[memberIndex], out HeroExtension? playable))
                             ui.characterPortraits[memberIndex].sprite = playable != null ? playable.Portrait : null;
                     }
                 }
 
-                if (peeker.TryPeek<GameManager, GameManager.SaveV1>(GameManager.Guid, out var clockData))
-                    ui.timePlayed.text = clockData.TimeSpan.ToString(@"hh\:mm\:ss");
+                if (peeker.TryPeek<GameManager, GameManager.SaveV3>(GameManager.Guid, out var clockData))
+                    ui.timePlayed.text = clockData.PreviousData.TimeSpan.ToString(@"hh\:mm\:ss");
 
                 if (peeker.TryPeek<InventoryManager, InventoryManager.SaveV1>(InventoryManager.Guid, out var inventoryData))
                     ui.moneyAcquired.text = $"{inventoryData.Credits} Credits";

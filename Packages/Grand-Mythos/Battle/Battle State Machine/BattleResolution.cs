@@ -80,7 +80,7 @@ public class BattleResolution : MonoBehaviour
         {
             HeroPanels[i].gameObject.SetActive(true);
             HeroPanels[i].displayBanner.sprite = GameManager.Instance.PartyLineup[i].Banner;
-            HeroPanels[i].displayName.text = GameManager.Instance.PartyLineup[i].gameObject.name;
+            HeroPanels[i].displayName.text = GameManager.Instance.PartyLineup[i].name;
             HeroPanels[i].displayLevel.text = GameManager.Instance.PartyLineup[i].Level.ToString();
             HeroPanels[i].displayEXPBar.fillAmount = (float)GameManager.Instance.PartyLineup[i].ExperienceToNextLevel / GameManager.Instance.PartyLineup[i].ExperienceThreshold;
             HeroPanels[i].displayEXPToNextLevel.text = (GameManager.Instance.PartyLineup[i].ExperienceThreshold - GameManager.Instance.PartyLineup[i].Experience).ToString();

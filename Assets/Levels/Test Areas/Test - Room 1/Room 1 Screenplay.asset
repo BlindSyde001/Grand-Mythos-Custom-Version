@@ -81,16 +81,16 @@ MonoBehaviour:
         IntroCamera: {fileID: 0}
         OutroCamera: {fileID: 0}
         Formation:
-        - {fileID: 4298728654131661726, guid: 95b17ca1544aeb047bcaddce9004d5c2, type: 3}
-        - {fileID: 9115676008236007249, guid: 98a278fbb427a4d4687934919c8a3a01, type: 3}
+        - {fileID: 11400000, guid: b840bcb0ddc9d4c4bb365b9943f8b4ea, type: 2}
+        - {fileID: 11400000, guid: 95b17ca1544aeb047bcaddce9004d5c2, type: 2}
         Seed: 3670892518
     - rid: 2764370834597347431
       type: {class: Interaction, ns: , asm: Grand-Mythos}
       data:
-        _position: {x: -472, y: -56}
+        _position: {x: -456, y: -40}
         Target:
           _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
+            _scenePath: Assets/Levels/Test Areas/Test - Room 1/Test - Room 1.unity
             _objId:
               a: 4858329512231775444
               b: 4349669265313117116
@@ -163,7 +163,7 @@ MonoBehaviour:
         _position: {x: 232, y: -520}
         Name: After attack
         Action:
-          rid: 2764370857063350287
+          rid: -2
         TriggerSource:
           rid: 2764370857063350875
         Repeatable: 1
