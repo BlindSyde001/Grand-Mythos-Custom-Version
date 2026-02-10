@@ -49,6 +49,7 @@ public class Consumable : TradeableItem, IAction
     IAction.Delay IAction.DelayToNextTurn => DelayToNextTurn;
     AnimationClip? IAction.CameraAnimation => CameraAnimation;
     int IAction.ManaCost => ManaCost;
+    float IAction.FlowCost => FlowCost;
 
     /// <summary>
     /// This one contains both the has item test and the additional precondition specific to this consumable
@@ -88,6 +89,7 @@ public class Consumable : TradeableItem, IAction
     public void Perform(CharacterTemplate[] targets, EvaluationContext context)
     {
         context.Profile.CurrentMP -= ManaCost;
+        context.Profile.CurrentFlow -= FlowCost;
 
         foreach (var effect in Effects)
         {

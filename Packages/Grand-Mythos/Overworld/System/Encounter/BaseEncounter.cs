@@ -69,8 +69,6 @@ public abstract class BaseEncounter : IEncounterDefinition
             while (loadOperation.progress < 0.9f)
                 await UniTask.NextFrame(cancellationToken:cts, cancelImmediately: true);
 
-            loadOperation.allowSceneActivation = true;
-
             for (int i = 0; i < opponents.Length; i++)
             {
                 var template = Object.Instantiate(opponents[i]);
@@ -100,6 +98,7 @@ public abstract class BaseEncounter : IEncounterDefinition
                 alliesControllers.Add(controller);
             }
 
+            loadOperation.allowSceneActivation = true;
             await loadOperation.ToUniTask(cancellationToken: cts);
 
             var runtimeScene = SceneManager.GetSceneByPath(scene.Path);
@@ -152,8 +151,10 @@ public abstract class BaseEncounter : IEncounterDefinition
             unloader.gameObjectsToReEnable = gameObjectsToReEnable;
             return bsm;
         }
-        catch
+        catch(Exception e)
         {
+            Debug.LogException(e);
+
             foreach (var gameObject in gameObjectsToReEnable)
                 gameObject.SetActive(true);
             foreach (var controller in hostileControllers)
@@ -166,7 +167,11 @@ public abstract class BaseEncounter : IEncounterDefinition
 
             var runtimeScene = SceneManager.GetSceneByPath(scene.Path);
             if (runtimeScene.IsValid())
-                await SceneManager.UnloadSceneAsync(runtimeScene)!.ToUniTask(cancellationToken: CancellationToken.None);
+            {
+                var v = SceneManager.UnloadSceneAsync(runtimeScene);
+                if (v != null)
+                    await v.ToUniTask(cancellationToken: CancellationToken.None);
+            }
 
             throw;
         }

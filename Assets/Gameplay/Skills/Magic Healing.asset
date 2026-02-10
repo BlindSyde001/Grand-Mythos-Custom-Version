@@ -15,7 +15,11 @@ MonoBehaviour:
   _guid:
     a: 5441392780872156517
     b: 13748056633952493967
-  ATBCost: 1
+  _description: 
+  ManaCost: 0
+  FlowCost: 2.5
+  DelayToNextTurn: 1
+  ProcAttachedSkills: 0
   Effects:
   - rid: 7439448773025857549
   - rid: 7439448773025857550
@@ -23,6 +27,7 @@ MonoBehaviour:
     rid: -2
   PreconditionToUse:
     rid: 7439448773025857553
+  CameraAnimation: {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -33,10 +38,12 @@ MonoBehaviour:
       data:
         Attribute: 0
         Amount: 1000
-        Scaling: 0
         Variance: 5
-        CritChance: 50
-        CritMultiplier: 2.5
+        Scaling: 0
+        Element: 0
+        CanCrit: 1
+        AdditionalCritChance: 50
+        AdditionalCritMultiplier: 2.5
     - rid: 7439448773025857550
       type: {class: ApplyOnCaster, ns: Effects, asm: Grand-Mythos}
       data:
@@ -47,10 +54,12 @@ MonoBehaviour:
       data:
         Attribute: 1
         Amount: -10
-        Scaling: 0
         Variance: 0
-        CritChance: 0
-        CritMultiplier: 2.5
+        Scaling: 0
+        Element: 0
+        CanCrit: 1
+        AdditionalCritChance: 0
+        AdditionalCritMultiplier: 2.5
     - rid: 7439448773025857553
       type: {class: And, ns: Conditions, asm: Grand-Mythos}
       data:

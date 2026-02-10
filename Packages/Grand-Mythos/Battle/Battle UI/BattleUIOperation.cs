@@ -37,6 +37,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
     public required RectTransform ActionSelectionContainer;
     public required Button Attack;
     public required Button Repeat;
+    public required Button Flow;
     public required Button Special;
     public required Button Skills;
     public required Button Items;
@@ -295,12 +296,12 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
             do
             {
-                
                 ResetNavigation();
                 Repeat.interactable = _lastAction.ContainsKey(unit);
-                Skills.interactable = unit.Profile.Skills.Count > 0;
+                Skills.interactable = unit.Profile.Skills.Any(x => x.FlowCost == 0);
                 Items.interactable = unit.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
 
+                Flow.interactable = unit.Profile.Skills.Any(x => x.FlowCost > 0);
                 Special.interactable = unit.Profile.Special is not null;
                 Special.GetComponentInChildren<TMP_Text>().text = unit.Profile.Special?.ButtonLabel ?? "Special";
                 int i;
@@ -311,6 +312,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                         i = await UniTask.WhenAny(
                             Attack.onClick.OnInvokeAsync(tcs.Token),
                             Repeat.onClick.OnInvokeAsync(tcs.Token),
+                            Flow.onClick.OnInvokeAsync(tcs.Token),
                             Skills.onClick.OnInvokeAsync(tcs.Token),
                             Items.onClick.OnInvokeAsync(tcs.Token),
                             Special.onClick.OnInvokeAsync(tcs.Token));
@@ -327,9 +329,10 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 {
                     0 => await PresentAttackUI(unit, cancellation),
                     1 => await PresentTargetSelectionUI(unit, _lastAction[unit], cancellation),
-                    2 => await PresentSkillsUI(unit, cancellation),
-                    3 => await PresentItemUI(unit, cancellation),
-                    4 => await unit.Profile.Special!.OnButtonClicked(unit, this, PresentTargetSelectionUI, cancellation),
+                    2 => await PresentSkillsUI(unit, true, cancellation),
+                    3 => await PresentSkillsUI(unit, false, cancellation),
+                    4 => await PresentItemUI(unit, cancellation),
+                    5 => await unit.Profile.Special!.OnButtonClicked(unit, this, PresentTargetSelectionUI, cancellation),
                     _ => throw new InvalidOperationException($"Unknown index {i}")
                 };
                 cancellation.ThrowIfCancellationRequested();
@@ -356,13 +359,17 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         return PresentTargetSelectionUI(unit, unit.Profile.BasicAttack, cancellation);
     }
 
-    async UniTask<Tactics?> PresentSkillsUI(BattleCharacterController unit, CancellationToken cancellation)
+    async UniTask<Tactics?> PresentSkillsUI(BattleCharacterController unit, bool presentFlow, CancellationToken cancellation)
     {
         var menu = NewMenuOf<Skill>(nameof(PresentSkillsUI));
         foreach (var skill in unit.Profile.Skills)
         {
+            bool hasFlow = skill.FlowCost > 0;
+            if (hasFlow != presentFlow)
+                continue;
+            
             var button = menu.NewButton(skill.name, skill, skill.Description);
-            button.interactable = skill.ManaCost <= unit.Profile.CurrentMP;
+            button.interactable = skill.ManaCost <= unit.Profile.CurrentMP && skill.FlowCost <= unit.Profile.CurrentFlow;
         }
 
         var selection = await menu.SelectedItem(cancellation);

@@ -56,6 +56,12 @@ public class ActionCondition : IdentifiableScriptableObject
             return false;
         }
 
+        if (action.FlowCost > context.Profile.CurrentFlow)
+        {
+            context.Tracker?.PostNotEnoughFlow(context.Profile);
+            return false;
+        }
+
         if (action.Precondition != null)
         {
             var allTargetsCopy = allTargets;

@@ -19,6 +19,9 @@ public class Skill : IdentifiableScriptableObject, IAction
 
     public int ManaCost;
 
+    [Range(0f,100f)]
+    public float FlowCost;
+
     public IAction.Delay DelayToNextTurn = IAction.Delay.Base;
 
     [Tooltip("When this action is used, should the skill attached to the unit's weapon proc")]
@@ -49,6 +52,7 @@ public class Skill : IdentifiableScriptableObject, IAction
     IAction.Delay IAction.DelayToNextTurn => DelayToNextTurn;
     AnimationClip? IAction.CameraAnimation => CameraAnimation;
     int IAction.ManaCost => ManaCost;
+    float IAction.FlowCost => FlowCost;
 
     public string UIDisplayText => Effects.UIDisplayText();
     string IAction.Name => name;
@@ -57,6 +61,7 @@ public class Skill : IdentifiableScriptableObject, IAction
     public void Perform(CharacterTemplate[] targets, EvaluationContext context)
     {
         context.Profile.CurrentMP -= ManaCost;
+        context.Profile.CurrentFlow -= FlowCost;
         
         foreach (var effect in Effects)
         {

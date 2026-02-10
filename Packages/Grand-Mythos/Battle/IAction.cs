@@ -5,6 +5,7 @@ public interface IAction : IIdentifiable
     string Name { get; }
     string Description { get; }
     int ManaCost { get; }
+    float FlowCost { get; }
     Delay DelayToNextTurn { get; }
 
     AnimationClip? CameraAnimation { get; }
