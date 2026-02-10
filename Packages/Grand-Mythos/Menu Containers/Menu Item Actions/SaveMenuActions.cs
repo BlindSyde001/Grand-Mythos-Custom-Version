@@ -2,22 +2,37 @@ using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class SaveMenuActions : MenuContainer
 {
     public UIElementList<SaveFileButton> SaveFileButtons = new(){ Template = null! };
     public UnityEvent? OnSave;
+    public required GameObject OverwritePanel;
+    public required Button OverwriteYes, OverwriteNo;
 
     // METHODS
     public void OpenLoadFiles()
     {
         SavingSystem.FeedFileUI(SaveFileButtons, file =>
         {
-            if (SavingSystem.TrySaveToDisk(file))
+            OverwritePanel.SetActive(true);
+            OverwriteYes.onClick.RemoveAllListeners();
+            OverwriteNo.onClick.RemoveAllListeners();
+
+            OverwriteYes.onClick.AddListener(() =>
             {
-                OpenLoadFiles();
-                OnSave?.Invoke();
-            }
+                OverwritePanel.SetActive(false);
+                if (SavingSystem.TrySaveToDisk(file))
+                {
+                    OpenLoadFiles();
+                    OnSave?.Invoke();
+                }
+            });
+            OverwriteNo.onClick.AddListener(() =>
+            {
+                OverwritePanel.SetActive(false);
+            });
         });
     }
 
