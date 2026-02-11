@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Interactables;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using Unity.Collections;
 using UnityEngine;
@@ -109,23 +109,13 @@ public class OverworldPlayerController : ReloadableBehaviour
     {
         _interactionStacked++;
         Disabler |= ControlDisabler.Interacting; // Just in case a coroutine does not start immediately
-        GameManager.Instance.StartUndisablableCoroutine(this, InteractionRoutine(this, source, interaction));
+        InteractionRoutine(this, source, interaction).Forget();
 
-        static IEnumerator InteractionRoutine(OverworldPlayerController @this, IInteractionSource source, IInteraction interaction)
+        static async UniTask InteractionRoutine(OverworldPlayerController @this, IInteractionSource source, IInteraction interaction)
         {
             try
             {
-                foreach (var delay in interaction.InteractEnum(source, @this))
-                {
-                    switch (delay)
-                    {
-                        case Delay.WaitTillNextFrame:
-                            yield return null;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
+                await interaction.InteractEnum(source, @this);
             }
             finally
             {
@@ -314,7 +304,7 @@ public class OverworldPlayerController : ReloadableBehaviour
 
     void ChangeOfTransportQuery()
     {
-        var pos = transform.position;
+        var pos = transform.position + transform.forward * 0.5f;
         for (int i = 0; i < MeansOfTransports.Length; i++)
         {
             if (i == _activeTransport)

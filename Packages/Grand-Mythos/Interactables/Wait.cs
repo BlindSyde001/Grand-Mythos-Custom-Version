@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 namespace Interactables
 {
@@ -9,12 +8,9 @@ namespace Interactables
     public class Wait : IInteraction
     {
         public float DurationInSeconds = 1f;
-        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+        public UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
-            for (float f = 0; f < DurationInSeconds; f += Time.deltaTime)
-            {
-                yield return Delay.WaitTillNextFrame;
-            }
+            return UniTask.Delay(TimeSpan.FromSeconds(DurationInSeconds));
         }
 
         public bool IsValid([MaybeNullWhen(true)] out string error)
@@ -28,5 +24,7 @@ namespace Interactables
             error = null;
             return true;
         }
+
+        public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI) { }
     }
 }

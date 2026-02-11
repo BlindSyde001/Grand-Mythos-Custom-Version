@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 
 namespace Interactables
@@ -13,10 +14,10 @@ namespace Interactables
 
         bool ValidateCount(uint count) => count > 0;
 
-        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+        public UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             InventoryManager.Instance.AddToInventory(Item, Count);
-            yield break;
+            return UniTask.CompletedTask;
         }
 
         public bool IsValid([MaybeNullWhen(true)] out string error)
@@ -36,5 +37,7 @@ namespace Interactables
             error = null;
             return true;
         }
+
+        public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI) { }
     }
 }

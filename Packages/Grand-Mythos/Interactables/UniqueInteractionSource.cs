@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSource, ISaved<UniqueInteractionSource, UniqueInteractionSource.Save>
+public abstract class UniqueInteractionSource : MonoBehaviourWithSceneGUI, IInteractionSource, ISaved<UniqueInteractionSource, UniqueInteractionSource.Save>
 {
     const string InfoBoxGuidWarning =
         "This value identifies this component for saving and restoring its state when its Type is set to 'Once Ever',\n" +
@@ -95,6 +95,12 @@ public abstract class UniqueInteractionSource : MonoBehaviour, IInteractionSourc
 
         controller.PlayInteraction(this, interaction);
         return true;
+    }
+
+    protected override void DuringSceneGui(SceneGUIProxy sceneGUI)
+    {
+        OnTrigger?.DuringSceneGui(this, sceneGUI);
+        PersistentEffect?.DuringSceneGui(this, sceneGUI);
     }
 
     public enum TriggerType

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace Interactables
@@ -17,48 +18,20 @@ namespace Interactables
             Simultaneously
         }
 
-        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+        public async UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             switch (Execution)
             {
                 case Mode.Sequentially:
                     foreach (var interaction in Array)
-                    {
-                        foreach (var yields in interaction.InteractEnum(source, player))
-                            yield return yields;
-                    }
+                        await interaction.InteractEnum(source, player);
                     break;
                 case Mode.Simultaneously:
-                    var enums = new IEnumerator<Delay>?[Array.Length];
+                    var enums = new UniTask[Array.Length];
                     for (int i = 0; i < enums.Length; i++)
-                        enums[i] = Array[i].InteractEnum(source, player).GetEnumerator();
+                        enums[i] = Array[i].InteractEnum(source, player);
 
-                    int idles = 0;
-                    do
-                    {
-                        for (int i = 0; i < enums.Length; i++)
-                        {
-                            var enumVal = enums[i];
-                            if (enumVal != null && enumVal.MoveNext())
-                            {
-                                switch (enumVal.Current)
-                                {
-                                    case Delay.WaitTillNextFrame:
-                                        break;
-                                    default:
-                                        throw new ArgumentOutOfRangeException(enumVal.Current.ToString());
-                                }
-
-                                continue;
-                            }
-
-                            idles++;
-                            enums[i] = null;
-                        }
-
-                        yield return Delay.WaitTillNextFrame;
-
-                    } while (idles != enums.Length);
+                    await UniTask.WhenAll(enums);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -82,6 +55,12 @@ namespace Interactables
 
             error = null;
             return true;
+        }
+
+        public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI)
+        {
+            foreach (var interaction in Array)
+                interaction.DuringSceneGui(source, sceneGUI);
         }
     }
 }

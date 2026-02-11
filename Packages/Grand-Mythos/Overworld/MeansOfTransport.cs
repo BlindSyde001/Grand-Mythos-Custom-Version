@@ -18,4 +18,6 @@ public enum NavFlags : int
     NotWalkable = 1 << 1,
     Jump = 1 << 2,
     Sea = 1 << 3,
+    Air = 1 << 4,
+    Crouch = 1 << 5,
 }

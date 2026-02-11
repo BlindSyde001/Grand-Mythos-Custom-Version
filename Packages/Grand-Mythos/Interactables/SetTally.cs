@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Cysharp.Threading.Tasks;
 using Nodalog;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Interactables
         [HorizontalGroup, HideLabel]
         public int Value = 1;
 
-        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+        public UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             Tally.Amount = Operation switch
             {
@@ -28,7 +29,7 @@ namespace Interactables
                 OperationType.Sub => Tally.Amount - Value,
                 _ => throw new ArgumentOutOfRangeException()
             };
-            yield break;
+            return UniTask.CompletedTask;
         }
 
         public bool IsValid([MaybeNullWhen(true)] out string error)
@@ -46,5 +47,7 @@ namespace Interactables
             [InspectorName("-")]
             Sub,
         }
+
+        public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI) { }
     }
 }

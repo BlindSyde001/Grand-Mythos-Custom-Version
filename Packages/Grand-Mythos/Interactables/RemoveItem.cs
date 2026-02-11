@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace Interactables
 
         bool ValidateCount(uint count) => count > 0;
 
-        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+        public UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
             if (InventoryManager.Instance.FindItem(Item, out var existingCount))
             {
@@ -33,7 +34,7 @@ namespace Interactables
                 Debug.LogWarning($"Could not find any {Item}, aborting remove");
             }
 
-            yield break;
+            return UniTask.CompletedTask;
         }
 
         public bool IsValid([MaybeNullWhen(true)] out string error)
@@ -53,5 +54,7 @@ namespace Interactables
             error = null;
             return true;
         }
+
+        public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI) { }
     }
 }

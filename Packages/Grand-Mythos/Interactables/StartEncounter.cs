@@ -12,14 +12,12 @@ namespace Interactables
     {
         [SerializeReference] public required IEncounterDefinition Encounter;
 
-        public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+        public async UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
         {
-            Encounter.Start(CancellationToken.None).Forget();
+            await Encounter.Start(CancellationToken.None);
             #warning this is a bit flacky, should change this into something more robust
-            while (InputManager.CurrentState != GameState.Battle) // Wait for transition into battle
-                yield return Delay.WaitTillNextFrame;
             while (InputManager.CurrentState == GameState.Battle) // Wait for transition out of battle
-                yield return Delay.WaitTillNextFrame;
+                await UniTask.NextFrame();
         }
 
         public bool IsValid([MaybeNullWhen(true)] out string error)
@@ -32,5 +30,7 @@ namespace Interactables
 
             return Encounter.IsValid(out error);
         }
+
+        public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI) { }
     }
 }

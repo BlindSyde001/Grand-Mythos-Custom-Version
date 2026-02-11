@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Interactables;
 using UnityEngine;
 
@@ -8,23 +9,22 @@ public class CompleteQuestStep : IInteraction
 {
     public required QuestStep Step;
 
-    public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+    public UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
     {
         if (Step.Completed)
         {
             Debug.LogWarning($"Tried to complete step '{Step}' but it was already completed");
-            yield break;
+            return UniTask.CompletedTask;
         }
 
         Step.Quest.Discovered = true;
         Step.Completed = true;
         if (Step.Quest.Completed && Step.Quest.Outcome is not null) // If this was the last step to complete this quest, run the outcome of this quest
         {
-            foreach (var delay in Step.Quest.Outcome.InteractEnum(source, player))
-            {
-                yield return delay;
-            }
+            return Step.Quest.Outcome.InteractEnum(source, player);
         }
+
+        return UniTask.CompletedTask;
     }
 
     public bool IsValid(out string error)
@@ -38,4 +38,6 @@ public class CompleteQuestStep : IInteraction
         error = "";
         return true;
     }
+
+    public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI) { }
 }

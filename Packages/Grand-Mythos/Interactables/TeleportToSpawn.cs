@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Interactables;
 
 public class TeleportToSpawn : IInteraction
 {
     public required SpawnPointReference Target;
 
-    public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+    public UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
     {
         Target.SwapSceneToThisSpawnPoint();
-        yield break;
+        return UniTask.CompletedTask;
     }
 
     public bool IsValid(out string error)
@@ -22,4 +23,6 @@ public class TeleportToSpawn : IInteraction
         error = "";
         return true;
     }
+
+    public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI) { }
 }

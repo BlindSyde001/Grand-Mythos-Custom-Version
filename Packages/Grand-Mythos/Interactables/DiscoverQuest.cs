@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Interactables;
 
 [Serializable]
@@ -8,10 +9,10 @@ public class DiscoverQuest : IInteraction
     [Tooltip("This quest will be added to the journal")]
     public required Quest Quest;
 
-    public IEnumerable<Delay> InteractEnum(IInteractionSource source, OverworldPlayerController player)
+    public UniTask InteractEnum(IInteractionSource source, OverworldPlayerController player)
     {
         Quest.Discovered = true;
-        yield break;
+        return UniTask.CompletedTask;
     }
 
     public bool IsValid(out string error)
@@ -25,4 +26,6 @@ public class DiscoverQuest : IInteraction
         error = "";
         return true;
     }
+
+    public void DuringSceneGui(IInteractionSource source, SceneGUIProxy sceneGUI) { }
 }
