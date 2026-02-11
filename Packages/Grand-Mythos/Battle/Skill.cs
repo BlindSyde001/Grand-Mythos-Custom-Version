@@ -68,54 +68,55 @@ public class Skill : IdentifiableScriptableObject, IAction
             effect.Apply(targets, context);
         }
 
-        if (!ProcAttachedSkills
-            || context.Profile is not HeroExtension hero
-            || hero._Weapon == null
-            || hero._Weapon.AttachedSkill == null
-            || context.Random.NextFloat(0, 100) > hero._Weapon.SkillProcChance) 
+        if (!ProcAttachedSkills || context.Profile is not HeroExtension hero) 
             return;
 
-        var attachedSkill = hero._Weapon.AttachedSkill;
-        var attachmentTargets = new TargetCollection(targets.ToList());
-        
-        if (BattleStateMachine.TryGetInstance(out var battle))
+        foreach (var (attachedSkill, chance) in hero.AttachedSkills)
         {
-            try
+            if (context.Random.NextFloat(0, 100) > chance)
+                continue;
+            
+            var attachmentTargets = new TargetCollection(targets.ToList());
+        
+            if (BattleStateMachine.TryGetInstance(out var battle))
             {
-                if (attachedSkill.PreconditionToUse != null)
+                try
                 {
-                    var allTargetsCopy = new TargetCollection(battle.Units.Select(x => x.Profile).ToList());
-                    attachedSkill.PreconditionToUse.Filter(ref allTargetsCopy, context);
-
-                    if (allTargetsCopy.IsEmpty)
+                    if (attachedSkill.PreconditionToUse != null)
                     {
-                        return;
+                        var allTargetsCopy = new TargetCollection(battle.Units.Select(x => x.Profile).ToList());
+                        attachedSkill.PreconditionToUse.Filter(ref allTargetsCopy, context);
+
+                        if (allTargetsCopy.IsEmpty)
+                        {
+                            return;
+                        }
                     }
                 }
+                catch(Exception e) when (attachedSkill is UnityEngine.Object o)
+                {
+                    Debug.LogException(e, o);
+                }
             }
-            catch(Exception e) when (attachedSkill is UnityEngine.Object o)
+            else
             {
-                Debug.LogException(e, o);
+                Debug.LogWarning($"Could not retrieve the {nameof(BattleStateMachine)} to run the precondition for {nameof(Weapon.AttachedSkill)}");
             }
-        }
-        else
-        {
-            Debug.LogWarning($"Could not retrieve the {nameof(BattleStateMachine)} to run the precondition for {nameof(Weapon.AttachedSkill)}");
-        }
         
-        attachedSkill.TargetConstraint?.Filter(ref attachmentTargets, context);
+            attachedSkill.TargetConstraint?.Filter(ref attachmentTargets, context);
         
-        var attachmentFilteredTargets = attachmentTargets.ToArray();
-        if (attachmentFilteredTargets.Length == 0)
-            return;
+            var attachmentFilteredTargets = attachmentTargets.ToArray();
+            if (attachmentFilteredTargets.Length == 0)
+                return;
 
-        foreach (var effect in attachedSkill.Effects)
-        {
-            effect.Apply(attachmentFilteredTargets, context);
+            foreach (var effect in attachedSkill.Effects)
+            {
+                effect.Apply(attachmentFilteredTargets, context);
+            }
+
+            attachedSkill.TargetConstraint?.NotifyUsedCondition(attachmentTargets, context);
+            attachedSkill.PreconditionToUse?.NotifyUsedCondition(attachmentTargets, context);
         }
-
-        attachedSkill.TargetConstraint?.NotifyUsedCondition(attachmentTargets, context);
-        attachedSkill.PreconditionToUse?.NotifyUsedCondition(attachmentTargets, context);
     }
 
 

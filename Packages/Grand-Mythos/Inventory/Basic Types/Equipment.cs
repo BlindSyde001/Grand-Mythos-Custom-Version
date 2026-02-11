@@ -22,4 +22,8 @@ public class Equipment : TradeableItem
     [BoxGroup("DEFENSE")]
     [SerializeField]
     internal int _EquipMagDefense;
+
+    public Skill? AttachedSkill;
+    [Range(0,100),SuffixLabel("%")]
+    public float SkillProcChance = 50f;
 }

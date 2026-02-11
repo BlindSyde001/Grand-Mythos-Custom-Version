@@ -73,6 +73,21 @@ public class HeroExtension : CharacterTemplate, ISaved<HeroExtension, HeroExtens
         }
     }
 
+    public IEnumerable<(Skill skill, float chance)> AttachedSkills
+    {
+        get
+        {
+            if (_Weapon?.AttachedSkill != null)
+                yield return (_Weapon.AttachedSkill, _Weapon.SkillProcChance);
+            if (_AccessoryOne?.AttachedSkill != null)
+                yield return (_AccessoryOne.AttachedSkill, _AccessoryOne.SkillProcChance);
+            if (_AccessoryTwo?.AttachedSkill != null)
+                yield return (_AccessoryTwo.AttachedSkill, _AccessoryTwo.SkillProcChance);
+            if (_Armour?.AttachedSkill != null)
+                yield return (_Armour.AttachedSkill, _Armour.SkillProcChance);
+        }
+    }
+
     protected override void Awake()
     {
         InitializeCharacter();

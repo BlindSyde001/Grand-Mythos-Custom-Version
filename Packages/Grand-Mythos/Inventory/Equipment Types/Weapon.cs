@@ -9,8 +9,4 @@ public class Weapon : Equipment
     [BoxGroup("BASIC DATA")]
     [PropertyOrder(0)]
     public WeaponType weaponType;
-
-    public Skill? AttachedSkill;
-    [Range(0,100),SuffixLabel("%")]
-    public float SkillProcChance = 50f;
 }
