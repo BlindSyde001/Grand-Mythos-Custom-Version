@@ -10,7 +10,7 @@ public class CameraFocus : ReloadableBehaviour
     static Coroutine? _coroutine;
 
     [SerializeReference]
-    public required ICameraControl Control = new OrbitCamera{ Input = null! };
+    public required ICameraControl Control = new OrbitCamera{ Input = null!, Zoom = null! };
 
     public ICameraTransition? FadeIn;
     public ICameraTransition? FadeOut;
