@@ -31,6 +31,7 @@ public class JournalMenuActions : MenuContainer
             button.Text.text = quest.name;
             button.Text.fontStyle = strikenThrough(quest) ? FontStyles.Strikethrough : FontStyles.Normal;
             button.Button.onClick.AddListener(() => onSelect(quest));
+            QuickFade(button.gameObject, 1f, 1f);
         }
 
         QuestTitle.text = "";

@@ -44,7 +44,15 @@ public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackRece
         if (Instance._findByGuid == null)
         {
             Instance._findByGuid = new();
-            foreach (var identifiable in Instance._identifiables)
+
+            var hs = new HashSet<IdentifiableScriptableObject>();
+            foreach (var identifiableScriptableObject in Instance._identifiables)
+            {
+                if (hs.Add(identifiableScriptableObject) == false)
+                    Debug.LogException(new InvalidOperationException($"Duplicate identifiable: {identifiableScriptableObject}"), Instance);
+            }
+            
+            foreach (var identifiable in hs)
             {
                 if (identifiable.Guid == default)
                 {
@@ -52,7 +60,11 @@ public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackRece
                     continue;
                 }
 
-                Instance._findByGuid.Add(identifiable.Guid, identifiable);
+                if (Instance._findByGuid.TryAdd(identifiable.Guid, identifiable) == false)
+                {
+                    Debug.LogException(new InvalidOperationException($"This {identifiable} has the same GUID {identifiable.Guid} as another, this is invalid"), identifiable);
+                    Debug.LogException(new InvalidOperationException($"This {Instance._findByGuid[identifiable.Guid]} has the same GUID {identifiable.Guid} as another, this is invalid"), Instance._findByGuid[identifiable.Guid]);
+                }
             }
         }
 
@@ -73,6 +85,9 @@ public class IdentifiableDatabase : ScriptableObject, ISerializationCallbackRece
 
         void FixupThisIdentifiable()
         {
+            if (Application.isPlaying)
+                return;
+
             lock (Instance._identifiables)
             {
                 if (Instance._cleanupScheduled == false)
