@@ -6,9 +6,11 @@ using Screenplay.Nodes;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
+using YNode;
 
 namespace Quests
 {
+    [NodeVisuals(Icon = "d_NavMeshAgent Icon")]
     public class NPCMoveTo : ExecutableLinear, INodeWithSceneGizmos
     {
         [HideLabel] public SceneObjectReference<NPC> NPC;
