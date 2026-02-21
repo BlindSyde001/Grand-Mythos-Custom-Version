@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,12 +11,14 @@ namespace Characters
         public required NavMeshAgent Agent;
         public required Animator Animator;
         public float WalkRunThreshold = 2f;
+        public float RotationSpeed = 2f;
         
         [ValidateInput(nameof(ValidateAnim))]
         [Tooltip("Plays the following state through the Animator")]
         public AnimationState Idle, Walk, Run;
 
         private bool _isIdle;
+        private UniTaskCompletionSource? _moveTasks;
 
         private void Update()
         {
@@ -32,54 +36,45 @@ namespace Characters
             }
         }
 
-        /*public IEnumerable Play(IAction action, BattleCharacterController controller, BattleCharacterController[] targets)
+        public async UniTask MoveTo(Vector3 pos, Quaternion rot, CancellationToken cts)
         {
-            var initialRotation = controller.transform.rotation;
-            Vector3 averagePos = default;
-            int count = 0;
-            foreach (var target in targets)
-            {
-                if (target == controller)
-                    continue;
+            var newTCS = new UniTaskCompletionSource();
 
-                count++;
-                averagePos += target.transform.position;
+            for (UniTaskCompletionSource? ongoing; (ongoing = Interlocked.CompareExchange(ref _moveTasks, newTCS, null)) != null;)
+            {
+                await ongoing.Task.WithInterruptingCancellation(cts);
             }
 
-            controller.Animator.Play(StateName, Layer);
-
-            yield return null; // Can't get current state until one frame passes ...
-
-            var current = controller.Animator.GetCurrentAnimatorStateInfo(Layer);
-
-            if (count != 0)
+            try
             {
-                averagePos /= count;
-                averagePos.y = 0;
-                controller.transform.DOLookAt(averagePos, 0.25f);
-                yield return new WaitForSeconds(0.25f);
+                Agent.SetDestination(pos);
+                while (Agent.pathPending)
+                {
+                    await UniTask.NextFrame(cts, true);
+                    cts.ThrowIfCancellationRequested();
+                }
+
+                while (Agent.hasPath)
+                {
+                    await UniTask.NextFrame(cts, true);
+                    cts.ThrowIfCancellationRequested();
+                }
+
+                var initialRotation = transform.rotation;
+                for (float t = 0; t < 1f; t += Time.deltaTime * RotationSpeed)
+                {
+                    transform.rotation = Quaternion.Slerp(initialRotation, rot, Mathf.SmoothStep(0, 1, t));
+                    await UniTask.NextFrame(cts, true);
+                    cts.ThrowIfCancellationRequested();
+                }
             }
-
-            if (current.IsName(StateName) == false)
+            finally
             {
-                Debug.LogError($"Error while playing state {StateName} on layer {Layer}, does that state exist on that layer for animator '{controller.Animator.runtimeAnimatorController}'", controller.Animator);
-                yield break;
-            }
-
-            var timeLeft = GetTimeLeft(current);
-            yield return new WaitForSeconds(timeLeft);
-
-            if (count != 0)
-            {
-                controller.transform.DOLookAt(controller.transform.position + initialRotation * Vector3.forward, 0.25f);
-                yield return new WaitForSeconds(0.25f);
+                var r = Interlocked.Exchange(ref _moveTasks, null);
+                Debug.Assert(r == newTCS);
+                newTCS.TrySetResult();
             }
         }
-
-        static float GetTimeLeft(in AnimatorStateInfo info)
-        {
-            return info.length * (1f - info.normalizedTime) / info.speed / info.speedMultiplier;
-        }*/
 
         bool ValidateAnim(AnimationState state, ref string message)
         {
