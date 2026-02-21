@@ -16,10 +16,20 @@ MonoBehaviour:
     a: 5009446267147112563
     b: 2577705464975157434
   Description: 
+  Cost: 10
+  OnPlayerSoldItem:
+    rid: -2
   _EquipAttack: 0
   _EquipMagAttack: 0
   _EquipHP: 50
   _EquipMP: 0
   _EquipDefense: 10
   _EquipMagDefense: 5
+  AttachedSkill: {fileID: 0}
+  SkillProcChance: 50
   armourType: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

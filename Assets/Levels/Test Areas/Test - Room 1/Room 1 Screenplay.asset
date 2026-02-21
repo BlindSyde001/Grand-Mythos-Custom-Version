@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Nodes:
   - rid: 2764370834597347419
-  - rid: 2764370834597347421
   - rid: 2764370834597347424
-  - rid: 2764370834597347431
   - rid: 2764370857063350287
   - rid: 2764370857063350290
   - rid: 2764370857063350539
@@ -27,6 +25,13 @@ MonoBehaviour:
   - rid: 2764370857063350936
   - rid: 2764370857063350957
   - rid: 2764370857063350961
+  - rid: 718287040876642499
+  - rid: 718287066741866848
+  - rid: 718287237684658941
+  - rid: 718287237684658948
+  - rid: 718287237684658953
+  - rid: 718287237684658961
+  - rid: 718287237684658983
   AllowMultipleInstances: 0
   RestoreMode: 1
   DebugRetainProgressInEditor: 0
@@ -43,27 +48,130 @@ MonoBehaviour:
       type: {class: DialogUIField, ns: Screenplay, asm: Screenplay}
       data:
         DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
+    - rid: 718287040876642499
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 952, y: -88}
+        Next:
+          rid: 718287040876642618
+        Line:
+          Content: 'Dialog Line
+
+
+            Another Line'
+          _guid:
+            a: 5302158531526413365
+            b: 13262797744959194791
+        InterlocutorSource:
+          rid: -2
+    - rid: 718287040876642502
+      type: {class: Move, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1464, y: -56}
+        Next:
+          rid: -2
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
+            _objId:
+              a: 4821666974509469073
+              b: 4675237078683791520
+            _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
+        Destination: {x: 0, y: 0, z: 0}
+        Rotation: {x: 0, y: 0, z: 0, w: 1}
+    - rid: 718287040876642618
+      type: {class: Join, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 1160, y: -56}
+        Next:
+          rid: 718287040876642502
+    - rid: 718287066741866848
+      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: 24, y: -136}
+        Next:
+          rid: 718287237684658953
+        NPC:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
+            _objId:
+              a: 5495235681438351649
+              b: 11237647656410145972
+            _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
+        Destination: {x: -5.0782084, y: 0.05687794, z: 0.79936635}
+        FinalRotation: {x: 0, y: 0.6653302, z: 0, w: 0.7465492}
+    - rid: 718287237684658941
+      type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -664, y: -88}
+        Entries:
+        - Executable:
+            rid: 718287066741866848
+        - Executable:
+            rid: 718287237684658961
+    - rid: 718287237684658948
+      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: 24, y: 8}
+        Next:
+          rid: 718287237684658953
+        NPC:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
+            _objId:
+              a: 4829560465753234824
+              b: 8633056744003702456
+            _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
+        Destination: {x: -3.3441734, y: 0.05687794, z: 0.4507844}
+        FinalRotation: {x: 0, y: -0.70458835, z: 0, w: 0.7096162}
+    - rid: 718287237684658953
+      type: {class: Rejoin, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: 360, y: -88}
+        Entries:
+        - Executable:
+            rid: 718287237684658983
+    - rid: 718287237684658961
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: -216, y: 40}
+        Next:
+          rid: 718287237684658948
+        Active: 1
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
+            _objId:
+              a: 4674288872679086791
+              b: 4921983841095818392
+            _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
+    - rid: 718287237684658983
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: 648, y: -72}
+        Next:
+          rid: 718287040876642499
+        Active: 0
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
+            _objId:
+              a: 4674288872679086791
+              b: 4921983841095818392
+            _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
     - rid: 2764370834597347419
       type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -168, y: -56}
+        _position: {x: -1048, y: -88}
         Name: Encounter Interrupt Test
         Action:
-          rid: 2764370834597347421
+          rid: 718287237684658941
         TriggerSource:
-          rid: 2764370834597347431
+          rid: -2
         Repeatable: 0
         Scene:
-          _path: Assets/Levels/Test Areas/Test - Room 1/Test - Room 1.unity
-          _sceneAsset: {fileID: 102900000, guid: a301f98ce08f6584495c915fc8d6ecd3, type: 3}
-    - rid: 2764370834597347421
-      type: {class: StartEncounter, ns: , asm: Grand-Mythos}
-      data:
-        _position: {x: 328, y: -56}
-        DuringEncounter:
-          rid: -2
-        Definition:
-          rid: 2764370834597347429
+          _path: Assets/Levels/Test Areas/Test - Room 1.unity
+          _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
     - rid: 2764370834597347424
       type: {class: EndEncounter, ns: , asm: Grand-Mythos}
       data:
@@ -71,31 +179,6 @@ MonoBehaviour:
         Next:
           rid: -2
         SkipEndScreen: 1
-    - rid: 2764370834597347429
-      type: {class: FixedEncounter, ns: , asm: Grand-Mythos}
-      data:
-        Scene:
-          _path: Assets/Levels/Test Areas/Test - Battle.unity
-          _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
-        PointOfView: {fileID: 0}
-        IntroCamera: {fileID: 0}
-        OutroCamera: {fileID: 0}
-        Formation:
-        - {fileID: 11400000, guid: b840bcb0ddc9d4c4bb365b9943f8b4ea, type: 2}
-        - {fileID: 11400000, guid: 95b17ca1544aeb047bcaddce9004d5c2, type: 2}
-        Seed: 3670892518
-    - rid: 2764370834597347431
-      type: {class: Interaction, ns: , asm: Grand-Mythos}
-      data:
-        _position: {x: -456, y: -40}
-        Target:
-          _genericRef:
-            _scenePath: Assets/Levels/Test Areas/Test - Room 1/Test - Room 1.unity
-            _objId:
-              a: 4858329512231775444
-              b: 4349669265313117116
-            _sceneAsset: {fileID: 102900000, guid: a301f98ce08f6584495c915fc8d6ecd3, type: 3}
-        Label: Interact
     - rid: 2764370857063350287
       type: {class: HaltEncounter, ns: , asm: Grand-Mythos}
       data:

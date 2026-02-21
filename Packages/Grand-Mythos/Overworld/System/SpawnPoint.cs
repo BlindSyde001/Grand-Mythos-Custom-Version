@@ -40,8 +40,6 @@ public class SpawnPoint : MonoBehaviour
 
     IEnumerator DelayedSpawn()
     {
-        yield return null; // Wait at least two frames to make sure that everything that meant to spawn the player had the time to do so
-        yield return null;
         if (OverworldPlayerController.Instances.Count != 0)
             yield break;
 
