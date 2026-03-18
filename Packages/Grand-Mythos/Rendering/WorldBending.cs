@@ -108,9 +108,8 @@ public class WorldBending : MonoBehaviour
         foreach (var renderer in renderers)
         {
             var newBounds = renderer.bounds;
-            newBounds.min = Vector3.Min(newBounds.min, bounds.min);
-            newBounds.max = Vector3.Min(newBounds.max, bounds.max);
-            bounds = newBounds;
+            bounds.min = Vector3.Min(newBounds.min, bounds.min);
+            bounds.max = Vector3.Max(newBounds.max, bounds.max);
         }
 
         bounds.extents -= new Vector3(BoundsPadding, 0f, BoundsPadding);
