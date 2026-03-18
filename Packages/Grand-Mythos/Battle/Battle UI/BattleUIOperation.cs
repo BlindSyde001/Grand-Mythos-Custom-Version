@@ -222,7 +222,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             ui.ManaLabel.text = hero.CurrentMP.ToString();
             ui.Health.text = hero.CurrentHP.ToString();
             ui.Health.color = HealthLabelColorPercent.Evaluate((float)hero.CurrentHP / hero.EffectiveStats.HP);
-            ui.ManaLabel.color = HealthLabelColorPercent.Evaluate((float)hero.CurrentMP / hero.EffectiveStats.MP);
+            ui.ManaLabel.color = ManaLabelColorPercent.Evaluate((float)hero.CurrentMP / hero.EffectiveStats.MP);
             ui.NameLabel.text = hero.Name;
         }
 
