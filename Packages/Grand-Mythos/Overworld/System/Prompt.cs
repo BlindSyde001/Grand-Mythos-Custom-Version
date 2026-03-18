@@ -36,6 +36,8 @@ public class Prompt : MonoBehaviour
                 Destroy(prompt.gameObject);
             foreach (Prompt prompt in _promptInUse)
                 Destroy(prompt.gameObject);
+            _promptCache.Clear();
+            _promptInUse.Clear();
 
             helper.PromptTemplate = PromptTemplate;
         };
