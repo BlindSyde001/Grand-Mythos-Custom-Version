@@ -1,0 +1,283 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f280a14fbcd4a8eb855b9acb1471d1e, type: 3}
+  m_Name: Facility Screenplay
+  m_EditorClassIdentifier: 
+  Nodes:
+  - rid: 9035828663861117144
+  - rid: 9035828663861117146
+  - rid: 9035828663861117149
+  - rid: 9035828663861117155
+  - rid: 9035828663861117159
+  - rid: 9035828663861117177
+  - rid: 9035828663861117186
+  - rid: 9035828663861117189
+  - rid: 9035828663861117192
+  - rid: 9035828663861117195
+  - rid: 9035828663861117198
+  - rid: 9035828663861117202
+  - rid: 9035828663861117248
+  - rid: 9035828663861117254
+  - rid: 9035828681241788596
+  - rid: 9035828681241788602
+  - rid: 9035828681241788604
+  - rid: 9035828681241788606
+  AllowMultipleInstances: 0
+  RestoreMode: 1
+  DebugRetainProgressInEditor: 0
+  _debugState:
+    Events: []
+  Fields:
+  - rid: 718286792178008117
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 718286792178008117
+      type: {class: DialogUIField, ns: Screenplay, asm: Screenplay}
+      data:
+        DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
+    - rid: 9035828663861117144
+      type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -4472, y: -1016}
+        Name: Start New Game
+        Action:
+          rid: 9035828681241788596
+        TriggerSource:
+          rid: -2
+        Repeatable: 0
+        Scene:
+          _path: Assets/Levels/Test Areas/Facility.unity
+          _sceneAsset: {fileID: 102900000, guid: 22363b5baa01d6a428f4e6d32d1cd50d, type: 3}
+    - rid: 9035828663861117146
+      type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -3336, y: -1128}
+        Entries:
+        - Executable:
+            rid: 9035828663861117149
+        - Executable:
+            rid: 9035828663861117177
+    - rid: 9035828663861117149
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -3208, y: -1240}
+        Next:
+          rid: 9035828663861117155
+        Line:
+          Content: 'Dialog Line
+
+
+            Another Line'
+          _guid:
+            a: 5208137981616416476
+            b: 16419103636867337387
+        InterlocutorSource:
+          rid: -2
+    - rid: 9035828663861117155
+      type: {class: Rejoin, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -2936, y: -1128}
+        Entries:
+        - Executable:
+            rid: 9035828663861117159
+    - rid: 9035828663861117159
+      type: {class: StartEncounter, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: -2840, y: -1176}
+        DuringEncounter:
+          rid: 9035828663861117186
+        Definition:
+          rid: 9035828663861117162
+    - rid: 9035828663861117162
+      type: {class: FixedEncounter, ns: , asm: Grand-Mythos}
+      data:
+        Scene:
+          _path: Assets/Levels/Test Areas/Test - Battle.unity
+          _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
+        PointOfView: {fileID: 0}
+        IntroCamera: {fileID: 0}
+        OutroCamera: {fileID: 0}
+        Formation: []
+        Seed: 0
+    - rid: 9035828663861117177
+      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -3208, y: -968}
+        Next:
+          rid: 9035828663861117155
+        NPC:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
+            _objId:
+              a: 5495235681438351649
+              b: 11237647656410145972
+            _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
+        Destination: {x: -19.3714, y: 0.05687794, z: 0.28995752}
+        FinalRotation: {x: 0, y: 0.6633562, z: 0, w: 0.7483038}
+    - rid: 9035828663861117186
+      type: {class: AwaitEndOfEncounter, ns: , asm: Grand-Mythos}
+      data:
+        _position: {x: -2360, y: -1160}
+        Victory:
+          rid: 9035828663861117189
+        Defeat:
+          rid: -2
+    - rid: 9035828663861117189
+      type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -2024, y: -1176}
+        Entries:
+        - Executable:
+            rid: 9035828663861117192
+        - Executable:
+            rid: 9035828663861117248
+    - rid: 9035828663861117192
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -1832, y: -1192}
+        Next:
+          rid: 9035828663861117198
+        Line:
+          Content: 'Dialog Line
+
+
+            Another Line'
+          _guid:
+            a: 5411029480441609341
+            b: 11280207703669283246
+        InterlocutorSource:
+          rid: -2
+    - rid: 9035828663861117195
+      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -1768, y: -952}
+        Next:
+          rid: 9035828663861117198
+        NPC:
+          _genericRef:
+            _scenePath: 
+            _objId:
+              a: 0
+              b: 0
+            _sceneAsset: {fileID: 0}
+        Destination: {x: 0, y: 0, z: 0}
+        FinalRotation: {x: 0, y: 0, z: 0, w: 1}
+    - rid: 9035828663861117198
+      type: {class: Rejoin, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -1544, y: -1064}
+        Entries:
+        - Executable:
+            rid: 9035828663861117254
+    - rid: 9035828663861117202
+      type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -1144, y: -1080}
+        Next:
+          rid: -2
+        Line:
+          Content: 'Dialog Line
+
+
+            Another Line'
+          _guid:
+            a: 5195026812642944676
+            b: 641104300132807339
+        InterlocutorSource:
+          rid: -2
+    - rid: 9035828663861117248
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: -2008, y: -984}
+        Next:
+          rid: 9035828663861117195
+        Active: 1
+        Target:
+          _genericRef:
+            _scenePath: 
+            _objId:
+              a: 0
+              b: 0
+            _sceneAsset: {fileID: 0}
+    - rid: 9035828663861117254
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: -1448, y: -1064}
+        Next:
+          rid: 9035828663861117202
+        Active: 1
+        Target:
+          _genericRef:
+            _scenePath: 
+            _objId:
+              a: 0
+              b: 0
+            _sceneAsset: {fileID: 0}
+    - rid: 9035828681241788596
+      type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -4088, y: -1048}
+        Entries:
+        - Executable:
+            rid: 9035828681241788602
+        - Executable:
+            rid: 9035828681241788604
+        - Executable:
+            rid: 9035828681241788606
+    - rid: 9035828681241788602
+      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -3960, y: -1208}
+        Next:
+          rid: -2
+        NPC:
+          _genericRef:
+            _scenePath: 
+            _objId:
+              a: 0
+              b: 0
+            _sceneAsset: {fileID: 0}
+        Destination: {x: 0, y: 0, z: 0}
+        FinalRotation: {x: 0, y: 0, z: 0, w: 1}
+    - rid: 9035828681241788604
+      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -3960, y: -1016}
+        Next:
+          rid: -2
+        NPC:
+          _genericRef:
+            _scenePath: 
+            _objId:
+              a: 0
+              b: 0
+            _sceneAsset: {fileID: 0}
+        Destination: {x: 0, y: 0, z: 0}
+        FinalRotation: {x: 0, y: 0, z: 0, w: 1}
+    - rid: 9035828681241788606
+      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -3976, y: -856}
+        Next:
+          rid: -2
+        NPC:
+          _genericRef:
+            _scenePath: 
+            _objId:
+              a: 0
+              b: 0
+            _sceneAsset: {fileID: 0}
+        Destination: {x: 0, y: 0, z: 0}
+        FinalRotation: {x: 0, y: 0, z: 0, w: 1}
