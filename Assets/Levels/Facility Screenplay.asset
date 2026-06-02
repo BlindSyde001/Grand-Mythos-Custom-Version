@@ -27,10 +27,9 @@ MonoBehaviour:
   - rid: 9035828663861117202
   - rid: 9035828663861117248
   - rid: 9035828663861117254
-  - rid: 9035828681241788596
-  - rid: 9035828681241788602
-  - rid: 9035828681241788604
-  - rid: 9035828681241788606
+  - rid: 1608306264159289802
+  - rid: 1608306264159289807
+  - rid: 1608306264159289816
   AllowMultipleInstances: 0
   RestoreMode: 1
   DebugRetainProgressInEditor: 0
@@ -47,13 +46,56 @@ MonoBehaviour:
       type: {class: DialogUIField, ns: Screenplay, asm: Screenplay}
       data:
         DialogUIPrefab: {fileID: 95448640817651799, guid: e8598590f03cd8c4b84a222271d3c962, type: 3}
+    - rid: 1608306264159289802
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: -4232, y: -1016}
+        Next:
+          rid: 1608306264159289807
+        Active: 1
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Facility.unity
+            _objId:
+              a: 5677877775530084702
+              b: 4823718298787257741
+            _sceneAsset: {fileID: 102900000, guid: 22363b5baa01d6a428f4e6d32d1cd50d, type: 3}
+    - rid: 1608306264159289807
+      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
+      data:
+        _position: {x: -3976, y: -1016}
+        Next:
+          rid: 1608306264159289816
+        NPC:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Facility.unity
+            _objId:
+              a: 4929987519929819914
+              b: 12582195891218981763
+            _sceneAsset: {fileID: 102900000, guid: 22363b5baa01d6a428f4e6d32d1cd50d, type: 3}
+        Destination: {x: 185.22507, y: -40.20982, z: -31.68077}
+        FinalRotation: {x: 0, y: 0, z: 0, w: 1}
+    - rid: 1608306264159289816
+      type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
+      data:
+        _position: {x: -3720, y: -920}
+        Next:
+          rid: -2
+        Active: 0
+        Target:
+          _genericRef:
+            _scenePath: Assets/Levels/Test Areas/Facility.unity
+            _objId:
+              a: 5677877775530084702
+              b: 4823718298787257741
+            _sceneAsset: {fileID: 102900000, guid: 22363b5baa01d6a428f4e6d32d1cd50d, type: 3}
     - rid: 9035828663861117144
       type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -4472, y: -1016}
+        _position: {x: -4616, y: -1016}
         Name: Start New Game
         Action:
-          rid: 9035828681241788596
+          rid: 1608306264159289802
         TriggerSource:
           rid: -2
         Repeatable: 0
@@ -225,59 +267,3 @@ MonoBehaviour:
               a: 0
               b: 0
             _sceneAsset: {fileID: 0}
-    - rid: 9035828681241788596
-      type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
-      data:
-        _position: {x: -4088, y: -1048}
-        Entries:
-        - Executable:
-            rid: 9035828681241788602
-        - Executable:
-            rid: 9035828681241788604
-        - Executable:
-            rid: 9035828681241788606
-    - rid: 9035828681241788602
-      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
-      data:
-        _position: {x: -3960, y: -1208}
-        Next:
-          rid: -2
-        NPC:
-          _genericRef:
-            _scenePath: 
-            _objId:
-              a: 0
-              b: 0
-            _sceneAsset: {fileID: 0}
-        Destination: {x: 0, y: 0, z: 0}
-        FinalRotation: {x: 0, y: 0, z: 0, w: 1}
-    - rid: 9035828681241788604
-      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
-      data:
-        _position: {x: -3960, y: -1016}
-        Next:
-          rid: -2
-        NPC:
-          _genericRef:
-            _scenePath: 
-            _objId:
-              a: 0
-              b: 0
-            _sceneAsset: {fileID: 0}
-        Destination: {x: 0, y: 0, z: 0}
-        FinalRotation: {x: 0, y: 0, z: 0, w: 1}
-    - rid: 9035828681241788606
-      type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
-      data:
-        _position: {x: -3976, y: -856}
-        Next:
-          rid: -2
-        NPC:
-          _genericRef:
-            _scenePath: 
-            _objId:
-              a: 0
-              b: 0
-            _sceneAsset: {fileID: 0}
-        Destination: {x: 0, y: 0, z: 0}
-        FinalRotation: {x: 0, y: 0, z: 0, w: 1}

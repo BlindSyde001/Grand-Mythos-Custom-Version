@@ -51,7 +51,7 @@ MonoBehaviour:
     - rid: 718287040876642499
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: 952, y: -88}
+        _position: {x: 600, y: -88}
         Next:
           rid: 718287040876642618
         Line:
@@ -88,7 +88,7 @@ MonoBehaviour:
     - rid: 718287066741866848
       type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
       data:
-        _position: {x: 24, y: -136}
+        _position: {x: -152, y: -136}
         Next:
           rid: 718287237684658953
         NPC:
@@ -98,12 +98,12 @@ MonoBehaviour:
               a: 5495235681438351649
               b: 11237647656410145972
             _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
-        Destination: {x: -5.0782084, y: 0.05687794, z: 0.79936635}
-        FinalRotation: {x: 0, y: 0.6653302, z: 0, w: 0.7465492}
+        Destination: {x: -5.881669, y: 0.05687794, z: 0.19688004}
+        FinalRotation: {x: 0, y: 0.7178011, z: 0, w: 0.6962482}
     - rid: 718287237684658941
       type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -440, y: -88}
+        _position: {x: -616, y: -88}
         Entries:
         - Executable:
             rid: 718287066741866848
@@ -112,7 +112,7 @@ MonoBehaviour:
     - rid: 718287237684658948
       type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
       data:
-        _position: {x: 24, y: 8}
+        _position: {x: -168, y: 24}
         Next:
           rid: 718287237684658953
         NPC:
@@ -122,19 +122,19 @@ MonoBehaviour:
               a: 4829560465753234824
               b: 8633056744003702456
             _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
-        Destination: {x: -3.3441734, y: 0.05687794, z: 0.4507844}
+        Destination: {x: -3.1522844, y: 0.05687794, z: -0.010814011}
         FinalRotation: {x: 0, y: -0.70458835, z: 0, w: 0.7096162}
     - rid: 718287237684658953
       type: {class: Rejoin, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: 360, y: -88}
+        _position: {x: 184, y: -88}
         Entries:
         - Executable:
             rid: 718287237684658983
     - rid: 718287237684658961
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
-        _position: {x: -280, y: 56}
+        _position: {x: -456, y: 56}
         Next:
           rid: 718287237684658948
         Active: 1
@@ -148,7 +148,7 @@ MonoBehaviour:
     - rid: 718287237684658983
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
-        _position: {x: 648, y: -72}
+        _position: {x: 296, y: -72}
         Next:
           rid: 718287040876642499
         Active: 0
@@ -194,7 +194,7 @@ MonoBehaviour:
     - rid: 2764370857063350539
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: 824, y: -344}
+        _position: {x: 792, y: -312}
         Next:
           rid: 2764370857063350547
         Line:

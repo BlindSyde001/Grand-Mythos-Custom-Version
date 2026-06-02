@@ -4,7 +4,7 @@ using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class PointOfViewTrack : PointOfViewBase
+public class PointOfViewOnRails : PointOfViewBase
 {
     public AnimationCurve3D Curve = new();
     public Vector3 Start = new(0, -1f, -1), End = new(0, -1f, 1);
@@ -91,7 +91,7 @@ public class PointOfViewTrack : PointOfViewBase
         }
 
         UnityEditor.EditorGUI.BeginChangeCheck();
-        UnityEditor.Undo.RecordObject(this, nameof(PointOfViewTrack));
+        UnityEditor.Undo.RecordObject(this, nameof(PointOfViewOnRails));
 
         for (int i = 0; i < Curve.Count; i++)
         {
