@@ -102,7 +102,7 @@ public class JournalMenuActions : MenuContainer
 
             StepTitle.text = "";
             StepTitle.fontStyle = FontStyles.Normal;
-            Description.text = @$"
+            Description.text = @$"{character.BestiaryDescription}
 Amount Defeated: {stats.AmountDefeated}
 Location: {character.BestiaryLocationDescription}
 Drops:

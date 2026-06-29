@@ -15,7 +15,7 @@ public class DetailedInfoPanel : MonoBehaviour
     [BoxGroup("Base")]
     public required Image Profile;
     [BoxGroup("Base")]
-    public required TMP_Text Level, Name;
+    public required TMP_Text Level, Name, Description;
     [BoxGroup("Stats")]
     public required TMP_Text Health, Mana, Attack, MagicAttack, Defense, MagicDefense, Speed, Luck;
     [BoxGroup("Resistances")]
@@ -57,6 +57,7 @@ public class DetailedInfoPanel : MonoBehaviour
 
                 Level.text = profile.Level.ToString();
                 Name.text = profile.Name;
+                Description.text = profile.BestiaryDescription;
                 Health.text = $"{profile.CurrentHP}/{stats.HP}";
                 Mana.text = $"{profile.CurrentMP}/{stats.MP}";
                 Attack.text = stats.Attack.ToString();

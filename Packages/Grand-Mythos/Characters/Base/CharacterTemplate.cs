@@ -14,6 +14,10 @@ public class CharacterTemplate : IdentifiableScriptableObject
     [ValidateInput(nameof(ValidateName))]
     public string Name = "";
 
+    [Multiline]
+    public string BestiaryDescription = "";
+
+    [Multiline]
     public string BestiaryLocationDescription = "";
 
     public required Team Team;
