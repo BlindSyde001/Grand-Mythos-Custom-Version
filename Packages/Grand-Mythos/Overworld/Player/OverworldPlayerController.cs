@@ -53,6 +53,8 @@ public class OverworldPlayerController : ReloadableBehaviour
     Vector3 _lastPointOnNavMesh;
     int _activeTransport;
     SpeedModifier _speedModifier;
+    Vector3 _inputRightVector;
+    PointOfViewBase? _currentPov;
 
     private enum SpeedModifier
     {
@@ -202,7 +204,26 @@ public class OverworldPlayerController : ReloadableBehaviour
         movementVector.y = 0;
         movementVector.z = inputMovement.y;
 
-        Vector3 facingDirection = Vector3.Cross(camera.transform.right, Vector3.up).normalized;
+
+        if (CameraFocus.CurrentFocus?.Control is PointOfViewPicker povPicker)
+        {
+            if (movementVector.magnitude > 0.1f && povPicker.CurrentPointOfView != _currentPov)
+            {
+                // Keep same frame of reference while movement is held and we changed camera
+            }
+            else
+            {
+                _inputRightVector = camera.transform.right;
+                _currentPov = povPicker.CurrentPointOfView;
+            }
+        }
+        else
+        {
+            _currentPov = null;
+            _inputRightVector = camera.transform.right;
+        }
+
+        var facingDirection = Vector3.Cross(_inputRightVector, Vector3.up).normalized;
         var inputSpace = Quaternion.LookRotation(facingDirection);
         if (movementVector != default)
         {

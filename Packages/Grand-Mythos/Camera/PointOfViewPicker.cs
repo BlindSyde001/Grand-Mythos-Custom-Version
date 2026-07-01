@@ -4,15 +4,15 @@ using UnityEngine;
 [Serializable]
 public class PointOfViewPicker : ICameraControl
 {
-    private PointOfViewBase? currentPointOfView;
+    public PointOfViewBase? CurrentPointOfView;
     private (Vector3 fromP, Quaternion fromR, float time)? inTransition;
     
     public void Update(Camera camera, CameraFocus focus)
     {
         var pov = PointOfViewBase.FindClosest(focus.transform);
-        if (pov != currentPointOfView)
+        if (pov != CurrentPointOfView)
         {
-            currentPointOfView = pov;
+            CurrentPointOfView = pov;
             inTransition = (camera.transform.position, camera.transform.rotation, 0);
         }
 
