@@ -4,6 +4,6 @@ using Cysharp.Threading.Tasks;
 
 public interface IEncounterDefinition
 {
-    UniTask<BattleStateMachine> Start(CancellationToken cts);
+    UniTask Start(CancellationToken cts);
     bool IsValid([MaybeNullWhen(true)] out string error);
 }

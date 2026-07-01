@@ -34,8 +34,8 @@ public class BattleResolution : MonoBehaviour
 
     public required GameObject LosePanel;
 
-    public UnityEvent? OnWin;
-    public UnityEvent? OnLose;
+    public required Button Retry, Load, Quit;
+    public required GameObject LoadPanel;
 
     private void Update()
     {
@@ -51,27 +51,42 @@ public class BattleResolution : MonoBehaviour
         }
     }
 
-    // METHODS
-    public async UniTask ResolveBattle(bool victory, BattleStateMachine battleStateMachine, CancellationToken cancellation)
+    
+    public async UniTask VictoryResolution(BattleStateMachine battleStateMachine, CancellationToken cancellation)
     {
-        if (victory)
-            OnWin?.Invoke();
-        else
-            OnLose?.Invoke();
-        await VideoAnimator.PlayVideoClip(VideoAnimator.videoClips[victory ? 0 : 1], cancellation);
+        await VideoAnimator.PlayVideoClip(VideoAnimator.videoClips[0], cancellation);
 
-        if (victory)
-        {
-            await ActivatePanel(cancellation);
-            await DistributeRewards(battleStateMachine, cancellation);
-        }
-        else
+        await DistributeRewards(battleStateMachine, cancellation);
+    }
+    
+    public async UniTask<Result> DefeatResolution(CancellationToken cancellation)
+    {
+        await VideoAnimator.PlayVideoClip(VideoAnimator.videoClips[1], cancellation);
+
+        try
         {
             LosePanel.SetActive(true);
+
+            var retryTask = Retry.OnClickAsync(cancellation);
+            var loadTask = Load.OnClickAsync(cancellation);
+            var quitTask = Quit.OnClickAsync(cancellation);
+
+            return (Result)await UniTask.WhenAny(retryTask, loadTask, quitTask);
+        }
+        finally
+        {
+            LosePanel.SetActive(false);
         }
     }
 
-    private async UniTask ActivatePanel(CancellationToken cancellation)
+    public enum Result
+    {
+        Retry,
+        Load,
+        Quit
+    }
+
+    private async UniTask DistributeRewards(BattleStateMachine battle, CancellationToken cancellation)
     {
         RewardBackground.DOFillAmount(1, speed);                                   // Cool Anim Effect
         HeroGridBackground.DOFillAmount(1, speed);                                 // Cool Anim effect
@@ -87,10 +102,7 @@ public class BattleResolution : MonoBehaviour
         }
         ExperienceRewards.gameObject.SetActive(true);
         CurrencyRewards.gameObject.SetActive(true);
-    }
 
-    private async UniTask DistributeRewards(BattleStateMachine battle, CancellationToken cancellation)
-    {
         int sharedExp = 0;
         int creditsEarned = 0;
         foreach (var unit in battle.Units)

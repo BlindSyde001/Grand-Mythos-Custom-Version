@@ -29,6 +29,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
     [ReadOnly, SerializeField] List<CharacterTemplate> EnemyData = new();
     [ReadOnly, SerializeField] List<EnemyPrefabUIData> EnemyUIData = new();
 
+    public required GameObject MainUI;
     public required BattleTooltipUI TooltipUI;
     public required DetailedInfoPanel DetailedInfoPanel;
     public required InputActionReference DetailedInfoPanelOpen;
@@ -79,6 +80,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     void OnEnable()
     {
+        MainUI.SetActive(true);
         TooltipUI.OnHideTooltip?.Invoke();
         ResetNavigation();
         HideNavigation();
@@ -96,6 +98,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     void OnDisable()
     {
+        MainUI.SetActive(false);
         AttributeAdd.OnApplied -= DamageHandler;
     }
 

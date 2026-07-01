@@ -20,26 +20,23 @@ public abstract class BaseEncounter : IEncounterDefinition
     public BattlePointOfViewReference? PointOfView;
     public AnimationClip? IntroCamera, OutroCamera;
 
-    public UniTask<BattleStateMachine> Start(CancellationToken cts)
+    public async UniTask Start(CancellationToken cts)
     {
         if (startingEncounter)
             throw new Exception("Trying to start an encounter while another one is already running");
 
         startingEncounter = true;
-        var battleTransition = new GameObject(nameof(EncounterState));
-        Object.DontDestroyOnLoad(battleTransition);
-        var encounterState = battleTransition.AddComponent<EncounterState>();
-        return OverworldToBattleTransition(Scene, GameManager.Instance.PartyLineup, cts);
-    }
 
-    private async UniTask<BattleStateMachine> OverworldToBattleTransition(SceneReference scene, IEnumerable<CharacterTemplate> allies, CancellationToken cts)
-    {
+        var scene = Scene;
         var gameObjectsToReEnable = new List<GameObject>();
         var hostileControllers = new List<BattleCharacterController>();
         var alliesControllers = new List<BattleCharacterController>();
         var previouslyActiveScene = SceneManager.GetActiveScene();
+
         try
         {
+            var allies = GameManager.Instance.PartyLineup;
+
             var opponents = FormationToSpawn();
 
             var loadOperation = SceneManager.LoadSceneAsync(scene.Path, LoadSceneMode.Additive);
@@ -109,6 +106,7 @@ public abstract class BaseEncounter : IEncounterDefinition
             if (bsm == null)
                 throw new Exception($"Could not find {nameof(BattleStateMachine)} in scene '{scene.Path}'");
 
+            bsm.EncounterDefinition = this;
             if (IntroCamera != null)
                 bsm.Intro = IntroCamera;
             if (OutroCamera != null)
@@ -149,7 +147,6 @@ public abstract class BaseEncounter : IEncounterDefinition
             var unloader = new GameObject(nameof(BackToOverworldOnDestroy)).AddComponent<BackToOverworldOnDestroy>();
             unloader.ActiveScene = previouslyActiveScene;
             unloader.gameObjectsToReEnable = gameObjectsToReEnable;
-            return bsm;
         }
         catch(Exception e)
         {

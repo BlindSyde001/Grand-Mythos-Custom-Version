@@ -36,7 +36,7 @@ public class BattleStateMachine : MonoBehaviour
 
     private CancellationTokenSource _targetStateChanged = new();
     private TargetState _targetState, _currentState;
-    private bool _skipBattleEndScreen = true;
+    private bool _skipBattleEndScreen = false;
     private double _timestamp = 0;
     private TaskCompletionSource<bool> _finishedTcs = new();
 
@@ -45,6 +45,8 @@ public class BattleStateMachine : MonoBehaviour
     public Tactics? TacticsPlaying { get; private set; }
 
     public BattleCharacterController? UnitPlaying { get; private set; }
+
+    public IEncounterDefinition? EncounterDefinition { get; set; }
 
     // UPDATES
     private void Awake()
@@ -89,9 +91,17 @@ public class BattleStateMachine : MonoBehaviour
         foreach (var target in FindObjectsOfType<BattleCharacterController>())
             Include(target);
 
+        var initialUnitStates = Units.Select(unit => (unit, clone: Instantiate(unit.Profile))).ToArray();
+        var initialConsumables = InventoryManager.Instance.Enumerate<Consumable>().ToArray();
+        var initialBattleCameraInstance = BattleCamera.Instance;
+
+        UIOperation.enabled = true;
+        enabled = true;
+        initialBattleCameraInstance.enabled = true;
+        _currentState = TargetState.Running;
         if (Intro)
         {
-            BattleCamera.Instance.PlayUninterruptible(Intro);
+            initialBattleCameraInstance.PlayUninterruptible(Intro);
             await UniTask.Delay(TimeSpan.FromSeconds(Intro.length), cancellationToken: cancellation);
         }
 
@@ -234,22 +244,23 @@ public class BattleStateMachine : MonoBehaviour
                     unit.Profile.Modifiers.RemoveAt(i);
             }
         }
+        
+        foreach (var (unit, _) in initialUnitStates)
+        {
+            for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
+            {
+                var m = unit.Profile.Modifiers[i];
+                if (m.Modifier.Temporary && Settings.Current.ModifiersBehavior == ModifiersBehavior.RemovedAfterBattle)
+                    unit.Profile.Modifiers.RemoveAt(i);
+            }
+        }
+
+        enabled = false;
+        UIOperation.enabled = false;
 
         if (_skipBattleEndScreen == false)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellation);
-        
-            foreach (var unit in PartyLineup)
-            {
-                for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
-                {
-                    var m = unit.Profile.Modifiers[i];
-                    if (m.Modifier.Temporary && Settings.Current.ModifiersBehavior == ModifiersBehavior.RemovedAfterBattle)
-                        unit.Profile.Modifiers.RemoveAt(i);
-                }
-            }
-                
-            enabled = false;
 
             if (Outro)
             {
@@ -258,7 +269,52 @@ public class BattleStateMachine : MonoBehaviour
                 BattleCamera.Instance.enabled = false;
             }
 
-            await BattleResolution.ResolveBattle(win, this, cancellation);
+            if (win)
+            {
+                await BattleResolution.VictoryResolution(this, cancellation);
+            }
+            else
+            {
+                var result = await BattleResolution.DefeatResolution(cancellation);
+                switch (result)
+                {
+                    case BattleResolution.Result.Retry:
+                        foreach (var tuple in initialUnitStates)
+                        {
+                            var profileCopy = Instantiate(tuple.clone);
+                            var profileSource = tuple.unit.Profile;
+                            profileSource.CurrentHP = profileCopy.CurrentHP;
+                            profileSource.CurrentMP = profileCopy.CurrentMP;
+                            profileSource.CurrentFlow = profileCopy.CurrentFlow;
+                            profileSource.InFlowState = profileCopy.InFlowState;
+                            profileSource.Inventory = profileCopy.Inventory;
+                        }
+
+                        foreach (var consumable in InventoryManager.Instance.Enumerate<Consumable>().ToArray())
+                            InventoryManager.Instance.Remove(consumable.item, consumable.count);
+                        
+                        foreach (var consumable in initialConsumables)
+                            InventoryManager.Instance.AddToInventory(consumable.item, consumable.count);
+
+                        await SceneManager.UnloadSceneAsync(gameObject.scene)!.ToUniTask(cancellationToken: CancellationToken.None);
+
+                        if (EncounterDefinition is null)
+                        {
+                            Debug.LogError("Cannot retry, Encounter definition is null");
+                            break;
+                        }
+
+                        await EncounterDefinition.Start(cts: CancellationToken.None);
+                        return;
+                    case BattleResolution.Result.Load:
+                        BattleResolution.LoadPanel.SetActive(true);
+                        return;
+                    case BattleResolution.Result.Quit:
+                        Application.Quit();
+                        return;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }
         }
 
         foreach (var hero in PartyLineup)
@@ -268,8 +324,9 @@ public class BattleStateMachine : MonoBehaviour
         {
             for (int i = 0; i < SceneManager.sceneCount; i++)
             {
-                if (SceneManager.GetSceneAt(i) != gameObject.scene)
-                    SceneManager.SetActiveScene(SceneManager.GetSceneAt(i));
+                var otherScene = SceneManager.GetSceneAt(i);
+                if (otherScene != gameObject.scene)
+                    SceneManager.SetActiveScene(otherScene);
             }
         }
 
