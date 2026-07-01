@@ -134,7 +134,11 @@ public class BattleStateMachine : MonoBehaviour
                 if (Queue.Values[i].Profile.CurrentHP == 0)
                     continue;
 
-                _timestamp = Queue.Keys[i];
+                if (Settings.Current.ATBMode == ATBMode.Instant)
+                    _timestamp = Queue.Keys[i];
+                else if (_timestamp < Queue.Keys[i])
+                    break;
+
                 unit = Queue.Values[i];
                 for (int j = 0; j < i; j++)
                     Queue.RemoveAt(0); // Remove all previous units
@@ -143,6 +147,8 @@ public class BattleStateMachine : MonoBehaviour
             if (unit == null)
             {
                 await UniTask.NextFrame(cancellation, cancelImmediately: true);
+                if (Settings.Current.ATBMode != ATBMode.Instant)
+                    _timestamp += Time.deltaTime * Settings.Current.BattleSpeed;
                 continue;
             }
 
@@ -202,6 +208,7 @@ public class BattleStateMachine : MonoBehaviour
             }
             else
             {
+                var startTS = Time.timeAsDouble;
                 try
                 {
                     TacticsPlaying = chosenTactic;
@@ -217,6 +224,9 @@ public class BattleStateMachine : MonoBehaviour
                     TacticsPlaying = null;
                     UnitPlaying = unit;
                 }
+
+                if (Settings.Current.ATBMode == ATBMode.Gradual)
+                    _timestamp += Time.timeAsDouble - startTS;
 
                 delay = chosenTactic.Action.DelayToNextTurn;
             }
@@ -626,6 +636,15 @@ public class BattleStateMachine : MonoBehaviour
 public partial class Settings
 {
     public ModifiersBehavior ModifiersBehavior = ModifiersBehavior.RemovedAfterBattle;
+    public ATBMode ATBMode;
+    public float BattleSpeed = 1f;
+}
+
+public enum ATBMode
+{
+    Gradual,
+    GradualPauseOnSkills,
+    Instant,
 }
 
 public enum ModifiersBehavior
