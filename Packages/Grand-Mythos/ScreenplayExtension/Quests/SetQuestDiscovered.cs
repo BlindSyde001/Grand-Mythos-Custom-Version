@@ -18,13 +18,13 @@ namespace Quests
             
         }
 
-        protected override UniTask LinearExecution(IEventContext context, CancellationToken cancellation)
+        protected override UniTask LinearExecution(IEventContext context, Cancellation cancellation)
         {
             Quest.Discovered = Discovered;
             return UniTask.CompletedTask;
         }
 
-        public override UniTask Persistence(IEventContext context, CancellationToken cancellationToken)
+        public override UniTask Persistence(IEventContext context, Cancellation cancellationToken)
         {
             return LinearExecution(context, cancellationToken);
         }
@@ -34,7 +34,7 @@ namespace Quests
             var currentValue = Quest.Discovered;
             previewer.RegisterRollback(() => Quest.Discovered = currentValue);
             if (fastForwarded)
-                Persistence(previewer, CancellationToken.None);
+                Persistence(previewer, Cancellation.None);
             else
                 previewer.PlaySafeAction(this);
         }

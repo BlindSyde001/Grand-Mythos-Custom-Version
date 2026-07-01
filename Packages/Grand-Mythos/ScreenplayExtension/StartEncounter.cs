@@ -29,14 +29,14 @@ public class StartEncounter : AbstractScreenplayNode, IExecutable
         
     }
 
-    public async UniTask<IExecutable?> Execute(IEventContext context, CancellationToken cancellation)
+    public async UniTask<IExecutable?> Execute(IEventContext context, Cancellation cancellation)
     {
         await Definition.Start(cancellation);
 
         return DuringEncounter;
     }
 
-    public UniTask Persistence(IEventContext context, CancellationToken cancellation)
+    public UniTask Persistence(IEventContext context, Cancellation cancellation)
     {
         return UniTask.CompletedTask;
     }

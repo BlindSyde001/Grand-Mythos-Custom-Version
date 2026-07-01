@@ -23,11 +23,11 @@ public class AwaitEndOfEncounter : AbstractScreenplayNode, IExecutable
             yield return Defeat;
     }
 
-    public async UniTask<IExecutable?> Execute(IEventContext context, CancellationToken cancellation)
+    public async UniTask<IExecutable?> Execute(IEventContext context, Cancellation cancellation)
     {
         if (BattleStateMachine.TryGetInstance(out var battle))
         {
-            var result = await battle.Finished.AsUniTask().WithInterruptingCancellation(cancellation);
+            var result = await battle.Finished.AsUniTask().AttachExternalCancellation(cancellation.GetStandardToken());
             return result ? Victory : Defeat;
         }
 
@@ -35,7 +35,7 @@ public class AwaitEndOfEncounter : AbstractScreenplayNode, IExecutable
         return Victory;
     }
 
-    public UniTask Persistence(IEventContext context, CancellationToken cancellation) => UniTask.CompletedTask;
+    public UniTask Persistence(IEventContext context, Cancellation cancellation) => UniTask.CompletedTask;
 
     public override void CollectReferences(ReferenceCollector references){}
 

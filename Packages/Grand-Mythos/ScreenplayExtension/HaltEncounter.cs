@@ -8,7 +8,7 @@ using UnityEngine;
 [Serializable]
 public class HaltEncounter : ExecutableLinear
 {
-    protected override async UniTask LinearExecution(IEventContext context, CancellationToken cancellation)
+    protected override async UniTask LinearExecution(IEventContext context, Cancellation cancellation)
     {
         if (BattleStateMachine.TryGetInstance(out var battle))
         {
@@ -21,7 +21,7 @@ public class HaltEncounter : ExecutableLinear
 
     }
 
-    public override UniTask Persistence(IEventContext context, CancellationToken cancellationToken) => UniTask.CompletedTask;
+    public override UniTask Persistence(IEventContext context, Cancellation cancellationToken) => UniTask.CompletedTask;
 
     public override void SetupPreview(IPreviewer previewer, bool fastForwarded) { }
 

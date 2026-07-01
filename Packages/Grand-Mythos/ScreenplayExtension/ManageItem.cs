@@ -23,7 +23,7 @@ public class ManageItem : ExecutableLinear
         
     }
 
-    protected override UniTask LinearExecution(IEventContext context, CancellationToken cancellation)
+    protected override UniTask LinearExecution(IEventContext context, Cancellation cancellation)
     {
         switch (Op)
         {
@@ -40,7 +40,7 @@ public class ManageItem : ExecutableLinear
         return UniTask.CompletedTask;
     }
 
-    public override UniTask Persistence(IEventContext context, CancellationToken cancellationToken) => UniTask.CompletedTask;
+    public override UniTask Persistence(IEventContext context, Cancellation cancellationToken) => UniTask.CompletedTask;
 
     public override void SetupPreview(IPreviewer previewer, bool fastForwarded)
     {

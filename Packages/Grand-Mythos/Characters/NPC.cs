@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using Screenplay;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.AI;
@@ -36,13 +37,13 @@ namespace Characters
             }
         }
 
-        public async UniTask MoveTo(Vector3 pos, Quaternion rot, CancellationToken cts)
+        public async UniTask MoveTo(Vector3 pos, Quaternion rot, Cancellation cts)
         {
             var newTCS = new UniTaskCompletionSource();
 
             for (UniTaskCompletionSource? ongoing; (ongoing = Interlocked.CompareExchange(ref _moveTasks, newTCS, null)) != null;)
             {
-                await ongoing.Task.WithInterruptingCancellation(cts);
+                await ongoing.Task.AttachExternalCancellation(cts.GetStandardToken());
             }
 
             try
@@ -50,13 +51,13 @@ namespace Characters
                 Agent.SetDestination(pos);
                 while (Agent.pathPending)
                 {
-                    await UniTask.NextFrame(cts, true);
+                    await Uni.NextFrame(cts, true);
                     cts.ThrowIfCancellationRequested();
                 }
 
                 while (Agent.hasPath)
                 {
-                    await UniTask.NextFrame(cts, true);
+                    await Uni.NextFrame(cts, true);
                     cts.ThrowIfCancellationRequested();
                 }
 
@@ -64,7 +65,7 @@ namespace Characters
                 for (float t = 0; t < 1f; t += Time.deltaTime * RotationSpeed)
                 {
                     transform.rotation = Quaternion.Slerp(initialRotation, rot, Mathf.SmoothStep(0, 1, t));
-                    await UniTask.NextFrame(cts, true);
+                    await Uni.NextFrame(cts, true);
                     cts.ThrowIfCancellationRequested();
                 }
             }

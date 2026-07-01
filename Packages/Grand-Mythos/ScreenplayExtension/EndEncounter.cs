@@ -13,11 +13,11 @@ public class EndEncounter : ExecutableLinear
     
     public override void CollectReferences(ReferenceCollector references) { }
 
-    protected override async UniTask LinearExecution(IEventContext context, CancellationToken cancellation)
+    protected override async UniTask LinearExecution(IEventContext context, Cancellation cancellation)
     {
         if (BattleStateMachine.TryGetInstance(out var battle))
         {
-            await battle.ForceEnd(SkipEndScreen).WithInterruptingCancellation(cancellation);
+            await battle.ForceEnd(SkipEndScreen).AttachExternalCancellation(cancellation.GetStandardToken());
         }
         else
         {
@@ -25,7 +25,7 @@ public class EndEncounter : ExecutableLinear
         }
     }
 
-    public override UniTask Persistence(IEventContext context, CancellationToken cancellationToken)
+    public override UniTask Persistence(IEventContext context, Cancellation cancellationToken)
     {
         return UniTask.CompletedTask;
     }

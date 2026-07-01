@@ -13,12 +13,13 @@ namespace Quests
         public Unit Filter = Unit.Any;
         
         public override void CollectReferences(ReferenceCollector references) { }
-        public override async UniTask Setup(IPreconditionCollector tracker, CancellationToken triggerCancellation)
+
+        public override async UniTask Setup(IPreconditionCollector tracker, Cancellation triggerCancellation)
         {
             while (triggerCancellation.IsCancellationRequested == false)
             {
                 tracker.SetUnlockedState(Evaluate());
-                await UniTask.NextFrame(triggerCancellation, cancelImmediately: true);
+                await Uni.NextFrame(triggerCancellation, cancelImmediately: true);
             }
         }
 

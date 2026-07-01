@@ -14,7 +14,7 @@ public class Interaction : Precondition
 
     public override void CollectReferences(ReferenceCollector references) => references.Collect(Target);
 
-    public override async UniTask Setup(IPreconditionCollector tracker, CancellationToken triggerCancellation)
+    public override async UniTask Setup(IPreconditionCollector tracker, Cancellation triggerCancellation)
     {
         while (triggerCancellation.IsCancellationRequested == false)
         {
@@ -26,9 +26,9 @@ public class Interaction : Precondition
                 output.Label = Label;
                 while (output && triggerCancellation.IsCancellationRequested == false)
                 {
-                    await UniTask.NextFrame(triggerCancellation, cancelImmediately: true); // This isn't great, but we must keep it open for at least one frame for all the other latches to open ...
+                    await Uni.NextFrame(triggerCancellation, cancelImmediately: true); // This isn't great, but we must keep it open for at least one frame for all the other latches to open ...
                     tracker.SetUnlockedState(false);
-                    await output.ManualResetEvent.AwaitOpen.WithInterruptingCancellation(triggerCancellation);
+                    await output.ResetEvent.NextSignal(triggerCancellation);
                     tracker.SetUnlockedState(true);
                 }
             }
@@ -51,20 +51,13 @@ public class InteractionComp : MonoBehaviour
 
     private static List<InteractionComp> s_instances = new();
 
-    public required SafeManualResetEvent ManualResetEvent = new();
+    public required CancelableAutoResetEvent<bool> ResetEvent = new();
     public string Label = "?";
 
     private void OnEnable() => s_instances.Add(this);
     private void OnDisable() => s_instances.Remove(this);
-    private void OnDestroy()
-    {
-        ManualResetEvent.TrySetCanceled();
-    }
+    private void OnDestroy() => ResetEvent.Close();
 
     [Button("Force Trigger")]
-    public void Trigger()
-    {
-        ManualResetEvent.Open();
-        ManualResetEvent.Close();
-    }
+    public void Trigger() => ResetEvent.Signal(false);
 }

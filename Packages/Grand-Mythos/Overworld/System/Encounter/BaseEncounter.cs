@@ -20,7 +20,7 @@ public abstract class BaseEncounter : IEncounterDefinition
     public BattlePointOfViewReference? PointOfView;
     public AnimationClip? IntroCamera, OutroCamera;
 
-    public async UniTask Start(CancellationToken cts)
+    public async UniTask Start(Cancellation cts)
     {
         if (startingEncounter)
             throw new Exception("Trying to start an encounter while another one is already running");
@@ -64,7 +64,7 @@ public abstract class BaseEncounter : IEncounterDefinition
             // "If you set allowSceneActivation to false, progress is halted at 0.9 until it is set to true"
             // Do note that this will fail if you specify '0.9' instead of '0.9f'
             while (loadOperation.progress < 0.9f)
-                await UniTask.NextFrame(cancellationToken:cts, cancelImmediately: true);
+                await Uni.NextFrame(cts, cancelImmediately: true);
 
             for (int i = 0; i < opponents.Length; i++)
             {
@@ -96,7 +96,7 @@ public abstract class BaseEncounter : IEncounterDefinition
             }
 
             loadOperation.allowSceneActivation = true;
-            await loadOperation.ToUniTask(cancellationToken: cts);
+            await loadOperation.ToUniTask(cancellationToken: cts.GetStandardToken());
 
             var runtimeScene = SceneManager.GetSceneByPath(scene.Path);
 

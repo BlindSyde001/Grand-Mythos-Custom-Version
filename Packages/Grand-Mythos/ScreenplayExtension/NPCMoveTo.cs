@@ -19,13 +19,13 @@ namespace Quests
         
         public override void CollectReferences(ReferenceCollector references) => references.Collect(NPC);
 
-        protected override async UniTask LinearExecution(IEventContext context, CancellationToken cancellation)
+        protected override async UniTask LinearExecution(IEventContext context, Cancellation cancellation)
         {
             var npc = await NPC.GetAsync(cancellation);
             await npc.MoveTo(Destination, FinalRotation, cancellation);
         }
 
-        public override async UniTask Persistence(IEventContext context, CancellationToken cancellationToken)
+        public override async UniTask Persistence(IEventContext context, Cancellation cancellationToken)
         {
             var npc = await NPC.GetAsync(cancellationToken);
             npc.transform.position = Destination;

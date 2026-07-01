@@ -8,6 +8,7 @@ using Characters.StatusHandler;
 using UnityEngine;
 using Conditions;
 using Cysharp.Threading.Tasks;
+using Screenplay;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -304,7 +305,7 @@ public class BattleStateMachine : MonoBehaviour
                             break;
                         }
 
-                        await EncounterDefinition.Start(cts: CancellationToken.None);
+                        await EncounterDefinition.Start(cts: Cancellation.None);
                         return;
                     case BattleResolution.Result.Load:
                         BattleResolution.LoadPanel.SetActive(true);
@@ -473,7 +474,7 @@ public class BattleStateMachine : MonoBehaviour
         return Finished.AsUniTask();
     }
 
-    public async UniTask Pause(CancellationToken cancellationToken)
+    public async UniTask Pause(Cancellation cancellationToken)
     {
         if (_targetState == TargetState.Running)
         {
@@ -481,10 +482,10 @@ public class BattleStateMachine : MonoBehaviour
             _targetStateChanged.Cancel();
         }
         while (_currentState == TargetState.Running)
-            await UniTask.NextFrame(cancellationToken, true);
+            await Uni.NextFrame(cancellationToken, true);
     }
 
-    public async UniTask Unpause(CancellationToken cancellationToken)
+    public async UniTask Unpause(Cancellation cancellationToken)
     {
         if (_targetState == TargetState.Paused)
         {
@@ -493,7 +494,7 @@ public class BattleStateMachine : MonoBehaviour
         }
 
         while (_currentState == TargetState.Paused)
-            await UniTask.NextFrame(cancellationToken, true);
+            await Uni.NextFrame(cancellationToken, true);
     }
 
     public async UniTask WaitForSkillPlayed(Skill skill, CancellationToken cancellationToken)
