@@ -8,21 +8,33 @@ public class PlayerPuppet : MonoBehaviour
     
     private void OnEnable()
     {
+        if (BaseEncounter.SetActiveAsPartOfEncounter)
+            return;
+
         tracked = OverworldPlayerController.Instances.ToArray();
         foreach (var controller in tracked)
         {
-            transform.position = controller.gameObject.transform.position;
-            transform.rotation = controller.gameObject.transform.rotation;
+            transform.position = controller.transform.position;
+            transform.rotation = controller.transform.rotation;
             controller.gameObject.SetActive(false);
         }
     }
 
     private void OnDisable()
     {
+        if (BaseEncounter.SetActiveAsPartOfEncounter)
+            return;
+
+        if (gameObject.scene.isLoaded == false)
+            return; // Do not trigger when exiting out of play mode
+
         foreach (var controller in tracked)
         {
-            controller.gameObject.transform.position = transform.position;
-            controller.gameObject.transform.rotation = transform.rotation;
+            if (controller == null)
+                continue;
+
+            controller.transform.position = transform.position;
+            controller.transform.rotation = transform.rotation;
             controller.gameObject.SetActive(true);
         }
     }

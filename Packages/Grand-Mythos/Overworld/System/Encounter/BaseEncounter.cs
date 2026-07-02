@@ -14,7 +14,9 @@ using Random = Unity.Mathematics.Random;
 [Serializable]
 public abstract class BaseEncounter : IEncounterDefinition
 {
-    static bool startingEncounter;
+    public static bool SetActiveAsPartOfEncounter = false;
+
+    private static bool _startingEncounter;
 
     public SceneReference Scene;
     public BattlePointOfViewReference? PointOfView;
@@ -22,10 +24,10 @@ public abstract class BaseEncounter : IEncounterDefinition
 
     public async UniTask Start(Cancellation cts)
     {
-        if (startingEncounter)
+        if (_startingEncounter)
             throw new Exception("Trying to start an encounter while another one is already running");
 
-        startingEncounter = true;
+        _startingEncounter = true;
 
         var scene = Scene;
         var gameObjectsToReEnable = new List<GameObject>();
@@ -47,18 +49,26 @@ public abstract class BaseEncounter : IEncounterDefinition
 
 #warning Both game manager and event switch scene should be rewritten, right now it's a bit too constrictive
 
-            for (int i = 0; i < SceneManager.sceneCount; i++)
+            try
             {
-                if (SceneManager.GetSceneAt(i).isLoaded == false)
-                    continue;
-
-                foreach (var gameObject in SceneManager.GetSceneAt(i).GetRootGameObjects())
+                SetActiveAsPartOfEncounter = true;
+                for (int i = 0; i < SceneManager.sceneCount; i++)
                 {
-                    if (gameObject.activeSelf == false)
+                    if (SceneManager.GetSceneAt(i).isLoaded == false)
                         continue;
-                    gameObject.SetActive(false);
-                    gameObjectsToReEnable.Add(gameObject);
+
+                    foreach (var gameObject in SceneManager.GetSceneAt(i).GetRootGameObjects())
+                    {
+                        if (gameObject.activeSelf == false)
+                            continue;
+                        gameObject.SetActive(false);
+                        gameObjectsToReEnable.Add(gameObject);
+                    }
                 }
+            }
+            finally
+            {
+                SetActiveAsPartOfEncounter = false;
             }
 
             // "If you set allowSceneActivation to false, progress is halted at 0.9 until it is set to true"
@@ -174,7 +184,7 @@ public abstract class BaseEncounter : IEncounterDefinition
         }
         finally
         {
-            startingEncounter = false;
+            _startingEncounter = false;
         }
     }
 
@@ -203,10 +213,18 @@ public abstract class BaseEncounter : IEncounterDefinition
             if (DomainReloadHelper.LastState == DomainReloadHelper.LastPlayModeState.ExitingPlayMode)
                 return;
 
-            foreach (var gameObject in gameObjectsToReEnable)
+            try
             {
-                if (gameObject != null)
-                    gameObject.SetActive(true);
+                SetActiveAsPartOfEncounter = true;
+                foreach (var gameObject in gameObjectsToReEnable)
+                {
+                    if (gameObject != null)
+                        gameObject.SetActive(true);
+                }
+            }
+            finally
+            {
+                SetActiveAsPartOfEncounter = false;
             }
 
             if (ActiveScene.isLoaded)
