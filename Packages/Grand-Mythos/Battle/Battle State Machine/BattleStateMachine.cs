@@ -89,262 +89,271 @@ public class BattleStateMachine : MonoBehaviour
 
     private async UniTask Run(CancellationToken cancellation)
     {
-        foreach (var target in FindObjectsOfType<BattleCharacterController>())
-            Include(target);
-
-        var initialUnitStates = Units.Select(unit => (unit, clone: Instantiate(unit.Profile))).ToArray();
-        var initialConsumables = InventoryManager.Instance.Enumerate<Consumable>().ToArray();
-        var initialBattleCameraInstance = BattleCamera.Instance;
-
-        UIOperation.enabled = true;
-        enabled = true;
-        initialBattleCameraInstance.enabled = true;
-        _currentState = TargetState.Running;
-        if (Intro)
+        try
         {
-            initialBattleCameraInstance.PlayUninterruptible(Intro);
-            await UniTask.Delay(TimeSpan.FromSeconds(Intro.length), cancellationToken: cancellation);
-        }
+            Time.timeScale = Settings.Current.BattleSpeedMultiplier;
 
-        // Sort them in the order they are setup in the party
-        PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
+            foreach (var target in FindObjectsOfType<BattleCharacterController>())
+                Include(target);
 
-        _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
-        
-        bool win;
-        while (IsBattleFinished(out win) == false && _targetState != TargetState.End)
-        {
-            cancellation.ThrowIfCancellationRequested();
+            var initialUnitStates = Units.Select(unit => (unit, clone: Instantiate(unit.Profile))).ToArray();
+            var initialConsumables = InventoryManager.Instance.Enumerate<Consumable>().ToArray();
+            var initialBattleCameraInstance = BattleCamera.Instance;
 
-            if (_targetState != _currentState)
+            UIOperation.enabled = true;
+            enabled = true;
+            initialBattleCameraInstance.enabled = true;
+            _currentState = TargetState.Running;
+            if (Intro)
             {
-                _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
-                _currentState = _targetState;
+                initialBattleCameraInstance.PlayUninterruptible(Intro);
+                await UniTask.Delay(TimeSpan.FromSeconds(Intro.length), cancellationToken: cancellation);
             }
 
-            if (_currentState == TargetState.Paused)
+            // Sort them in the order they are setup in the party
+            PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
+
+            _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+
+            bool win;
+            while (IsBattleFinished(out win) == false && _targetState != TargetState.End)
             {
-                await UniTask.NextFrame(cancellation, cancelImmediately: true);
-                continue;
-            }
+                cancellation.ThrowIfCancellationRequested();
 
-            BattleCharacterController? unit = null;
-            for (int i = 0; i < Queue.Count; i++)
-            {
-                if (Queue.Values[i].Profile.CurrentHP == 0)
-                    continue;
-
-                if (Settings.Current.ATBMode == ATBMode.Instant)
-                    _timestamp = Queue.Keys[i];
-                else if (_timestamp < Queue.Keys[i])
-                    break;
-
-                unit = Queue.Values[i];
-                for (int j = 0; j < i; j++)
-                    Queue.RemoveAt(0); // Remove all previous units
-            }
-
-            if (unit == null)
-            {
-                await UniTask.NextFrame(cancellation, cancelImmediately: true);
-                if (Settings.Current.ATBMode != ATBMode.Instant)
-                    _timestamp += Time.deltaTime * Settings.Current.BattleSpeed;
-                continue;
-            }
-
-            Tactics? chosenTactic;
-            TargetCollection selectionAsTargetCollection;
-            if (unit.Profile.Team == PlayerTeam)
-            {
-                using (Units.TemporaryCopy(out var unitsCopy))
+                if (_targetState != _currentState)
                 {
-                    if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is { Modifier: not null } taunt)
-                        unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
+                    _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+                    _currentState = _targetState;
+                }
 
+                if (_currentState == TargetState.Paused)
+                {
+                    await UniTask.NextFrame(cancellation, cancelImmediately: true);
+                    continue;
+                }
+
+                BattleCharacterController? unit = null;
+                for (int i = 0; i < Queue.Count; i++)
+                {
+                    if (Queue.Values[i].Profile.CurrentHP == 0)
+                        continue;
+
+                    if (Settings.Current.ATBMode == ATBMode.Instant)
+                        _timestamp = Queue.Keys[i];
+                    else if (_timestamp < Queue.Keys[i])
+                        break;
+
+                    unit = Queue.Values[i];
+                    for (int j = 0; j < i; j++)
+                        Queue.RemoveAt(0); // Remove all previous units
+                }
+
+                if (unit == null)
+                {
+                    await UniTask.NextFrame(cancellation, cancelImmediately: true);
+                    if (Settings.Current.ATBMode != ATBMode.Instant)
+                        _timestamp += Time.deltaTime * Settings.Current.ATBRateMultiplier;
+                    continue;
+                }
+
+                Tactics? chosenTactic;
+                TargetCollection selectionAsTargetCollection;
+                if (unit.Profile.Team == PlayerTeam)
+                {
+                    using (Units.TemporaryCopy(out var unitsCopy))
+                    {
+                        if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is { Modifier: not null } taunt)
+                            unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
+
+                        try
+                        {
+                            chosenTactic = await UIOperation.RunUIFor(unit, unitsCopy, _targetStateChanged.Token);
+                        }
+                        catch (Exception e) when (e is OperationCanceledException or TaskCanceledException) // May be interrupted as a result of a state change
+                        {
+                            _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+                            continue;
+                        }
+
+                        var allUnits = new TargetCollection(unitsCopy.Select(x => x.Profile).ToList());
+                        if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out selectionAsTargetCollection) == false)
+                            chosenTactic = null;
+                    }
+                }
+                else
+                {
+                    chosenTactic = null;
+                    selectionAsTargetCollection = default;
+                    using (Units.TemporaryCopy(out var unitsCopy))
+                    {
+                        if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is { Modifier: not null } taunt)
+                            unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
+
+                        foreach (var tactic in unit.Profile.Tactics)
+                        {
+                            var allUnits = new TargetCollection(unitsCopy.Select(x => x.Profile).ToList());
+                            if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Action, allUnits, unit.Context, out selectionAsTargetCollection))
+                            {
+                                chosenTactic = tactic;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                unit.Context.CombatTimestamp = _timestamp;
+                unit.Context.Round++;
+
+                IAction.Delay delay;
+                if (chosenTactic == null)
+                {
+                    Debug.LogError($"{unit} did not find any tactics to run");
+                    delay = IAction.Delay.Base;
+                }
+                else
+                {
+                    var startTS = Time.timeAsDouble;
                     try
                     {
-                        chosenTactic = await UIOperation.RunUIFor(unit, unitsCopy, _targetStateChanged.Token);
+                        TacticsPlaying = chosenTactic;
+                        UnitPlaying = unit;
+                        await ProcessUnit(unit, chosenTactic, selectionAsTargetCollection.Select(x => Units.First(y => x == y.Profile)).ToList(), cancellation);
                     }
-                    catch (Exception e) when (e is OperationCanceledException or TaskCanceledException) // May be interrupted as a result of a state change
+                    catch (Exception e) when (e is not OperationCanceledException)
                     {
-                        _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
-                        continue;
+                        Debug.LogException(e);
                     }
-
-                    var allUnits = new TargetCollection(unitsCopy.Select(x => x.Profile).ToList());
-                    if (chosenTactic.Condition.CanExecute(chosenTactic.Action, allUnits, unit.Context, out selectionAsTargetCollection) == false)
-                        chosenTactic = null;
-                }
-            }
-            else
-            {
-                chosenTactic = null;
-                selectionAsTargetCollection = default;
-                using (Units.TemporaryCopy(out var unitsCopy))
-                {
-                    if (unit.Profile.Modifiers.FirstOrDefault(x => x.Modifier is TauntModifier) is { Modifier: not null } taunt)
-                        unitsCopy.RemoveAll(x => x.Profile != taunt.Source);
-
-                    foreach (var tactic in unit.Profile.Tactics)
+                    finally
                     {
-                        var allUnits = new TargetCollection(unitsCopy.Select(x => x.Profile).ToList());
-                        if (tactic != null && tactic.IsOn && tactic.Condition.CanExecute(tactic.Action, allUnits, unit.Context, out selectionAsTargetCollection))
-                        {
-                            chosenTactic = tactic;
-                            break;
-                        }
+                        TacticsPlaying = null;
+                        UnitPlaying = unit;
+                    }
+
+                    if (Settings.Current.ATBMode == ATBMode.Gradual)
+                        _timestamp += Time.timeAsDouble - startTS;
+
+                    delay = chosenTactic.Action.DelayToNextTurn;
+                }
+
+                var delayDuration = DelayScalar(delay, unit.Profile.ActionRechargeSpeed);
+
+                var unitIndex = Queue.Values.IndexOf(unit);
+                if (unitIndex != -1)
+                    Queue.RemoveAt(unitIndex);
+
+                Queue.Add(_timestamp + delayDuration, unit);
+                if (unit.Profile.InFlowState)
+                {
+                    unit.Profile.CurrentFlow -= delayDuration * SingletonManager.Instance.Formulas.FlowDepletionRate;
+                    if (unit.Profile.CurrentFlow <= 0f)
+                    {
+                        unit.Profile.InFlowState = false;
+                        unit.Profile.CurrentFlow = 0f;
+                    }
+                }
+
+                for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
+                {
+                    var m = unit.Profile.Modifiers[i];
+                    if (m.Modifier.IsStillValid(m, unit.Context) == false)
+                        unit.Profile.Modifiers.RemoveAt(i);
+                }
+            }
+
+            foreach (var (unit, _) in initialUnitStates)
+            {
+                for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
+                {
+                    var m = unit.Profile.Modifiers[i];
+                    if (m.Modifier.Temporary && Settings.Current.ModifiersBehavior == ModifiersBehavior.RemovedAfterBattle)
+                        unit.Profile.Modifiers.RemoveAt(i);
+                }
+            }
+
+            enabled = false;
+            UIOperation.enabled = false;
+
+            if (_skipBattleEndScreen == false)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellation);
+
+                if (Outro)
+                {
+                    BattleCamera.Instance.PlayUninterruptible(Outro, false);
+                    await UniTask.Delay(TimeSpan.FromSeconds(Outro.length), cancellationToken: cancellation);
+                    BattleCamera.Instance.enabled = false;
+                }
+
+                if (win)
+                {
+                    await BattleResolution.VictoryResolution(this, cancellation);
+                }
+                else
+                {
+                    var result = await BattleResolution.DefeatResolution(cancellation);
+                    switch (result)
+                    {
+                        case BattleResolution.Result.Retry:
+                            foreach (var tuple in initialUnitStates)
+                            {
+                                var profileCopy = Instantiate(tuple.clone);
+                                var profileSource = tuple.unit.Profile;
+                                profileSource.CurrentHP = profileCopy.CurrentHP;
+                                profileSource.CurrentMP = profileCopy.CurrentMP;
+                                profileSource.CurrentFlow = profileCopy.CurrentFlow;
+                                profileSource.InFlowState = profileCopy.InFlowState;
+                                profileSource.Inventory = profileCopy.Inventory;
+                            }
+
+                            foreach (var consumable in InventoryManager.Instance.Enumerate<Consumable>().ToArray())
+                                InventoryManager.Instance.Remove(consumable.item, consumable.count);
+
+                            foreach (var consumable in initialConsumables)
+                                InventoryManager.Instance.AddToInventory(consumable.item, consumable.count);
+
+                            await SceneManager.UnloadSceneAsync(gameObject.scene)!.ToUniTask(cancellationToken: CancellationToken.None);
+
+                            if (EncounterDefinition is null)
+                            {
+                                Debug.LogError("Cannot retry, Encounter definition is null");
+                                break;
+                            }
+
+                            await EncounterDefinition.Start(cts: Cancellation.None);
+                            return;
+                        case BattleResolution.Result.Load:
+                            BattleResolution.LoadPanel.SetActive(true);
+                            return;
+                        case BattleResolution.Result.Quit:
+                            Application.Quit();
+                            return;
+                        default: throw new ArgumentOutOfRangeException();
                     }
                 }
             }
 
-            unit.Context.CombatTimestamp = _timestamp;
-            unit.Context.Round++;
+            foreach (var hero in PartyLineup)
+                hero.Profile.CurrentHP = hero.Profile.CurrentHP == 0 ? 1 : hero.Profile.CurrentHP;
 
-            IAction.Delay delay;
-            if (chosenTactic == null)
+            if (gameObject.scene == SceneManager.GetActiveScene())
             {
-                Debug.LogError($"{unit} did not find any tactics to run");
-                delay = IAction.Delay.Base;
-            }
-            else
-            {
-                var startTS = Time.timeAsDouble;
-                try
+                for (int i = 0; i < SceneManager.sceneCount; i++)
                 {
-                    TacticsPlaying = chosenTactic;
-                    UnitPlaying = unit;
-                    await ProcessUnit(unit, chosenTactic, selectionAsTargetCollection.Select(x => Units.First(y => x == y.Profile)).ToList(), cancellation);
-                }
-                catch (Exception e) when (e is not OperationCanceledException)
-                {
-                    Debug.LogException(e);
-                }
-                finally
-                {
-                    TacticsPlaying = null;
-                    UnitPlaying = unit;
-                }
-
-                if (Settings.Current.ATBMode == ATBMode.Gradual)
-                    _timestamp += Time.timeAsDouble - startTS;
-
-                delay = chosenTactic.Action.DelayToNextTurn;
-            }
-
-            var delayDuration = DelayScalar(delay, unit.Profile.ActionRechargeSpeed);
-
-            var unitIndex = Queue.Values.IndexOf(unit);
-            if (unitIndex != -1)
-                Queue.RemoveAt(unitIndex);
-
-            Queue.Add(_timestamp + delayDuration, unit);
-            if (unit.Profile.InFlowState)
-            {
-                unit.Profile.CurrentFlow -= delayDuration * SingletonManager.Instance.Formulas.FlowDepletionRate;
-                if (unit.Profile.CurrentFlow <= 0f)
-                {
-                    unit.Profile.InFlowState = false;
-                    unit.Profile.CurrentFlow = 0f;
+                    var otherScene = SceneManager.GetSceneAt(i);
+                    if (otherScene != gameObject.scene)
+                        SceneManager.SetActiveScene(otherScene);
                 }
             }
 
-            for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
-            {
-                var m = unit.Profile.Modifiers[i];
-                if (m.Modifier.IsStillValid(m, unit.Context) == false)
-                    unit.Profile.Modifiers.RemoveAt(i);
-            }
+            await SceneManager.UnloadSceneAsync(gameObject.scene)!.ToUniTask(cancellationToken: CancellationToken.None);
+
+            _currentState = TargetState.End;
+            _finishedTcs.SetResult(win);
         }
-        
-        foreach (var (unit, _) in initialUnitStates)
+        finally
         {
-            for (int i = unit.Profile.Modifiers.Count - 1; i >= 0; i--)
-            {
-                var m = unit.Profile.Modifiers[i];
-                if (m.Modifier.Temporary && Settings.Current.ModifiersBehavior == ModifiersBehavior.RemovedAfterBattle)
-                    unit.Profile.Modifiers.RemoveAt(i);
-            }
+            Time.timeScale = 1;
         }
-
-        enabled = false;
-        UIOperation.enabled = false;
-
-        if (_skipBattleEndScreen == false)
-        {
-            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellation);
-
-            if (Outro)
-            {
-                BattleCamera.Instance.PlayUninterruptible(Outro, false);
-                await UniTask.Delay(TimeSpan.FromSeconds(Outro.length), cancellationToken: cancellation);
-                BattleCamera.Instance.enabled = false;
-            }
-
-            if (win)
-            {
-                await BattleResolution.VictoryResolution(this, cancellation);
-            }
-            else
-            {
-                var result = await BattleResolution.DefeatResolution(cancellation);
-                switch (result)
-                {
-                    case BattleResolution.Result.Retry:
-                        foreach (var tuple in initialUnitStates)
-                        {
-                            var profileCopy = Instantiate(tuple.clone);
-                            var profileSource = tuple.unit.Profile;
-                            profileSource.CurrentHP = profileCopy.CurrentHP;
-                            profileSource.CurrentMP = profileCopy.CurrentMP;
-                            profileSource.CurrentFlow = profileCopy.CurrentFlow;
-                            profileSource.InFlowState = profileCopy.InFlowState;
-                            profileSource.Inventory = profileCopy.Inventory;
-                        }
-
-                        foreach (var consumable in InventoryManager.Instance.Enumerate<Consumable>().ToArray())
-                            InventoryManager.Instance.Remove(consumable.item, consumable.count);
-                        
-                        foreach (var consumable in initialConsumables)
-                            InventoryManager.Instance.AddToInventory(consumable.item, consumable.count);
-
-                        await SceneManager.UnloadSceneAsync(gameObject.scene)!.ToUniTask(cancellationToken: CancellationToken.None);
-
-                        if (EncounterDefinition is null)
-                        {
-                            Debug.LogError("Cannot retry, Encounter definition is null");
-                            break;
-                        }
-
-                        await EncounterDefinition.Start(cts: Cancellation.None);
-                        return;
-                    case BattleResolution.Result.Load:
-                        BattleResolution.LoadPanel.SetActive(true);
-                        return;
-                    case BattleResolution.Result.Quit:
-                        Application.Quit();
-                        return;
-                    default: throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
-        foreach (var hero in PartyLineup)
-            hero.Profile.CurrentHP = hero.Profile.CurrentHP == 0 ? 1 : hero.Profile.CurrentHP;
-
-        if (gameObject.scene == SceneManager.GetActiveScene())
-        {
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-            {
-                var otherScene = SceneManager.GetSceneAt(i);
-                if (otherScene != gameObject.scene)
-                    SceneManager.SetActiveScene(otherScene);
-            }
-        }
-
-        await SceneManager.UnloadSceneAsync(gameObject.scene)!.ToUniTask(cancellationToken: CancellationToken.None);
-
-        _currentState = TargetState.End;
-        _finishedTcs.SetResult(win);
     }
 
     private bool IsBattleFinished(out bool win)
@@ -637,7 +646,23 @@ public partial class Settings
 {
     public ModifiersBehavior ModifiersBehavior = ModifiersBehavior.RemovedAfterBattle;
     public ATBMode ATBMode;
-    public float BattleSpeed = 1f;
+    public ATBRate ATBRate;
+    public BattleSpeed BattleSpeed;
+
+    public float ATBRateMultiplier => ATBRate switch
+    {
+        ATBRate.Slow => 0.5f,
+        ATBRate.Normal => 1.0f,
+        ATBRate.Fast => 2.0f,
+        _ => throw new ArgumentOutOfRangeException()
+    };
+    public float BattleSpeedMultiplier => BattleSpeed switch
+    {
+        BattleSpeed.Slow => 0.5f,
+        BattleSpeed.Normal => 1.0f,
+        BattleSpeed.Fast => 2.0f,
+        _ => throw new ArgumentOutOfRangeException()
+    };
 }
 
 public enum ATBMode
@@ -645,6 +670,20 @@ public enum ATBMode
     Gradual,
     GradualPauseOnSkills,
     Instant,
+}
+
+public enum ATBRate
+{
+    Slow,
+    Normal,
+    Fast,
+}
+
+public enum BattleSpeed
+{
+    Slow,
+    Normal,
+    Fast,
 }
 
 public enum ModifiersBehavior

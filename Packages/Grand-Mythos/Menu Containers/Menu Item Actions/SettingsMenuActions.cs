@@ -16,7 +16,7 @@ public class SettingsMenuActions : MenuContainer
     public required RectTransform DefaultDropdownParent;
     public SerializableDictionary<string, SettingsMenuDropdownTemplate> Dropdowns = new();
 
-    public required TMP_Dropdown ResolutionDropdown, BattleSpeedDropdown;
+    public required TMP_Dropdown ResolutionDropdown;
 
     readonly Dictionary<object, Action> _scheduledChanges = new();
 
@@ -92,18 +92,6 @@ public class SettingsMenuActions : MenuContainer
         {
             _scheduledChanges[windowModeDropdown] = () => Screen.fullScreenMode = Settings.Current.WindowMode;
         });
-
-        {
-            var speeds = new[]
-            {
-                (name:"50%", value:0.5f),
-                (name:"75%", value:0.75f),
-                (name:"100%", value:1.0f),
-                (name:"125%", value:1.25f),
-                (name:"150%", value:1.5f)
-            };
-            SetupDropdown(BattleSpeedDropdown, speeds, Settings.Current.BattleSpeed, f => Settings.Current.BattleSpeed = f);
-        }
 
         void SetupDropdown<T>(TMP_Dropdown dropdown, (string name, T associatedValue)[] values, T selectedValue, Action<T> onValueChanged) where T : notnull
         {
