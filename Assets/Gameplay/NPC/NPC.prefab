@@ -1836,13 +1836,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Agent: {fileID: 2645418712302102538}
   Animator: {fileID: 7680098167712258008}
-  WalkRunThreshold: 2
+  WalkJogThreshold: 4
+  JogRunThreshold: 6
   RotationSpeed: 2
   Idle:
     StateName: Idle
     Layer: 0
   Walk:
-    StateName: Run
+    StateName: Walk
+    Layer: 0
+  Jog:
+    StateName: Jog
     Layer: 0
   Run:
     StateName: Run

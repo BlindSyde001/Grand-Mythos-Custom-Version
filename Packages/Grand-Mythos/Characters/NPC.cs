@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Screenplay;
 using Sirenix.OdinInspector;
@@ -11,12 +12,13 @@ namespace Characters
     {
         public required NavMeshAgent Agent;
         public required Animator Animator;
-        public float WalkRunThreshold = 2f;
+        public float WalkJogThreshold = 4f;
+        public float JogRunThreshold = 6f;
         public float RotationSpeed = 2f;
         
         [ValidateInput(nameof(ValidateAnim))]
         [Tooltip("Plays the following state through the Animator")]
-        public AnimationState Idle, Walk, Run;
+        public AnimationState Idle, Walk, Jog, Run;
 
         private bool _isIdle;
         private UniTaskCompletionSource? _moveTasks;
@@ -25,7 +27,13 @@ namespace Characters
         {
             if (Agent.remainingDistance > 0)
             {
-                var selected = Agent.velocity.magnitude > WalkRunThreshold ? Run : Walk;
+                AnimationState selected;
+                if (Agent.velocity.magnitude > JogRunThreshold)
+                    selected = Run;
+                else if (Agent.velocity.magnitude > WalkJogThreshold)
+                    selected = Jog;
+                else
+                    selected = Walk;
                 if (Animator.GetCurrentAnimatorStateInfo(selected.Layer).IsName(selected.StateName) == false)
                     Animator.Play(selected.StateName, selected.Layer);
                 _isIdle = false;
@@ -37,7 +45,7 @@ namespace Characters
             }
         }
 
-        public async UniTask MoveTo(Vector3 pos, Quaternion rot, Cancellation cts)
+        public async UniTask MoveTo(Vector3 pos, Quaternion rot, Movement movement, Cancellation cts)
         {
             var newTCS = new UniTaskCompletionSource();
 
@@ -48,6 +56,13 @@ namespace Characters
 
             try
             {
+                Agent.speed = movement switch
+                {
+                    Movement.Walk => WalkJogThreshold - 0.1f,
+                    Movement.Jog => (WalkJogThreshold + JogRunThreshold) * 0.5f,
+                    Movement.Run => JogRunThreshold + 0.1f,
+                    _ => throw new ArgumentOutOfRangeException(nameof(movement), movement, null)
+                };
                 Agent.SetDestination(pos);
                 while (Agent.pathPending)
                 {
@@ -86,6 +101,13 @@ namespace Characters
             }
 
             return state.EditorOnlyValidate(Animator, out message);
+        }
+
+        public enum Movement
+        {
+            Walk,
+            Jog,
+            Run,
         }
     }
 }

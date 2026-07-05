@@ -16,13 +16,14 @@ namespace Quests
         [HideLabel] public SceneObjectReference<NPC> NPC;
         public Vector3 Destination;
         public Quaternion FinalRotation = Quaternion.identity;
+        public NPC.Movement Type = Characters.NPC.Movement.Jog;
         
         public override void CollectReferences(ReferenceCollector references) => references.Collect(NPC);
 
         protected override async UniTask LinearExecution(IEventContext context, Cancellation cancellation)
         {
             var npc = await NPC.GetAsync(cancellation);
-            await npc.MoveTo(Destination, FinalRotation, cancellation);
+            await npc.MoveTo(Destination, FinalRotation, Type, cancellation);
         }
 
         public override async UniTask Persistence(IEventContext context, Cancellation cancellationToken)
