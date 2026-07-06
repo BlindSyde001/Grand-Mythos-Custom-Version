@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0a32d200dc4b20ab26c2a607d1071d, type: 3}
+  m_Name: Defending
+  m_EditorClassIdentifier: 
+  _guid:
+    a: 5409008179804100567
+    b: 7653859592468076938
+  Description: 
+  DisplayPrefab: {fileID: 5366163306638713126, guid: 502c2d5dbe89bc24bba1ddeadef7d9a8, type: 3}
+  Outgoing:
+    rid: -2
+  Incoming:
+    rid: 5574916631446683648
+  Temporary: 1
+  Duration:
+    rid: 5574916631446683673
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 5574916631446683648
+      type: {class: PhysicalDamageMultiplier, ns: StatusHandler, asm: Grand-Mythos}
+      data:
+        Multiplier: 0.3
+    - rid: 5574916631446683673
+      type: {class: Turns, ns: StatusHandler, asm: Grand-Mythos}
+      data:
+        Amount: 1

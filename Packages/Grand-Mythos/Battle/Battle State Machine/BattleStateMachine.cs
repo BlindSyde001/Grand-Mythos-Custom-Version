@@ -202,7 +202,7 @@ public class BattleStateMachine : MonoBehaviour
                 }
 
                 unit.Context.CombatTimestamp = _timestamp;
-                unit.Context.Round++;
+                unit.Context.Turn++;
 
                 IAction.Delay delay;
                 if (chosenTactic == null)

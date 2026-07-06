@@ -13,7 +13,7 @@ namespace Conditions
         public float Chance = 50f;
         protected override void FilterInner(ref TargetCollection targets, EvaluationContext context)
         {
-            Random random = new Random((uint)GetHashCode() + context.Round + context.CombatSeed);
+            Random random = new Random((uint)GetHashCode() + context.Turn + context.CombatSeed);
             if (random.NextFloat(0f, 100f) >= Chance)
                 targets.Empty();
         }

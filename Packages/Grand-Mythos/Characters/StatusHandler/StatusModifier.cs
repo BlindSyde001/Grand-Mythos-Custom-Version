@@ -1,4 +1,6 @@
-﻿using Characters;
+﻿using System;
+using Characters;
+using Screenplay;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -15,6 +17,7 @@ namespace StatusHandler
         
         [TextArea] public string Description = "";
 
+        [PrefabWithComponent]
         public required ModifierDisplay DisplayPrefab;
 
         [SerializeReference, InfoBox(OutgoingDescription), BoxGroup(nameof(Outgoing)), HideLabel] public IStatusModifierLogic? Outgoing;
@@ -23,7 +26,7 @@ namespace StatusHandler
         [InfoBox("Is this status only effective during the encounter were it was applied, or carried between each encounter")]
         public bool Temporary = true;
 
-        public float Duration = float.PositiveInfinity;
+        [SerializeReference] public IStatusModifierDuration Duration = new Time{ Duration = float.PositiveInfinity };
 
         ModifierDisplay? IModifier.DisplayPrefab => DisplayPrefab;
 
@@ -42,9 +45,35 @@ namespace StatusHandler
         bool IModifier.Temporary => Temporary;
         public bool DisplayOnRightSide => false;
 
+        public bool IsStillValid(AppliedModifier data, EvaluationContext context) => Duration.IsStillValid(data, context);
+    }
+
+    public interface IStatusModifierDuration
+    {
+        bool IsStillValid(AppliedModifier data, EvaluationContext context);
+    }
+
+    [Serializable]
+    public class Time : IStatusModifierDuration
+    {
+        [SuffixLabel("Seconds")]
+        public float Duration = float.PositiveInfinity;
+
         public bool IsStillValid(AppliedModifier data, EvaluationContext context)
         {
             return context.CombatTimestamp - data.CreationTimeStamp < Duration;
+        }
+    }
+
+    [Serializable]
+    public class Turns : IStatusModifierDuration
+    {
+        [SuffixLabel("Turns")]
+        public int Amount = 1;
+
+        public bool IsStillValid(AppliedModifier data, EvaluationContext context)
+        {
+            return context.Turn - data.CreationTurns < Amount;
         }
     }
 }

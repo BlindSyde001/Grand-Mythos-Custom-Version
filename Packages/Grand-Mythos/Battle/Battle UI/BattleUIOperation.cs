@@ -289,8 +289,11 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
         }
     }
 
+
     public async UniTask<Tactics> RunUIFor(BattleCharacterController unit, List<BattleCharacterController> targetsAvailable, CancellationToken cancellation)
     {
+        const bool RepeatIsDefense = true;
+        
         Tactics? tactic;
         try
         {
@@ -300,7 +303,11 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
             do
             {
                 ResetNavigation();
-                Repeat.interactable = _lastAction.ContainsKey(unit);
+                if (RepeatIsDefense)
+                    Repeat.interactable = unit.Profile.Defense is not null;
+                else
+                    Repeat.interactable = _lastAction.ContainsKey(unit);
+                
                 Skills.interactable = unit.Profile.Skills.Any(x => x.FlowCost == 0);
                 Items.interactable = unit.Profile.Inventory.Items().FirstOrDefault(x => x.item is Consumable).item is Consumable;
 
@@ -331,7 +338,7 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
                 tactic = i switch
                 {
                     0 => await PresentAttackUI(unit, cancellation),
-                    1 => await PresentTargetSelectionUI(unit, _lastAction[unit], cancellation),
+                    1 => RepeatIsDefense ? await PresentDefenseUI(unit, cancellation) : await PresentTargetSelectionUI(unit, _lastAction[unit], cancellation),
                     2 => await PresentSkillsUI(unit, true, cancellation),
                     3 => await PresentSkillsUI(unit, false, cancellation),
                     4 => await PresentItemUI(unit, cancellation),
@@ -360,6 +367,32 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
     UniTask<Tactics?> PresentAttackUI(BattleCharacterController unit, CancellationToken cancellation)
     {
         return PresentTargetSelectionUI(unit, unit.Profile.BasicAttack, cancellation);
+    }
+
+    UniTask<Tactics?> PresentDefenseUI(BattleCharacterController unit, CancellationToken cancellation)
+    {
+        if (unit.Profile.Defense is null)
+        {
+            Debug.LogError("Defending without defense!");
+            return PresentAttackUI(unit, cancellation);
+        }
+
+        if (unit.Profile.Defense.TargetConstraint is IsSelf)
+        {
+            var tactic = new Tactics
+            {
+                Action = unit.Profile.Defense, Condition = null!
+            };
+            
+            tactic.Condition = ScriptableObject.CreateInstance<ActionCondition>();
+            tactic.Condition.TargetFilter = new SpecificTargetsCondition { Targets = new HashSet<CharacterTemplate>{ unit.Profile } };
+            return UniTask.FromResult(tactic)!;
+            
+        }
+        else
+        {
+            return PresentTargetSelectionUI(unit, unit.Profile.Defense, cancellation);
+        }
     }
 
     async UniTask<Tactics?> PresentSkillsUI(BattleCharacterController unit, bool presentFlow, CancellationToken cancellation)

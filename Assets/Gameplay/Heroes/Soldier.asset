@@ -16,11 +16,13 @@ MonoBehaviour:
     a: 5498223193288803467
     b: 12559289441932633019
   Name: Soldier
+  BestiaryDescription: 
+  BestiaryLocationDescription: 
   Team: {fileID: 11400000, guid: 425bb16aa5c44ba46979988cd14c9117, type: 2}
   BattlePrefab: {fileID: 574080924864135042, guid: 2a7e0d6b3c5902840a8f497de7f23194, type: 3}
   Portrait: {fileID: 21300000, guid: 970eb6fdd42a108408775879b6bdc704, type: 3}
-  CurrentHP: 154
-  CurrentMP: 70
+  CurrentHP: 250
+  CurrentMP: 97
   CurrentFlow: 0
   BaseStats:
     HP: 22
@@ -59,7 +61,7 @@ MonoBehaviour:
     Speed: 4
     Luck: 4
   Experience: 982
-  Level: 5
+  Level: 6
   ResistanceFire: 100
   ResistanceIce: 100
   ResistanceLightning: 100
@@ -69,9 +71,11 @@ MonoBehaviour:
     m_Keys: []
     m_Values: 
   BasicAttack: {fileID: 11400000, guid: d2745b8d923b99146933aae66389b74b, type: 2}
+  Defense: {fileID: 11400000, guid: 416d282104672114f9f13f9f5c6ed3b0, type: 2}
   Skills:
     _backingArray:
     - {fileID: 11400000, guid: 447a2983ec2390741a8d18e767d385c0, type: 2}
+    - {fileID: 11400000, guid: 565824b87e5b38b4f81e0b21ba8eaceb, type: 2}
   Special:
     rid: -2
   LevelUnlocks: {fileID: 11400000, guid: ce5ccc5f623b1044eb7e8f1338904ba6, type: 2}
@@ -113,12 +117,12 @@ MonoBehaviour:
   myArmourType: 0
   _AccessoryOne: {fileID: 11400000, guid: 112d6aea410489a4896b0dc5d6b0ad3d, type: 2}
   _AccessoryTwo: {fileID: 0}
-  equipHP: 0
-  equipMP: 0
-  equipAttack: 0
-  equipMagAttack: 0
-  equipDefense: 0
-  equipMagDefense: 0
+  equipHP: 70
+  equipMP: 15
+  equipAttack: 10
+  equipMagAttack: 5
+  equipDefense: 10
+  equipMagDefense: 15
   equipSpeed: 0
   Banner: {fileID: 21300000, guid: 3df74c71eb6c67c4cbd8c8a6ee65bbdd, type: 3}
   SkillTree: {fileID: 248158881564659840, guid: 1fcb273e1da81064c90f4559082510e8, type: 3}

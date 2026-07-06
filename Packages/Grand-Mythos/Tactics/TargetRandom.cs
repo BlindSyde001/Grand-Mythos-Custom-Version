@@ -9,7 +9,7 @@ namespace Conditions
     {
         protected override void FilterInner(ref TargetCollection targets, EvaluationContext context)
         {
-            Random random = new Random((uint)GetHashCode() + context.Round + context.CombatSeed);
+            Random random = new Random((uint)GetHashCode() + context.Turn + context.CombatSeed);
             int selection = random.NextInt(0, targets.CountSlow());
             for (int i = -1, c = 0; targets.TryGetNext(ref i, out _); c++)
             {

@@ -160,7 +160,7 @@ public class EvaluationContext
     /// <summary>
     /// Incremented every time <see cref="Profile"/> has finished playing all its scheduled tactics
     /// </summary>
-    public uint Round;
+    public uint Turn;
 
     public uint CombatSeed;
     public Random Random;

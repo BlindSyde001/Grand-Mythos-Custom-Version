@@ -82,6 +82,9 @@ public class CharacterTemplate : IdentifiableScriptableObject
     public required Skill BasicAttack;
 
     [BoxGroup("SKILLS")]
+    public Skill? Defense;
+
+    [BoxGroup("SKILLS")]
     public SerializableHashSet<Skill> Skills = new();
 
     [BoxGroup("SKILLS"), SerializeReference]

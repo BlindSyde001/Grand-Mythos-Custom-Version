@@ -11,6 +11,7 @@ namespace Characters
         [SerializeField] ScriptableObject? _object;
         [SerializeReference, ReadOnly] private IModifier? _modRef;
 
+        public uint CreationTurns;
         public double CreationTimeStamp;
         public CharacterTemplate? Source;
 
@@ -39,11 +40,12 @@ namespace Characters
             return obj is IModifier;
         }
 
-        public AppliedModifier(double combatTimestamp, IModifier modifier, CharacterTemplate? source)
+        public AppliedModifier(double combatTimestamp, uint combatTurn, IModifier modifier, CharacterTemplate? source)
         {
             _object = null;
             _modRef = null;
             CreationTimeStamp = combatTimestamp;
+            CreationTurns = combatTurn;
             Source = source;
             Modifier = modifier;
         }

@@ -17,7 +17,7 @@ namespace Effects
             foreach (var target in targets)
             {
                 if (context.Random.NextFloat(0,100) <= Chance)
-                    target.Modifiers.Add(new AppliedModifier(context.CombatTimestamp, Modifier, context.Profile));
+                    target.Modifiers.Add(new AppliedModifier(context.CombatTimestamp, context.Turn, Modifier, context.Profile));
             }
         }
 

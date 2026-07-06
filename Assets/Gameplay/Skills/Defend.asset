@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00d19563990c46f190b108ccb4d28df2, type: 3}
+  m_Name: Defend
+  m_EditorClassIdentifier: 
+  _guid:
+    a: 4688940179606656532
+    b: 810057245972963231
+  _description: 
+  ManaCost: 0
+  FlowCost: 0
+  DelayToNextTurn: 1
+  ProcAttachedSkills: 0
+  Effects:
+  - rid: 5574916631446683654
+  TargetConstraint:
+    rid: 5574916631446683655
+  PreconditionToUse:
+    rid: -2
+  CameraAnimation: {fileID: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 5574916631446683654
+      type: {class: ApplyOnCaster, ns: Effects, asm: Grand-Mythos}
+      data:
+        Effects:
+        - rid: 5574916631446683656
+    - rid: 5574916631446683655
+      type: {class: IsSelf, ns: Conditions, asm: Grand-Mythos}
+      data: 
+    - rid: 5574916631446683656
+      type: {class: GiveStatusModifier, ns: Effects, asm: Grand-Mythos}
+      data:
+        Modifier: {fileID: 11400000, guid: 7d7d7680848a01b4a8996c95fb8f73a6, type: 2}
+        Chance: 100
