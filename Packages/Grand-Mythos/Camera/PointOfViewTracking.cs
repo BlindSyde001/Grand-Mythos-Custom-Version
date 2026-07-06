@@ -1,15 +1,33 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class PointOfViewTracking : PointOfViewBase
 {
     public Vector3 FixedPosition = Vector3.one;
+    public Axis Control;
+    public float LockedAxisAngle;
+
+    public enum Axis
+    {
+        Unconstrained,
+        HorizontalOnly,
+        VerticalOnly
+    }
 
     public override void ComputeWorldTransform(Vector3 worldPosFocus, out Vector3 position, out Quaternion rotation)
     {
         var matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one) * Matrix4x4.Translate(FixedPosition);
         position = matrix.GetPosition();
-        var dir = Vector3.Normalize(worldPosFocus - position);
+        var dir = worldPosFocus - position;
+        dir = Control switch
+        {
+            Axis.Unconstrained => dir,
+            Axis.HorizontalOnly => Quaternion.AngleAxis(LockedAxisAngle, Vector3.Cross(new Vector3(dir.x, 0, dir.z).normalized, dir.normalized)) * new Vector3(dir.x, 0, dir.z),
+            Axis.VerticalOnly => Vector3.ProjectOnPlane(dir, Quaternion.AngleAxis(LockedAxisAngle, Vector3.up) * Vector3.right),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        dir = Vector3.Normalize(dir);
         if (dir == Vector3.zero)
             dir = Vector3.Normalize(transform.position - position);
         rotation = Quaternion.LookRotation(dir, transform.up);
@@ -31,8 +49,25 @@ public class PointOfViewTracking : PointOfViewBase
         ComputeWorldTransform(transform.position, out var position, out var rotation);
         
         var matrix = Gizmos.matrix;
-        Gizmos.matrix = Matrix4x4.TRS(position, rotation, Vector3.one);
+        var hMatrix = UnityEditor.Handles.matrix;
+        UnityEditor.Handles.matrix = Gizmos.matrix = Matrix4x4.TRS(position, rotation, Vector3.one);
         DrawCameraFrustum();
+
+        switch (Control)
+        {
+            case Axis.Unconstrained:
+                break;
+            case Axis.HorizontalOnly:
+                UnityEditor.Handles.DrawSolidDisc(Vector3.zero, Vector3.up, 0.25f);
+                break;
+            case Axis.VerticalOnly:
+                UnityEditor.Handles.DrawSolidDisc(Vector3.zero, Vector3.right, 0.25f);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        UnityEditor.Handles.matrix = hMatrix;
         Gizmos.matrix = matrix;
     }
 
