@@ -20,7 +20,17 @@ public abstract class BaseEncounter : IEncounterDefinition
 
     public SceneReference Scene;
     public BattlePointOfViewReference? PointOfView;
-    public AnimationClip? IntroCamera, OutroCamera;
+
+    /// <summary>
+    /// Camera animation to use when starting the combat
+    /// </summary>
+    public AnimationClip? IntroCamera;
+    public AnimationClip? OutroCamera;
+
+    /// <summary>
+    /// Camera animation to use for the 'idle' animation prior to starting the battle
+    /// </summary>
+    public AnimationClip? TransitionalCameraOverride;
 
     public async UniTask Start(Cancellation cts)
     {
@@ -121,6 +131,8 @@ public abstract class BaseEncounter : IEncounterDefinition
                 bsm.Intro = IntroCamera;
             if (OutroCamera != null)
                 bsm.Outro = OutroCamera;
+            if (TransitionalCameraOverride != null)
+                bsm.TransitionalCamera = TransitionalCameraOverride;
             (Vector3 pos, Quaternion rot)[] hostileSpawns = bsm.EnemySpawns.Select(x => (x.position, x.rotation)).ToArray();
             (Vector3 pos, Quaternion rot)[] alliesSpawns = bsm.HeroSpawns.Select(x => (x.position, x.rotation)).ToArray();
 

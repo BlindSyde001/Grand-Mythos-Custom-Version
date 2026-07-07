@@ -210,6 +210,67 @@ public class BattleCamera : MonoBehaviour
         }
     }
 
+    private class AnimLoop : IDisposable
+    {
+        public bool Disposed { get; private set; }
+
+        public void Dispose() => Disposed = true;
+    }
+
+    public IDisposable PlayLooping(AnimationClip clip, float blendIn = 1f)
+    {
+        const int priority = 2;
+
+        var loop = new AnimLoop();
+        _routine?.Dispose();
+        _routine = new DisposableCoroutine(this, PlayAnim(loop), priority);
+        return loop;
+
+        IEnumerable PlayAnim(AnimLoop animLoopController)
+        {
+            var graph = PlayableGraph.Create();
+            try
+            {
+                var animator = gameObject.GetComponent<Animator>();
+                if (animator == null)
+                {
+                    animator = gameObject.AddComponent<Animator>();
+                    animator.hideFlags |= HideFlags.DontSave | HideFlags.NotEditable;
+                }
+                graph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+                var playableClip = AnimationClipPlayable.Create(graph, clip);
+                var output = AnimationPlayableOutput.Create(graph, nameof(BattleCamera), animator);
+                output.SetSourcePlayable(playableClip);
+
+                var initialPos = transform.position;
+                var initialRot = transform.rotation;
+                for (float f = 0; animLoopController.Disposed == false; f += Time.unscaledDeltaTime)
+                {
+                    playableClip.SetTime(f);
+                    graph.Evaluate();
+                    var animatedPos = transform.position;
+                    var animatedRot = transform.rotation;
+
+                    // Blending in
+                    var p = f < blendIn ? Vector3.Lerp(initialPos, animatedPos, f / blendIn) : animatedPos;
+                    var r = f < blendIn ? Quaternion.Lerp(initialRot, animatedRot, f / blendIn) : animatedRot;
+                    transform.SetPositionAndRotation(p, r);
+                    yield return null;
+                }
+
+                _routine = null;
+                if (_lastPov is not null)
+                    TransitionTo(_lastPov);
+            }
+            finally
+            {
+                if (graph.IsValid())
+                    graph.Destroy();
+                _routine = null;
+            }
+        }
+    }
+
     public enum CameraType
     {
         Static,

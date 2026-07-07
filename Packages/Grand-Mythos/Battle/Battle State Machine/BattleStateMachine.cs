@@ -11,6 +11,7 @@ using Cysharp.Threading.Tasks;
 using Screenplay;
 using Sirenix.OdinInspector;
 using TMPro;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class BattleStateMachine : MonoBehaviour
@@ -19,7 +20,11 @@ public class BattleStateMachine : MonoBehaviour
 
     public required Team PlayerTeam;
 
-    public required AnimationClip Intro, Outro;
+    public AnimationClip? Intro, Outro;
+
+    public required AnimationClip TransitionalCamera;
+
+    public required InputActionReference SkipTransition;
 
     public required BattleUIOperation UIOperation;
     
@@ -91,6 +96,7 @@ public class BattleStateMachine : MonoBehaviour
     {
         try
         {
+            UIOperation.enabled = false;
             Time.timeScale = Settings.Current.BattleSpeedMultiplier;
 
             foreach (var target in FindObjectsOfType<BattleCharacterController>())
@@ -100,14 +106,21 @@ public class BattleStateMachine : MonoBehaviour
             var initialConsumables = InventoryManager.Instance.Enumerate<Consumable>().ToArray();
             var initialBattleCameraInstance = BattleCamera.Instance;
 
-            UIOperation.enabled = true;
             enabled = true;
             initialBattleCameraInstance.enabled = true;
             _currentState = TargetState.Running;
             if (Intro)
             {
-                initialBattleCameraInstance.PlayUninterruptible(Intro);
+                initialBattleCameraInstance.PlayUninterruptible(Intro, false);
                 await UniTask.Delay(TimeSpan.FromSeconds(Intro.length), cancellationToken: cancellation);
+            }
+
+            using (initialBattleCameraInstance.PlayLooping(TransitionalCamera))
+            {
+                while (SkipTransition.action.WasPerformedThisFrameUnique() == false)
+                {
+                    await UniTask.NextFrame(cancellationToken: cancellation);
+                }
             }
 
             // Sort them in the order they are setup in the party
@@ -115,6 +128,8 @@ public class BattleStateMachine : MonoBehaviour
 
             _targetStateChanged = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
 
+            UIOperation.enabled = true;
+            
             bool win;
             while (IsBattleFinished(out win) == false && _targetState != TargetState.End)
             {
@@ -645,9 +660,9 @@ public class BattleStateMachine : MonoBehaviour
 public partial class Settings
 {
     public ModifiersBehavior ModifiersBehavior = ModifiersBehavior.RemovedAfterBattle;
-    public ATBMode ATBMode;
-    public ATBRate ATBRate;
-    public BattleSpeed BattleSpeed;
+    public ATBMode ATBMode = ATBMode.Gradual;
+    public ATBRate ATBRate = ATBRate.Normal;
+    public BattleSpeed BattleSpeed = BattleSpeed.Normal;
 
     public float ATBRateMultiplier => ATBRate switch
     {

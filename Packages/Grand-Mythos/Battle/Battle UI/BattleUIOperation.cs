@@ -98,7 +98,8 @@ public class BattleUIOperation : MonoBehaviour, IDisposableMenuProvider
 
     void OnDisable()
     {
-        MainUI.SetActive(false);
+        if (MainUI != null) // Could have been destroyed when loaded out for example
+            MainUI.SetActive(false);
         AttributeAdd.OnApplied -= DamageHandler;
     }
 
