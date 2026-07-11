@@ -155,12 +155,14 @@ public class BattleStateMachine : MonoBehaviour
 
                     if (Settings.Current.ATBMode == ATBMode.Instant)
                         _timestamp = Queue.Keys[i];
-                    else if (_timestamp < Queue.Keys[i])
+
+                    if (_timestamp < Queue.Keys[i])
                         break;
 
                     unit = Queue.Values[i];
                     for (int j = 0; j < i; j++)
                         Queue.RemoveAt(0); // Remove all previous units
+                    break;
                 }
 
                 if (unit == null)
