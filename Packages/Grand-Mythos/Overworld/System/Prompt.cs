@@ -30,6 +30,11 @@ public class Prompt : MonoBehaviour
 
     static Prompt()
     {
+        DomainReloadHelper.OnEnterEditMode += () =>
+        {
+            _promptCache.Clear();
+            _promptInUse.Clear();
+        };
         DomainReloadHelper.BeforeReload += helper =>
         {
             foreach (Prompt prompt in _promptCache)
