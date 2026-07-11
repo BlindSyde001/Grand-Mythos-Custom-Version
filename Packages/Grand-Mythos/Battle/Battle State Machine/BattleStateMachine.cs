@@ -466,10 +466,17 @@ public class BattleStateMachine : MonoBehaviour
                     {
                         var controller = selectionArray[i];
                         IActionAnimation? anim;
+
                         if (controller.CurrentHP == initialHP[i])
+                        {
+                            if (unit.Profile.Team == controller.Team)
+                                continue;
                             anim = controller.Dodge ?? controller.Parry ?? controller.Shield;
+                        }
                         else
+                        {
                             anim = controller.CurrentHP > 0 ? controller.Hurt : controller.Death;
+                        }
 
                         if (anim is null)
                             continue;
