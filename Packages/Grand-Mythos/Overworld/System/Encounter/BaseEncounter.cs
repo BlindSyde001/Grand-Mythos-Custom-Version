@@ -32,6 +32,13 @@ public abstract class BaseEncounter : IEncounterDefinition
     /// </summary>
     public AnimationClip? TransitionalCameraOverride;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void ResetOnPlay()
+    {
+        SetActiveAsPartOfEncounter = false;
+        _startingEncounter = false;
+    }
+
     public async UniTask Start(Cancellation cts)
     {
         if (_startingEncounter)

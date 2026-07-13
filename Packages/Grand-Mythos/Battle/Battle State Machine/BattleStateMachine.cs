@@ -54,6 +54,12 @@ public class BattleStateMachine : MonoBehaviour
 
     public IEncounterDefinition? EncounterDefinition { get; set; }
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void ResetOnPlay()
+    {
+        _instance = null!;
+    }
+
     // UPDATES
     private void Awake()
     {

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,6 +13,12 @@ public class OnCancel : MonoBehaviour
 
     static int _lastProcess;
     static readonly List<OnCancel> _instances = new();
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void ResetOnPlay()
+    {
+        _lastProcess = 0;
+    }
 
     void Update()
     {

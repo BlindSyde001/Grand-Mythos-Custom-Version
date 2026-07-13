@@ -12,6 +12,12 @@ public class AudioManager : MonoBehaviour
     public required Sound overworldTheme;
     public required Sound battleTheme;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void ResetOnPlay()
+    {
+        _instance = null!;
+    }
+
     //UPDATES
     void Awake()
     {

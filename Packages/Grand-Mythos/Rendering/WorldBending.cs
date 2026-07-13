@@ -29,6 +29,12 @@ public class WorldBending : MonoBehaviour
 
     public Bounds Bounds => _bounds;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void ResetOnPlay()
+    {
+        _instance = null!;
+    }
+
     void OnEnable()
     {
         if (_instance != null!)

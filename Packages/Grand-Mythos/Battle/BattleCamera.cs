@@ -20,6 +20,12 @@ public class BattleCamera : MonoBehaviour
 
     DisposableCoroutine? _routine;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    static void ResetOnPlay()
+    {
+        Instance = null!;
+    }
+
     private void Start()
     {
         _timeBeforeNextCam = TimeBetweenNewPOV;
