@@ -75,12 +75,13 @@ MonoBehaviour:
             _sceneAsset: {fileID: 102900000, guid: 22363b5baa01d6a428f4e6d32d1cd50d, type: 3}
         Destination: {x: 185.22507, y: -40.20982, z: -31.68077}
         FinalRotation: {x: 0, y: 0, z: 0, w: 1}
+        Type: 1
     - rid: 1608306264159289816
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
         _position: {x: -3720, y: -920}
         Next:
-          rid: -2
+          rid: 9035828663861117146
         Active: 0
         Target:
           _genericRef:
@@ -151,7 +152,10 @@ MonoBehaviour:
         PointOfView: {fileID: 0}
         IntroCamera: {fileID: 0}
         OutroCamera: {fileID: 0}
-        Formation: []
+        TransitionalCameraOverride: {fileID: 0}
+        Formation:
+        - {fileID: 11400000, guid: 95b17ca1544aeb047bcaddce9004d5c2, type: 2}
+        - {fileID: 11400000, guid: 95b17ca1544aeb047bcaddce9004d5c2, type: 2}
         Seed: 0
     - rid: 9035828663861117177
       type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
@@ -168,6 +172,7 @@ MonoBehaviour:
             _sceneAsset: {fileID: 102900000, guid: 9e892b1831ef8f34e9ea5cde4fde83e8, type: 3}
         Destination: {x: -19.3714, y: 0.05687794, z: 0.28995752}
         FinalRotation: {x: 0, y: 0.6633562, z: 0, w: 0.7483038}
+        Type: 1
     - rid: 9035828663861117186
       type: {class: AwaitEndOfEncounter, ns: , asm: Grand-Mythos}
       data:
@@ -188,7 +193,7 @@ MonoBehaviour:
     - rid: 9035828663861117192
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -1832, y: -1192}
+        _position: {x: -1944, y: -1192}
         Next:
           rid: 9035828663861117198
         Line:
@@ -204,7 +209,7 @@ MonoBehaviour:
     - rid: 9035828663861117195
       type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
       data:
-        _position: {x: -1768, y: -952}
+        _position: {x: -1720, y: -952}
         Next:
           rid: 9035828663861117198
         NPC:
@@ -216,17 +221,18 @@ MonoBehaviour:
             _sceneAsset: {fileID: 0}
         Destination: {x: 0, y: 0, z: 0}
         FinalRotation: {x: 0, y: 0, z: 0, w: 1}
+        Type: 1
     - rid: 9035828663861117198
       type: {class: Rejoin, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -1544, y: -1064}
+        _position: {x: -1464, y: -1096}
         Entries:
         - Executable:
-            rid: 9035828663861117254
+            rid: 9035828663861117198
     - rid: 9035828663861117202
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -1144, y: -1080}
+        _position: {x: -1112, y: -1080}
         Next:
           rid: -2
         Line:
@@ -242,7 +248,7 @@ MonoBehaviour:
     - rid: 9035828663861117248
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
-        _position: {x: -2008, y: -984}
+        _position: {x: -1960, y: -936}
         Next:
           rid: 9035828663861117195
         Active: 1
@@ -256,7 +262,7 @@ MonoBehaviour:
     - rid: 9035828663861117254
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
-        _position: {x: -1448, y: -1064}
+        _position: {x: -1368, y: -1064}
         Next:
           rid: 9035828663861117202
         Active: 1
