@@ -14,13 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Nodes:
   - rid: 9035828663861117144
-  - rid: 9035828663861117146
   - rid: 9035828663861117149
   - rid: 9035828663861117155
   - rid: 9035828663861117159
   - rid: 9035828663861117177
   - rid: 9035828663861117186
-  - rid: 9035828663861117189
   - rid: 9035828663861117192
   - rid: 9035828663861117195
   - rid: 9035828663861117198
@@ -30,6 +28,7 @@ MonoBehaviour:
   - rid: 1608306264159289802
   - rid: 1608306264159289807
   - rid: 1608306264159289816
+  - rid: 6189472623366766870
   AllowMultipleInstances: 0
   RestoreMode: 1
   DebugRetainProgressInEditor: 0
@@ -49,7 +48,7 @@ MonoBehaviour:
     - rid: 1608306264159289802
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
-        _position: {x: -4232, y: -1016}
+        _position: {x: -4248, y: -1016}
         Next:
           rid: 1608306264159289807
         Active: 1
@@ -63,7 +62,7 @@ MonoBehaviour:
     - rid: 1608306264159289807
       type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
       data:
-        _position: {x: -3976, y: -1016}
+        _position: {x: -3992, y: -1016}
         Next:
           rid: 1608306264159289816
         NPC:
@@ -75,13 +74,13 @@ MonoBehaviour:
             _sceneAsset: {fileID: 102900000, guid: 22363b5baa01d6a428f4e6d32d1cd50d, type: 3}
         Destination: {x: 185.22507, y: -40.20982, z: -31.68077}
         FinalRotation: {x: 0, y: 0, z: 0, w: 1}
-        Type: 1
+        Type: 0
     - rid: 1608306264159289816
       type: {class: SetActive, ns: Screenplay.Nodes.Unity, asm: Screenplay}
       data:
-        _position: {x: -3720, y: -920}
+        _position: {x: -3752, y: -1016}
         Next:
-          rid: 9035828663861117146
+          rid: -2
         Active: 0
         Target:
           _genericRef:
@@ -90,10 +89,19 @@ MonoBehaviour:
               a: 5677877775530084702
               b: 4823718298787257741
             _sceneAsset: {fileID: 102900000, guid: 22363b5baa01d6a428f4e6d32d1cd50d, type: 3}
+    - rid: 6189472623366766870
+      type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
+      data:
+        _position: {x: -3816, y: -648}
+        Entries:
+        - Executable:
+            rid: -2
+        - Executable:
+            rid: -2
     - rid: 9035828663861117144
       type: {class: Event, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -4616, y: -1016}
+        _position: {x: -4680, y: -1016}
         Name: Start New Game
         Action:
           rid: 1608306264159289802
@@ -103,26 +111,17 @@ MonoBehaviour:
         Scene:
           _path: Assets/Levels/Test Areas/Facility.unity
           _sceneAsset: {fileID: 102900000, guid: 22363b5baa01d6a428f4e6d32d1cd50d, type: 3}
-    - rid: 9035828663861117146
-      type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
-      data:
-        _position: {x: -3336, y: -1128}
-        Entries:
-        - Executable:
-            rid: 9035828663861117149
-        - Executable:
-            rid: 9035828663861117177
     - rid: 9035828663861117149
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -3208, y: -1240}
+        _position: {x: -3496, y: -1016}
         Next:
-          rid: 9035828663861117155
+          rid: 9035828663861117159
         Line:
-          Content: 'Dialog Line
+          Content: 'Enemy Encoutnered!
 
 
-            Another Line'
+            Starting a fight'
           _guid:
             a: 5208137981616416476
             b: 16419103636867337387
@@ -131,14 +130,14 @@ MonoBehaviour:
     - rid: 9035828663861117155
       type: {class: Rejoin, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -2936, y: -1128}
+        _position: {x: -3336, y: -648}
         Entries:
         - Executable:
-            rid: 9035828663861117159
+            rid: 9035828663861117155
     - rid: 9035828663861117159
       type: {class: StartEncounter, ns: , asm: Grand-Mythos}
       data:
-        _position: {x: -2840, y: -1176}
+        _position: {x: -3240, y: -1016}
         DuringEncounter:
           rid: 9035828663861117186
         Definition:
@@ -149,7 +148,7 @@ MonoBehaviour:
         Scene:
           _path: Assets/Levels/Test Areas/Test - Battle.unity
           _sceneAsset: {fileID: 102900000, guid: 8f2961ea2d7e15e4e9a60cea29e5c6a2, type: 3}
-        PointOfView: {fileID: 0}
+        PointOfView: {fileID: 11400000, guid: a0abe99f9da9c8248b5a1189ce34fc0e, type: 2}
         IntroCamera: {fileID: 0}
         OutroCamera: {fileID: 0}
         TransitionalCameraOverride: {fileID: 0}
@@ -160,9 +159,9 @@ MonoBehaviour:
     - rid: 9035828663861117177
       type: {class: NPCMoveTo, ns: Quests, asm: Grand-Mythos}
       data:
-        _position: {x: -3208, y: -968}
+        _position: {x: -3672, y: -632}
         Next:
-          rid: 9035828663861117155
+          rid: 9035828663861117177
         NPC:
           _genericRef:
             _scenePath: Assets/Levels/Test Areas/Test - Room 1.unity
@@ -176,31 +175,21 @@ MonoBehaviour:
     - rid: 9035828663861117186
       type: {class: AwaitEndOfEncounter, ns: , asm: Grand-Mythos}
       data:
-        _position: {x: -2360, y: -1160}
+        _position: {x: -2888, y: -1016}
         Victory:
-          rid: 9035828663861117189
+          rid: 9035828663861117192
         Defeat:
           rid: -2
-    - rid: 9035828663861117189
-      type: {class: Bifurcate, ns: Screenplay.Nodes, asm: Screenplay}
-      data:
-        _position: {x: -2024, y: -1176}
-        Entries:
-        - Executable:
-            rid: 9035828663861117192
-        - Executable:
-            rid: 9035828663861117248
     - rid: 9035828663861117192
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
-        _position: {x: -1944, y: -1192}
+        _position: {x: -2536, y: -1048}
         Next:
-          rid: 9035828663861117198
+          rid: -2
         Line:
-          Content: 'Dialog Line
+          Content: 'Won the fight
 
-
-            Another Line'
+            Let''s get going!'
           _guid:
             a: 5411029480441609341
             b: 11280207703669283246
@@ -228,7 +217,7 @@ MonoBehaviour:
         _position: {x: -1464, y: -1096}
         Entries:
         - Executable:
-            rid: 9035828663861117198
+            rid: 9035828663861117254
     - rid: 9035828663861117202
       type: {class: Dialog, ns: Screenplay.Nodes, asm: Screenplay}
       data:
