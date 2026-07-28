@@ -22,6 +22,8 @@ public class BattleStateMachine : MonoBehaviour
 
     public AnimationClip? Intro, Outro;
 
+    public required TMP_Text PreBattlePrompt;
+
     public required AnimationClip TransitionalCamera;
 
     public required InputActionReference SkipTransition;
@@ -103,6 +105,7 @@ public class BattleStateMachine : MonoBehaviour
         try
         {
             UIOperation.enabled = false;
+            PreBattlePrompt.enabled = false;
             Time.timeScale = Settings.Current.BattleSpeedMultiplier;
 
             foreach (var target in FindObjectsOfType<BattleCharacterController>())
@@ -121,6 +124,20 @@ public class BattleStateMachine : MonoBehaviour
                 await UniTask.Delay(TimeSpan.FromSeconds(Intro.length), cancellationToken: cancellation);
             }
 
+            PreBattlePrompt.enabled = true;
+
+            string str = "";
+            foreach (var actionControl in SkipTransition.action.controls)
+            {
+                if (string.IsNullOrWhiteSpace(actionControl.shortDisplayName) == false)
+                {
+                    if (str.Length != 0)
+                        str += " or ";
+                    str += actionControl.shortDisplayName;
+                }
+            }
+            
+            PreBattlePrompt.text = $"Press {str} to start the encounter";
             using (initialBattleCameraInstance.PlayLooping(TransitionalCamera))
             {
                 while (SkipTransition.action.WasPerformedThisFrameUnique() == false)
@@ -128,6 +145,7 @@ public class BattleStateMachine : MonoBehaviour
                     await UniTask.NextFrame(cancellationToken: cancellation);
                 }
             }
+            PreBattlePrompt.enabled = false;
 
             // Sort them in the order they are setup in the party
             PartyLineup = GameManager.Instance.PartyLineup.Select(x => PartyLineup.FirstOrDefault(y => y.Profile == x)).Where(x => x != null).ToList();
@@ -235,7 +253,21 @@ public class BattleStateMachine : MonoBehaviour
                 }
                 else
                 {
-                    var startTS = Time.timeAsDouble;
+                    var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+                    if (Settings.Current.ATBMode == ATBMode.Gradual)
+                    {
+                        var token = cts.Token;
+                        IncrementTS().Forget();
+                        async UniTask IncrementTS()
+                        {
+                            while (token.IsCancellationRequested == false)
+                            {
+                                await UniTask.NextFrame(token, true);
+                                _timestamp += Time.deltaTime;
+                            }
+                        }
+                    }
+
                     try
                     {
                         TacticsPlaying = chosenTactic;
@@ -251,9 +283,8 @@ public class BattleStateMachine : MonoBehaviour
                         TacticsPlaying = null;
                         UnitPlaying = unit;
                     }
-
-                    if (Settings.Current.ATBMode == ATBMode.Gradual)
-                        _timestamp += Time.timeAsDouble - startTS;
+                    cts.Cancel();
+                    cts.Dispose();
 
                     delay = chosenTactic.Action.DelayToNextTurn;
                 }
@@ -589,6 +620,21 @@ public class BattleStateMachine : MonoBehaviour
             if (Queue.Values[i] == unit)
                 Queue.RemoveAt(i);
         }
+    }
+
+    public float NormalizedATBOf(CharacterTemplate unit)
+    {
+        foreach (var (time, queueUnit) in Queue)
+        {
+            if (queueUnit.Profile == unit)
+            {
+                var timeElapsed = _timestamp - queueUnit.Context.CombatTimestamp;
+                var duration = time - queueUnit.Context.CombatTimestamp;
+                return (float)(timeElapsed / duration);
+            }
+        }
+
+        return 0;
     }
 
     private enum TargetState
