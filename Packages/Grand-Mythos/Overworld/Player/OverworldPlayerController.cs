@@ -29,10 +29,11 @@ public class OverworldPlayerController : ReloadableBehaviour
     public float JumpUnitPerSecond = 10f;
     public float InteractDistance = 0.5f;
     public float TurnRate = 20f;
+    public ControlDisabler Disabler;
+    public LocomotionType CurrentLocomotion = LocomotionType.Run;
     public float MovementSpeed = 8f;
     public float WalkingMultiplier = 0.5f;
     public float SprintingMultiplier = 2f;
-    public ControlDisabler Disabler;
     public double UnitsWalked;
 
     [SerializeField, Sirenix.OdinInspector.ReadOnly]
@@ -52,11 +53,10 @@ public class OverworldPlayerController : ReloadableBehaviour
     bool _noNavmesh;
     Vector3 _lastPointOnNavMesh;
     int _activeTransport;
-    SpeedModifier _speedModifier;
     Vector3 _inputRightVector;
     PointOfViewBase? _currentPov;
 
-    private enum SpeedModifier
+    public enum LocomotionType
     {
         Walk,
         Run,
@@ -245,19 +245,19 @@ public class OverworldPlayerController : ReloadableBehaviour
     void MoveOffset(Vector3 movementVector)
     {
         if (SprintingToggle.action.WasPerformedThisFrameUnique())
-            _speedModifier = _speedModifier == SpeedModifier.Sprint ? SpeedModifier.Run : SpeedModifier.Sprint;
+            CurrentLocomotion = CurrentLocomotion == LocomotionType.Sprint ? LocomotionType.Run : LocomotionType.Sprint;
         if (WalkingToggle.action.WasPerformedThisFrameUnique())
-            _speedModifier = _speedModifier == SpeedModifier.Walk ? SpeedModifier.Run : SpeedModifier.Walk;
+            CurrentLocomotion = CurrentLocomotion == LocomotionType.Walk ? LocomotionType.Run : LocomotionType.Walk;
         
         var previousPosition = Controller.transform.position;
         try
         {
             var offset = movementVector * (MovementSpeed * Time.deltaTime);
-            offset *= _speedModifier switch
+            offset *= CurrentLocomotion switch
             {
-                SpeedModifier.Walk => WalkingMultiplier,
-                SpeedModifier.Run => 1f,
-                SpeedModifier.Sprint => SprintingMultiplier,
+                LocomotionType.Walk => WalkingMultiplier,
+                LocomotionType.Run => 1f,
+                LocomotionType.Sprint => SprintingMultiplier,
                 _ => throw new ArgumentOutOfRangeException()
             };
             Controller.Move(offset);
