@@ -113,15 +113,18 @@ public abstract class PointOfViewBase : MonoBehaviour
 
     protected static void DrawCameraFrustum()
     {
-        if (_debugMesh == null && UnityEditor.SceneView.lastActiveSceneView is {} view)
+        if (_debugMesh == null)
         {
-            var previousAspect = view.camera.aspect;
-            view.camera.aspect = Ratio;
+            var go = new GameObject();
+            var c = go.AddComponent<Camera>();
+            c.aspect = Ratio;
+            c.nearClipPlane = NearPlane;
+            c.farClipPlane = FarPlane;
+            c.fieldOfView = FieldOfView;
             var farCorners = new Vector3[4];
             var nearCorners = new Vector3[4];
-            view.camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), FarPlane, Camera.MonoOrStereoscopicEye.Mono, farCorners);
-            view.camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), NearPlane, Camera.MonoOrStereoscopicEye.Mono, nearCorners);
-            view.camera.aspect = previousAspect;
+            c.CalculateFrustumCorners(new Rect(0, 0, 1, 1), FarPlane, Camera.MonoOrStereoscopicEye.Mono, farCorners);
+            c.CalculateFrustumCorners(new Rect(0, 0, 1, 1), NearPlane, Camera.MonoOrStereoscopicEye.Mono, nearCorners);
             _debugMesh = new Mesh
             {
                 vertices = nearCorners.Concat(farCorners).ToArray(),
@@ -135,6 +138,7 @@ public abstract class PointOfViewBase : MonoBehaviour
                 (Vector3.Lerp(farCorners[0], farCorners[3], 0.33f), Vector3.Lerp(farCorners[1], farCorners[2], 0.33f)),
                 (Vector3.Lerp(farCorners[0], farCorners[3], 0.66f), Vector3.Lerp(farCorners[1], farCorners[2], 0.66f)),
             };
+            DestroyImmediate(c);
         }
 
         if (_debugMesh)
